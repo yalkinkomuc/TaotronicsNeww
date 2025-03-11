@@ -304,8 +304,8 @@ MonoBehaviour:
     m_Bits: 64
   wallCheck: {fileID: 8432171091623823911}
   wallCheckDistance: 0.69
-  facingdir: -1
-  knockbackDirection: {x: 3, y: 4}
+  facingdir: 1
+  knockbackDirection: {x: 2, y: 3}
   knockbackDuration: 0.2
   whatIsPlayer:
     serializedVersion: 2
