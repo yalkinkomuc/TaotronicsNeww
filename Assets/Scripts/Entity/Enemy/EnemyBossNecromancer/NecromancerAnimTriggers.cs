@@ -4,7 +4,7 @@ using System.Collections;
 public class NecromancerAnimTriggers : EnemyAnimationTriggers
 {
    private EnemyBossNecromancerBoss enemyBossNecromancer => GetComponentInParent<EnemyBossNecromancerBoss>();
-   private bool isSpawnTriggered = false;
+   //private bool isSpawnTriggered = false;
 
    private void Relocate() => enemyBossNecromancer.FindPosition();
    
