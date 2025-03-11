@@ -220,10 +220,21 @@ public class EnemyBossNecromancerBoss : Enemy
 
     public void FindPosition()
     {
-        float x = Random.Range(arenaCollider.bounds.min.x + 3 , arenaCollider.bounds.max.x -3);
-        float y = Random.Range(arenaCollider.bounds.min.y + 3 , arenaCollider.bounds.max.y -3);
+        Vector3 originalPosition = transform.position;
+        float x = Random.Range(arenaCollider.bounds.min.x + 3, arenaCollider.bounds.max.x - 3);
+        float y = Random.Range(arenaCollider.bounds.min.y + 3, arenaCollider.bounds.max.y - 3);
 
-        transform.position = new Vector3(x, y);
+        Vector3 newPosition = new Vector3(x, y);
+        float distance = Vector2.Distance(originalPosition, newPosition);
+
+        // Eğer yeni konum mevcut konuma çok yakınsa yeni konum bul
+        if (distance < 6f)
+        {
+            FindPosition();
+            return;
+        }
+
+        transform.position = newPosition;
         transform.position = new Vector3(transform.position.x,
             transform.position.y - GroundBelow().distance + (collider.size.y / 2));
 
