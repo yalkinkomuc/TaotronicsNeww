@@ -14,11 +14,10 @@ public class SkeletonSpawnEffect : MonoBehaviour
     // Animation Event'ten çağrılacak
     private void OnSpawnAnimationComplete()
     {
-        if (necromancer != null)
+        if (necromancer != null && necromancer.CanSummon())
         {
-            // İskeleti tam olarak efektin olduğu konumda spawn et
             necromancer.SummonSkeletonAtPosition(spawnPosition);
         }
-        Destroy(gameObject); // Efekt bitince yok ol
+        Destroy(gameObject);
     }
 } 

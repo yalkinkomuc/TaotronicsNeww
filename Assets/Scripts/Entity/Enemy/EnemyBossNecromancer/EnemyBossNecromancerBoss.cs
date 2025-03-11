@@ -7,6 +7,8 @@ using System.Linq;
 
 public class EnemyBossNecromancerBoss : Enemy
 {
+    public static bool isBossFightOver { get; private set; } = false;
+
     #region States
     public NecromancerIdleState idleState { get; private set; }
     public NecromancerBattleState battleState { get; private set; }
@@ -26,12 +28,15 @@ public class EnemyBossNecromancerBoss : Enemy
     [Header("Summon Settings")]
     [SerializeField] private GameObject skeletonPrefab;
     [SerializeField] public int skeletonsToSpawn = 2;
-    [SerializeField] private int maxSkeletons = 4;  // Maksimum iskelet sayısı
+    [SerializeField] public int maxSkeletons = 4;  // Public olarak değiştirdik
     public float spawnRange = 15f;
-    [SerializeField] private float summonCooldown = 8f;
-    private float summonCooldownTimer;
+    [SerializeField] public float summonCooldown = 8f; // Public olarak değiştirdik
+    public float summonCooldownTimer; // Public olarak değiştirdik
     [SerializeField] private GameObject spawnEffectPrefab;
+    [SerializeField] private float spawnEffectCooldown = 3f;
+    private float spawnEffectCooldownTimer = 0f;
 
+    public List<Skeleton_Enemy> summonedSkeletons = new List<Skeleton_Enemy>(); // Public olarak değiştirdik
 
     [Header("Teleport Settings")] 
     [SerializeField] public BoxCollider2D arenaCollider; // public yaptık
@@ -41,11 +46,15 @@ public class EnemyBossNecromancerBoss : Enemy
 
     private GameObject arena;
 
-    private List<Skeleton_Enemy> summonedSkeletons = new List<Skeleton_Enemy>();
+    [Header("Debug")]
+    [SerializeField] private bool debugMode = false;  // Hata ayıklama için eklendi
+
+    //private bool isSpawningSkeletons = false; // Spawn işlemi kontrolü için
 
     protected override void Awake()
     {
         base.Awake();
+        isBossFightOver = false; // Boss savaşı başladığında false'a çek
 
         idleState = new NecromancerIdleState(this, stateMachine, "Idle", this);
         battleState = new NecromancerBattleState(this, stateMachine, "Move", this);
@@ -66,43 +75,59 @@ public class EnemyBossNecromancerBoss : Enemy
     {
         base.Update();
 
-        // Cooldown timerları güncelle
         if (spellCooldownTimer > 0)
-        {
             spellCooldownTimer -= Time.deltaTime;
-        }
 
         if (summonCooldownTimer > 0)
-        {
             summonCooldownTimer -= Time.deltaTime;
-        }
+        
+        if (spawnEffectCooldownTimer > 0)
+            spawnEffectCooldownTimer -= Time.deltaTime;
 
-        // Ölen iskeletleri listeden temizle
-        CleanupDeadSkeletons();
+        // Her frame'de değil, belirli aralıklarla kontrol et
+        if (Time.frameCount % 30 == 0) // Her 30 frame'de bir
+        {
+            CleanupDeadSkeletons();
+        }
     }
 
-    // Ölen iskeletleri listeden temizle
     private void CleanupDeadSkeletons()
     {
-        for (int i = summonedSkeletons.Count - 1; i >= 0; i--)
+        // Listeden silinecek iskeletleri geçici bir listede topla
+        List<Skeleton_Enemy> skeletonsToRemove = new List<Skeleton_Enemy>();
+        
+        foreach (var skeleton in summonedSkeletons)
         {
-            if (summonedSkeletons[i] == null || !summonedSkeletons[i].gameObject.activeInHierarchy)
+            if (skeleton == null || !skeleton.gameObject.activeInHierarchy)
             {
-                summonedSkeletons.RemoveAt(i);
+                skeletonsToRemove.Add(skeleton);
             }
+        }
+        
+        // Silinecek iskeletleri ana listeden kaldır
+        foreach (var skeleton in skeletonsToRemove)
+        {
+            summonedSkeletons.Remove(skeleton);
+            if (debugMode)
+                Debug.Log("İskelet listeden kaldırıldı");
         }
     }
 
     // Sıkı kontroller içeren CanSummon ve CanCastSpell metodları
     public bool CanCastSpell()
     {
-        return spellCooldownTimer <= 0;
+        bool canCast = spellCooldownTimer <= 0;
+        if (debugMode)
+            Debug.Log($"CanCastSpell: {canCast} (cooldown={spellCooldownTimer.ToString("F1")})");
+        return canCast;
     }
 
     public bool CanSummon()
     {
-        // Debug.Log($"CanSummon: cooldown={summonCooldownTimer}, count={summonedSkeletons.Count}, max={maxSkeletons}");
-        return summonCooldownTimer <= 0 && summonedSkeletons.Count < maxSkeletons;
+        bool canSpawn = summonCooldownTimer <= 0 && summonedSkeletons.Count < maxSkeletons;
+        if (debugMode)
+            Debug.Log($"CanSummon: {canSpawn} (cooldown={summonCooldownTimer.ToString("F1")}, count={summonedSkeletons.Count}, max={maxSkeletons})");
+        return canSpawn;
     }
 
     private RaycastHit2D GroundBelow() => Physics2D.Raycast(transform.position,Vector2.down,100,whatIsGround);
@@ -132,47 +157,74 @@ public class EnemyBossNecromancerBoss : Enemy
         }
     }
 
-    // SummonSkeletons metodunda cooldown'u kesin şekilde ayarla
-    public void SummonSkeletons()
-    {
-        // Eğer cooldown varsa veya maksimum iskelet sayısına ulaşıldıysa çık
-        if (summonCooldownTimer > 0 || summonedSkeletons.Count >= maxSkeletons)
-        {
-            // Debug.Log($"SummonSkeletons - İptal: cooldown={summonCooldownTimer}, count={summonedSkeletons.Count}");
-            return;
-        }
+    // SummonSkeletons metodunu düzelt - yerin altında değil üstünde spawn olsun
+    // public void SummonSkeletons()
+    // {
+    //     int skeletonsToSpawnNow = Mathf.Min(skeletonsToSpawn, maxSkeletons - summonedSkeletons.Count);
+    //     
+    //     if (skeletonPrefab != null && arenaCollider != null)
+    //     {
+    //         // Sabit X aralığı (Arena görüntüsüne göre)
+    //         float minX = -10f; // Sol sınır
+    //         float maxX = 9f;   // Sağ sınır
+    //         
+    //         // ARENA ZEMİNİ - arenaCollider'ın alt kısmı (min.y)
+    //         float groundY = arenaCollider.bounds.min.y;
+    //         
+    //         for (int i = 0; i < skeletonsToSpawnNow; i++)
+    //         {
+    //             float randomX = Random.Range(minX, maxX);
+    //             
+    //             // ZEMİNİN ÜSTÜNDE spawn et, küçük bir offset ekle
+    //             Vector2 spawnPosition = new Vector2(randomX, groundY + 0.5f);
+    //             
+    //             GameObject skeletonObj = Instantiate(skeletonPrefab, spawnPosition, Quaternion.identity);
+    //             Skeleton_Enemy skeleton = skeletonObj.GetComponent<Skeleton_Enemy>();
+    //             if (skeleton != null)
+    //             {
+    //                 skeleton.SetSummonedByNecromancer(true);
+    //                 summonedSkeletons.Add(skeleton);
+    //             }
+    //         }
+    //         
+    //         summonCooldownTimer = summonCooldown;
+    //     }
+    // }
 
-        int skeletonsToSpawnNow = Mathf.Min(skeletonsToSpawn, maxSkeletons - summonedSkeletons.Count);
+    // SummonSkeletonAtPosition metodunu da güncelle
+    public void SummonSkeletonAtPosition(Vector2 position)
+    {
+        if (summonedSkeletons.Count >= maxSkeletons || skeletonPrefab == null || arenaCollider == null)
+            return;
+
+        float minX = arenaCollider.bounds.min.x + 2f;
+        float maxX = arenaCollider.bounds.max.x - 2f;
+        float groundY = arenaCollider.bounds.min.y;
         
-        if (skeletonPrefab != null && skeletonsToSpawnNow > 0)
+        float clampedX = Mathf.Clamp(position.x, minX, maxX);
+        Vector2 spawnPos = new Vector2(clampedX, groundY + 0.5f);
+        
+        GameObject skeletonObj = Instantiate(skeletonPrefab, spawnPos, Quaternion.identity);
+        Skeleton_Enemy skeleton = skeletonObj.GetComponent<Skeleton_Enemy>();
+        if (skeleton != null)
         {
-            for (int i = 0; i < skeletonsToSpawnNow; i++)
-            {
-                float randomX = transform.position.x + Random.Range(-spawnRange, spawnRange);
-                Vector2 spawnPosition = new Vector2(randomX, transform.position.y);
-                
-                GameObject skeletonObj = Instantiate(skeletonPrefab, spawnPosition, Quaternion.identity);
-                Skeleton_Enemy skeleton = skeletonObj.GetComponent<Skeleton_Enemy>();
-                if (skeleton != null)
-                {
-                    skeleton.SetSummonedByNecromancer(true);
-                    summonedSkeletons.Add(skeleton);
-                }
-            }
-            
-            // Cooldown'u kesinlikle ayarla ve log ekle
+            skeleton.SetSummonedByNecromancer(true);
+            summonedSkeletons.Add(skeleton);
+            // Ana spawn cooldown'u burada başlat
             summonCooldownTimer = summonCooldown;
-            // Debug.Log($"SummonSkeletons - Cooldown ayarlandı: {summonCooldown} saniye");
         }
     }
 
     public override void Die()
     {
+        isBossFightOver = true;
+
+        // Tüm iskeletleri dead state'e geçir
         foreach (var skeleton in summonedSkeletons.ToList())
         {
             if (skeleton != null && skeleton.gameObject != null)
             {
-                skeleton.Die();
+                skeleton.Die(); // Bu şekilde iskeletler de kendi ölüm animasyonlarını oynatacak
             }
         }
         summonedSkeletons.Clear();
@@ -183,37 +235,45 @@ public class EnemyBossNecromancerBoss : Enemy
 
     public void CreateSpawnEffect(Vector2 position)
     {
-        if (spawnEffectPrefab != null)
+        // Sadece spawn effect cooldown kontrolü
+        if (spawnEffectCooldownTimer > 0)
         {
-            GameObject effect = Instantiate(spawnEffectPrefab, position, Quaternion.identity);
+            if (debugMode)
+                Debug.Log($"Spawn efekti cooldown: {spawnEffectCooldownTimer}");
+            return;
+        }
+
+        // Maksimum iskelet kontrolü
+        if (summonedSkeletons.Count >= maxSkeletons)
+        {
+            if (debugMode)
+                Debug.Log($"Maksimum iskelet sayısına ulaşıldı: {summonedSkeletons.Count}/{maxSkeletons}");
+            return;
+        }
+
+        if (spawnEffectPrefab != null && arenaCollider != null)
+        {
+            float minX = arenaCollider.bounds.min.x + 2f;
+            float maxX = arenaCollider.bounds.max.x - 2f;
+            float groundY = arenaCollider.bounds.min.y;
+            
+            float clampedX = Mathf.Clamp(position.x, minX, maxX);
+            Vector2 effectPosition = new Vector2(clampedX, groundY + 0.5f);
+            
+            GameObject effect = Instantiate(spawnEffectPrefab, effectPosition, Quaternion.identity);
             SkeletonSpawnEffect spawnEffect = effect.GetComponent<SkeletonSpawnEffect>();
+            
             if (spawnEffect != null)
             {
-                spawnEffect.Initialize(this, position);
+                spawnEffect.Initialize(this, effectPosition);
+                // Sadece efekt cooldown'unu başlat
+                spawnEffectCooldownTimer = spawnEffectCooldown;
             }
-        }
-    }
-
-    // Tek bir iskelet spawn etme
-    public void SummonSkeletonAtPosition(Vector2 position)
-    {
-        // Maksimum sayı kontrolü
-        if (summonedSkeletons.Count >= maxSkeletons)
-            return;
-
-        if (skeletonPrefab != null)
-        {
-            float clampedX = Mathf.Clamp(position.x, 
-                transform.position.x - spawnRange, 
-                transform.position.x + spawnRange);
-            Vector2 spawnPos = new Vector2(clampedX, position.y);
-
-            GameObject skeletonObj = Instantiate(skeletonPrefab, spawnPos, Quaternion.identity);
-            Skeleton_Enemy skeleton = skeletonObj.GetComponent<Skeleton_Enemy>();
-            if (skeleton != null)
+            else
             {
-                skeleton.SetSummonedByNecromancer(true);
-                summonedSkeletons.Add(skeleton);
+                if (debugMode)
+                    Debug.LogError("SkeletonSpawnEffect component bulunamadı!");
+                Destroy(effect);
             }
         }
     }

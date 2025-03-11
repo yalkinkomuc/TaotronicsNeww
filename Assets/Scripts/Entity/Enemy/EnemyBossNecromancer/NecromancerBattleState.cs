@@ -9,21 +9,23 @@ public class NecromancerBattleState : EnemyState
     
     // Teleport değişkenlerini düşürdük
     private const float EMERGENCY_TELEPORT_DISTANCE = 2.5f;    // 3'ten 2'ye düşürdük
-    private const float PREFERRED_DISTANCE = 4f;            
-    private const float TELEPORT_CHANCE = 0.10f;      // Teleport şansını %10'a düşürelim
-    private const float DANGER_TELEPORT_CHANCE = 0.3f;     // 0.6'dan 0.3'e düşürdük
+    private const float MIN_PREFERRED_DISTANCE = 6f;
+    private const float MAX_PREFERRED_DISTANCE = 12f;
+   
     private int consecutiveCloseCallCount = 0;             
 
-    // Skill şanslarını daha agresif hale getirelim
-    private const float SPELL_CAST_CHANCE = 0.75f;    // Büyü atma şansını %75'e çıkaralım
-    private const float SUMMON_CHANCE = 0.10f;        // İskelet çağırma şansını %10'a düşürelim
-    // Geriye %5 boş hareket kalıyor
+ 
 
     private const float TELEPORT_COOLDOWN = 3f;
     private float teleportCooldownTimer = 0f;
     private int teleportCount = 0;
     private const int MAX_TELEPORTS_NORMAL = 3; // Normal durumda 3 TP
     private const int MAX_TELEPORTS_LOW_HEALTH = 7; // Düşük sağlıkta 7 TP
+
+    private float battleTime;
+    private float decisionTime = 2f;
+    private float lastSummonTime = 0f; // Son summon zamanı
+    private const float summonCooldown = 3f; // Summon sonrası 3 saniye bekleme süresi
 
     public NecromancerBattleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName, EnemyBossNecromancerBoss _enemy) : base(_enemyBase, _stateMachine, _animBoolName)
     {
@@ -34,6 +36,8 @@ public class NecromancerBattleState : EnemyState
     {
         base.Enter();
         stateTimer = skillDecisionTimer;
+        battleTime = 0f;
+        enemy.SetVelocity(0, 0);
         
         // Battle state'e girerken oyuncuya dön
         float xDirection = enemy.player.transform.position.x - enemy.transform.position.x;
@@ -48,6 +52,47 @@ public class NecromancerBattleState : EnemyState
     public override void Update()
     {
         base.Update();
+        battleTime += Time.deltaTime;
+
+        if (battleTime >= decisionTime)
+        {
+            battleTime = 0;
+            
+            // Teleport ve spell şansları
+            float teleportChance = 0.1f;
+            float spellChance = 0.7f;
+            float summonChance = 0.2f;
+            
+            // Eğer son summon'dan yeterli süre geçmediyse summon şansını 0 yap
+            if (Time.time - lastSummonTime < summonCooldown)
+            {
+                summonChance = 0f; // Summon şansını sıfırla
+                
+                // Diğer şansları paylaştır
+                teleportChance = 0.2f;
+                spellChance = 0.8f;
+            }
+
+            float decision = Random.value;
+            
+            if (decision < teleportChance)
+            {
+                stateMachine.ChangeState(enemy.teleportState);
+            }
+            else if (decision < teleportChance + spellChance && enemy.CanCastSpell())
+            {
+                stateMachine.ChangeState(enemy.spellCastState);
+            }
+            else if (enemy.CanSummon())
+            {
+                lastSummonTime = Time.time; // Son summon zamanını kaydet
+                stateMachine.ChangeState(enemy.summonState);
+            }
+            else
+            {
+                stateMachine.ChangeState(enemy.teleportState);
+            }
+        }
 
         // Cooldown timer'ı güncelle
         if (teleportCooldownTimer > 0)
@@ -60,7 +105,7 @@ public class NecromancerBattleState : EnemyState
         }
 
         float distanceToPlayer = Vector2.Distance(enemy.transform.position, enemy.player.transform.position);
-        float xDirection = enemy.player.transform.position.x - enemy.transform.position.x;
+       
 
         // Duvar kontrolü - direkt TP
         if (enemy.IsWallDetected())
@@ -85,63 +130,23 @@ public class NecromancerBattleState : EnemyState
             consecutiveCloseCallCount = 0;
         }
 
-        // Skill seçimi
-        if (stateTimer <= 0)
+        // Hareket mantığı - tercih edilen mesafedeyken spell at
+        if (distanceToPlayer < MIN_PREFERRED_DISTANCE) 
         {
-            float roll = Random.value;
-
-            bool canCastSpell = enemy.CanCastSpell();
-            bool canSummon = enemy.CanSummon();
-            bool canTeleport = CanTeleport();
-
-            // Önce spell cast'i kontrol et (daha yüksek şans)
-            if (roll < SPELL_CAST_CHANCE && canCastSpell)
-            {
-                stateMachine.ChangeState(enemy.spellCastState);
-                return;
-            }
-            // Summon şansı (düşük)
-            else if (roll < SPELL_CAST_CHANCE + SUMMON_CHANCE && canSummon)
-            {
-                stateMachine.ChangeState(enemy.summonState);
-                return;
-            }
-            // Teleport şansı (düşük)
-            else if (roll < SPELL_CAST_CHANCE + SUMMON_CHANCE + TELEPORT_CHANCE && canTeleport)
-            {
-                HandleTeleport();
-                return;
-            }
-            // Eğer ilk seçilen skill yapılamazsa başka birini dene
-            else if (canCastSpell)
-            {
-                stateMachine.ChangeState(enemy.spellCastState);
-                return;
-            }
-            else if (canSummon)
-            {
-                stateMachine.ChangeState(enemy.summonState);
-                return;
-            }
-            else if (canTeleport)
-            {
-                HandleTeleport();
-                return;
-            }
-
-            stateTimer = skillDecisionTimer;
+            // Çok yakın, uzaklaş
+            enemy.SetVelocity(-moveSpeed, enemy.rb.linearVelocity.y);
+            enemy.FlipController(-moveSpeed);
         }
-
-        // Hareket mantığı
-        if (distanceToPlayer > PREFERRED_DISTANCE - 1f)
+        else if (distanceToPlayer > MAX_PREFERRED_DISTANCE)
         {
+            // Çok uzak, yaklaş
             enemy.SetVelocity(moveSpeed, enemy.rb.linearVelocity.y);
             enemy.FlipController(moveSpeed);
         }
         else
         {
-            enemy.SetVelocity(-moveSpeed, enemy.rb.linearVelocity.y);
-            enemy.FlipController(-moveSpeed);
+            // İdeal mesafedeyiz, direkt spell at
+            stateMachine.ChangeState(enemy.spellCastState);
         }
     }
 

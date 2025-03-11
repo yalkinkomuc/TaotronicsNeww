@@ -18,7 +18,7 @@ public class BossArenaManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private BossHealthBar bossHealthBar;
     
-    private const float EXIT_PORTAL_DELAY = 1f;
+    private const float EXIT_PORTAL_DELAY = 3f;
 
     private void Awake()
     {

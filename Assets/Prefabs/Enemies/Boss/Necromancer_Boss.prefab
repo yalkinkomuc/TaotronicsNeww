@@ -397,11 +397,14 @@ MonoBehaviour:
   skeletonPrefab: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
   skeletonsToSpawn: 2
   maxSkeletons: 4
-  spawnRange: 10
+  spawnRange: 20
   summonCooldown: 8
+  summonCooldownTimer: 0
   spawnEffectPrefab: {fileID: 928637090390650468, guid: 131331112bdee41459105cb9091238bf, type: 3}
+  summonedSkeletons: []
   arenaCollider: {fileID: 0}
   surroundingCheckSize: {x: 1.1, y: 1.1}
+  debugMode: 1
 --- !u!114 &3616037168172700755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -433,6 +436,6 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   maxHealth:
-    baseValue: 150
+    baseValue: 20
     modifiers: 
   currentHealth: 0
