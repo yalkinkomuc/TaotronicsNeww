@@ -88,6 +88,9 @@ public class Player : Entity
     
     private IInteractable currentInteractable;
 
+    [Header("Crouch Attack")]
+    public Vector2 crouchAttackOffset; // Örnek: (0, 0.2f) 
+
     protected override void Awake()
     {
         base.Awake();

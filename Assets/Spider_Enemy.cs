@@ -18,6 +18,8 @@ public class Spider_Enemy : Enemy
     {
         base.Awake();
         
+        SetupDefaultFacingDir(1);
+        
         idleState = new Spider_IdleState(this,stateMachine,"Idle",this);
         moveState = new Spider_MoveState(this,stateMachine,"Move",this);
         battleState = new Spider_BattleState(this,stateMachine,"Move",this);
