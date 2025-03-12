@@ -29,6 +29,6 @@ public class SkeletonMoveState : SkeletonGroundedState
             stateMachine.ChangeState(enemy.idleState);
         }
         
-        //Debug.Log("Skeleton in MoveState");
+        Debug.Log("Skeleton in MoveState");
     }
 }

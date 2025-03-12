@@ -16,7 +16,7 @@ public class SkeletonBattleState : EnemyState
     {
         base.Enter();
 
-        player = PlayerManager.instance.transform;
+        player = PlayerManager.instance.player.transform;
     }
 
     public override void Exit()
@@ -28,7 +28,7 @@ public class SkeletonBattleState : EnemyState
     {
         base.Update();
         
-       
+        Debug.Log("im in battleState");
         
         if(player.position.x > enemy.transform.position.x)
             moveDir = 1;

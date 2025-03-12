@@ -21,6 +21,8 @@ public class SkeletonGroundedState : EnemyState
     public override void Update()
     {
         base.Update();
+        
+        Debug.Log("im in groundedState");
 
         if (enemy.IsPlayerDetected() ||enemy.IsTooCloseToPlayer())
         {
