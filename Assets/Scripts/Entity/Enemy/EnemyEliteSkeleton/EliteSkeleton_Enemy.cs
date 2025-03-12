@@ -18,6 +18,7 @@ public class EliteSkeleton_Enemy : Enemy
     [Header("AttackInfo")] 
     public float attackDistance;
     public float attackCooldown;
+    public float battleTime;
     [HideInInspector] public float lastTimeAttacked;
     
     
