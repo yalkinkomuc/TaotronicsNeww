@@ -1284,6 +1284,10 @@ MonoBehaviour:
     vfxPrefab: {fileID: 3640434673979778771, guid: 0086d03691286ab4c9cccbfbf11dc4d6, type: 3}
   - vfxId: Skeleton_Hurt3
     vfxPrefab: {fileID: 2942430389981394608, guid: 1328bc5773bcfe046aef71ed277786bd, type: 3}
+  - vfxId: BloodVFX1
+    vfxPrefab: {fileID: 4327787346237210893, guid: edcb7e47710bb7e47b3225af29140772, type: 3}
+  - vfxId: BloodVFX2
+    vfxPrefab: {fileID: 6790647974808866659, guid: 6b414d20df288a443a4f888a59c2f32a, type: 3}
 --- !u!4 &581203128
 Transform:
   m_ObjectHideFlags: 0
@@ -4098,17 +4102,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1447844343380681819, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
-      propertyPath: maxHealth.baseValue
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 4780685259017831128, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_Name
       value: Spider_Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 4780685259017831128, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6353669383580540762, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4149,18 +4149,6 @@ PrefabInstance:
     - target: {fileID: 6353669383580540762, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6869598775475667402, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
-      propertyPath: knockbackDuration
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6869598775475667402, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
-      propertyPath: knockbackDirection.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6869598775475667402, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
-      propertyPath: knockbackDirection.y
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4536,6 +4524,10 @@ PrefabInstance:
     - target: {fileID: 2128240008628340159, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
       propertyPath: m_Name
       value: Skeleton_Enemy_Archer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2128240008628340159, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7877003868482642406, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
       propertyPath: m_LocalPosition.x

@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 6312121485096397388}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.484, y: 0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -401,6 +401,7 @@ MonoBehaviour:
   summonCooldown: 8
   summonCooldownTimer: 0
   spawnEffectPrefab: {fileID: 928637090390650468, guid: 131331112bdee41459105cb9091238bf, type: 3}
+  spawnEffectCooldown: 3
   summonedSkeletons: []
   arenaCollider: {fileID: 0}
   surroundingCheckSize: {x: 1.1, y: 1.1}
@@ -418,8 +419,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitMat: {fileID: 2100000, guid: 7a1a264730cde2341b44f080cf9b3a6e, type: 2}
-  hitVFXIds: []
-  vfxSpawnPoint: {fileID: 0}
+  hitVFXIds:
+  - BloodVFX1
+  - BloodVFX2
+  vfxSpawnPoint: {fileID: 2267727980904717625}
 --- !u!114 &4508352989967533048
 MonoBehaviour:
   m_ObjectHideFlags: 0
