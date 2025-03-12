@@ -359,7 +359,10 @@ MonoBehaviour:
   chaseSpeed: 3.5
   tooCloseDistance: 3
   detectDistance: 15
-  attackDistance: 1.02
+  attackDistance: 0.85
+  attackCooldown: 0.2
+  battleTime: 4
+  lastTimeAttacked: 0
 --- !u!114 &7637031704639217373
 MonoBehaviour:
   m_ObjectHideFlags: 0
