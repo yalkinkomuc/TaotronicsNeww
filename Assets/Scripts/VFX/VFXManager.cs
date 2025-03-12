@@ -45,6 +45,16 @@ public class VFXManager : MonoBehaviour
         if (vfxPool.TryGetValue(vfxId, out GameObject vfx))
         {
             vfx.transform.position = position;
+            
+            // Vuran player'ın pozisyonuna göre VFX'i döndür
+            Player player = PlayerManager.instance.player;
+            bool hitFromLeft = player.transform.position.x < position.x;
+            
+            // Y ekseninde döndür
+            vfx.transform.rotation = hitFromLeft ? 
+                Quaternion.Euler(0f, 180f, 0f) : 
+                Quaternion.Euler(0f, 0f, 0f);
+                
             if (parent != null)
                 vfx.transform.SetParent(parent);
                 

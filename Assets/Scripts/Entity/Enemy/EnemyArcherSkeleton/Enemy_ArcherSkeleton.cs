@@ -12,7 +12,7 @@ public class Enemy_ArcherSkeleton : Enemy
     
     #endregion
 
-    [SerializeField] private BowWeaponStateMachine bowWeapon;
+    //[SerializeField] private BowWeaponStateMachine bowWeapon;
 
     [Header("Archer Settings")]
     
@@ -48,9 +48,7 @@ public class Enemy_ArcherSkeleton : Enemy
     {
         base.Start();
         
-        if (bowWeapon == null)
-            bowWeapon = GetComponentInChildren<BowWeaponStateMachine>();
-        
+      
         if (isSummoned)
         {
             stateMachine.Initialize(battleState);

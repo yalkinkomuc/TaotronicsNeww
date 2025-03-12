@@ -3625,6 +3625,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ground (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6831132013157184206, guid: c80c8de8481b93d4288fb701d84a3340, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4094,6 +4098,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1447844343380681819, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
+      propertyPath: maxHealth.baseValue
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4780685259017831128, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_Name
       value: Spider_Enemy
@@ -4144,15 +4152,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6869598775475667402, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: knockbackDuration
-      value: 0
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 6869598775475667402, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: knockbackDirection.x
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6869598775475667402, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: knockbackDirection.y
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4387,20 +4395,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
-      propertyPath: moveSpeed
-      value: 1.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: battleTime
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
-      propertyPath: chaseSpeed
-      value: 2.25
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: attackCooldown
-      value: 0.35
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: attackDistance
@@ -4409,6 +4409,10 @@ PrefabInstance:
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
       value: EliteSkeleton_Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4545,6 +4549,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 771119517957317904, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.385
+      objectReference: {fileID: 0}
+    - target: {fileID: 771119517957317904, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.08
+      objectReference: {fileID: 0}
     - target: {fileID: 2128240008628340159, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
       propertyPath: m_Name
       value: Skeleton_Enemy_Archer
@@ -4552,6 +4564,14 @@ PrefabInstance:
     - target: {fileID: 2128240008628340159, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6885391756319380915, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.091
+      objectReference: {fileID: 0}
+    - target: {fileID: 6885391756319380915, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.128
       objectReference: {fileID: 0}
     - target: {fileID: 7877003868482642406, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4593,8 +4613,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8013320533889900930, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6160369000570901411, guid: 5b8e266e2aa69ec4f9c54e4b6b0b09fc, type: 3}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8440498735062880148, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
@@ -4781,6 +4806,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 309585666282751159, guid: 504a2022e8007534aa22658e01218e40, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.223
+      objectReference: {fileID: 0}
     - target: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_Name
       value: Skeleton_Enemy
@@ -4791,11 +4820,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.023
+      value: 4.69
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.243
+      value: -3.117
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4831,7 +4860,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6821090607185294136, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: maxHealth.baseValue
-      value: 150
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
