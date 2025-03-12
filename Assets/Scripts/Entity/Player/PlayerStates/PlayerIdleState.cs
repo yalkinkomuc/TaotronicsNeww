@@ -24,6 +24,8 @@ public class PlayerIdleState : PlayerGroundedState
         base.Update();
         
         //Debug.Log("im in idle state");
+        
+        player.SetZeroVelocity();
 
         if (xInput !=0)
         {

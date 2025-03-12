@@ -4387,12 +4387,24 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: moveSpeed
+      value: 1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: battleTime
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: chaseSpeed
+      value: 2.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: attackCooldown
-      value: 1
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: attackDistance
+      value: 0.85
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
