@@ -10,6 +10,7 @@ public class Spider_Enemy : Enemy
     public Spider_IdleState idleState { get; private set; }
     public Spider_MoveState moveState { get; private set; }
     public Spider_BattleState battleState { get; private set; }
+    public Spider_DeadState deadState { get; private set; }
     
 
     #endregion
@@ -23,6 +24,7 @@ public class Spider_Enemy : Enemy
         idleState = new Spider_IdleState(this,stateMachine,"Idle",this);
         moveState = new Spider_MoveState(this,stateMachine,"Move",this);
         battleState = new Spider_BattleState(this,stateMachine,"Move",this);
+        deadState = new Spider_DeadState(this,stateMachine,"Death",this);
     }
 
     protected override void Start()
@@ -37,6 +39,8 @@ public class Spider_Enemy : Enemy
     public override void Die()
     {
         base.Die();
+        
+        stateMachine.ChangeState(deadState);
     }
 
     private void OnCollisionStay2D(Collision2D other)
