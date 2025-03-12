@@ -12,5 +12,6 @@ public class PCInput : IPlayerInput
     public bool crouchInputReleased => Input.GetKeyUp(KeyCode.S);
     public bool attackInput => Input.GetKeyDown(KeyCode.Mouse0);
     public bool interactionInput => Input.GetKeyDown(KeyCode.E);
+    public bool parryInput => Input.GetKeyDown(KeyCode.Q);
     
 }

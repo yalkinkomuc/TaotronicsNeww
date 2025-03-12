@@ -10,4 +10,5 @@ public class GamepadInput : IPlayerInput
     public bool crouchInputReleased => yInput >= -0.5f;
     public bool attackInput => Input.GetKeyDown(KeyCode.JoystickButton2);
     public bool interactionInput => Input.GetKeyDown(KeyCode.JoystickButton3);
+    public bool parryInput => Input.GetKeyDown(KeyCode.JoystickButton4);
 }

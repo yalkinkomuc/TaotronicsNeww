@@ -16,12 +16,15 @@ public class NecromancerAnimTriggers : EnemyAnimationTriggers
    private void EndTeleportInvincibility() => enemyBossNecromancer.stats.MakeInvincible(false);
    
    // Anim Trigger'lar için yeni metotlar
-   private void AnimationTrigger()
+
+   protected override void AnimationTrigger()
    {
-        if (enemyBossNecromancer != null)
-        {
-            enemyBossNecromancer.AnimationFinishTrigger();
-        }
+       base.AnimationTrigger();
+       
+       if (enemyBossNecromancer != null)
+       {
+           enemyBossNecromancer.AnimationFinishTrigger();
+       }
    }
 
    private void AnimationTriggerCastSpell()
@@ -70,23 +73,5 @@ public class NecromancerAnimTriggers : EnemyAnimationTriggers
         }
    }
    
-   // İskelet spawn metodu - eskiden SpawnSkeletons() adlıydı
-   // private void SpawnSkeletons()
-   // {
-   //      // Eğer spawn zaten tetiklendiyse çık
-   //      if (isSpawnTriggered || enemyBossNecromancer == null)
-   //          return;
-   //
-   //      isSpawnTriggered = true;
-   //      enemyBossNecromancer.SummonSkeletons();
-   //      
-   //      // Bir frame sonra reset et
-   //      StartCoroutine(ResetSpawnTrigger());
-   // }
-
-   // private System.Collections.IEnumerator ResetSpawnTrigger()
-   // {
-   //      yield return new WaitForEndOfFrame();
-   //      isSpawnTriggered = false;
-   // }
+  
 }

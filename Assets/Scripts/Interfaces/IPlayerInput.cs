@@ -10,4 +10,5 @@ public interface IPlayerInput
      bool crouchInputReleased { get; }
      bool attackInput { get; }
      bool interactionInput { get; }
+     bool parryInput { get; }
 }
