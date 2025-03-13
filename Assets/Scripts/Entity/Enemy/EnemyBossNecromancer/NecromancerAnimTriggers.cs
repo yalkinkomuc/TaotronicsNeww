@@ -46,26 +46,31 @@ public class NecromancerAnimTriggers : EnemyAnimationTriggers
         // Hiç slot kalmadıysa çık
         if (remainingSlots <= 0) return;
         
-        // En fazla 2 iskelet spawn et (veya kalan slot sayısı kadar)
-        int effectsToCreate = Mathf.Min(2, remainingSlots);
+        // En fazla 3 iskelet spawn et (veya kalan slot sayısı kadar) - 2'den 3'e artırıldı
+        int effectsToCreate = Mathf.Min(3, remainingSlots);
         
         // Arena sınırları
-        float minX = -10f;
-        float maxX = 9f;
+        float minX = enemyBossNecromancer.arenaCollider.bounds.min.x + 2f;
+        float maxX = enemyBossNecromancer.arenaCollider.bounds.max.x - 2f;
         float groundY = enemyBossNecromancer.arenaCollider.bounds.min.y;
         
-        // Her iskelet için ayrı bir efekt oluştur (en fazla 2 tane)
+        // Her iskelet için ayrı bir efekt oluştur (en fazla 3 tane)
         for (int i = 0; i < effectsToCreate; i++)
         {
-            float randomX = Random.Range(minX, maxX);
+            float randomX;
             
-            // Aynı X konumuna çok yakın olmasınlar
-            if (i > 0)
+            // İskeletleri daha iyi dağıt
+            if (effectsToCreate == 1)
             {
-                // İlk iskeletle mesafeyi koru
-                randomX = (randomX < 0) ? randomX - 3f : randomX + 3f;
-                // Sınırlar içinde tut
-                randomX = Mathf.Clamp(randomX, minX, maxX);
+                // Tek iskelet: tamamen random
+                randomX = Random.Range(minX, maxX);
+            }
+            else
+            {
+                // Birden fazla iskelet: arenayı böl
+                float segmentWidth = (maxX - minX) / effectsToCreate;
+                float segmentStart = minX + (i * segmentWidth);
+                randomX = Random.Range(segmentStart, segmentStart + segmentWidth);
             }
             
             Vector2 spawnPos = new Vector2(randomX, groundY + 0.5f);

@@ -8,7 +8,7 @@ public class NecromancerBattleState : EnemyState
     private const float moveSpeed = 3.5f; // Yürüme hızı
     
     // Teleport değişkenlerini düşürdük
-    private const float EMERGENCY_TELEPORT_DISTANCE = 2.5f;    // 3'ten 2'ye düşürdük
+    private const float EMERGENCY_TELEPORT_DISTANCE = 5f;    // 2.5f'den 5f'e artırıldı
     private const float MIN_PREFERRED_DISTANCE = 6f;
     private const float MAX_PREFERRED_DISTANCE = 12f;
    
@@ -60,8 +60,8 @@ public class NecromancerBattleState : EnemyState
             
             // Teleport ve spell şansları
             float teleportChance = 0.1f;
-            float spellChance = 0.7f;
-            float summonChance = 0.2f;
+            float spellChance = 0.4f;
+            float summonChance = 0.5f;
             
             // Eğer son summon'dan yeterli süre geçmediyse summon şansını 0 yap
             if (Time.time - lastSummonTime < summonCooldown)
@@ -73,9 +73,24 @@ public class NecromancerBattleState : EnemyState
                 spellChance = 0.8f;
             }
 
+            // Düşük sağlık teleport önceliği
+            float healthPercentage = (float)enemy.stats.currentHealth / enemy.stats.maxHealth.GetValue();
+            if (healthPercentage <= 0.25f)
+            {
+                // Çok düşük sağlıkta TP atamasın - ölüm animasyonu için
+                teleportChance = 0f;
+            }
+            else if (healthPercentage <= 0.5f)
+            {
+                // Düşük sağlıkta daha fazla teleport şansı
+                teleportChance = 0.3f;
+                spellChance = 0.3f;
+                summonChance = 0.4f;
+            }
+
             float decision = Random.value;
             
-            if (decision < teleportChance)
+            if (decision < teleportChance && CanTeleportSafely())
             {
                 stateMachine.ChangeState(enemy.teleportState);
             }
@@ -90,7 +105,18 @@ public class NecromancerBattleState : EnemyState
             }
             else
             {
-                stateMachine.ChangeState(enemy.teleportState);
+                // Sağlık düşükse ve teleport güvenli değilse spell at
+                if (healthPercentage <= 0.25f || !CanTeleportSafely())
+                {
+                    if (enemy.CanCastSpell())
+                        stateMachine.ChangeState(enemy.spellCastState);
+                    else
+                        enemy.SetZeroVelocity(); // Sadece dur
+                }
+                else
+                {
+                    stateMachine.ChangeState(enemy.teleportState);
+                }
             }
         }
 
@@ -110,7 +136,8 @@ public class NecromancerBattleState : EnemyState
         // Duvar kontrolü - direkt TP
         if (enemy.IsWallDetected())
         {
-            stateMachine.ChangeState(enemy.teleportState);
+            if (CanTeleportSafely())
+                stateMachine.ChangeState(enemy.teleportState);
             return;
         }
 
@@ -118,7 +145,7 @@ public class NecromancerBattleState : EnemyState
         if (distanceToPlayer < EMERGENCY_TELEPORT_DISTANCE)
         {
             consecutiveCloseCallCount++;
-            if (consecutiveCloseCallCount >= 3 && CanTeleport())
+            if (consecutiveCloseCallCount >= 2 && CanTeleport() && CanTeleportSafely())
             {
                 HandleTeleport();
                 consecutiveCloseCallCount = 0;
@@ -148,6 +175,14 @@ public class NecromancerBattleState : EnemyState
             // İdeal mesafedeyiz, direkt spell at
             stateMachine.ChangeState(enemy.spellCastState);
         }
+    }
+
+    // Ölüm animasyonu bug'ını önlemek için güvenli TP kontrolü
+    private bool CanTeleportSafely()
+    {
+        // Eğer canı çok azsa (örneğin %25'in altındaysa) teleport yapmasın
+        float healthPercentage = (float)enemy.stats.currentHealth / enemy.stats.maxHealth.GetValue();
+        return healthPercentage > 0.25f;
     }
 
     private bool CanTeleport()
