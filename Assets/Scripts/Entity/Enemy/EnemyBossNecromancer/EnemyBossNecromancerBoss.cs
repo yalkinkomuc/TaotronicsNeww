@@ -145,7 +145,7 @@ public class EnemyBossNecromancerBoss : Enemy
             Rigidbody2D playerRb = player.GetComponent<Rigidbody2D>();
             if (playerRb != null && Mathf.Abs(playerRb.linearVelocity.x) > 0.1f)
             {
-                float randomXOffset = Random.Range(-2f, 2f);
+                float randomXOffset = Random.Range(-1f, 1f);
                 spawnPos.x += randomXOffset;
             }
             
@@ -288,7 +288,7 @@ public class EnemyBossNecromancerBoss : Enemy
         float distance = Vector2.Distance(originalPosition, newPosition);
 
         // Eğer yeni konum mevcut konuma çok yakınsa yeni konum bul
-        if (distance < 6f)
+        if (distance < 15f)
         {
             FindPosition();
             return;
