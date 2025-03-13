@@ -30,7 +30,7 @@ public class EnemyBossNecromancerBoss : Enemy
     [SerializeField] public int skeletonsToSpawn = 2;
     [SerializeField] public int maxSkeletons = 4;  // Public olarak değiştirdik
     public float spawnRange = 15f;
-    [SerializeField] public float summonCooldown = 8f; // Public olarak değiştirdik
+    [SerializeField] public float summonCooldown = 5f; // 8f'den 5f'e düşürüldü
     public float summonCooldownTimer; // Public olarak değiştirdik
     [SerializeField] private GameObject spawnEffectPrefab;
     [SerializeField] private float spawnEffectCooldown = 3f;
