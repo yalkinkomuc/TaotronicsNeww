@@ -3305,6 +3305,67 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &1648144558
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 928637090390650468, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_Name
+      value: Necromancer_SpawnSkill_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 928637090390650468, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 26.814629
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.2366924
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095359898508154670, guid: 131331112bdee41459105cb9091238bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 131331112bdee41459105cb9091238bf, type: 3}
 --- !u!1 &1654090580
 GameObject:
   m_ObjectHideFlags: 0
@@ -4087,7 +4148,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7215539477136866372, guid: 302ad76f4e05bcd4cb4c11062ef69d95, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4893,6 +4954,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1409020364}
   - {fileID: 1665313542}
+  - {fileID: 1597551076}
   - {fileID: 581203128}
   - {fileID: 1683066506}
   - {fileID: 1606350478}
@@ -4909,10 +4971,10 @@ SceneRoots:
   - {fileID: 1305073517}
   - {fileID: 4123598476150187709}
   - {fileID: 1448425658}
-  - {fileID: 1597551076}
   - {fileID: 6939988114859540770}
   - {fileID: 5006739567299956700}
   - {fileID: 1458681736445992216}
   - {fileID: 1893356843493668652}
   - {fileID: 5699712334015022333}
   - {fileID: 1795173820}
+  - {fileID: 1648144558}
