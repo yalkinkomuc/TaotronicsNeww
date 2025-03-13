@@ -12,6 +12,10 @@ public class Bat_DeadState : EnemyState
     public override void Enter()
     {
         base.Enter();
+        
+        enemy.collider.enabled = false;
+        rb.gravityScale = 3f;
+        rb.bodyType = RigidbodyType2D.Static;
     }
 
     public override void Exit()
@@ -22,5 +26,7 @@ public class Bat_DeadState : EnemyState
     public override void Update()
     {
         base.Update();
+        
+        enemy.entityFX.StartFadeOutAndDestroy();
     }
 }
