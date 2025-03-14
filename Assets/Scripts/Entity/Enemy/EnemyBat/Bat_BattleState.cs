@@ -9,8 +9,7 @@ public class Bat_BattleState : EnemyState
     // Yükseklik ayarları
     private float normalFlightHeight = 1.5f; // Oyuncunun üstünde uçma yüksekliği
     private float divingDistance = 2f; // Dalış başlangıç mesafesi
-    private float normalVerticalSmoothTime = 0.3f; // Normal dikey hareket yumuşatma zamanı
-    private float divingVerticalSmoothTime = 0.8f; // Dalış yumuşatma zamanı (daha yüksek = daha yavaş)
+    private float verticalSmoothTime = 0.3f; // Dikey hareket yumuşatma zamanı
     private float currentVelocityY = 0f; // SmoothDamp için yardımcı değişken
     
     public Bat_BattleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName, Bat_Enemy _enemy) 
@@ -48,22 +47,17 @@ public class Bat_BattleState : EnemyState
             Vector2 targetPosition = new Vector2();
             targetPosition.x = player.position.x;
             
-            // Dikey yumuşatma süresini ayarla
-            float verticalSmoothTime;
-            
             // Eğer oyuncu çok yakınsa (2 birim) dikey olarak oyuncunun seviyesine in
             // Değilse oyuncunun 1.5 birim üstünde uç
             if (horizontalDistance <= divingDistance)
             {
-                // Oyuncunun yüksekliğine daha yavaş dalış yap
+                // Oyuncunun yüksekliğine dalış yap
                 targetPosition.y = player.position.y;
-                verticalSmoothTime = divingVerticalSmoothTime; // Daha yavaş dalış
             }
             else
             {
                 // Oyuncunun üstünde uç
                 targetPosition.y = player.position.y + normalFlightHeight;
-                verticalSmoothTime = normalVerticalSmoothTime; // Normal hız
             }
             
             // Yatay yönde direkt hareket et
@@ -80,6 +74,12 @@ public class Bat_BattleState : EnemyState
             // Hızı hesapla
             float velocityX = directionX * chaseSpeed;
             float velocityY = (smoothedY - enemyBase.transform.position.y) / Time.deltaTime;
+            
+            // Eğer oyuncu çok yakınsa hızı artır (dalış hızlanması)
+            if (horizontalDistance <= divingDistance)
+            {
+                velocityY *= 1.5f; // Dalış hızını artır
+            }
             
             // Hızı uygula
             enemyBase.SetVelocity(velocityX, velocityY);

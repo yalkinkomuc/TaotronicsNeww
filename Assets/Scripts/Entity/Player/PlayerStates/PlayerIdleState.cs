@@ -9,6 +9,8 @@ public class PlayerIdleState : PlayerGroundedState
     public override void Enter()
     {
         base.Enter();
+        
+        rb.bodyType = RigidbodyType2D.Kinematic;
     }
 
    
@@ -17,6 +19,7 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.Exit();
         
+        rb.bodyType = RigidbodyType2D.Dynamic;
     }
     
     public override void Update()

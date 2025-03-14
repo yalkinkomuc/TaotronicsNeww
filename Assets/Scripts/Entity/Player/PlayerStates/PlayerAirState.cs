@@ -24,6 +24,11 @@ public class PlayerAirState : PlayerState
             stateMachine.ChangeState(player.idleState);
         
         player.SetVelocity(xInput*player.moveSpeed,rb.linearVelocity.y);
+
+        if (player.playerInput.attackInput)
+        {
+            stateMachine.ChangeState(player.attackState);
+        }
     }
 
   

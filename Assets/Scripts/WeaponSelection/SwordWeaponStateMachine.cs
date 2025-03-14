@@ -126,5 +126,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Stunned);
         }
+
+        else if(player.stateMachine.currentState == player.airState && player.playerInput.attackInput)
+        {
+            ChangeState(WeaponState.Attack);
+        }
     }
 }
