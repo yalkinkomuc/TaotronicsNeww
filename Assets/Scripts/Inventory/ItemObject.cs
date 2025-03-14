@@ -4,16 +4,18 @@ using UnityEngine;
 public class ItemObject : MonoBehaviour,IInteractable
 {
    
-   private SpriteRenderer spriteRenderer;
+   
    [SerializeField] private ItemData itemData;
    [SerializeField] private InteractionPrompt prompt;
 
-   private void Start()
-   {
-      spriteRenderer = GetComponent<SpriteRenderer>();
-      spriteRenderer.sprite = itemData.icon;
-   }
+  
 
+
+   private void OnValidate()
+   {
+      GetComponent<SpriteRenderer>().sprite = itemData.icon;
+      gameObject.name = "Item Object -  " + itemData.itemName;
+   }
 
    public void Interact()
    {
