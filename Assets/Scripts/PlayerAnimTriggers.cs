@@ -8,6 +8,8 @@ public class PlayerAnimTriggers : MonoBehaviour
    {
       player.AnimationFinishTrigger();
    }
+
+   private void ThrowBoomerangTrigger() => player.ThrowBoomerang();
    
    private void AttackTrigger()
    {

@@ -17,7 +17,8 @@ public class Player : Entity
     public float attackCheckRadius;
     public Vector2 attackSize;
     
-    
+    [SerializeField] private GameObject boomerangPrefab;
+    [SerializeField] private Transform boomerangLaunchPoint;
     
     [Header("Collider")]
     public CapsuleCollider2D capsuleCollider;
@@ -165,8 +166,11 @@ public class Player : Entity
     }
 
     public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
-    
-    
+
+    public void ThrowBoomerang()
+    {
+        Instantiate(boomerangPrefab,boomerangLaunchPoint.position,Quaternion.identity);
+    }
    
 
     #region Dash
