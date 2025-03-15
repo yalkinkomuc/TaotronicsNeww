@@ -88,13 +88,18 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         // Input kontrolünü kaldırıyoruz, bunun yerine JumpAttackState'i ilk sıraya alıyoruz
         
         // JumpAttackState kontrolünü EN BAŞA getir
-        if (!player.IsGroundDetected() && player.playerInput.attackInput)
+        if (player.stateMachine.currentState == player.JumpAttackState)
         {
             ChangeState(WeaponState.JumpAttack);
         }
         else if (player.stateMachine.currentState == player.attackState)
         {
             ChangeState(WeaponState.Attack);
+        }
+        
+        else if (!player.IsGroundDetected() && player.playerInput.attackInput)
+        {
+            ChangeState(WeaponState.JumpAttack);
         }
         else if (player.stateMachine.currentState == player.idleState)
         {
@@ -136,5 +141,8 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Stunned);
         }
+        
+       
+        
     }
 }

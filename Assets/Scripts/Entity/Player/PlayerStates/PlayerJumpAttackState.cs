@@ -22,6 +22,11 @@ public class PlayerJumpAttackState : PlayerState
         {
             stateMachine.ChangeState(player.idleState);
         }
+
+        if (player.playerInput.attackInput)
+        {
+            stateMachine.ChangeState(player.JumpAttackState);
+        }
     }
 
     public override void Exit()

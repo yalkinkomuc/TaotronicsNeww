@@ -20,10 +20,17 @@ public class PlayerAirState : PlayerState
     {
         base.Update();
         
-        if(rb.linearVelocity.y == 0)
+        if (player.playerInput.attackInput)
+        {
+            stateMachine.ChangeState(player.JumpAttackState);
+        }
+        
+        if(rb.linearVelocity.y ==0)
             stateMachine.ChangeState(player.idleState);
         
         player.SetVelocity(xInput*player.moveSpeed,rb.linearVelocity.y);
+        
+       
 
         
     }

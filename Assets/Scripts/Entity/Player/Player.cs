@@ -156,11 +156,7 @@ public class Player : Entity
             currentInteractable.Interact();
         }
 
-        if (!IsGroundDetected() && playerInput.attackInput)
-        {
-            stateMachine.ChangeState(JumpAttackState);
-            
-        }
+       
     }
 
     public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
