@@ -2103,6 +2103,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &712100198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 712100199}
+  m_Layer: 8
+  m_Name: BoomerangLaunchPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &712100199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712100198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.943, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1377457613}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &730749059
 GameObject:
   m_ObjectHideFlags: 0
@@ -3271,6 +3302,8 @@ MonoBehaviour:
   attackCheck: {fileID: 2044795576}
   attackCheckRadius: 0.39
   attackSize: {x: 1.3, y: 0.4}
+  boomerangPrefab: {fileID: 5897258380486930799, guid: fcf09d240695bf5458ab2de5fafdda12, type: 3}
+  boomerangLaunchPoint: {fileID: 712100199}
   capsuleCollider: {fileID: 0}
   moveSpeed: 5.5
   jumpForce: 20
@@ -3308,6 +3341,7 @@ Transform:
   - {fileID: 1448585253}
   - {fileID: 805791711}
   - {fileID: 2044795576}
+  - {fileID: 712100199}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &1377457614

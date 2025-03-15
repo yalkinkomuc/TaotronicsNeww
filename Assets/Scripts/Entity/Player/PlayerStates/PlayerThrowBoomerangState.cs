@@ -14,6 +14,8 @@ public class PlayerThrowBoomerangState : PlayerState
     public override void Update()
     {
         base.Update();
+        
+        player.SetZeroVelocity();
 
         if (triggerCalled)
         {

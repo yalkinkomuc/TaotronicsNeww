@@ -9,15 +9,27 @@ public class PlayerCatchBoomerangState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        // Yakalama animasyonunu başlat
+        
     }
 
     public override void Update()
     {
         base.Update();
+        
+        player.SetZeroVelocity();
+        // Animasyon bittiğinde idle state'e geç
+        if (triggerCalled)
+        {
+            stateMachine.ChangeState(player.idleState);
+        }
+        
     }
 
     public override void Exit()
     {
         base.Exit();
+        // Animasyonu kapat
+        
     }
 }
