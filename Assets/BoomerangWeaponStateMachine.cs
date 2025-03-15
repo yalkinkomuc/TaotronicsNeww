@@ -1,82 +1,79 @@
 using UnityEngine;
 
-public class SwordWeaponStateMachine : WeaponStateMachine
+public class BoomerangWeaponStateMachine : WeaponStateMachine
 {
-    //private Vector3 defaultLocalPosition; // Kılıcın varsayılan local pozisyonu
-    //private Vector3 jumpLocalPosition = new Vector3(-0.229f, 0.172f, 0f); 
-    //[SerializeField] private Transform SwordJumpPosition;// Jump durumundaki pozisyon
-
     protected override void Start()
     {
-        base.Start();  // Üst sınıftaki Start metodunu çağır
+        base.Start();
         
-        ChangeState(WeaponState.Idle);  // Başlangıçta Idle state'ini aktif et
+        ChangeState(WeaponState.Idle);
     }
 
     protected override void HandleStateChange()
     {
-        // Önce tüm bool değerlerini false yap
-        animator.SetBool("SwordIdle", false);
-        animator.SetBool("SwordMove", false);
-        animator.SetBool("SwordDash", false);
-        animator.SetBool("SwordJump",false);
-        animator.SetBool("SwordFall", false);
-        animator.SetBool("SwordAttack", false);
-        animator.SetBool("SwordGroundDash", false);
-        animator.SetBool("SwordCrouch", false);
-        animator.SetBool("SwordGroundAttack",false);
-        animator.SetBool("SwordDeath",false);
-        animator.SetBool("SwordStunned",false);
-
+        animator.SetBool("BoomerangIdle",false);
+        animator.SetBool("BoomerangMove",false);
+        animator.SetBool("BoomerangDash",false);
+        animator.SetBool("BoomerangJump",false);
+        animator.SetBool("BoomerangFall",false);
+        animator.SetBool("BoomerangAttack",false);
+        animator.SetBool("BoomerangGroundDash",false);
+        animator.SetBool("BoomerangCrouch",false);
+        animator.SetBool("BoomerangGroundAttack",false);
+        animator.SetBool("BoomerangDeath",false);
+        animator.SetBool("BoomerangStunned",false);
+        
+        
         switch (currentState)
         {
             case WeaponState.Idle:
-                animator.SetBool("SwordIdle", true);
+                animator.SetBool("BoomerangIdle", true);
                 break;
                 
             case WeaponState.Move:
-                animator.SetBool("SwordMove", true);
+                animator.SetBool("BoomerangMove", true);
                 break;
                 
             case WeaponState.Dash:
-                animator.SetBool("SwordDash", true);
+                animator.SetBool("BoomerangDash", true);
                 break;
                 
             case WeaponState.Jump:
-                animator.SetBool("SwordJump", true);
+                animator.SetBool("BoomerangJump", true);
                 break;
                 
             case WeaponState.Fall:
-                animator.SetBool("SwordFall", true);
+                animator.SetBool("BoomerangFall", true);
                 break;
                 
             case WeaponState.Attack:
-                animator.SetBool("SwordAttack",true);
+                animator.SetBool("BoomerangAttack",true);
                 break;
             case WeaponState.Crouch:
-                animator.SetBool("SwordCrouch", true);
+                animator.SetBool("BoomerangCrouch", true);
                 break;
             case WeaponState.GroundDash:
-                animator.SetBool("SwordGroundDash", true);
+                animator.SetBool("BoomerangGroundDash", true);
                 break;
             case WeaponState.CrouchAttack:
-                animator.SetBool("SwordGroundAttack", true);
+                animator.SetBool("BoomerangGroundAttack", true);
                 break;
             case WeaponState.Death:
-                animator.SetBool("SwordDeath", true);
+                animator.SetBool("BoomerangDeath", true);
                 break;
             case WeaponState.Stunned:
-                animator.SetBool("SwordStunned", true);
+                animator.SetBool("BoomerangStunned", true);
                 break;
         }
+        
     }
 
     protected override void Update()
     {
+        
         base.Update();
         
-        // Y ekseni hızını animator'a gönder
-        animator.SetFloat("SwordyYVelocity", player.rb.linearVelocity.y);  
+        animator.SetFloat("BoomerangYVelocity", player.rb.linearVelocity.y);  
         
       
         

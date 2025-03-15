@@ -8,6 +8,7 @@ public class PlayerWeaponManager : MonoBehaviour
     void Start()
     {
         EquipWeapon(0); 
+        EquipWeapon(1); // ikisini birden takmak istediğimizde bunu çağırcaz.
     }
 
     void Update()
