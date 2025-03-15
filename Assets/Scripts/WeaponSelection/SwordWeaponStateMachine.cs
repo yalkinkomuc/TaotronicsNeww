@@ -85,11 +85,18 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         // Y ekseni hızını animator'a gönder
         animator.SetFloat("SwordyYVelocity", player.rb.linearVelocity.y);  
         
-      
+        // Input kontrolünü kaldırıyoruz, bunun yerine JumpAttackState'i ilk sıraya alıyoruz
         
-        
-        // State kontrolleri
-        if (player.stateMachine.currentState == player.idleState)
+        // JumpAttackState kontrolünü EN BAŞA getir
+        if (!player.IsGroundDetected() && player.playerInput.attackInput)
+        {
+            ChangeState(WeaponState.JumpAttack);
+        }
+        else if (player.stateMachine.currentState == player.attackState)
+        {
+            ChangeState(WeaponState.Attack);
+        }
+        else if (player.stateMachine.currentState == player.idleState)
         {
             ChangeState(WeaponState.Idle);
         }
@@ -97,11 +104,6 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Move);
         }
-        else if(player.stateMachine.currentState == player.JumpAttackState )
-        {
-            ChangeState(WeaponState.JumpAttack);
-        }
-        
         else if (player.stateMachine.currentState == player.dashState) 
         {
             ChangeState(WeaponState.Dash);
@@ -113,10 +115,6 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.airState)
         {
             ChangeState(WeaponState.Fall);
-        }
-        else if (player.stateMachine.currentState == player.attackState)
-        {
-            ChangeState(WeaponState.Attack);
         }
         else if (player.stateMachine.currentState == player.crouchState)
         {
@@ -138,7 +136,5 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Stunned);
         }
-
-      
     }
 }
