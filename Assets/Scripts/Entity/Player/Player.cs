@@ -98,6 +98,8 @@ public class Player : Entity
     [Header("Crouch Attack")]
     public Vector2 crouchAttackOffset; // Örnek: (0, 0.2f) 
 
+    public BoomerangWeaponStateMachine boomerangWeapon;
+
     protected override void Awake()
     {
         base.Awake();
@@ -136,8 +138,10 @@ public class Player : Entity
         normalOffset = capsuleCollider.offset;
         crouchOffset = new Vector2(normalOffset.x, normalOffset.y-0.1f);
         
-        
-        
+        if (boomerangWeapon == null)
+        {
+            boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>();
+        }
     }
 
     
@@ -155,7 +159,7 @@ public class Player : Entity
         if (Input.GetKeyDown(KeyCode.X))
         {
             stateMachine.ChangeState(stunnedState);
-            StartCoroutine("HitKnockback");
+            StartHitKnockbackCoroutine();
         }
 
         // Interaction kontrolü
@@ -169,6 +173,10 @@ public class Player : Entity
 
     public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
 
+    public void StartHitKnockbackCoroutine()
+    {
+        StartCoroutine(HitKnockback());
+    }
     public void ThrowBoomerang()
     {
         Instantiate(boomerangPrefab,boomerangLaunchPoint.position,Quaternion.identity);
@@ -343,6 +351,13 @@ public class Player : Entity
 
     public void CatchBoomerang()
     {
+        // Bumerang silahını bul ve aktif et
+        BoomerangWeaponStateMachine boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
+        if (boomerangWeapon != null)
+        {
+            boomerangWeapon.gameObject.SetActive(true);
+        }
+        
         stateMachine.ChangeState(catchBoomerangState);
     }
     // Bumerangın yakalanması için metod

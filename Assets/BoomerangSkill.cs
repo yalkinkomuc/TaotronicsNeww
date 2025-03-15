@@ -6,7 +6,7 @@ public class BoomerangSkill : MonoBehaviour
     [SerializeField] private float speed = 15f;
     [SerializeField] private float maxDistance = 6f; // Maksimum gidebileceği mesafe
     [SerializeField] private float returnSpeed = 18f; // Geri dönüş hızı
-    [SerializeField] private float rotationSpeed = 720f; // Dönme hızı (derece/saniye)
+    //[SerializeField] private float rotationSpeed = 720f; // Dönme hızı (derece/saniye)
     
     // Referanslar
     private Rigidbody2D rb;
@@ -14,6 +14,9 @@ public class BoomerangSkill : MonoBehaviour
     private Vector2 startPosition;
     private bool isReturning = false;
     private Animator animator;
+    
+    // Bumerang silahı referansı
+    private BoomerangWeaponStateMachine boomerangWeapon;
     
     // Layer kontrolü için
     private int groundLayer;
@@ -37,11 +40,19 @@ public class BoomerangSkill : MonoBehaviour
     
     private void Start()
     {
-        player = FindObjectOfType<Player>();
+        player = PlayerManager.instance.player;
         if (player == null)
         {
             Debug.LogError("Sahnede Player objesi bulunamadı!");
             return;
+        }
+        
+        // Bumerang silahını bul
+        boomerangWeapon = FindObjectOfType<BoomerangWeaponStateMachine>();
+        if (boomerangWeapon != null)
+        {
+            // Bumerang fırlatıldığında silahı deaktif et
+            boomerangWeapon.gameObject.SetActive(false);
         }
         
         startPosition = transform.position;
@@ -57,12 +68,13 @@ public class BoomerangSkill : MonoBehaviour
         }
     }
     
+    // Görsel güncellemeleri Update'te yap
     private void Update()
     {
-        // Bumerangı döndür
-        transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+        // Dönme animasyonu
+        //transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
         
-        // Geri dönmeli mi kontrol et
+        // Mesafe kontrolü
         if (!isReturning)
         {
             float distanceTraveled = Vector2.Distance(startPosition, transform.position);
@@ -71,19 +83,32 @@ public class BoomerangSkill : MonoBehaviour
                 StartReturning();
             }
         }
-        // Geri dönüş hareketi
-        else if (player != null)
+        
+        // Yakalama kontrolü
+        if (isReturning && player != null)
         {
-            Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
-            rb.linearVelocity = directionToPlayer * returnSpeed;
-            
-            // Oyuncuya yaklaştıysa yakala
             float distanceToPlayer = Vector2.Distance(player.transform.position, transform.position);
             if (distanceToPlayer <= 1.0f)
             {
+                if (boomerangWeapon != null)
+                {
+                    boomerangWeapon.gameObject.SetActive(true);
+                }
+                
                 player.CatchBoomerang();
                 Destroy(gameObject);
             }
+        }
+    }
+    
+    // Fizik güncellemelerini FixedUpdate'te yap
+    private void FixedUpdate()
+    {
+        // Geri dönüş hareketi - fizik hesaplamalarını burada yap
+        if (isReturning && player != null)
+        {
+            Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
+            rb.linearVelocity = directionToPlayer * returnSpeed;
         }
     }
     

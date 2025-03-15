@@ -39,5 +39,10 @@ public class PlayerJumpState : PlayerState
             stateMachine.ChangeState(player.jumpAttackState);
         }
         
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            stateMachine.ChangeState(player.throwBoomerangState);
+        }
+        
     }
 }

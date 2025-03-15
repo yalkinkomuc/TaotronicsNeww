@@ -11,6 +11,8 @@ public class PlayerCatchBoomerangState : PlayerState
         base.Enter();
         // Yakalama animasyonunu başlat
         
+        player.StartHitKnockbackCoroutine();
+        
     }
 
     public override void Update()
@@ -21,6 +23,7 @@ public class PlayerCatchBoomerangState : PlayerState
         // Animasyon bittiğinde idle state'e geç
         if (triggerCalled)
         {
+           
             stateMachine.ChangeState(player.idleState);
         }
         

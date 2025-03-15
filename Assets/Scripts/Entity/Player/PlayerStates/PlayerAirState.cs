@@ -25,6 +25,11 @@ public class PlayerAirState : PlayerState
             stateMachine.ChangeState(player.jumpAttackState);
         }
         
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            stateMachine.ChangeState(player.throwBoomerangState);
+        }
+        
         if(rb.linearVelocity.y ==0)
             stateMachine.ChangeState(player.idleState);
         
