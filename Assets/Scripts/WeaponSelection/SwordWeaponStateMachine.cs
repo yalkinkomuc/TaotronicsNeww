@@ -28,6 +28,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SwordGroundAttack",false);
         animator.SetBool("SwordDeath",false);
         animator.SetBool("SwordStunned",false);
+        animator.SetBool("SwordThrowBoomerang",false);
        
 
         switch (currentState)
@@ -74,6 +75,9 @@ public class SwordWeaponStateMachine : WeaponStateMachine
             case WeaponState.Stunned:
                 animator.SetBool("SwordStunned", true);
                 break;
+            case WeaponState.ThrowBoomerang:
+                animator.SetBool("SwordThrowBoomerang", true);
+                break;
             
         }
     }
@@ -88,7 +92,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         // Input kontrolünü kaldırıyoruz, bunun yerine JumpAttackState'i ilk sıraya alıyoruz
         
         // JumpAttackState kontrolünü EN BAŞA getir
-        if (player.stateMachine.currentState == player.JumpAttackState)
+        if (player.stateMachine.currentState == player.jumpAttackState)
         {
             ChangeState(WeaponState.JumpAttack);
         }
@@ -141,7 +145,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Stunned);
         }
-        
+        else if (player.stateMachine.currentState == player.throwBoomerangState)
+        {
+            ChangeState(WeaponState.ThrowBoomerang);
+        }
        
         
     }

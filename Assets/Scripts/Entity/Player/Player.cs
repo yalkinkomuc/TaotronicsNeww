@@ -85,7 +85,10 @@ public class Player : Entity
     public PlayerStunnedState stunnedState {get;private set;}
     public PlayerParryState parryState {get;private set;}
     
-    public PlayerJumpAttackState JumpAttackState {get;private set;}
+    public PlayerJumpAttackState jumpAttackState {get;private set;}
+    
+    public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
+    public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
     #endregion
     
     private IInteractable currentInteractable;
@@ -112,7 +115,9 @@ public class Player : Entity
         deadState = new PlayerDeadState(this,stateMachine,"Death");
         stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
         parryState = new PlayerParryState(this,stateMachine,"Parry");
-        JumpAttackState = new PlayerJumpAttackState(this, stateMachine, "JumpAttack");
+        jumpAttackState = new PlayerJumpAttackState(this, stateMachine, "JumpAttack");
+        throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
+        catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
 
 
 

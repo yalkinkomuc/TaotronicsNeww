@@ -22,7 +22,7 @@ public class PlayerAirState : PlayerState
         
         if (player.playerInput.attackInput)
         {
-            stateMachine.ChangeState(player.JumpAttackState);
+            stateMachine.ChangeState(player.jumpAttackState);
         }
         
         if(rb.linearVelocity.y ==0)

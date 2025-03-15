@@ -22,6 +22,7 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         animator.SetBool("BoomerangGroundAttack",false);
         animator.SetBool("BoomerangDeath",false);
         animator.SetBool("BoomerangStunned",false);
+        animator.SetBool("BoomerangThrow",false);
         
         
         switch (currentState)
@@ -63,6 +64,9 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Stunned:
                 animator.SetBool("BoomerangStunned", true);
+                break;
+            case WeaponState.ThrowBoomerang:
+                animator.SetBool("BoomerangThrow", true);
                 break;
         }
         
@@ -128,5 +132,11 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Attack);
         }
+        else if (player.stateMachine.currentState == player.throwBoomerangState)
+        {
+            ChangeState(WeaponState.ThrowBoomerang);
+        }
+        
+        
     }
 }

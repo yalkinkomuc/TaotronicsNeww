@@ -14,4 +14,5 @@ public enum WeaponState
     Death,
     Stunned,
     JumpAttack,
+    ThrowBoomerang,
 }
