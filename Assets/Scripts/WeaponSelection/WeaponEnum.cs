@@ -13,4 +13,5 @@ public enum WeaponState
     CrouchAttack,
     Death,
     Stunned,
+    JumpAttack,
 }

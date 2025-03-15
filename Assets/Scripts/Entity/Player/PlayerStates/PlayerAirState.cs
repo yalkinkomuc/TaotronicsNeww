@@ -27,7 +27,7 @@ public class PlayerAirState : PlayerState
 
         if (player.playerInput.attackInput)
         {
-            stateMachine.ChangeState(player.attackState);
+            stateMachine.ChangeState(player.JumpAttackState);
         }
     }
 

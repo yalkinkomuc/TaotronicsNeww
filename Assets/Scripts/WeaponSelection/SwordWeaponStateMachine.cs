@@ -18,6 +18,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         // Önce tüm bool değerlerini false yap
         animator.SetBool("SwordIdle", false);
         animator.SetBool("SwordMove", false);
+        animator.SetBool("SwordJumpAttack", false);
         animator.SetBool("SwordDash", false);
         animator.SetBool("SwordJump",false);
         animator.SetBool("SwordFall", false);
@@ -27,6 +28,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SwordGroundAttack",false);
         animator.SetBool("SwordDeath",false);
         animator.SetBool("SwordStunned",false);
+       
 
         switch (currentState)
         {
@@ -36,6 +38,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 
             case WeaponState.Move:
                 animator.SetBool("SwordMove", true);
+                break;
+            
+            case WeaponState.JumpAttack:
+                animator.SetBool("SwordJumpAttack", true);
                 break;
                 
             case WeaponState.Dash:
@@ -68,6 +74,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
             case WeaponState.Stunned:
                 animator.SetBool("SwordStunned", true);
                 break;
+            
         }
     }
 
@@ -90,6 +97,11 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Move);
         }
+        else if(player.stateMachine.currentState == player.JumpAttackState )
+        {
+            ChangeState(WeaponState.JumpAttack);
+        }
+        
         else if (player.stateMachine.currentState == player.dashState) 
         {
             ChangeState(WeaponState.Dash);
@@ -127,9 +139,6 @@ public class SwordWeaponStateMachine : WeaponStateMachine
             ChangeState(WeaponState.Stunned);
         }
 
-        else if(player.stateMachine.currentState == player.airState && player.playerInput.attackInput)
-        {
-            ChangeState(WeaponState.Attack);
-        }
+      
     }
 }

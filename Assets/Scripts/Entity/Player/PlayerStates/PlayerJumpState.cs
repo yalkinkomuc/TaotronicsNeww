@@ -33,7 +33,11 @@ public class PlayerJumpState : PlayerState
         {
             stateMachine.ChangeState(player.idleState);
         }
-        
+
+        if (player.playerInput.attackInput)
+        {
+            stateMachine.ChangeState(player.JumpAttackState);
+        }
         
     }
 }
