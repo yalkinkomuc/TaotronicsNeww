@@ -22,14 +22,13 @@ public class PlayerWeaponManager : MonoBehaviour
 
     void EquipWeapon(int index)
     {
-        if (weapons.Length == 0)
+        if (weapons.Length == 0 || index >= weapons.Length)
         {
-            Debug.LogError("Silah listesi boş");
+            Debug.LogError("Geçersiz silah indeksi");
             return;
         }
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            weapons[i].gameObject.SetActive(i == index); 
-        }
+        
+        // Sadece seçilen silahı aktif et, diğerlerine dokunma
+        weapons[index].gameObject.SetActive(true);
     }
 }
