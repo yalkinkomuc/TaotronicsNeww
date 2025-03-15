@@ -89,6 +89,7 @@ public class Player : Entity
     public PlayerJumpAttackState jumpAttackState {get;private set;}
     
     public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
+    public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
     
     #endregion
     
@@ -118,6 +119,7 @@ public class Player : Entity
         parryState = new PlayerParryState(this,stateMachine,"Parry");
         jumpAttackState = new PlayerJumpAttackState(this, stateMachine, "JumpAttack");
         throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
+        catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
         
 
 
@@ -337,8 +339,12 @@ public class Player : Entity
     }
 
     #endregion
-  
 
+
+    public void CatchBoomerang()
+    {
+        stateMachine.ChangeState(catchBoomerangState);
+    }
     // Bumerangın yakalanması için metod
    
 }

@@ -29,6 +29,8 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SwordDeath",false);
         animator.SetBool("SwordStunned",false);
         animator.SetBool("SwordThrowBoomerang",false);
+        animator.SetBool("SwordCatchBoomerang",false);
+        animator.SetBool("SwordParry",false);
        
 
         switch (currentState)
@@ -77,6 +79,12 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.ThrowBoomerang:
                 animator.SetBool("SwordThrowBoomerang", true);
+                break;
+            case WeaponState.CatchBoomerang:
+                animator.SetBool("SwordCatchBoomerang", true);
+                break;
+            case WeaponState.Parry:
+                animator.SetBool("SwordParry", true);
                 break;
             
         }
@@ -149,6 +157,15 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.ThrowBoomerang);
         }
+        else if (player.stateMachine.currentState == player.catchBoomerangState)
+        {
+            ChangeState(WeaponState.CatchBoomerang);
+        }
+        else if (player.stateMachine.currentState == player.parryState)
+        {
+            ChangeState(WeaponState.Parry);
+        }
+        
        
         
     }

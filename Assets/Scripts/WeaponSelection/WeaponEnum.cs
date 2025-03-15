@@ -15,4 +15,6 @@ public enum WeaponState
     Stunned,
     JumpAttack,
     ThrowBoomerang,
+    CatchBoomerang,
+    Parry,
 }

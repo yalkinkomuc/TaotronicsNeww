@@ -9,13 +9,15 @@ public class PlayerParryState : PlayerState
     public override void Enter()
     {
         base.Enter();
+
+        stateTimer = .5f;
     }
 
     public override void Update()
     {
         base.Update();
 
-        if (triggerCalled)
+        if (stateTimer < 0f)
         {
             stateMachine.ChangeState(player.idleState);
         }

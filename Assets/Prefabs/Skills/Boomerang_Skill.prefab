@@ -125,9 +125,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a851e2523449f543857b323d3a945be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchSpeed: 11
-  normalSelfDestructTime: 4
-  stuckSelfDestructTime: 0.8
+  speed: 8
+  maxDistance: 6
+  returnSpeed: 10
+  rotationSpeed: 720
 --- !u!50 &1087690343777654911
 Rigidbody2D:
   serializedVersion: 5
