@@ -76,7 +76,7 @@ public class Player : Entity
     public PlayerStateMachine stateMachine;
     public PlayerIdleState idleState { get; private set; }
     public PlayerMoveState moveState { get; private set; }
-    public PlayerJumpState jumpState { get; private set; }
+    
     
     public PlayerDashState dashState { get; private set; }
     public PlayerAirState airState { get; private set; }
@@ -88,7 +88,7 @@ public class Player : Entity
     public PlayerStunnedState stunnedState {get;private set;}
     public PlayerParryState parryState {get;private set;}
     
-    public PlayerJumpAttackState jumpAttackState {get;private set;}
+    
     
     public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
     public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
@@ -111,13 +111,13 @@ public class Player : Entity
     protected override void Awake()
     {
         base.Awake();
-        playerInput = new PCInput();
+        playerInput = new GamepadInput();
         
         stateMachine = new PlayerStateMachine();
         
         idleState = new PlayerIdleState(this,stateMachine,"Idle");
         moveState = new PlayerMoveState(this,stateMachine,"Move");
-        jumpState = new PlayerJumpState(this,stateMachine,"Jump");
+        
         dashState = new PlayerDashState(this,stateMachine,"Dash");
         airState = new PlayerAirState(this,stateMachine,"Jump");
         crouchState = new PlayerCrouchState(this,stateMachine,"Crouch");
@@ -127,7 +127,7 @@ public class Player : Entity
         deadState = new PlayerDeadState(this,stateMachine,"Death");
         stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
         parryState = new PlayerParryState(this,stateMachine,"Parry");
-        jumpAttackState = new PlayerJumpAttackState(this, stateMachine, "JumpAttack");
+        
         throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
         catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
         

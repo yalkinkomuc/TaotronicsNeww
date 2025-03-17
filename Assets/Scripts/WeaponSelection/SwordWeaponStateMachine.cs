@@ -18,10 +18,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         // Önce tüm bool değerlerini false yap
         animator.SetBool("SwordIdle", false);
         animator.SetBool("SwordMove", false);
-        animator.SetBool("SwordJumpAttack", false);
+        
         animator.SetBool("SwordDash", false);
         animator.SetBool("SwordJump",false);
-        animator.SetBool("SwordFall", false);
+        
         animator.SetBool("SwordAttack", false);
         animator.SetBool("SwordGroundDash", false);
         animator.SetBool("SwordCrouch", false);
@@ -43,9 +43,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 animator.SetBool("SwordMove", true);
                 break;
             
-            case WeaponState.JumpAttack:
-                animator.SetBool("SwordJumpAttack", true);
-                break;
+            
                 
             case WeaponState.Dash:
                 animator.SetBool("SwordDash", true);
@@ -55,9 +53,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 animator.SetBool("SwordJump", true);
                 break;
                 
-            case WeaponState.Fall:
-                animator.SetBool("SwordFall", true);
-                break;
+            
                 
             case WeaponState.Attack:
                 animator.SetBool("SwordAttack",true);
@@ -95,28 +91,22 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         base.Update();
         
         // Y ekseni hızını animator'a gönder
-        animator.SetFloat("SwordyYVelocity", player.rb.linearVelocity.y);  
+        
         
         // Input kontrolünü kaldırıyoruz, bunun yerine JumpAttackState'i ilk sıraya alıyoruz
         
         // JumpAttackState kontrolünü EN BAŞA getir
-        if (player.stateMachine.currentState == player.jumpAttackState)
+        if (player.stateMachine.currentState == player.idleState)
         {
-            ChangeState(WeaponState.JumpAttack);
+            ChangeState(WeaponState.Idle);
         }
         else if (player.stateMachine.currentState == player.attackState)
         {
             ChangeState(WeaponState.Attack);
         }
         
-        else if (!player.IsGroundDetected() && player.playerInput.attackInput)
-        {
-            ChangeState(WeaponState.JumpAttack);
-        }
-        else if (player.stateMachine.currentState == player.idleState)
-        {
-            ChangeState(WeaponState.Idle);
-        }
+       
+        
         else if (player.stateMachine.currentState == player.moveState) 
         {
             ChangeState(WeaponState.Move);
@@ -125,13 +115,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Dash);
         }
-        else if (player.stateMachine.currentState == player.jumpState)
-        {
-            ChangeState(WeaponState.Jump);
-        }
+       
         else if (player.stateMachine.currentState == player.airState)
         {
-            ChangeState(WeaponState.Fall);
+            ChangeState(WeaponState.Jump);
         }
         else if (player.stateMachine.currentState == player.crouchState)
         {

@@ -43,9 +43,7 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
                 animator.SetBool("BoomerangJump", true);
                 break;
                 
-            case WeaponState.Fall:
-                animator.SetBool("BoomerangFall", true);
-                break;
+          
                 
             case WeaponState.Attack:
                 animator.SetBool("BoomerangAttack",true);
@@ -95,13 +93,10 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Dash);
         }
-        else if (player.stateMachine.currentState == player.jumpState)
-        {
-            ChangeState(WeaponState.Jump);
-        }
+      
         else if (player.stateMachine.currentState == player.airState)
         {
-            ChangeState(WeaponState.Fall);
+            ChangeState(WeaponState.Jump);
         }
         else if (player.stateMachine.currentState == player.attackState)
         {

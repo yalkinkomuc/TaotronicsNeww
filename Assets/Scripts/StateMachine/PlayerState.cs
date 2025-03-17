@@ -41,7 +41,6 @@ public class PlayerState
       xInput = player.playerInput.xInput;
       //yInput = player.playerInput.yInput;
       
-      player.anim.SetFloat("yVelocity",rb.linearVelocity.y);
       
       //Debug.Log(xInput);
    }
