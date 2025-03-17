@@ -55,7 +55,7 @@ public class Entity : MonoBehaviour
         }
         
         entityFX.StartCoroutine("HitFX");
-        StartCoroutine("HitKnockback");
+        StartCoroutine("HitKnockback",knockbackDirection);
        
         Debug.Log(gameObject.name + " was damaged ");
         stats.TakeDamage(1);

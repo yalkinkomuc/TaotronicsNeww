@@ -45,7 +45,7 @@ public class PlayerGroundedState : PlayerState
             stateMachine.ChangeState(player.parryState);
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetKeyDown(KeyCode.Mouse1) && player.CanThrowBoomerang())
         {
             stateMachine.ChangeState(player.throwBoomerangState);
         }

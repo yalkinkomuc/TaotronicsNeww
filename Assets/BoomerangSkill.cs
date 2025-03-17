@@ -6,7 +6,8 @@ public class BoomerangSkill : MonoBehaviour
     [SerializeField] private float speed = 15f;
     [SerializeField] private float maxDistance = 6f; // Maksimum gidebileceği mesafe
     [SerializeField] private float returnSpeed = 18f; // Geri dönüş hızı
-    //[SerializeField] private float rotationSpeed = 720f; // Dönme hızı (derece/saniye)
+    [SerializeField] private static float cooldownTime = 2f; // Cooldown süresi
+    private static float currentCooldown = 0f; // Mevcut cooldown sayacı
     
     // Referanslar
     private Rigidbody2D rb;
@@ -20,6 +21,8 @@ public class BoomerangSkill : MonoBehaviour
     
     // Layer kontrolü için
     private int groundLayer;
+    
+    public static bool CanThrow() => currentCooldown <= 0f; // Bumerang atılabilir mi kontrolü
     
     private void Awake()
     {
@@ -48,7 +51,7 @@ public class BoomerangSkill : MonoBehaviour
         }
         
         // Bumerang silahını bul
-        boomerangWeapon = FindObjectOfType<BoomerangWeaponStateMachine>();
+        boomerangWeapon = Object.FindAnyObjectByType<BoomerangWeaponStateMachine>();
         if (boomerangWeapon != null)
         {
             // Bumerang fırlatıldığında silahı deaktif et
@@ -71,6 +74,12 @@ public class BoomerangSkill : MonoBehaviour
     // Görsel güncellemeleri Update'te yap
     private void Update()
     {
+        // Cooldown sayacını güncelle
+        if (currentCooldown > 0f)
+        {
+            currentCooldown -= Time.deltaTime;
+        }
+        
         // Dönme animasyonu
         //transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
         
@@ -151,5 +160,11 @@ public class BoomerangSkill : MonoBehaviour
         {
             StartReturning();
         }
+    }
+    
+    private void OnDestroy()
+    {
+        // Bumerang yok edildiğinde cooldown'u başlat
+        currentCooldown = cooldownTime;
     }
 }

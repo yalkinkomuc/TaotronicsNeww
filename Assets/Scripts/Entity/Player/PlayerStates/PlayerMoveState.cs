@@ -30,8 +30,12 @@ public class PlayerMoveState : PlayerGroundedState
         {
             player.stateMachine.ChangeState(player.idleState);
         }
-        
-        
-        
+
+        if (!player.IsGroundDetected() && player.playerInput.attackInput)
+        {
+            stateMachine.ChangeState(player.jumpAttackState);
+        }
+
+
     }
 }

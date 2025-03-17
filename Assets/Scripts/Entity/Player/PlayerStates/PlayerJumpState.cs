@@ -34,10 +34,10 @@ public class PlayerJumpState : PlayerState
             stateMachine.ChangeState(player.idleState);
         }
 
-        if (player.playerInput.attackInput)
-        {
-            stateMachine.ChangeState(player.jumpAttackState);
-        }
+        //if (player.playerInput.attackInput)
+        //{
+        //    stateMachine.ChangeState(player.jumpAttackState);
+        //}
         
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {

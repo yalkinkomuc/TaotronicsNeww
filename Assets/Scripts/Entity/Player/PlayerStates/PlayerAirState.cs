@@ -25,7 +25,7 @@ public class PlayerAirState : PlayerState
             stateMachine.ChangeState(player.jumpAttackState);
         }
         
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetKeyDown(KeyCode.Mouse1) && player.CanThrowBoomerang())
         {
             stateMachine.ChangeState(player.throwBoomerangState);
         }

@@ -67,7 +67,8 @@ public class Player : Entity
     public int arrowLayerMaskIndex;
 
     [Header("Damage Control")]
-    [SerializeField] private float invulnerabilityDuration = 1f; // Hasar alamama süresi
+    [SerializeField] private float invulnerabilityDuration = 1f;
+    [SerializeField] private Vector2 stunKnocback; // Hasar alamama süresi
     private bool isInvulnerable = false;
 
     #region States
@@ -100,6 +101,12 @@ public class Player : Entity
     public Vector2 crouchAttackOffset; // Örnek: (0, 0.2f) 
 
     public BoomerangWeaponStateMachine boomerangWeapon;
+
+    [Header("Boomerang Settings")]
+    [SerializeField] private float boomerangCooldown = 2f;
+    private float boomerangCooldownTimer;
+
+    public bool CanThrowBoomerang() => boomerangCooldownTimer <= 0f;
 
     protected override void Awake()
     {
@@ -154,13 +161,19 @@ public class Player : Entity
         base.Update();
         stateMachine.currentState.Update();
 
+        // Bumerang cooldown'unu güncelle
+        if (boomerangCooldownTimer > 0)
+        {
+            boomerangCooldownTimer -= Time.deltaTime;
+        }
+
         CheckForDashInput();
         CheckForGroundDashInput();
 
         if (Input.GetKeyDown(KeyCode.X))
         {
             stateMachine.ChangeState(stunnedState);
-            StartBoomerangKnockbackCoroutine();
+            StartStunnedKnockbackCoroutine();
         }
 
         // Interaction kontrolü
@@ -178,9 +191,15 @@ public class Player : Entity
     {
         StartCoroutine(HitKnockback(boomerangCatchForce));
     }
+
+     public void StartStunnedKnockbackCoroutine()
+    {
+        StartCoroutine(HitKnockback(stunKnocback));
+    }
     public void ThrowBoomerang()
     {
-        Instantiate(boomerangPrefab,boomerangLaunchPoint.position,Quaternion.identity);
+        Instantiate(boomerangPrefab, boomerangLaunchPoint.position, Quaternion.identity);
+        boomerangCooldownTimer = boomerangCooldown; // Cooldown'u başlat
     }
    
 
