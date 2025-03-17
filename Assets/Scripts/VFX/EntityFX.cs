@@ -9,6 +9,8 @@ public class EntityFX : MonoBehaviour
 
    [Header("FlashFX")] 
    [SerializeField] private Material hitMat;
+   [SerializeField] private float flashDuration = 0.2f; // Tek flash süresi
+   [SerializeField] private float flashInterval = 0.2f; // Flash'lar arası bekleme süresi
    private Material originalMat;
 
    [Header("Hit VFX")]
@@ -86,5 +88,24 @@ public class EntityFX : MonoBehaviour
          newColor.a = 1f;
          sr.color = newColor;
       }
+   }
+
+   public IEnumerator FlashFX(float totalDuration)
+   {
+       float endTime = Time.time + totalDuration;
+       
+       while (Time.time < endTime)
+       {
+           // Flash açık
+           sr.material = hitMat;
+           yield return new WaitForSeconds(flashDuration);
+           
+           // Flash kapalı
+           sr.material = originalMat;
+           yield return new WaitForSeconds(flashInterval);
+       }
+       
+       // Son durumda normal materyal
+       sr.material = originalMat;
    }
 }

@@ -67,7 +67,7 @@ public class Player : Entity
     public int arrowLayerMaskIndex;
 
     [Header("Damage Control")]
-    [SerializeField] private float invulnerabilityDuration = 1f;
+    [SerializeField] private float invulnerabilityDuration = 1f; // Hasar alamama süresi
     [SerializeField] private Vector2 stunKnocback; // Hasar alamama süresi
     private bool isInvulnerable = false;
 
@@ -303,9 +303,7 @@ public class Player : Entity
     {
         base.Die();
         stateMachine.ChangeState(deadState);  
-        
        
-        
     }
 
     public override void Damage()
@@ -319,8 +317,6 @@ public class Player : Entity
 
     public override void DamageWithoutKnockback()
     {
-       
-
         if (!isInvulnerable)
         {
             base.DamageWithoutKnockback();
@@ -331,6 +327,8 @@ public class Player : Entity
     private IEnumerator InvulnerabilityCoroutine()
     {
         isInvulnerable = true;
+        // Flash efektini invulnerability süresi boyunca çalıştır
+        StartCoroutine(entityFX.FlashFX(invulnerabilityDuration));
         yield return new WaitForSeconds(invulnerabilityDuration);
         isInvulnerable = false;
     }
