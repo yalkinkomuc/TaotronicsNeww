@@ -140,6 +140,8 @@ public class Player : Entity
     protected override void Start()
     {
         base.Start();
+        ResetPlayerFacing();
+        
         stateMachine.Initialize(idleState);
         capsuleCollider = GetComponent<CapsuleCollider2D>();
 
@@ -150,6 +152,13 @@ public class Player : Entity
         {
             boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>();
         }
+    }
+
+    public void ResetPlayerFacing()
+    {
+        transform.rotation = Quaternion.identity;
+        facingdir = 1;
+        facingright = true;
     }
 
     
