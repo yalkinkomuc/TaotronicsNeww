@@ -111,7 +111,7 @@ public class Player : Entity
     protected override void Awake()
     {
         base.Awake();
-        playerInput = new GamepadInput();
+        playerInput = new PCInput();
         
         stateMachine = new PlayerStateMachine();
         

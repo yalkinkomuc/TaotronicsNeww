@@ -75,7 +75,7 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         
         base.Update();
         
-        animator.SetFloat("BoomerangYVelocity", player.rb.linearVelocity.y);  
+       
         
       
         
@@ -123,10 +123,7 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
             ChangeState(WeaponState.Stunned);
         }
 
-        else if(player.stateMachine.currentState == player.airState && player.playerInput.attackInput)
-        {
-            ChangeState(WeaponState.Attack);
-        }
+        
         else if (player.stateMachine.currentState == player.throwBoomerangState)
         {
             ChangeState(WeaponState.ThrowBoomerang);

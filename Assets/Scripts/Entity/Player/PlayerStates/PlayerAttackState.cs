@@ -22,7 +22,16 @@ public class PlayerAttackState : PlayerState
     {
         base.Update();
 
-        player.SetZeroVelocity();
+        if (player.IsGroundDetected())
+        {
+            player.SetZeroVelocity();
+        }
+        else
+        {
+            player.SetVelocity(rb.linearVelocity.x*.5f, rb.linearVelocity.y);
+        }
+
+
         if (triggerCalled)
         {
             stateMachine.ChangeState(player.idleState);

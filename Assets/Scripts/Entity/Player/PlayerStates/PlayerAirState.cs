@@ -12,8 +12,7 @@ public class PlayerAirState : PlayerState
 
         if (player.IsGroundDetected())
         {
-
-        player.SetVelocity(rb.linearVelocity.x, player.jumpForce);
+            player.SetVelocity(rb.linearVelocity.x * .2f, player.jumpForce);
         }
     }
 
@@ -25,9 +24,9 @@ public class PlayerAirState : PlayerState
     public override void Update()
     {
         base.Update();
-        
-        
-        
+
+        player.SetVelocity(rb.linearVelocity.x * .2f, rb.linearVelocity.y);
+
         if (Input.GetKeyDown(KeyCode.Mouse1) && player.CanThrowBoomerang())
         {
             stateMachine.ChangeState(player.throwBoomerangState);

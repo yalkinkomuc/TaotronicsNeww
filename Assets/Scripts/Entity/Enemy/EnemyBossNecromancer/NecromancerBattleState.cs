@@ -61,12 +61,12 @@ public class NecromancerBattleState : EnemyState
             // Teleport ve spell şansları
             float teleportChance = 0.1f;
             float spellChance = 0.4f;
-            float summonChance = 0.5f;
+            //float summonChance = 0.5f;
             
             // Eğer son summon'dan yeterli süre geçmediyse summon şansını 0 yap
             if (Time.time - lastSummonTime < summonCooldown)
             {
-                summonChance = 0f; // Summon şansını sıfırla
+                //summonChance = 0f; // Summon şansını sıfırla
                 
                 // Diğer şansları paylaştır
                 teleportChance = 0.2f;
@@ -85,7 +85,7 @@ public class NecromancerBattleState : EnemyState
                 // Düşük sağlıkta daha fazla teleport şansı
                 teleportChance = 0.3f;
                 spellChance = 0.3f;
-                summonChance = 0.4f;
+                //summonChance = 0.4f;
             }
 
             float decision = Random.value;

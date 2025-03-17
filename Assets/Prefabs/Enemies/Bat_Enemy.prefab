@@ -141,9 +141,9 @@ MonoBehaviour:
   idleTime: 1.5
   moveSpeed: 2.5
   chaseSpeed: 3
-  tooCloseDistance: 3
-  detectDistance: 10
-  detectionRange: 5
+  tooCloseDistance: 0.2
+  detectDistance: 0.2
+  detectionRange: 0.2
   flightSpeed: 3
 --- !u!114 &5764120550791581918
 MonoBehaviour:
@@ -158,6 +158,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitMat: {fileID: 2100000, guid: 7a1a264730cde2341b44f080cf9b3a6e, type: 2}
+  flashDuration: 0.2
+  flashInterval: 0.2
   hitVFXIds:
   - BloodVFX2
   vfxSpawnPoint: {fileID: 8912795064409113771}
@@ -299,7 +301,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8467375858560153589}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -348,7 +350,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 509013307
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 6059592855818619829, guid: 12e45d8abd3a2ab4b9c8e7487ad655f7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
