@@ -19,6 +19,7 @@ public class Player : Entity
     
     [SerializeField] private GameObject boomerangPrefab;
     [SerializeField] private Transform boomerangLaunchPoint;
+    [SerializeField] public Vector2 boomerangCatchForce;
     
     [Header("Collider")]
     public CapsuleCollider2D capsuleCollider;
@@ -159,7 +160,7 @@ public class Player : Entity
         if (Input.GetKeyDown(KeyCode.X))
         {
             stateMachine.ChangeState(stunnedState);
-            StartHitKnockbackCoroutine();
+            StartBoomerangKnockbackCoroutine();
         }
 
         // Interaction kontrolü
@@ -173,9 +174,9 @@ public class Player : Entity
 
     public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
 
-    public void StartHitKnockbackCoroutine()
+    public void StartBoomerangKnockbackCoroutine()
     {
-        StartCoroutine(HitKnockback());
+        StartCoroutine(HitKnockback(boomerangCatchForce));
     }
     public void ThrowBoomerang()
     {

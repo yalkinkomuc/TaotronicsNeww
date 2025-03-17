@@ -11,7 +11,7 @@ public class PlayerCatchBoomerangState : PlayerState
         base.Enter();
         // Yakalama animasyonunu başlat
         
-        player.StartHitKnockbackCoroutine();
+        player.StartBoomerangKnockbackCoroutine();
         
     }
 

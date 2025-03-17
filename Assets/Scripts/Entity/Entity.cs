@@ -74,11 +74,14 @@ public class Entity : MonoBehaviour
     }
     
     
-    protected virtual IEnumerator HitKnockback()
+    protected virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
+       
         isKnocked = true;
+
+
         
-        rb.linearVelocity = new Vector2(knockbackDirection.x * -facingdir, knockbackDirection.y);
+        rb.linearVelocity = new Vector2(knockbackDirectionParam.x * -facingdir, knockbackDirectionParam.y);
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
     }
