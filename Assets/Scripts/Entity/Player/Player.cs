@@ -88,7 +88,8 @@ public class Player : Entity
     public PlayerStunnedState stunnedState {get;private set;}
     public PlayerParryState parryState {get;private set;}
     
-    
+    public PlayerSpell1State spell1State {get;private set;}
+    public PlayerSpell2State spell2State {get;private set;}
     
     public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
     public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
@@ -130,9 +131,10 @@ public class Player : Entity
         
         throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
         catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
-        
 
 
+        spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
+        spell2State = new PlayerSpell2State(this, stateMachine, "Spell2");
 
 
     }

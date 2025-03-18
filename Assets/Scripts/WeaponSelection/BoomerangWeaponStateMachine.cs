@@ -15,7 +15,7 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         animator.SetBool("BoomerangMove",false);
         animator.SetBool("BoomerangDash",false);
         animator.SetBool("BoomerangJump",false);
-        animator.SetBool("BoomerangFall",false);
+        
         animator.SetBool("BoomerangAttack",false);
         animator.SetBool("BoomerangGroundDash",false);
         animator.SetBool("BoomerangCrouch",false);

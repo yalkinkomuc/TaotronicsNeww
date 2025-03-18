@@ -12,7 +12,7 @@ public class SkeletonArcher_DeadState : EnemyState
     {
         base.Enter();
         
-        enemy.collider.enabled = false;
+        enemy.boxCollider.enabled = false;
         rb.bodyType = RigidbodyType2D.Static;
     }
 

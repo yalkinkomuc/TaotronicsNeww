@@ -18,6 +18,8 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         // Önce tüm bool değerlerini false yap
         animator.SetBool("SwordIdle", false);
         animator.SetBool("SwordMove", false);
+        animator.SetBool("SwordSpell1", false);
+        animator.SetBool("SwordSpell2",false);
         
         animator.SetBool("SwordDash", false);
         animator.SetBool("SwordJump",false);
@@ -42,9 +44,6 @@ public class SwordWeaponStateMachine : WeaponStateMachine
             case WeaponState.Move:
                 animator.SetBool("SwordMove", true);
                 break;
-            
-            
-                
             case WeaponState.Dash:
                 animator.SetBool("SwordDash", true);
                 break;
@@ -52,9 +51,6 @@ public class SwordWeaponStateMachine : WeaponStateMachine
             case WeaponState.Jump:
                 animator.SetBool("SwordJump", true);
                 break;
-                
-            
-                
             case WeaponState.Attack:
                 animator.SetBool("SwordAttack",true);
                 break;
@@ -82,7 +78,14 @@ public class SwordWeaponStateMachine : WeaponStateMachine
             case WeaponState.Parry:
                 animator.SetBool("SwordParry", true);
                 break;
-            
+            case WeaponState.Spell1:
+                animator.SetBool("SwordSpell1", true);
+                break;
+            case WeaponState.Spell2:
+                animator.SetBool("SwordSpell2", true);
+                break;
+
+
         }
     }
 
@@ -90,12 +93,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
     {
         base.Update();
         
-        // Y ekseni hızını animator'a gönder
-        
-        
-        // Input kontrolünü kaldırıyoruz, bunun yerine JumpAttackState'i ilk sıraya alıyoruz
-        
-        // JumpAttackState kontrolünü EN BAŞA getir
+       
         if (player.stateMachine.currentState == player.idleState)
         {
             ChangeState(WeaponState.Idle);
@@ -151,6 +149,16 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.parryState)
         {
             ChangeState(WeaponState.Parry);
+        }
+
+        else if (player.stateMachine.currentState == player.spell1State)
+        {
+            ChangeState(WeaponState.Spell1);
+        }
+
+        else if (player.stateMachine.currentState == player.spell2State)
+        {
+            ChangeState(WeaponState.Spell2);
         }
         
        

@@ -8,7 +8,7 @@ public class Enemy : Entity
    // public Animator animator { get;private set; }
    // public Rigidbody2D rb { get;private set; }
    
-   public BoxCollider2D collider { get; private set; }
+   public BoxCollider2D boxCollider { get; private set; }
    
    protected SpriteRenderer spriteRenderer;
    public Player player { get; protected set; }
@@ -26,7 +26,7 @@ public class Enemy : Entity
    protected override void Awake()
    {
       base.Awake();
-      collider = GetComponent<BoxCollider2D>();
+      boxCollider = GetComponent<BoxCollider2D>();
       spriteRenderer = GetComponentInChildren<SpriteRenderer>();
       stateMachine = new EnemyStateMachine();
      

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class SceneManager : MonoBehaviour
 {
@@ -73,5 +74,7 @@ public class SceneManager : MonoBehaviour
             }
         }
     }
+
+    
 }
 
