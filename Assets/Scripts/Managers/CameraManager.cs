@@ -47,20 +47,31 @@ public class CameraManager : MonoBehaviour
 
     private void SetupCamera()
     {
-        // Sahnedeki virtual camera'yı bul
-        virtualCamera = Object.FindAnyObjectByType<CinemachineVirtualCamera>();
+        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
         
         if (virtualCamera != null)
         {
-            // Player'ı follow target olarak ata
-            if (PlayerManager.instance != null && PlayerManager.instance.player != null)
+            // Rotasyon takibini kapat
+            var composer = virtualCamera.GetCinemachineComponent<CinemachineComposer>();
+            if (composer != null)
+            {
+                composer.m_TrackedObjectOffset = Vector3.zero;
+                composer.m_LookaheadTime = 0;
+            }
+
+            // Kamera pozisyonunu ayarla
+            var transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+            if (transposer != null)
+            {
+                transposer.m_BindingMode = CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp;
+                transposer.m_XDamping = 1f;
+                transposer.m_YDamping = 1f;
+            }
+
+            if (PlayerManager.instance?.player != null)
             {
                 virtualCamera.Follow = PlayerManager.instance.player.transform;
                 Debug.Log("Camera target set to player");
-            }
-            else
-            {
-                Debug.LogWarning("Player not found for camera setup!");
             }
         }
         else
