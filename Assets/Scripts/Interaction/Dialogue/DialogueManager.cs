@@ -7,10 +7,15 @@ public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
 
-    [SerializeField] private GameObject dialogueCanvas;
-    [SerializeField] private TextMeshProUGUI dialogueText;
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private Image characterPortrait;
+    [SerializeField] private GameObject dialogueCanvasPrefab;
+    [SerializeField] private string dialogueTextName = "DialogueText"; // Text objesinin adı
+    [SerializeField] private string nameTextName = "NameText";        // İsim text objesinin adı
+    [SerializeField] private string portraitImageName = "Portrait";   // Portre image'ın adı
+
+    private GameObject dialogueCanvas;
+    private TextMeshProUGUI dialogueText;
+    private TextMeshProUGUI nameText;
+    private Image characterPortrait;
    
     [SerializeField] private float typingSpeed = 0.05f; // Harf yazma hızı
 
@@ -28,15 +33,64 @@ public class DialogueManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            SetupDialogueUI();
         }
         else
         {
             Destroy(gameObject);
         }
+    }
 
-        dialogueCanvas.SetActive(false);
-        IsDialogueActive = false;
+    private void SetupDialogueUI()
+    {
+        if (dialogueCanvasPrefab != null)
+        {
+            // Önceki canvas varsa yok et
+            if (dialogueCanvas != null)
+                Destroy(dialogueCanvas);
+            
+            // Yeni canvas oluştur
+            dialogueCanvas = Instantiate(dialogueCanvasPrefab, transform);
+            
+            // İsimlere göre kesin referansları al
+            dialogueText = dialogueCanvas.transform.Find(dialogueTextName)?.GetComponent<TextMeshProUGUI>();
+            nameText = dialogueCanvas.transform.Find(nameTextName)?.GetComponent<TextMeshProUGUI>();
+            characterPortrait = dialogueCanvas.transform.Find(portraitImageName)?.GetComponent<Image>();
+            
+            if (dialogueText == null || nameText == null || characterPortrait == null)
+            {
+                Debug.LogError("UI references not found by name! Check the element names in your prefab:");
+                Debug.LogError($"Looking for: {dialogueTextName}, {nameTextName}, {portraitImageName}");
+            }
+            
+            dialogueCanvas.SetActive(false);
+        }
+        else
+        {
+            Debug.LogError("Dialogue Canvas Prefab is not assigned in DialogueManager!");
+        }
         
+        IsDialogueActive = false;
+    }
+
+    private void OnEnable()
+    {
+        // Scene yüklendiğinde UI'ı yeniden kur
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        // Scene değiştiğinde UI referansları kaybolabilir, yeniden kur
+        if (dialogueCanvas == null)
+        {
+            SetupDialogueUI();
+        }
     }
 
     private void Update()
@@ -63,14 +117,27 @@ public class DialogueManager : MonoBehaviour
 
     public void StartDialogue(DialogueData dialogueData)
     {
+        // UI elemanları kontrol et
+        if (dialogueCanvas == null || dialogueText == null || nameText == null)
+        {
+            Debug.LogError("Dialogue UI references are missing. Reinstantiating...");
+            SetupDialogueUI();
+            
+            // Hala sorun varsa diyaloğu başlatma
+            if (dialogueCanvas == null)
+            {
+                Debug.LogError("Could not create dialogue UI!");
+                return;
+            }
+        }
+        
         currentDialogue = dialogueData;
         currentLineIndex = 0;
         IsDialogueActive = true;
         dialogueCanvas.SetActive(true);
 
-        // İlk diyaloğu göster
         nameText.text = currentDialogue.characterName;
-        if (currentDialogue.characterPortrait != null)
+        if (currentDialogue.characterPortrait != null && characterPortrait != null)
             characterPortrait.sprite = currentDialogue.characterPortrait;
 
         DisplayNextDialogue();
