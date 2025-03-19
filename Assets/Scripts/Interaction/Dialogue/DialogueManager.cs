@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-public class DialogueManager : MonoBehaviour
+public class DialogueManager : MonoBehaviour, IManager
 {
     public static DialogueManager Instance { get; private set; }
 
@@ -29,16 +29,13 @@ public class DialogueManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            SetupDialogueUI();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Instance = this;
+    }
+
+    public void Initialize()
+    {
+        SetupDialogueUI();
+        Debug.Log("DialogueManager initialized");
     }
 
     private void SetupDialogueUI()
