@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-public class DialogueManager : MonoBehaviour, IManager
+public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
 
@@ -29,7 +29,16 @@ public class DialogueManager : MonoBehaviour, IManager
 
     private void Awake()
     {
-        Instance = this;
+        // Singleton pattern
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void Initialize()
@@ -40,6 +49,10 @@ public class DialogueManager : MonoBehaviour, IManager
 
     private void SetupDialogueUI()
     {
+        // Null kontrolü ekle
+        if (this == null) return;
+        if (!gameObject.activeInHierarchy) return;
+
         if (dialogueCanvasPrefab != null)
         {
             // Önceki canvas varsa yok et
@@ -114,19 +127,11 @@ public class DialogueManager : MonoBehaviour, IManager
 
     public void StartDialogue(DialogueData dialogueData)
     {
-        // UI elemanları kontrol et
-        if (dialogueCanvas == null || dialogueText == null || nameText == null)
-        {
-            Debug.LogError("Dialogue UI references are missing. Reinstantiating...");
-            SetupDialogueUI();
-            
-            // Hala sorun varsa diyaloğu başlatma
-            if (dialogueCanvas == null)
-            {
-                Debug.LogError("Could not create dialogue UI!");
-                return;
-            }
-        }
+        // Null kontrolü ekle
+        if (this == null) return;
+        if (dialogueData == null) return;
+
+        SetupDialogueUI();
         
         currentDialogue = dialogueData;
         currentLineIndex = 0;

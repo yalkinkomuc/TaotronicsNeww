@@ -190,6 +190,13 @@ public class Player : Entity
         // Interaction kontrolü
         if (playerInput.interactionInput && currentInteractable != null)
         {
+            // DialogueManager kontrolü
+            if (currentInteractable is DialogueNPC && DialogueManager.Instance == null)
+            {
+                Debug.LogWarning("DialogueManager bulunamadı!");
+                return;
+            }
+            
             currentInteractable.Interact();
         }
 

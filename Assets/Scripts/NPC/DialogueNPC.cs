@@ -8,6 +8,13 @@ public class DialogueNPC : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        // DialogueManager null kontrolü
+        if (DialogueManager.Instance == null)
+        {
+            Debug.LogError("DialogueManager bulunamadı!");
+            return;
+        }
+
         if (playerInRange)
         {
             DialogueManager.Instance.StartDialogue(dialogueData);
