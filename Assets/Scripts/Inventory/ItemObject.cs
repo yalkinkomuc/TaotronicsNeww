@@ -1,37 +1,53 @@
 using System;
 using UnityEngine;
 
-public class ItemObject : MonoBehaviour,IInteractable
+public class ItemObject : MonoBehaviour, IInteractable
 {
-   
-   
-   [SerializeField] private ItemData itemData;
-   [SerializeField] private InteractionPrompt prompt;
+    [SerializeField] private ItemData itemData;
+    [SerializeField] private InteractionPrompt prompt;
+    [SerializeField] private string uniqueID; // Her eşya için benzersiz ID
 
-  
+    private void Start()
+    {
+        // Eğer bu eşya daha önce toplandıysa, yok et
+        if (ItemCollectionManager.Instance != null && 
+            ItemCollectionManager.Instance.WasItemCollected(uniqueID))
+        {
+            Destroy(gameObject);
+        }
+    }
 
+    private void OnValidate()
+    {
+        if (string.IsNullOrEmpty(uniqueID))
+        {
+            // Editörde benzersiz ID oluştur
+            uniqueID = System.Guid.NewGuid().ToString();
+        }
+        
+        GetComponent<SpriteRenderer>().sprite = itemData.icon;
+        gameObject.name = "Item Object - " + itemData.itemName;
+    }
 
-   private void OnValidate()
-   {
-      GetComponent<SpriteRenderer>().sprite = itemData.icon;
-      gameObject.name = "Item Object -  " + itemData.itemName;
-   }
+    public void Interact()
+    {
+        if (Inventory.instance != null)
+        {
+            Inventory.instance.AddItem(itemData);
+            ItemCollectionManager.Instance.MarkItemAsCollected(uniqueID);
+            Destroy(gameObject);
+        }
+    }
 
-   public void Interact()
-   {
-      Inventory.instance.AddItem(itemData);
-      Destroy(gameObject);
-   }
+    public void ShowInteractionPrompt()
+    {
+        if (prompt != null)
+            prompt.ShowPrompt();
+    }
 
-   public void ShowInteractionPrompt()
-   {
-      if (prompt != null)
-         prompt.ShowPrompt();
-   }
-
-   public void HideInteractionPrompt()
-   {
-      if (prompt != null)
-         prompt.HidePrompt();
-   }
+    public void HideInteractionPrompt()
+    {
+        if (prompt != null)
+            prompt.HidePrompt();
+    }
 }

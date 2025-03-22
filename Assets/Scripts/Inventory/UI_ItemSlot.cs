@@ -14,16 +14,20 @@ public class UI_ItemSlot : MonoBehaviour
     public InventoryItem item;
     
 
+    private void Awake()
+    {
+        // Başlangıçta image'i temizle
+        ClearSlot();
+    }
+
     public void UpdateSlot(InventoryItem _newItem)
     {
-
         item = _newItem;
-        
-        itemImage.color = Color.white;
-        
+
         if (item != null)
         {
             itemImage.sprite = item.data.icon;
+            itemImage.color = Color.white;
 
             if (item.stackSize > 1)
             {
@@ -34,5 +38,17 @@ public class UI_ItemSlot : MonoBehaviour
                 itemText.text = "";
             }
         }
+        else
+        {
+            ClearSlot();
+        }
+    }
+
+    private void ClearSlot()
+    {
+        item = null;
+        itemImage.sprite = null;
+        itemImage.color = new Color(0, 0, 0, 0); // Tamamen şeffaf
+        itemText.text = "";
     }
 }

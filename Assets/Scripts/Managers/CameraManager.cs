@@ -13,7 +13,7 @@ public class CameraManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -47,7 +47,7 @@ public class CameraManager : MonoBehaviour
 
     private void SetupCamera()
     {
-        virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        virtualCamera = Object.FindFirstObjectByType<CinemachineVirtualCamera>();
         
         if (virtualCamera != null)
         {

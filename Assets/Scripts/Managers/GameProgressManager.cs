@@ -16,7 +16,7 @@ public class GameProgressManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+          //  DontDestroyOnLoad(gameObject);
             LoadProgress();
         }
         else
