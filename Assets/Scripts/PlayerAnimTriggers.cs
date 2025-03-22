@@ -1,8 +1,11 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerAnimTriggers : MonoBehaviour
 {
    private Player player => GetComponentInParent<Player>();
+   [SerializeField] private GameObject iceShardPrefab;
+   [SerializeField] private Transform spellCastPoint; // Spell'in başlayacağı nokta
 
    private void AnimationTrigger()
    {
@@ -61,4 +64,11 @@ public class PlayerAnimTriggers : MonoBehaviour
       
       Gizmos.DrawWireCube(attackPosition, p.attackSize);
    }
+
+   private void SpellOneTrigger()
+   {
+      player.SpellOneTrigger();
+   }
+
+   
 }

@@ -109,6 +109,12 @@ public class Player : Entity
     [SerializeField] private float boomerangCooldown = 2f;
     private float boomerangCooldownTimer;
 
+    [Header("Spell Settings")]
+    [SerializeField] private GameObject iceShardPrefab;
+    [SerializeField] private float spellSpacing = 1f; // Buz parçaları arası mesafe
+    [SerializeField] private float delayBetweenShards = 0.1f;
+    [SerializeField] private int shardCount = 3;
+
     public bool CanThrowBoomerang()
     {
         // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
@@ -463,6 +469,32 @@ public class Player : Entity
         // Tüm silah referanslarını güncelle (aktif veya inaktif)
         boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
         spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>(true);
+    }
+
+    public void SpellOneTrigger()
+    {
+        StartCoroutine(CastIceShards());
+    }
+
+    private IEnumerator CastIceShards()
+    {
+        float xOffset = 1f * facingdir;
+        float startX = transform.position.x + xOffset;
+        float spawnY = transform.position.y + 0.3f;
+
+        for (int i = 0; i < shardCount; i++)
+        {
+            Vector3 spawnPos = new Vector3(
+                startX + (spellSpacing * i * facingdir),
+                spawnY,
+                transform.position.z
+            );
+
+            // Sadece instantiate et, collider'ı animasyon event ile aktifleştirelim
+            Instantiate(iceShardPrefab, spawnPos, Quaternion.identity);
+
+            yield return new WaitForSeconds(delayBetweenShards);
+        }
     }
 }
 
