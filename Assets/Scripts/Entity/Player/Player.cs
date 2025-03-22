@@ -101,7 +101,9 @@ public class Player : Entity
     [Header("Crouch Attack")]
     public Vector2 crouchAttackOffset; // Örnek: (0, 0.2f) 
 
+    [Header("Weapon References")]
     public BoomerangWeaponStateMachine boomerangWeapon;
+    public SpellbookWeaponStateMachine spellbookWeapon;
 
     [Header("Boomerang Settings")]
     [SerializeField] private float boomerangCooldown = 2f;
@@ -112,6 +114,11 @@ public class Player : Entity
         // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
         bool isBoomerangActive = boomerangWeapon != null && boomerangWeapon.gameObject.activeInHierarchy;
         return boomerangCooldownTimer <= 0f && isBoomerangActive;
+    }
+
+    public bool CanCastSpells()
+    {
+        return spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy;
     }
 
     protected override void Awake()
@@ -159,6 +166,11 @@ public class Player : Entity
         {
             boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>();
         }
+        
+        if (spellbookWeapon == null)
+        {
+            spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>();
+        }
     }
 
     public void ResetPlayerFacing()
@@ -177,6 +189,9 @@ public class Player : Entity
         base.Update();
         stateMachine.currentState.Update();
 
+        // Her frame'de referansları güncelle
+        UpdateWeaponReferences();
+
         // Bumerang cooldown'unu güncelle
         if (boomerangCooldownTimer > 0)
         {
@@ -185,6 +200,7 @@ public class Player : Entity
 
         CheckForDashInput();
         CheckForGroundDashInput();
+        CheckForSpellInput();
 
         if (Input.GetKeyDown(KeyCode.X))
         {
@@ -205,7 +221,15 @@ public class Player : Entity
             currentInteractable.Interact();
         }
 
-       
+        // Spell state kontrolü - boomerang'daki gibi
+        if (playerInput.spell1Input && spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy && IsGroundDetected())
+        {
+            stateMachine.ChangeState(spell1State);
+        }
+        else if (playerInput.spell2Input && spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy&& IsGroundDetected())
+        {
+            stateMachine.ChangeState(spell2State);
+        }
     }
 
     public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
@@ -415,5 +439,30 @@ public class Player : Entity
     }
     // Bumerangın yakalanması için metod
    
+
+    private void CheckForSpellInput()
+    {
+        // Eğer spellbook aktif değilse büyü kullanamaz
+        if (!CanCastSpells())
+            return;
+
+        // Spell1 kontrolü
+        // if (playerInput.spell1Input )
+        // {
+        //     stateMachine.ChangeState(spell1State);
+        // }
+        // // Spell2 kontrolü
+        // else if (playerInput.spell2Input )
+        // {
+        //     stateMachine.ChangeState(spell2State);
+        // }
+    }
+
+    private void UpdateWeaponReferences()
+    {
+        // Tüm silah referanslarını güncelle (aktif veya inaktif)
+        boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
+        spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>(true);
+    }
 }
 

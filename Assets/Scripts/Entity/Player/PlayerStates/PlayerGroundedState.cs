@@ -50,14 +50,14 @@ public class PlayerGroundedState : PlayerState
             stateMachine.ChangeState(player.throwBoomerangState);
         }
 
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            stateMachine.ChangeState(player.spell1State);
-        }
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            stateMachine.ChangeState(player.spell2State);
-        }
+        // if(Input.GetKeyDown(KeyCode.R))
+        // {
+        //     stateMachine.ChangeState(player.spell1State);
+        // }
+        //
+        // if (Input.GetKeyDown(KeyCode.T))
+        // {
+        //     stateMachine.ChangeState(player.spell2State);
+        // }
     }
 }

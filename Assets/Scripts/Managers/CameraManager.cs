@@ -57,7 +57,9 @@ public class CameraManager : MonoBehaviour, IManager
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
         // Sahnedeki tüm virtual kameraları bul
-        var sceneCameras = Object.FindObjectsOfType<CinemachineVirtualCamera>();
+        var sceneCameras = UnityEngine.Object.FindObjectsByType<CinemachineVirtualCamera>(
+            FindObjectsSortMode.None // Sıralama gerekmiyorsa None kullanarak performans kazanıyoruz
+        );
         
         // Sahnedeki fazla kameraları devre dışı bırak veya sil
         foreach (var cam in sceneCameras)

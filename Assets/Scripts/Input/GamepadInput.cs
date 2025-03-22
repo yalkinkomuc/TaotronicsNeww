@@ -11,4 +11,6 @@ public class GamepadInput : IPlayerInput
     public bool attackInput => Input.GetKeyDown(KeyCode.JoystickButton2);
     public bool interactionInput => Input.GetKeyDown(KeyCode.JoystickButton3);
     public bool parryInput => Input.GetKeyDown(KeyCode.JoystickButton4);
+    public bool spell1Input => Input.GetKeyDown(KeyCode.JoystickButton7);
+    public bool spell2Input => Input.GetKeyDown(KeyCode.JoystickButton8);
 }
