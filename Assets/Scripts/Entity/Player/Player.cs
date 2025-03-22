@@ -107,7 +107,12 @@ public class Player : Entity
     [SerializeField] private float boomerangCooldown = 2f;
     private float boomerangCooldownTimer;
 
-    public bool CanThrowBoomerang() => boomerangCooldownTimer <= 0f;
+    public bool CanThrowBoomerang()
+    {
+        // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
+        bool isBoomerangActive = boomerangWeapon != null && boomerangWeapon.gameObject.activeInHierarchy;
+        return boomerangCooldownTimer <= 0f && isBoomerangActive;
+    }
 
     protected override void Awake()
     {
@@ -216,8 +221,20 @@ public class Player : Entity
     }
     public void ThrowBoomerang()
     {
+        // Bumerang atma koşullarını kontrol et
+        if (!CanThrowBoomerang())
+        {
+            return;
+        }
+
         Instantiate(boomerangPrefab, boomerangLaunchPoint.position, Quaternion.identity);
-        boomerangCooldownTimer = boomerangCooldown; // Cooldown'u başlat
+        boomerangCooldownTimer = boomerangCooldown;
+        
+        // Bumerang silahını devre dışı bırak
+        if (boomerangWeapon != null)
+        {
+            boomerangWeapon.gameObject.SetActive(false);
+        }
     }
    
 

@@ -1,11 +1,17 @@
 using UnityEngine;
 using Cinemachine;
 
-public class CameraManager : MonoBehaviour
+public class CameraManager : MonoBehaviour, IManager
 {
     public static CameraManager instance { get; private set; }
     
-    private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private CinemachineVirtualCamera cameraPrefab; // Ana kamera prefabınız
+    private CinemachineVirtualCamera activeCamera;
+    
+    // Kamera ayarları için sabit değerler
+    [SerializeField] private float xDamping = 1f;
+    [SerializeField] private float yDamping = 1f;
+    private bool isInitialized = false;
 
     private void Awake()
     {
@@ -25,7 +31,7 @@ public class CameraManager : MonoBehaviour
     private void Start()
     {
         // Oyun başladığında kamerayı ayarla
-        SetupCamera();
+        Initialize();
     }
 
     private void OnEnable()
@@ -39,20 +45,59 @@ public class CameraManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    public void Initialize()
+    {
+        if (!isInitialized)
+        {
+            SetupCamera();
+            isInitialized = true;
+        }
+    }
+
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        // Her sahne yüklendiğinde kamerayı ayarla
-        SetupCamera();
+        // Sahnedeki tüm virtual kameraları bul
+        var sceneCameras = Object.FindObjectsOfType<CinemachineVirtualCamera>();
+        
+        // Sahnedeki fazla kameraları devre dışı bırak veya sil
+        foreach (var cam in sceneCameras)
+        {
+            if (cam != activeCamera)
+            {
+                Debug.Log($"Disabling extra camera: {cam.name}");
+                Destroy(cam.gameObject);
+            }
+        }
+
+        // Eğer aktif kamera yoksa yeni bir tane oluştur
+        if (activeCamera == null)
+        {
+            CreateMainCamera();
+        }
+
+        UpdateCameraTarget();
+    }
+
+    private void CreateMainCamera()
+    {
+        if (cameraPrefab != null)
+        {
+            activeCamera = Instantiate(cameraPrefab);
+            activeCamera.name = "Main Virtual Camera";
+            SetupCamera();
+        }
+        else
+        {
+            Debug.LogError("Camera prefab is not assigned in CameraManager!");
+        }
     }
 
     private void SetupCamera()
     {
-        virtualCamera = Object.FindFirstObjectByType<CinemachineVirtualCamera>();
-        
-        if (virtualCamera != null)
+        if (activeCamera != null)
         {
             // Rotasyon takibini kapat
-            var composer = virtualCamera.GetCinemachineComponent<CinemachineComposer>();
+            var composer = activeCamera.GetCinemachineComponent<CinemachineComposer>();
             if (composer != null)
             {
                 composer.m_TrackedObjectOffset = Vector3.zero;
@@ -60,32 +105,33 @@ public class CameraManager : MonoBehaviour
             }
 
             // Kamera pozisyonunu ayarla
-            var transposer = virtualCamera.GetCinemachineComponent<CinemachineTransposer>();
+            var transposer = activeCamera.GetCinemachineComponent<CinemachineTransposer>();
             if (transposer != null)
             {
                 transposer.m_BindingMode = CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp;
-                transposer.m_XDamping = 1f;
-                transposer.m_YDamping = 1f;
+                transposer.m_XDamping = xDamping;
+                transposer.m_YDamping = yDamping;
             }
 
-            if (PlayerManager.instance?.player != null)
-            {
-                virtualCamera.Follow = PlayerManager.instance.player.transform;
-                Debug.Log("Camera target set to player");
-            }
+            UpdateCameraTarget();
         }
-        else
+    }
+
+    private void UpdateCameraTarget()
+    {
+        if (activeCamera != null && PlayerManager.instance?.player != null)
         {
-            Debug.LogWarning("Virtual Camera not found in scene!");
+            activeCamera.Follow = PlayerManager.instance.player.transform;
+            Debug.Log("Camera target updated to player");
         }
     }
 
     // Gerekirse manuel olarak kamera hedefini değiştirmek için
     public void SetCameraTarget(Transform target)
     {
-        if (virtualCamera != null)
+        if (activeCamera != null)
         {
-            virtualCamera.Follow = target;
+            activeCamera.Follow = target;
         }
     }
 } 

@@ -2,33 +2,49 @@ using UnityEngine;
 
 public class PlayerWeaponManager : MonoBehaviour
 {
-    public WeaponStateMachine[] weapons; 
-    //private int currentWeaponIndex = 0;
+    public WeaponStateMachine[] weapons;
+    private int currentSecondaryWeaponIndex = 1; // 1'den başlıyoruz çünkü 0 kılıç
+    
+    [SerializeField] private KeyCode weaponSwitchKey = KeyCode.Q; // Silah değiştirme tuşu
 
     void Start()
     {
-        EquipWeapon(0); 
-        EquipWeapon(1); // ikisini birden takmak istediğimizde bunu çağırcaz.
+        if (weapons.Length < 2)
+        {
+            Debug.LogError("En az 2 silah (kılıç ve ikincil silah) atanmalı!");
+            return;
+        }
+
+        // Kılıcı aktif et (her zaman aktif kalacak)
+        weapons[0].gameObject.SetActive(true);
+        
+        // İkincil silahı aktif et
+        EquipSecondaryWeapon(currentSecondaryWeaponIndex);
     }
 
     void Update()
     {
-        // if (Input.GetKeyDown(KeyCode.Q)) 
-        // {
-        //     currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Length;
-        //     EquipWeapon(currentWeaponIndex);
-        // }
+        if (Input.GetKeyDown(weaponSwitchKey) && weapons.Length > 2)
+        {
+            // Sadece ikincil silahlar arasında geçiş yap (1. indeksten başlayarak)
+            currentSecondaryWeaponIndex++;
+            if (currentSecondaryWeaponIndex >= weapons.Length)
+            {
+                currentSecondaryWeaponIndex = 1; // 1'e dön (0 kılıç olduğu için)
+            }
+            EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+        }
     }
 
-    void EquipWeapon(int index)
+    void EquipSecondaryWeapon(int index)
     {
-        if (weapons.Length == 0 || index >= weapons.Length)
+        // Kılıcı etkileme (0. index)
+        for (int i = 1; i < weapons.Length; i++)
         {
-            Debug.LogError("Geçersiz silah indeksi");
-            return;
+            // Seçilen silahı aktif et, diğerlerini deaktif et
+            weapons[i].gameObject.SetActive(i == index);
         }
         
-        // Sadece seçilen silahı aktif et, diğerlerine dokunma
-        weapons[index].gameObject.SetActive(true);
+        Debug.Log($"Equipped secondary weapon: {weapons[index].name}");
     }
 }
