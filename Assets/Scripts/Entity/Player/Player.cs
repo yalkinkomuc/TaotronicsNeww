@@ -137,7 +137,7 @@ public class Player : Entity
     protected override void Awake()
     {
         base.Awake();
-        playerInput = new PCInput();
+        playerInput = new PCInput(); // PCInputa çevirebilirsin********************
         
         stateMachine = new PlayerStateMachine();
         

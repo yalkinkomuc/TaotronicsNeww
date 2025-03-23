@@ -131,7 +131,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   wallCheck: {fileID: 5441756697815002969}
-  wallCheckDistance: -1.1
+  wallCheckDistance: 1.1
   facingdir: 1
   knockbackDirection: {x: 0, y: 0}
   knockbackDuration: 0
@@ -163,6 +163,7 @@ MonoBehaviour:
   hitVFXIds:
   - BloodVFX2
   vfxSpawnPoint: {fileID: 8912795064409113771}
+  burnMat: {fileID: 0}
 --- !u!114 &4615162018279291874
 MonoBehaviour:
   m_ObjectHideFlags: 0

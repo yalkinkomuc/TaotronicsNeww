@@ -13,4 +13,5 @@ public interface IPlayerInput
      bool parryInput { get; }
      bool spell1Input { get; }
      bool spell2Input { get; }
+     bool boomerangInput { get; }
 }

@@ -48,7 +48,13 @@ public class Bat_MoveState : EnemyState
             stateMachine.ChangeState(enemy.battleState);
             return;
         }
-        
+
+
+        // if (enemy.IsWallDetected())
+        // {
+        //     enemy.Flip();
+        // }
+        //
         // Pozisyon kontrolü
         float distanceFromStart = enemyBase.transform.position.x - startPosition.x;
         
