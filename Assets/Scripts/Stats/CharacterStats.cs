@@ -6,7 +6,7 @@ public class CharacterStats : MonoBehaviour
     public Stat damage;
     public Stat maxHealth;
     
-     public int currentHealth;
+    public float currentHealth;
     
     public bool isInvincible { get; private set; }
 
@@ -17,20 +17,15 @@ public class CharacterStats : MonoBehaviour
         damage.AddModifier(2);
     }
 
-    public virtual void TakeDamage(int _damage)
+    public virtual void TakeDamage(float _damage)
     {
-
         if (isInvincible)
-        {
             return;
-        }
+            
         currentHealth -= _damage;
 
         if (currentHealth <= 0)
-        {
             Die();
-        }
-            
     }
     
     public void MakeInvincible (bool _isInvincible) => isInvincible = _isInvincible;

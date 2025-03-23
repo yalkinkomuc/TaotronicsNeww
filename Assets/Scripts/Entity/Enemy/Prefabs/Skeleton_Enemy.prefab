@@ -157,11 +157,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitMat: {fileID: 2100000, guid: 7a1a264730cde2341b44f080cf9b3a6e, type: 2}
+  flashDuration: 0.2
+  flashInterval: 0.2
   hitVFXIds:
   - Skeleton_Hurt1
   - Skeleton_Hurt2
   - Skeleton_Hurt3
   vfxSpawnPoint: {fileID: 309585666282751159}
+  burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
 --- !u!114 &6821090607185294136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,7 +181,7 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   maxHealth:
-    baseValue: 5
+    baseValue: 100
     modifiers: 
   currentHealth: 0
 --- !u!1 &3024438536914116532
@@ -349,7 +352,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 509013307
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 1417047543268158525, guid: e5299be353d60654093e85226a0f64f4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

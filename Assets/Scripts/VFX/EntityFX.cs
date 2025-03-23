@@ -17,6 +17,9 @@ public class EntityFX : MonoBehaviour
    [SerializeField] private string[] hitVFXIds;
    [SerializeField] private Transform vfxSpawnPoint; // Unity'de sürükle bırak
 
+   [Header("BurnFX")] 
+   [SerializeField] public Material burnMat; // Unity'de turuncu flash materyali atanacak
+
    private void Start()
    {
       sr = GetComponentInChildren<SpriteRenderer>();
@@ -107,5 +110,21 @@ public class EntityFX : MonoBehaviour
        
        // Son durumda normal materyal
        sr.material = originalMat;
+   }
+
+   public IEnumerator BurnFX()
+   {
+       sr.material = burnMat;
+       // Artık flash yok, sürekli turuncu kalacak
+       while (true)
+       {
+           yield return null;
+       }
+   }
+
+   public void ResetToOriginalMaterial()
+   {
+      if(sr != null)
+         sr.material = originalMat;
    }
 }

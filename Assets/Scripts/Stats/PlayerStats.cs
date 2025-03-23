@@ -11,7 +11,7 @@ public class PlayerStats : CharacterStats
         player = GetComponent<Player>();
     }
 
-    public override void TakeDamage(int _damage)
+    public override void TakeDamage(float _damage)
     {
         base.TakeDamage(_damage);
     }

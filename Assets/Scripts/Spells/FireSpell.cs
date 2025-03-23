@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 public class FireSpell : MonoBehaviour
 {
-    [SerializeField] private int damagePerTick = 5; // Her tick'te verilecek hasar
-    [SerializeField] private float tickRate = 0.2f; // Kaç saniyede bir hasar verilecek
+    [SerializeField] private float damagePerSecond = 2f; // Saniyede verilen hasar
     private BoxCollider2D boxCollider2D;
     private List<Enemy> burningEnemies = new List<Enemy>();
 
@@ -26,6 +25,15 @@ public class FireSpell : MonoBehaviour
     private void OnDisable()
     {
         StopAllCoroutines();
+        foreach (var enemy in burningEnemies)
+        {
+            if (enemy != null)
+            {
+                enemy.entityFX.StopCoroutine("BurnFX");
+                enemy.entityFX.ResetToOriginalMaterial();
+                enemy.RemoveBurnEffect();
+            }
+        }
         burningEnemies.Clear();
     }
 
@@ -51,15 +59,20 @@ public class FireSpell : MonoBehaviour
         if (enemy != null && !burningEnemies.Contains(enemy))
         {
             burningEnemies.Add(enemy);
+            enemy.entityFX.StartCoroutine("BurnFX");
+            enemy.ApplyBurnEffect();
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         Enemy enemy = other.GetComponent<Enemy>();
-        if ( enemy!= null)
+        if (enemy != null)
         {
             burningEnemies.Remove(enemy);
+            enemy.entityFX.StopCoroutine("BurnFX");
+            enemy.entityFX.ResetToOriginalMaterial();
+            enemy.RemoveBurnEffect();
         }
     }
 
@@ -67,13 +80,14 @@ public class FireSpell : MonoBehaviour
     {
         while (true)
         {
-            // Listede olan tüm düşmanlara periyodik hasar ver
+            // Her frame'de hasar ver
             for (int i = burningEnemies.Count - 1; i >= 0; i--)
             {
                 if (burningEnemies[i] != null)
                 {
-                    burningEnemies[i].DamageWithoutKnockback();
-                    burningEnemies[i].stats.TakeDamage(damagePerTick);
+                    // Time.deltaTime ile çarparak saniye başına hasarı frame'e böl
+                    float frameDamage = damagePerSecond * Time.deltaTime;
+                    burningEnemies[i].stats.TakeDamage(frameDamage);
                 }
                 else
                 {
@@ -81,7 +95,7 @@ public class FireSpell : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(tickRate);
+            yield return null; // Her frame'de çalış
         }
     }
 } 

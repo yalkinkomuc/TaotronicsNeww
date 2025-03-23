@@ -5,7 +5,7 @@ public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
-    private const float MIN_CHARGE_TIME = 0.5f; // Minimum şarj süresi
+    private const float MIN_CHARGE_TIME = 0.35f; // Minimum şarj süresi
     private const float MAX_CHARGE_TIME = 3.5f;
     private float currentChargeTime;
     private bool hasSpawnedSpell;

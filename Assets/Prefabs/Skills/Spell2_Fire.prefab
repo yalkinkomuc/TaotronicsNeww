@@ -170,5 +170,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec947693c8b32d42a876c73c09f6402, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 15
-  maxChargeTime: 3.5
+  damagePerTick: 1
+  tickRate: 0.001

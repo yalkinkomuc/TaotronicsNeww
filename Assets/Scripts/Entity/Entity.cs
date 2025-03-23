@@ -28,6 +28,9 @@ public class Entity : MonoBehaviour
     [SerializeField] protected float knockbackDuration;
 
     protected bool isKnocked;
+    protected float originalMoveSpeed;
+    protected float originalChaseSpeed;
+
     protected virtual void Awake()
     {
         
@@ -156,5 +159,26 @@ public class Entity : MonoBehaviour
             new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
         
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance*facingdir, wallCheck.position.y));
+    }
+
+    public virtual void ApplyBurnEffect()
+    {
+        if (this is Enemy enemy)
+        {
+            originalMoveSpeed = enemy.moveSpeed;
+            originalChaseSpeed = enemy.chaseSpeed;
+            
+            enemy.moveSpeed *= 0.5f;
+            enemy.chaseSpeed *= 0.5f;
+        }
+    }
+
+    public virtual void RemoveBurnEffect()
+    {
+        if (this is Enemy enemy)
+        {
+            enemy.moveSpeed = originalMoveSpeed;
+            enemy.chaseSpeed = originalChaseSpeed;
+        }
     }
 }
