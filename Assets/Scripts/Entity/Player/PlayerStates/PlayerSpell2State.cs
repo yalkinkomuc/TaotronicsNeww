@@ -5,7 +5,10 @@ public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
-    private const float SPAWN_DELAY = 0.5f;
+    private const float MIN_CHARGE_TIME = 0.5f; // Minimum şarj süresi
+    private const float MAX_CHARGE_TIME = 3.5f;
+    private float currentChargeTime;
+    private bool hasSpawnedSpell;
 
     public PlayerSpell2State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -14,6 +17,8 @@ public class PlayerSpell2State : PlayerState
     public override void Enter()
     {
         base.Enter();
+        currentChargeTime = 0f;
+        hasSpawnedSpell = false;
         
         // Animasyonu başlat
         player.anim.Play(SPELL2_ANIM_NAME);
@@ -22,15 +27,6 @@ public class PlayerSpell2State : PlayerState
         {
             player.spellbookWeapon.PauseAnimation();
         }
-
-        // Gecikmeli spawn
-        player.StartCoroutine(DelayedSpawnFireSpell());
-    }
-
-    private IEnumerator DelayedSpawnFireSpell()
-    {
-        yield return new WaitForSeconds(SPAWN_DELAY);
-        SpawnFireSpell();
     }
 
     public override void Update()
@@ -38,10 +34,20 @@ public class PlayerSpell2State : PlayerState
         base.Update();
         player.SetZeroVelocity();
 
-        // T tuşu bırakıldığında state'i bitir
-        if (!player.playerInput.spell2Input)
+        currentChargeTime += Time.deltaTime;
+        
+        // Minimum şarj süresini geçtiyse ve henüz spawn olmadıysa
+        if (currentChargeTime >= MIN_CHARGE_TIME && !hasSpawnedSpell)
+        {
+            SpawnFireSpell();
+            hasSpawnedSpell = true;
+        }
+
+        // T tuşu bırakıldığında VEYA maksimum süre dolduğunda
+        if (!player.playerInput.spell2Input || currentChargeTime >= MAX_CHARGE_TIME)
         {
             stateMachine.ChangeState(player.idleState);
+            return;
         }
     }
 
@@ -59,6 +65,7 @@ public class PlayerSpell2State : PlayerState
             player.spellbookWeapon.ResumeAnimation();
         }
         
+        // FireSpell'i yok et
         if (currentFireSpell != null)
         {
             GameObject.Destroy(currentFireSpell.gameObject);
