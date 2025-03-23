@@ -14,6 +14,6 @@ public class PCInput : IPlayerInput
     public bool interactionInput => Input.GetKeyDown(KeyCode.E);
     public bool parryInput => Input.GetKeyDown(KeyCode.Q);
     public bool spell1Input => Input.GetKeyDown(KeyCode.R);
-    public bool spell2Input => Input.GetKeyDown(KeyCode.T);
+    public bool spell2Input => Input.GetKey(KeyCode.T);
     
 }

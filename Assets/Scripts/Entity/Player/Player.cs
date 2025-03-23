@@ -115,6 +115,13 @@ public class Player : Entity
     [SerializeField] private float delayBetweenShards = 0.1f;
     [SerializeField] private int shardCount = 3;
 
+    [Header("Fire Spell Settings")]
+    public GameObject fireSpellPrefab;
+    public Transform fireSpellPoint;
+
+    [Header("Fire Spell Settings")]
+    private bool isChargingFire = false;
+
     public bool CanThrowBoomerang()
     {
         // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
@@ -234,7 +241,11 @@ public class Player : Entity
         }
         else if (playerInput.spell2Input && spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy&& IsGroundDetected())
         {
-            stateMachine.ChangeState(spell2State);
+            StartFireSpell();
+        }
+        else if (!playerInput.spell2Input && isChargingFire)
+        {
+            StopFireSpell();
         }
     }
 
@@ -494,6 +505,24 @@ public class Player : Entity
             Instantiate(iceShardPrefab, spawnPos, Quaternion.identity);
 
             yield return new WaitForSeconds(delayBetweenShards);
+        }
+    }
+
+    private void StartFireSpell()
+    {
+        if (!isChargingFire)
+        {
+            isChargingFire = true;
+            stateMachine.ChangeState(spell2State);
+        }
+    }
+
+    private void StopFireSpell()
+    {
+        if (isChargingFire)
+        {
+            isChargingFire = false;
+            stateMachine.ChangeState(idleState);
         }
     }
 }

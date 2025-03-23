@@ -69,6 +69,4 @@ public class PlayerAnimTriggers : MonoBehaviour
    {
       player.SpellOneTrigger();
    }
-
-   
 }
