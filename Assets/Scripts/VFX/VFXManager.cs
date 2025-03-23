@@ -35,7 +35,7 @@ public class VFXManager : MonoBehaviour
         {
             GameObject vfx = Instantiate(vfxData.vfxPrefab);
             vfx.transform.SetParent(transform);
-            vfx.gameObject.SetActive(true);
+            vfx.gameObject.SetActive(false);
             vfxPool.Add(vfxData.vfxId, vfx);
         }
     }
