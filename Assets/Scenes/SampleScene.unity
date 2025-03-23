@@ -2050,8 +2050,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 450c3197f6464a140bb389a25d45ac56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iceShardPrefab: {fileID: 0}
-  spellCastPoint: {fileID: 0}
 --- !u!224 &1127178340 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5760456709028540616, guid: fd11e61e5af10624d8a30819131628b4, type: 3}
@@ -2291,7 +2289,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1301243577}
   m_Layer: 8
-  m_Name: Spell1_IcePosition
+  m_Name: Spell2_FireCharge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2306,7 +2304,7 @@ Transform:
   m_GameObject: {fileID: 1301243576}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.476, y: -0.426, z: 0}
+  m_LocalPosition: {x: 1.432, y: 0.101, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2438,6 +2436,8 @@ MonoBehaviour:
   spellSpacing: 1
   delayBetweenShards: 0.2
   shardCount: 3
+  fireSpellPrefab: {fileID: 32532192634965339, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
+  fireSpellPoint: {fileID: 1301243577}
 --- !u!4 &1377457613
 Transform:
   m_ObjectHideFlags: 0
