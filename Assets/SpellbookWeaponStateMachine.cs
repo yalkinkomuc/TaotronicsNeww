@@ -2,6 +2,40 @@ using UnityEngine;
 
 public class SpellbookWeaponStateMachine : WeaponStateMachine
 {
+    private const string SPELLBOOK_SPELL2 = "SpellBook_Spell2";
+    private const string SPELLBOOK_IDLE = "Spellbook_Idle";
+
+    public void PlaySpell2Animation()
+    {
+        if (animator != null)
+        {
+            animator.Play(SPELLBOOK_SPELL2);
+        }
+    }
+
+    public void PlayIdleAnimation()
+    {
+        if (animator != null)
+        {
+            animator.Play(SPELLBOOK_IDLE);
+        }
+    }
+
+    public void PauseAnimation()
+    {
+        if (animator != null)
+        {
+            animator.speed = 0;
+        }
+    }
+
+    public void ResumeAnimation()
+    {
+        if (animator != null)
+        {
+            animator.speed = 1;
+        }
+    }
 
     protected override void Start()
     {

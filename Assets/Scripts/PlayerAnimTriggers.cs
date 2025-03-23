@@ -4,8 +4,11 @@ using System.Collections;
 public class PlayerAnimTriggers : MonoBehaviour
 {
    private Player player => GetComponentInParent<Player>();
-   [SerializeField] private GameObject iceShardPrefab;
-   [SerializeField] private Transform spellCastPoint; // Spell'in başlayacağı nokta
+   
+   private void Awake()
+   {
+      
+   }
 
    private void AnimationTrigger()
    {
@@ -68,5 +71,14 @@ public class PlayerAnimTriggers : MonoBehaviour
    private void SpellOneTrigger()
    {
       player.SpellOneTrigger();
+   }
+
+   // Animation Event tarafından çağrılacak
+   public void PauseSpell2Animation()
+   {
+      if (player.stateMachine.currentState is PlayerSpell2State)
+      {
+         player.anim.speed = 0;
+      }
    }
 }

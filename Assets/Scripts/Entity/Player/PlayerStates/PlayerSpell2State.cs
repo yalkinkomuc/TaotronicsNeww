@@ -1,8 +1,11 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
+    private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
+    private const float SPAWN_DELAY = 0.5f;
 
     public PlayerSpell2State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -11,6 +14,22 @@ public class PlayerSpell2State : PlayerState
     public override void Enter()
     {
         base.Enter();
+        
+        // Animasyonu başlat
+        player.anim.Play(SPELL2_ANIM_NAME);
+        
+        if (player.spellbookWeapon != null)
+        {
+            player.spellbookWeapon.PauseAnimation();
+        }
+
+        // Gecikmeli spawn
+        player.StartCoroutine(DelayedSpawnFireSpell());
+    }
+
+    private IEnumerator DelayedSpawnFireSpell()
+    {
+        yield return new WaitForSeconds(SPAWN_DELAY);
         SpawnFireSpell();
     }
 
@@ -30,7 +49,16 @@ public class PlayerSpell2State : PlayerState
     {
         base.Exit();
         
-        // State'ten çıkarken ateşi yok et
+        // Oyuncu animasyonunu devam ettir
+        player.anim.speed = 1;
+        
+        // Spellbook animasyonunu idle'a döndür ve devam ettir
+        if (player.spellbookWeapon != null)
+        {
+            player.spellbookWeapon.PlayIdleAnimation();
+            player.spellbookWeapon.ResumeAnimation();
+        }
+        
         if (currentFireSpell != null)
         {
             GameObject.Destroy(currentFireSpell.gameObject);
@@ -40,13 +68,13 @@ public class PlayerSpell2State : PlayerState
 
     private void SpawnFireSpell()
     {
-        GameObject spellObj = GameObject.Instantiate(
-            player.fireSpellPrefab, 
-            player.fireSpellPoint.position, 
-            player.fireSpellPoint.rotation,
-            player.fireSpellPoint // Parent olarak spell point'i veriyoruz
-        );
-        
-        currentFireSpell = spellObj.GetComponent<FireSpell>();
+        if (player.fireSpellPrefab != null && player.fireSpellPoint != null)
+        {
+            GameObject spellObj = GameObject.Instantiate(player.fireSpellPrefab, 
+                player.fireSpellPoint.position, 
+                player.fireSpellPoint.rotation);
+            
+            currentFireSpell = spellObj.GetComponent<FireSpell>();
+        }
     }
 }
