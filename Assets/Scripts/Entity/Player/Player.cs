@@ -104,6 +104,7 @@ public class Player : Entity
     [Header("Weapon References")]
     public BoomerangWeaponStateMachine boomerangWeapon;
     public SpellbookWeaponStateMachine spellbookWeapon;
+    public SwordWeaponStateMachine swordWeapon;
 
     [Header("Boomerang Settings")]
     [SerializeField] private float boomerangCooldown = 2f;
@@ -184,6 +185,11 @@ public class Player : Entity
         {
             spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>();
         }
+
+        if (swordWeapon == null)
+        {
+            swordWeapon = GetComponentInChildren<SwordWeaponStateMachine>();
+        }
     }
 
     public void ResetPlayerFacing()
@@ -239,7 +245,7 @@ public class Player : Entity
         {
             stateMachine.ChangeState(spell1State);
         }
-        else if (playerInput.spell2Input && spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy&& IsGroundDetected())
+        else if (playerInput.spell2Input && spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy && IsGroundDetected())
         {
             StartFireSpell();
         }

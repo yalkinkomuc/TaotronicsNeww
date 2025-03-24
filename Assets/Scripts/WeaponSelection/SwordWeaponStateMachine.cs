@@ -164,4 +164,20 @@ public class SwordWeaponStateMachine : WeaponStateMachine
        
         
     }
+
+    public void PauseAnimation()
+    {
+        if (animator != null)
+        {
+            animator.speed = 0;
+        }
+    }
+
+    public void ResumeAnimation()
+    {
+        if (animator != null)
+        {
+            animator.speed = 1;
+        }
+    }
 }
