@@ -1718,8 +1718,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapons:
   - {fileID: 305076}
-  - {fileID: 3452476}
   - {fileID: 1503857569}
+  - {fileID: 3452476}
   weaponSwitchKey: 257
 --- !u!4 &812422636 stripped
 Transform:
@@ -2497,7 +2497,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1377457612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2549,6 +2549,7 @@ MonoBehaviour:
   crouchAttackOffset: {x: 0, y: -0.35}
   boomerangWeapon: {fileID: 0}
   spellbookWeapon: {fileID: 0}
+  swordWeapon: {fileID: 0}
   boomerangCooldown: 1.5
   iceShardPrefab: {fileID: 3781980674335233421, guid: 35eb45ef5405f1046af3fe7f5e18d141, type: 3}
   spellSpacing: 1
@@ -3163,7 +3164,7 @@ Transform:
   m_GameObject: {fileID: 1503857567}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.086, y: -0.137, z: 0}
+  m_LocalPosition: {x: 0.097, y: -0.106, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3247,7 +3248,7 @@ SpriteRenderer:
   m_SortingLayerID: -1051577623
   m_SortingLayer: 5
   m_SortingOrder: 1
-  m_Sprite: {fileID: -4569324176857691774, guid: 2598a9396a169134f8095f905d09b5ce, type: 3}
+  m_Sprite: {fileID: -7896440054100060983, guid: cf524f4ab5f37f2429b240a2eff57d44, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

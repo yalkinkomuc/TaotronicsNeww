@@ -46,21 +46,61 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
 
     protected override void HandleStateChange()
     {
-        animator.SetBool("Idle",false);
-        animator.SetBool("Spell1",false);
-        animator.SetBool("Spell2",false);
+        animator.SetBool("SpellbookIdle",false);
+        animator.SetBool("SpellbookMove",false);
+        animator.SetBool("SpellbookSpell1",false);
+        animator.SetBool("SpellbookSpell2",false);
+        animator.SetBool("SpellbookAttack",false);
+        animator.SetBool("SpellbookDash",false);
+        animator.SetBool("SpellbookJump",false);
+        animator.SetBool("SpellbookGroundDash",false);
+        animator.SetBool("SpellbookCrouch",false);
+        animator.SetBool("SpellbookGroundAttack",false);
+        animator.SetBool("SpellbookDeath",false);
+        animator.SetBool("SpellbookStunned",false);
+        animator.SetBool("SpellbookParry",false);
 
         switch (currentState)
         {
             case WeaponState.Idle:
-                animator.SetBool("Idle",true);
+                animator.SetBool("SpellbookIdle",true);
                 break;
             case WeaponState.Spell1:
-                animator.SetBool("Spell1", true);
+                animator.SetBool("SpellbookSpell1", true);
                 break;
             case WeaponState.Spell2:
-                animator.SetBool("Spell2", true);
+                animator.SetBool("SpellbookSpell2", true);
             break ;
+            case WeaponState.Move:
+                animator.SetBool("SpellbookMove", true);
+                break;
+            case WeaponState.Attack:
+                animator.SetBool("SpellbookAttack",true);
+                break;
+            case WeaponState.Dash:
+                animator.SetBool("SpellbookDash", true);
+                break;
+            case WeaponState.Jump:
+                animator.SetBool("SpellbookJump", true);
+                break;
+            case WeaponState.Crouch:
+                animator.SetBool("SpellbookCrouch", true);
+                break;
+            case WeaponState.GroundDash:
+                animator.SetBool("SpellbookGroundDash", true);
+                break;
+            case WeaponState.CrouchAttack:
+                animator.SetBool("SpellbookGroundAttack", true);
+                break;
+            case WeaponState.Parry:
+                animator.SetBool("SpellbookParry", true);
+                break;
+            case WeaponState.Stunned:
+                animator.SetBool("SpellbookStunned", true);
+                break;
+            case WeaponState.Death:
+                animator.SetBool("SpellbookDeath", true);
+                break;
         }
     }
 
@@ -74,6 +114,10 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Idle);
         }
+        else if (player.stateMachine.currentState == player.attackState)
+        {
+            ChangeState(WeaponState.Attack);
+        }
         else if (player.stateMachine.currentState == player.spell1State)
         {
             ChangeState(WeaponState.Spell1);
@@ -81,6 +125,42 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.spell2State)
         {
             ChangeState(WeaponState.Spell2);
+        }
+        else if (player.stateMachine.currentState == player.moveState)
+        {
+            ChangeState(WeaponState.Move);
+        }
+        else if (player.stateMachine.currentState == player.dashState)
+        {
+            ChangeState(WeaponState.Dash);
+        }
+        else if (player.stateMachine.currentState == player.groundDashState)
+        {
+            ChangeState(WeaponState.GroundDash);
+        }
+        else if (player.stateMachine.currentState == player.crouchAttackState)
+        {
+            ChangeState(WeaponState.CrouchAttack);
+        }
+        else if (player.stateMachine.currentState == player.airState)
+        {
+            ChangeState(WeaponState.Jump);
+        }
+        else if (player.stateMachine.currentState == player.crouchState)
+        {
+            ChangeState(WeaponState.Crouch);
+        }
+        else if (player.stateMachine.currentState == player.deadState)
+        {
+            ChangeState(WeaponState.Death);
+        }
+        else if (player.stateMachine.currentState == player.stunnedState)
+        {
+            ChangeState(WeaponState.Stunned);
+        }
+        else if (player.stateMachine.currentState == player.parryState)
+        {
+            ChangeState(WeaponState.Parry);
         }
     }
 

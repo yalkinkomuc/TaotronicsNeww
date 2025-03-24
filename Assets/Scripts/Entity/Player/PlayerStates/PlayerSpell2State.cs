@@ -5,9 +5,10 @@ public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
+    private const float MIN_CHARGE_TIME = 0.2f; // Minimum şarj süresi
     private const float MAX_CHARGE_TIME = 3.5f;
     private float currentChargeTime;
-    private const float SPAWN_DELAY = 0.5f;
+    private bool hasSpawnedSpell;
 
     public PlayerSpell2State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -17,6 +18,7 @@ public class PlayerSpell2State : PlayerState
     {
         base.Enter();
         currentChargeTime = 0f;
+        hasSpawnedSpell = false;
         
         player.anim.Play(SPELL2_ANIM_NAME);
         
@@ -28,8 +30,6 @@ public class PlayerSpell2State : PlayerState
         {
             player.swordWeapon.PauseAnimation();
         }
-
-        player.StartCoroutine(DelayedSpawnFireSpell());
     }
 
     public override void Update()
@@ -38,7 +38,15 @@ public class PlayerSpell2State : PlayerState
         player.SetZeroVelocity();
 
         currentChargeTime += Time.deltaTime;
+
+        // Minimum şarj süresine ulaştıysak ve henüz spawn etmediysek
+        if (currentChargeTime >= MIN_CHARGE_TIME && !hasSpawnedSpell)
+        {
+            hasSpawnedSpell = true;
+            player.StartCoroutine(DelayedSpawnFireSpell());
+        }
         
+        // T tuşu bırakıldığında veya max süre dolduğunda
         if (!player.playerInput.spell2Input || currentChargeTime >= MAX_CHARGE_TIME)
         {
             stateMachine.ChangeState(player.idleState);
@@ -70,7 +78,7 @@ public class PlayerSpell2State : PlayerState
 
     private IEnumerator DelayedSpawnFireSpell()
     {
-        yield return new WaitForSeconds(SPAWN_DELAY);
+        yield return new WaitForSeconds(0.1f); // Çok kısa bir delay
         SpawnFireSpell();
     }
 
