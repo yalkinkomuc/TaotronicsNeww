@@ -3,6 +3,7 @@ using UnityEngine;
 public class Dummy : MonoBehaviour
 {
     private Animator anim;
+    private readonly int hitIndexHash = Animator.StringToHash("HitIndex");
 
     private void Awake()
     {
@@ -12,6 +13,12 @@ public class Dummy : MonoBehaviour
     public void PlayRandomHit()
     {
         int randomHit = Random.Range(0, 3);
-        anim.SetInteger("HitIndex", randomHit);
+        anim.SetInteger(hitIndexHash, randomHit);
+    }
+
+    // Animation Event ile çağrılacak
+    public void ResetHitIndex()
+    {
+        anim.SetInteger(hitIndexHash, -1); // veya 0, ama -1 daha güvenli
     }
 } 

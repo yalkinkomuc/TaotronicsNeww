@@ -39,6 +39,12 @@ public class PlayerAnimTriggers : MonoBehaviour
             
             Debug.Log(" modifierli final hasarı "+ player.stats.damage.GetValue());
          }
+
+         if (hit.GetComponent<Dummy>() != null)
+         {
+            hit.GetComponent<Dummy>().PlayRandomHit();
+         }
+         
       }
    }
 
