@@ -21,15 +21,6 @@ public class PlayerSpell2State : PlayerState
         hasSpawnedSpell = false;
         
         player.anim.Play(SPELL2_ANIM_NAME);
-        
-        if (player.spellbookWeapon != null)
-        {
-            player.spellbookWeapon.PauseAnimation();
-        }
-        if (player.swordWeapon != null)
-        {
-            player.swordWeapon.PauseAnimation();
-        }
     }
 
     public override void Update()
@@ -61,12 +52,11 @@ public class PlayerSpell2State : PlayerState
         
         if (player.spellbookWeapon != null)
         {
-            player.spellbookWeapon.PlayIdleAnimation();
-            player.spellbookWeapon.ResumeAnimation();
+            player.spellbookWeapon.animator.speed = 1;
         }
         if (player.swordWeapon != null)
         {
-            player.swordWeapon.ResumeAnimation();
+            player.swordWeapon.animator.speed = 1;
         }
         
         if (currentFireSpell != null)

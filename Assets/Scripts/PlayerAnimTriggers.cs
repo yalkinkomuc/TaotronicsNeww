@@ -79,6 +79,15 @@ public class PlayerAnimTriggers : MonoBehaviour
       if (player.stateMachine.currentState is PlayerSpell2State)
       {
          player.anim.speed = 0;
+         // Spellbook ve sword için de aynı frame'de durduralım
+         if (player.spellbookWeapon != null)
+         {
+            player.spellbookWeapon.animator.speed = 0;
+         }
+         if (player.swordWeapon != null)
+         {
+            player.swordWeapon.animator.speed = 0;
+         }
       }
    }
 }

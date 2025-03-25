@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class WeaponStateMachine : MonoBehaviour
 {
     protected WeaponState currentState = WeaponState.Idle;
-    protected Animator animator;
+    public Animator animator;
     protected Player player;
 
     protected virtual void Start()
