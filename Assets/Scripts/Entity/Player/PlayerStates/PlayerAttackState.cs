@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class PlayerAttackState : PlayerState
 {
-
-    private int comboCounter;
+    protected int comboCounter = 0;
     
     private float lastTimeAttacked;
     private float comboWindow = 2;
+
+    public int GetComboCounter() => comboCounter;
+
     public PlayerAttackState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
     }
@@ -21,7 +23,9 @@ public class PlayerAttackState : PlayerState
         }
         
         player.anim.SetInteger("comboCounter", comboCounter);
-        
+
+        stateTimer = .1f;
+
     }
 
     public override void Exit()
@@ -36,7 +40,7 @@ public class PlayerAttackState : PlayerState
     {
         base.Update();
 
-        if (player.IsGroundDetected())
+        if (stateTimer < 0f)
         {
             player.SetZeroVelocity();
         }
@@ -44,6 +48,8 @@ public class PlayerAttackState : PlayerState
         {
             player.SetVelocity(rb.linearVelocity.x*.5f, rb.linearVelocity.y);
         }
+        
+       
 
 
         if (triggerCalled)

@@ -34,6 +34,8 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SwordCatchBoomerang",false);
         animator.SetBool("SwordParry",false);
        
+        // Bool yerine integer kullanıyoruz
+        animator.SetInteger("SwordComboCounter", 0);
 
         switch (currentState)
         {
@@ -53,6 +55,11 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Attack:
                 animator.SetBool("SwordAttack",true);
+                if (player.stateMachine.currentState is PlayerAttackState attackState)
+                {
+                    // Direkt combo counter'ı set ediyoruz
+                    animator.SetInteger("SwordComboCounter", attackState.GetComboCounter());
+                }
                 break;
             case WeaponState.Crouch:
                 animator.SetBool("SwordCrouch", true);
