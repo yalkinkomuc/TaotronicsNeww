@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class PlayerAttackState : PlayerState
 {
+
+    private int comboCounter;
+    
+    private float lastTimeAttacked;
+    private float comboWindow = 2;
     public PlayerAttackState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
     }
@@ -10,12 +15,21 @@ public class PlayerAttackState : PlayerState
     {
         base.Enter();
 
-        stateTimer = 1f;
+        if (comboCounter > 2 || Time.time >= lastTimeAttacked + comboWindow)
+        {
+            comboCounter = 0;
+        }
+        
+        player.anim.SetInteger("comboCounter", comboCounter);
+        
     }
 
     public override void Exit()
     {
         base.Exit();
+        comboCounter++;
+        
+        lastTimeAttacked = Time.time;
     }
 
     public override void Update()
