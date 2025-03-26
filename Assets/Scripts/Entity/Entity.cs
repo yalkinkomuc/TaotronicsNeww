@@ -11,7 +11,7 @@ public class Entity : MonoBehaviour
     public CharacterStats stats {get;private set;}
     
     [Header("Ground Check")]
-    [SerializeField] protected Transform groundCheck;
+    [SerializeField] public Transform groundCheck;
     [SerializeField] protected float groundCheckDistance;
     [SerializeField] protected LayerMask whatIsGround;
     

@@ -136,4 +136,25 @@ public class PlayerAnimTriggers : MonoBehaviour
          }
       }
    }
+   
+   private void MakeInvisible() => player.entityFX.MakeTransparent(true);
+   private void Makevisible() => player.entityFX.MakeTransparent(false);
+
+   private void VoidDisappearFinished()
+   {
+      if (player.stateMachine.currentState is PlayerVoidState)
+      {
+         // Disappear animasyonu tamamlandığında çağrılır
+         player.anim.SetBool("VoidDisappear", false);
+      }
+   }
+
+   private void VoidReappearFinished()
+   {
+      if (player.stateMachine.currentState is PlayerVoidState)
+      {
+         // Reappear animasyonu tamamlandığında çağrılır
+         player.anim.SetBool("VoidReappear", false);
+      }
+   }
 }

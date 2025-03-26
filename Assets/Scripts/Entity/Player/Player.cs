@@ -116,6 +116,9 @@ public class Player : Entity
     [SerializeField] private float spellSpacing = 1f; // Buz parçaları arası mesafe
     [SerializeField] private float delayBetweenShards = 0.1f;
     [SerializeField] private int shardCount = 3;
+    
+    [Header("Void Skill Settings")]
+    [SerializeField] public GameObject voidSlashPrefab;
 
     [Header("Fire Spell Settings")]
     public GameObject fireSpellPrefab;
@@ -162,7 +165,7 @@ public class Player : Entity
 
         spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
         spell2State = new PlayerSpell2State(this, stateMachine, "Spell2");
-        voidState = new PlayerVoidState(this,stateMachine,"VoidSkill");
+        voidState = new PlayerVoidState(this,stateMachine,"VoidDisappear");
 
 
     }
@@ -223,10 +226,15 @@ public class Player : Entity
         CheckForGroundDashInput();
         CheckForSpellInput();
 
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.X) && IsGroundDetected())
         {
-            stateMachine.ChangeState(stunnedState);
-            StartStunnedKnockbackCoroutine();
+            stateMachine.ChangeState(voidState);
+        }
+
+        // Void Skill için X tuşunu dinle (X tuşunu istediğin gibi değiştirebilirsin)
+        if (Input.GetKeyDown(KeyCode.F) && IsGroundDetected())
+        {
+            TryActivateVoidSkill();
         }
 
         // Interaction kontrolü
@@ -532,6 +540,12 @@ public class Player : Entity
             isChargingFire = false;
             stateMachine.ChangeState(idleState);
         }
+    }
+
+    private void TryActivateVoidSkill()
+    {
+        // Void skill kullanım koşulları (cooldown, mana vs. ekleyebilirsin)
+        stateMachine.ChangeState(voidState);
     }
 }
 
