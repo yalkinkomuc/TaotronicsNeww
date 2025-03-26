@@ -49,6 +49,11 @@ public class PlayerGroundedState : PlayerState
         {
             stateMachine.ChangeState(player.throwBoomerangState);
         }
+        
+        if (Input.GetKeyDown(KeyCode.X) && player.IsGroundDetected())
+        {
+            stateMachine.ChangeState(player.voidState);
+        }
 
         
 

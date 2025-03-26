@@ -124,7 +124,7 @@ public class PlayerVoidState : PlayerState
     {
         // Düşmanın baktığı yönün tam tersine oyuncuyu konumlandır
         Vector2 repositionDirection = new Vector2(-targetEnemy.facingdir, 0).normalized;
-        Vector3 newPosition = targetEnemy.transform.position + new Vector3(repositionDirection.x * 2f, 0, 0);
+        Vector3 newPosition = targetEnemy.transform.position + new Vector3(repositionDirection.x * 5f, 0, 0);
         
         // Player'ın Y pozisyonunu yerden yükselt
         newPosition.y = player.groundCheck.position.y;
@@ -143,6 +143,7 @@ public class PlayerVoidState : PlayerState
         base.Update();
         
         player.EnterGhostMode();
+        player.SetZeroVelocity();
         // Bu state'de sadece coroutine çalıştığı için Update'te ekstra bir şey yapmıyoruz
     }
 }

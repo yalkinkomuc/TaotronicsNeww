@@ -138,7 +138,7 @@ public class PlayerAnimTriggers : MonoBehaviour
    }
    
    private void MakeInvisible() => player.entityFX.MakeTransparent(true);
-   private void Makevisible() => player.entityFX.MakeTransparent(false);
+   private void MakeVisible() => player.entityFX.MakeTransparent(false);
 
    private void VoidDisappearFinished()
    {

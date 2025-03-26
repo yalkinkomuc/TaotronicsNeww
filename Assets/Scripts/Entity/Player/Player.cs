@@ -226,16 +226,9 @@ public class Player : Entity
         CheckForGroundDashInput();
         CheckForSpellInput();
 
-        if (Input.GetKeyDown(KeyCode.X) && IsGroundDetected())
-        {
-            stateMachine.ChangeState(voidState);
-        }
+        
 
-        // Void Skill için X tuşunu dinle (X tuşunu istediğin gibi değiştirebilirsin)
-        if (Input.GetKeyDown(KeyCode.F) && IsGroundDetected())
-        {
-            TryActivateVoidSkill();
-        }
+       
 
         // Interaction kontrolü
         if (playerInput.interactionInput && currentInteractable != null)
@@ -299,7 +292,10 @@ public class Player : Entity
 
     private void CheckForDashInput()
     {
-        
+        if (stateMachine.currentState == voidState)
+        {
+            return;
+        }
         dashTimer -= Time.deltaTime;
         if (playerInput.dashInput&&dashTimer<0&&!IsGroundDetected())
         {
@@ -319,6 +315,12 @@ public class Player : Entity
     
     private void CheckForGroundDashInput()
     {
+
+        if (stateMachine.currentState == voidState)
+        {
+            return;
+        }
+        
         if (playerInput.dashInput && dashTimer < 0 && IsGroundDetected())
         {
 
@@ -541,11 +543,6 @@ public class Player : Entity
             stateMachine.ChangeState(idleState);
         }
     }
-
-    private void TryActivateVoidSkill()
-    {
-        // Void skill kullanım koşulları (cooldown, mana vs. ekleyebilirsin)
-        stateMachine.ChangeState(voidState);
-    }
+    
 }
 
