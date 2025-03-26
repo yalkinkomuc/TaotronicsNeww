@@ -93,6 +93,7 @@ public class Player : Entity
     
     public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
     public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
+    public PlayerVoidState voidState {get;private set;}
     
     #endregion
     
@@ -161,6 +162,7 @@ public class Player : Entity
 
         spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
         spell2State = new PlayerSpell2State(this, stateMachine, "Spell2");
+        voidState = new PlayerVoidState(this,stateMachine,"VoidSkill");
 
 
     }
