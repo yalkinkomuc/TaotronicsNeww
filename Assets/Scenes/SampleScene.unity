@@ -2499,7 +2499,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1377457612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2559,6 +2559,7 @@ MonoBehaviour:
   spellSpacing: 1
   delayBetweenShards: 0.2
   shardCount: 3
+  voidSlashPrefab: {fileID: 124281320698397150, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
   fireSpellPrefab: {fileID: 32532192634965339, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
   fireSpellPoint: {fileID: 1301243577}
 --- !u!4 &1377457613
@@ -4598,6 +4599,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 35eb45ef5405f1046af3fe7f5e18d141, type: 3}
+--- !u!1001 &4995305435630581670
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 124281320698397150, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_Name
+      value: Karaktere_ozel_skill-1_EFFECT-45x32_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 124281320698397150, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.4263396
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.2503898
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922612154840289300, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: efbd292d278bcee48be6749dc3b05e6b, type: 3}
 --- !u!1001 &5006739567299956700
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5675,3 +5737,4 @@ SceneRoots:
   - {fileID: 1495880833}
   - {fileID: 952822302}
   - {fileID: 8783362160583741016}
+  - {fileID: 4995305435630581670}
