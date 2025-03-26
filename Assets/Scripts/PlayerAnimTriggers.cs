@@ -34,10 +34,50 @@ public class PlayerAnimTriggers : MonoBehaviour
       {
          if (hit.GetComponent<Enemy>() != null)
          {
-            hit.GetComponent<Enemy>().Damage();
-            hit.GetComponent<CharacterStats>().TakeDamage(player.stats.damage.GetValue());
+            Enemy enemy = hit.GetComponent<Enemy>();
             
-            Debug.Log(" modifierli final hasarı "+ player.stats.damage.GetValue());
+            //
+            //
+            //enemy.GetComponent<CharacterStats>().TakeDamage(player.stats.damage.GetValue());
+
+            float currentDamage = player.stats.baseDamage.GetValue();
+            
+            // Combo sayısına göre knockback gücünü artır
+            if (player.stateMachine.currentState is PlayerAttackState attackState)
+            {
+                Vector2 knockbackForce;
+                switch (attackState.GetComboCounter())
+                {
+                    case 0:
+                        currentDamage *= 1f;
+                        Debug.Log(currentDamage);
+                        knockbackForce = enemy.knockbackDirection; // Normal knockback
+                        break;
+                    case 1:
+                        currentDamage *= player.stats.secondComboDamageMultiplier.GetValue();
+                        Debug.Log(currentDamage);
+                        knockbackForce = new Vector2(enemy.knockbackDirection.x*enemy.secondComboKnockbackXMultiplier,enemy.knockbackDirection.y); // Daha güçlü
+                        break;
+                    case 2:
+                       currentDamage *= player.stats.thirdComboDamageMultiplier.GetValue();;
+                       Debug.Log(currentDamage);
+                       knockbackForce = new Vector2(enemy.knockbackDirection.x*enemy.thirdComboKnockbackXMultiplier,enemy.knockbackDirection.y); // En güçlü
+                        break;
+                    default:
+                       knockbackForce = enemy.knockbackDirection;
+                        break;
+                }
+                
+                enemy.Damage();
+                hit.GetComponent<CharacterStats>().TakeDamage(currentDamage);
+                
+
+                if (enemy.rb.bodyType == RigidbodyType2D.Static)
+                {
+                   return;
+                }
+                StartCoroutine(enemy.HitKnockback(knockbackForce));
+            }
          }
 
          if (hit.GetComponent<Dummy>() != null)

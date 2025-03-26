@@ -24,7 +24,9 @@ public class Entity : MonoBehaviour
     protected bool facingright = true;
     
     [Header("KnockbackInfo")]
-    [SerializeField] protected Vector2 knockbackDirection;
+    [SerializeField] public Vector2 knockbackDirection;
+    [SerializeField] public float secondComboKnockbackXMultiplier;
+    [SerializeField] public float thirdComboKnockbackXMultiplier;
     [SerializeField] protected float knockbackDuration;
 
     protected bool isKnocked;
@@ -77,7 +79,7 @@ public class Entity : MonoBehaviour
     }
     
     
-    protected virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
+    public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
        
         isKnocked = true;

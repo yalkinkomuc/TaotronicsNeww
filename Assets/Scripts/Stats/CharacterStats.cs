@@ -1,9 +1,12 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CharacterStats : MonoBehaviour
 {
-    public Stat damage;
+    [FormerlySerializedAs("damage")] public Stat baseDamage;
+    public Stat secondComboDamageMultiplier;
+    public Stat thirdComboDamageMultiplier;
     public Stat maxHealth;
     
     public float currentHealth;
@@ -14,7 +17,7 @@ public class CharacterStats : MonoBehaviour
     {
         currentHealth = maxHealth.GetValue();
         
-        damage.AddModifier(2);
+        //damage.AddModifier(2);
     }
 
     public virtual void TakeDamage(float _damage)

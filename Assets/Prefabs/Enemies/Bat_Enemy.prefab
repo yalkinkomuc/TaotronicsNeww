@@ -133,7 +133,7 @@ MonoBehaviour:
   wallCheck: {fileID: 5441756697815002969}
   wallCheckDistance: 1.1
   facingdir: 1
-  knockbackDirection: {x: 0, y: 0}
+  knockbackDirection: {x: 1, y: 1}
   knockbackDuration: 0
   whatIsPlayer:
     serializedVersion: 2
@@ -141,9 +141,9 @@ MonoBehaviour:
   idleTime: 1.5
   moveSpeed: 2.5
   chaseSpeed: 3
-  tooCloseDistance: 0.2
-  detectDistance: 0.2
-  detectionRange: 0.2
+  tooCloseDistance: 1
+  detectDistance: 1
+  detectionRange: 1
   flightSpeed: 3
 --- !u!114 &5764120550791581918
 MonoBehaviour:
