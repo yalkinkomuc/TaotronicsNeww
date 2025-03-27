@@ -36,10 +36,6 @@ public class PlayerAnimTriggers : MonoBehaviour
          {
             Enemy enemy = hit.GetComponent<Enemy>();
             
-            //
-            //
-            //enemy.GetComponent<CharacterStats>().TakeDamage(player.stats.damage.GetValue());
-
             float currentDamage = player.stats.baseDamage.GetValue();
             
             // Combo sayısına göre knockback gücünü artır
@@ -71,12 +67,24 @@ public class PlayerAnimTriggers : MonoBehaviour
                 enemy.Damage();
                 hit.GetComponent<CharacterStats>().TakeDamage(currentDamage);
                 
-
                 if (enemy.rb.bodyType == RigidbodyType2D.Static)
                 {
                    return;
                 }
                 StartCoroutine(enemy.HitKnockback(knockbackForce));
+            }
+            else if (player.stateMachine.currentState == player.crouchAttackState)
+            {
+                // Çömelme saldırısı için hasar ve knockback
+                currentDamage *= 1.2f; // Çömelme saldırısı biraz daha fazla hasar versin
+                enemy.Damage();
+                hit.GetComponent<CharacterStats>().TakeDamage(currentDamage);
+                
+                if (enemy.rb.bodyType == RigidbodyType2D.Static)
+                {
+                   return;
+                }
+                StartCoroutine(enemy.HitKnockback(enemy.knockbackDirection));
             }
          }
 
