@@ -6,7 +6,7 @@ public class PlayerSpell2State : PlayerState
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
     private const float MIN_CHARGE_TIME = 0.2f; // Minimum şarj süresi
-    private const float MAX_CHARGE_TIME = 3.5f;
+    private const float MAX_CHARGE_TIME = 1000f;
     private float currentChargeTime;
     private bool hasSpawnedSpell;
 
@@ -17,6 +17,7 @@ public class PlayerSpell2State : PlayerState
     public override void Enter()
     {
         base.Enter();
+        
         currentChargeTime = 0f;
         hasSpawnedSpell = false;
         
@@ -27,6 +28,13 @@ public class PlayerSpell2State : PlayerState
     {
         base.Update();
         player.SetZeroVelocity();
+
+        // Mana kontrolü
+        if (!player.HasEnoughMana(player.spell2ManaDrainPerSecond * Time.deltaTime))
+        {
+            stateMachine.ChangeState(player.idleState);
+            return;
+        }
 
         currentChargeTime += Time.deltaTime;
 

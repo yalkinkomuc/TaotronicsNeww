@@ -34,13 +34,14 @@ public class CharacterStats : MonoBehaviour
             Die();
     }
 
-    public virtual void UseMana(float _mana)
+    public virtual bool UseMana(float _mana)
     {
         if (currentMana >= _mana)
         {
             currentMana -= _mana;
-            return;
+            return true;
         }
+        return false;
     }
     
     public void MakeInvincible (bool _isInvincible) => isInvincible = _isInvincible;

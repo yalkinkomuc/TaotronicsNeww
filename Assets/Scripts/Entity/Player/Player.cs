@@ -113,13 +113,13 @@ public class Player : Entity
 
     [Header("Spell Settings")]
     [SerializeField] private GameObject iceShardPrefab;
-    [SerializeField] private float spellSpacing = 1f; // Buz parçaları arası mesafe
+    [SerializeField] private float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
     [SerializeField] private int shardCount = 3;
     
     [Header("Mana Costs")]
     [SerializeField] private float spell1ManaCost = 20f;
-    [SerializeField] private float spell2ManaCost = 30f;
+    [SerializeField] public float spell2ManaDrainPerSecond = 5f; // Saniyede tüketilecek mana
     [SerializeField] public float voidSkillManaCost = 40f;
 
     [Header("Void Skill Settings")]
@@ -149,9 +149,9 @@ public class Player : Entity
         return stats.currentMana >= manaCost;
     }
 
-    public void UseMana(float manaCost)
+    public bool UseMana(float manaCost)
     {
-        stats.UseMana(manaCost);
+        return stats.UseMana(manaCost);
     }
 
     protected override void Awake()
@@ -237,6 +237,26 @@ public class Player : Entity
             boomerangCooldownTimer -= Time.deltaTime;
         }
 
+        // Spell2 için sürekli mana tüketimi
+        if (isChargingFire)
+        {
+            float manaDrainThisFrame = spell2ManaDrainPerSecond * Time.deltaTime;
+            if (HasEnoughMana(manaDrainThisFrame))
+            {
+                UseMana(manaDrainThisFrame);
+            }
+            else
+            {
+                StopFireSpell();
+            }
+        }
+
+        // C tuşuna basıldığında manayı doldur
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            RefillMana();
+        }
+
         CheckForDashInput();
         CheckForGroundDashInput();
         CheckForSpellInput();
@@ -256,20 +276,6 @@ public class Player : Entity
             }
             
             currentInteractable.Interact();
-        }
-
-        // Spell state kontrolü - boomerang'daki gibi
-        if (playerInput.spell1Input && spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy && IsGroundDetected())
-        {
-            stateMachine.ChangeState(spell1State);
-        }
-        else if (playerInput.spell2Input && spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy && IsGroundDetected())
-        {
-            StartFireSpell();
-        }
-        else if (!playerInput.spell2Input && isChargingFire)
-        {
-            StopFireSpell();
         }
     }
 
@@ -503,9 +509,8 @@ public class Player : Entity
             stateMachine.ChangeState(spell1State);
         }
         // Spell2 kontrolü
-        else if (playerInput.spell2Input && HasEnoughMana(spell2ManaCost))
+        else if (playerInput.spell2Input && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
         {
-            UseMana(spell2ManaCost);
             StartFireSpell();
         }
         else if (!playerInput.spell2Input && isChargingFire)
@@ -549,7 +554,7 @@ public class Player : Entity
 
     private void StartFireSpell()
     {
-        if (!isChargingFire)
+        if (!isChargingFire && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
         {
             isChargingFire = true;
             stateMachine.ChangeState(spell2State);
@@ -563,6 +568,11 @@ public class Player : Entity
             isChargingFire = false;
             stateMachine.ChangeState(idleState);
         }
+    }
+
+    private void RefillMana()
+    {
+        stats.currentMana = stats.maxMana.GetValue();
     }
     
 }
