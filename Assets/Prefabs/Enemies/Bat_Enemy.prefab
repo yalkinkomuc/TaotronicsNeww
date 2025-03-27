@@ -134,6 +134,8 @@ MonoBehaviour:
   wallCheckDistance: 1.1
   facingdir: 1
   knockbackDirection: {x: 1, y: 1}
+  secondComboKnockbackXMultiplier: 0
+  thirdComboKnockbackXMultiplier: 0
   knockbackDuration: 0
   whatIsPlayer:
     serializedVersion: 2
@@ -176,7 +178,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696e681ce93ee644784651941034bea4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage:
+  baseDamage:
+    baseValue: 10
+    modifiers: 
+  secondComboDamageMultiplier:
+    baseValue: 0
+    modifiers: 
+  thirdComboDamageMultiplier:
     baseValue: 0
     modifiers: 
   maxHealth:

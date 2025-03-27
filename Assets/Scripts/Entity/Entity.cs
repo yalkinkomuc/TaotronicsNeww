@@ -63,7 +63,7 @@ public class Entity : MonoBehaviour
         StartCoroutine("HitKnockback",knockbackDirection);
        
         Debug.Log(gameObject.name + " was damaged ");
-        stats.TakeDamage(1);
+        stats.TakeDamage(stats.baseDamage.GetValue());
     }
 
     public virtual void DamageWithoutKnockback()
