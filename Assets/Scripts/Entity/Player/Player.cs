@@ -8,6 +8,8 @@ public class Player : Entity
    
     
     public IPlayerInput playerInput {get;private set;}
+    
+    public HealthBar healthBar;
 
 
     [Header("AttackDetails")] 
@@ -132,6 +134,9 @@ public class Player : Entity
     [Header("Fire Spell Settings")]
     private bool isChargingFire = false;
 
+    [Header("Checkpoint")]
+    private Vector2 lastCheckpointPosition;
+
     public bool CanThrowBoomerang()
     {
         // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
@@ -188,7 +193,11 @@ public class Player : Entity
     protected override void Start()
     {
         base.Start();
+        healthBar = GetComponent<HealthBar>();
         ResetPlayerFacing();
+        
+        // Checkpoint pozisyonunu yükle
+        LoadCheckpoint();
         
         stateMachine.Initialize(idleState);
         capsuleCollider = GetComponent<CapsuleCollider2D>();
@@ -209,6 +218,35 @@ public class Player : Entity
         if (swordWeapon == null)
         {
             swordWeapon = GetComponentInChildren<SwordWeaponStateMachine>();
+        }
+    }
+
+    private void LoadCheckpoint()
+    {
+        if (PlayerPrefs.HasKey("CheckpointX") && PlayerPrefs.HasKey("CheckpointY"))
+        {
+            float x = PlayerPrefs.GetFloat("CheckpointX");
+            float y = PlayerPrefs.GetFloat("CheckpointY");
+            lastCheckpointPosition = new Vector2(x, y);
+            transform.position = lastCheckpointPosition;
+        }
+    }
+
+    public void RespawnAtCheckpoint()
+    {
+        if (PlayerPrefs.HasKey("CheckpointX") && PlayerPrefs.HasKey("CheckpointY"))
+        {
+            transform.position = lastCheckpointPosition;
+            stats.currentHealth = stats.maxHealth.GetValue();
+            stats.currentMana = stats.maxMana.GetValue();
+            
+            if (healthBar != null)
+                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+                
+            // Item durumlarını yükle
+            Checkpoint.LoadItemStates(this);
+                
+            stateMachine.ChangeState(idleState);
         }
     }
 
@@ -421,8 +459,16 @@ public class Player : Entity
     public override void Die()
     {
         base.Die();
-        stateMachine.ChangeState(deadState);  
-       
+        stateMachine.ChangeState(deadState);
+        
+        // 3 saniye sonra checkpoint'ten yeniden doğ
+        StartCoroutine(RespawnCoroutine());
+    }
+
+    private IEnumerator RespawnCoroutine()
+    {
+        yield return new WaitForSeconds(3f);
+        RespawnAtCheckpoint();
     }
 
     public override void Damage()
