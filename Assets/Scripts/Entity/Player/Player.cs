@@ -238,16 +238,20 @@ public class Player : Entity
         }
 
         // Spell2 için sürekli mana tüketimi
-        if (isChargingFire)
+        if (isChargingFire && stateMachine.currentState is PlayerSpell2State spell2State)
         {
-            float manaDrainThisFrame = spell2ManaDrainPerSecond * Time.deltaTime;
-            if (HasEnoughMana(manaDrainThisFrame))
+            // Sadece minimum şarj süresinden sonra mana tüket
+            if (spell2State.GetCurrentChargeTime() >= PlayerSpell2State.MIN_CHARGE_TIME)
             {
-                UseMana(manaDrainThisFrame);
-            }
-            else
-            {
-                StopFireSpell();
+                float manaDrainThisFrame = spell2ManaDrainPerSecond * Time.deltaTime;
+                if (HasEnoughMana(manaDrainThisFrame))
+                {
+                    UseMana(manaDrainThisFrame);
+                }
+                else
+                {
+                    StopFireSpell();
+                }
             }
         }
 

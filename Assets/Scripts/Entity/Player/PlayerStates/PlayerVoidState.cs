@@ -19,22 +19,22 @@ public class PlayerVoidState : PlayerState
     {
         base.Enter();
         
-        // Mana kontrolü
-        if (!player.HasEnoughMana(player.voidSkillManaCost))
-        {
-            stateMachine.ChangeState(player.idleState);
-            return;
-        }
-        
-        // Mana kullan
-        player.UseMana(player.voidSkillManaCost);
-        
-        // En yakın düşmanı bul
+        // Önce en yakın düşmanı bul
         targetEnemy = FindClosestEnemy();
         
         if (targetEnemy != null)
         {
-            // Düşman bulundu, void skill başlat
+            // Düşman bulundu, mana kontrolü yap
+            if (!player.HasEnoughMana(player.voidSkillManaCost))
+            {
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+            
+            // Mana kullan
+            player.UseMana(player.voidSkillManaCost);
+            
+            // Void skill başlat
             player.StartCoroutine(VoidSkillSequence());
         }
         else

@@ -5,7 +5,7 @@ public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
-    private const float MIN_CHARGE_TIME = 0.2f; // Minimum şarj süresi
+    public const float MIN_CHARGE_TIME = 0.2f; // Minimum şarj süresi
     private const float MAX_CHARGE_TIME = 1000f;
     private float currentChargeTime;
     private bool hasSpawnedSpell;
@@ -29,13 +29,6 @@ public class PlayerSpell2State : PlayerState
         base.Update();
         player.SetZeroVelocity();
 
-        // Mana kontrolü
-        if (!player.HasEnoughMana(player.spell2ManaDrainPerSecond * Time.deltaTime))
-        {
-            stateMachine.ChangeState(player.idleState);
-            return;
-        }
-
         currentChargeTime += Time.deltaTime;
 
         // Minimum şarj süresine ulaştıysak ve henüz spawn etmediysek
@@ -43,6 +36,17 @@ public class PlayerSpell2State : PlayerState
         {
             hasSpawnedSpell = true;
             player.StartCoroutine(DelayedSpawnFireSpell());
+        }
+        
+        // Minimum şarj süresinden sonra mana tüketmeye başla
+        if (currentChargeTime >= MIN_CHARGE_TIME)
+        {
+            // Mana kontrolü
+            if (!player.HasEnoughMana(player.spell2ManaDrainPerSecond * Time.deltaTime))
+            {
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
         }
         
         // T tuşu bırakıldığında veya max süre dolduğunda
@@ -90,5 +94,10 @@ public class PlayerSpell2State : PlayerState
             
             currentFireSpell = spellObj.GetComponent<FireSpell>();
         }
+    }
+
+    public float GetCurrentChargeTime()
+    {
+        return currentChargeTime;
     }
 }
