@@ -117,6 +117,11 @@ public class Player : Entity
     [SerializeField] private float delayBetweenShards = 0.1f;
     [SerializeField] private int shardCount = 3;
     
+    [Header("Mana Costs")]
+    [SerializeField] private float spell1ManaCost = 20f;
+    [SerializeField] private float spell2ManaCost = 30f;
+    [SerializeField] public float voidSkillManaCost = 40f;
+
     [Header("Void Skill Settings")]
     [SerializeField] public GameObject voidSlashPrefab;
 
@@ -137,6 +142,16 @@ public class Player : Entity
     public bool CanCastSpells()
     {
         return spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy;
+    }
+
+    public bool HasEnoughMana(float manaCost)
+    {
+        return stats.currentMana >= manaCost;
+    }
+
+    public void UseMana(float manaCost)
+    {
+        stats.UseMana(manaCost);
     }
 
     protected override void Awake()
@@ -482,15 +497,21 @@ public class Player : Entity
             return;
 
         // Spell1 kontrolü
-        // if (playerInput.spell1Input )
-        // {
-        //     stateMachine.ChangeState(spell1State);
-        // }
-        // // Spell2 kontrolü
-        // else if (playerInput.spell2Input )
-        // {
-        //     stateMachine.ChangeState(spell2State);
-        // }
+        if (playerInput.spell1Input && HasEnoughMana(spell1ManaCost))
+        {
+            UseMana(spell1ManaCost);
+            stateMachine.ChangeState(spell1State);
+        }
+        // Spell2 kontrolü
+        else if (playerInput.spell2Input && HasEnoughMana(spell2ManaCost))
+        {
+            UseMana(spell2ManaCost);
+            StartFireSpell();
+        }
+        else if (!playerInput.spell2Input && isChargingFire)
+        {
+            StopFireSpell();
+        }
     }
 
     private void UpdateWeaponReferences()

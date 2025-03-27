@@ -19,11 +19,18 @@ public class PlayerVoidState : PlayerState
     {
         base.Enter();
         
+        // Mana kontrolü
+        if (!player.HasEnoughMana(player.voidSkillManaCost))
+        {
+            stateMachine.ChangeState(player.idleState);
+            return;
+        }
+        
+        // Mana kullan
+        player.UseMana(player.voidSkillManaCost);
+        
         // En yakın düşmanı bul
         targetEnemy = FindClosestEnemy();
-        
-        
-
         
         if (targetEnemy != null)
         {

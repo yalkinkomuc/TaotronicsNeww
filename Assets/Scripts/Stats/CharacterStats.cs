@@ -8,14 +8,17 @@ public class CharacterStats : MonoBehaviour
     public Stat secondComboDamageMultiplier;
     public Stat thirdComboDamageMultiplier;
     public Stat maxHealth;
+    public Stat maxMana;
     
     public float currentHealth;
+    public float currentMana;
     
     public bool isInvincible { get; private set; }
 
     protected virtual void Start()
     {
         currentHealth = maxHealth.GetValue();
+        currentMana = maxMana.GetValue();
         
         //damage.AddModifier(2);
     }
@@ -29,6 +32,15 @@ public class CharacterStats : MonoBehaviour
 
         if (currentHealth <= 0)
             Die();
+    }
+
+    public virtual void UseMana(float _mana)
+    {
+        if (currentMana >= _mana)
+        {
+            currentMana -= _mana;
+            return;
+        }
     }
     
     public void MakeInvincible (bool _isInvincible) => isInvincible = _isInvincible;
