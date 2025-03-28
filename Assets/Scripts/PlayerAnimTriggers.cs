@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 using System.Collections;
 
 public class PlayerAnimTriggers : MonoBehaviour
 {
+   private int ogrenciNotu;
    private Player player => GetComponentInParent<Player>();
    
    private void Awake()
@@ -165,4 +167,7 @@ public class PlayerAnimTriggers : MonoBehaviour
          player.anim.SetBool("VoidReappear", false);
       }
    }
+
+  
+   
 }

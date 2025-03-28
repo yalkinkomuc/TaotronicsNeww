@@ -10,6 +10,8 @@ public class Boar_Enemy : Enemy
     public Boar_IdleState idleState { get; private set; }
     public Boar_MoveState moveState { get; private set; }
     public Boar_ChaseState chaseState { get; private set; }
+    public Boar_ChargeState chargeState { get; private set; }
+    public Boar_AttackState attackState { get; private set; }
     
     // Flag to prevent flipping during knockback and for a short time after
     private bool preventFlip = false;
@@ -20,6 +22,14 @@ public class Boar_Enemy : Enemy
     private int lastHitDirection = 0;
 
     #endregion
+    
+    
+    [Header("AttackInfo")] 
+    public float attackDistance = 2f;
+    public float attackCooldown = 2f;
+    public float battleTime = 10f;
+    [HideInInspector] public float lastTimeAttacked;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -29,6 +39,8 @@ public class Boar_Enemy : Enemy
         idleState = new Boar_IdleState(this, stateMachine, "Idle", this);
         moveState = new Boar_MoveState(this, stateMachine, "Move", this);
         chaseState = new Boar_ChaseState(this, stateMachine, "Chase", this);
+        chargeState = new Boar_ChargeState(this, stateMachine, "Charge", this);
+        attackState = new Boar_AttackState(this, stateMachine,"Attack",this);
     }
 
     protected override void Start()
@@ -36,7 +48,6 @@ public class Boar_Enemy : Enemy
         base.Start();
         
         stateMachine.Initialize(idleState);
-        
     }
 
     protected override void Update()
@@ -57,8 +68,12 @@ public class Boar_Enemy : Enemy
     public override void Die()
     {
         base.Die();
-        
-        
+    }
+    
+    // Animasyon olaylarını tetiklemek için kullanılacak
+    public void AnimationFinishTrigger()
+    {
+        stateMachine.currentState.AnimationFinishTrigger();
     }
 
     public override void Damage()
@@ -138,5 +153,13 @@ public class Boar_Enemy : Enemy
         {
             player.Damage();
         }
+    }
+    
+    protected override void OnDrawGizmos()
+    {
+        base.OnDrawGizmos();
+        
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position,new Vector3(transform.position.x + attackDistance*facingdir,transform.position.y));
     }
 }

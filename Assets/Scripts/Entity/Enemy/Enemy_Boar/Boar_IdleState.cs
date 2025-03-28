@@ -37,5 +37,10 @@ public class Boar_IdleState : EnemyState
         {
             stateMachine.ChangeState(enemy.moveState);
         }
+        
+        if (enemy.IsPlayerDetected())
+        {
+            stateMachine.ChangeState(enemy.chargeState);
+        }
     }
 }

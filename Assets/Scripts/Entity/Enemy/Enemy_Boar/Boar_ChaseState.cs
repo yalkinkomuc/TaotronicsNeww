@@ -22,6 +22,8 @@ public class Boar_ChaseState : EnemyState
         player = PlayerManager.instance.player.transform;
         
         enemy.moveSpeed = enemy.chaseSpeed;
+        
+        stateTimer = enemy.battleTime;
     }
 
     public override void Exit()
@@ -34,6 +36,12 @@ public class Boar_ChaseState : EnemyState
     {
         base.Update();
         
+        if (stateTimer < 0)
+        {
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
+        
         if(player.position.x > enemy.transform.position.x)
             moveDir = 1;
         else if (player.position.x <enemy.transform.position.x)
@@ -43,9 +51,25 @@ public class Boar_ChaseState : EnemyState
 
         if (!enemy.IsGroundDetected() || enemy.IsWallDetected())
         {
-            enemy.SetZeroVelocity(); // simdilik calisiyor ama sonradan değiştirelbilir.
-            enemy.Flip();
+            enemy.SetZeroVelocity();
             stateMachine.ChangeState(enemy.idleState);
+            return;
         }
+        
+        if (enemy.IsPlayerDetected())
+        {
+            if (enemy.IsPlayerDetected().distance < enemy.attackDistance && CanAttack())
+            {
+                enemy.SetZeroVelocity();
+                enemy.lastTimeAttacked = Time.time;
+                stateMachine.ChangeState(enemy.attackState);
+            }
+        }
+       
+    }
+    
+    private bool CanAttack()
+    {
+        return Time.time >= enemy.lastTimeAttacked + enemy.attackCooldown;
     }
 }
