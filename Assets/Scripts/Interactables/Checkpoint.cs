@@ -65,7 +65,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     private void HealPlayer()
     {
-        Player player = FindObjectOfType<Player>();
+        Player player = FindFirstObjectByType<Player>();
         if (player != null)
         {
             player.stats.currentHealth = player.stats.maxHealth.GetValue();
@@ -92,7 +92,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
     private void SaveItemStates()
     {
         // Bumerang durumunu kaydet
-        Player player = FindObjectOfType<Player>();
+        Player player = FindFirstObjectByType<Player>();
         if (player != null)
         {
             // Bumerang durumu

@@ -191,9 +191,15 @@ public class Inventory : MonoBehaviour
             {
                 foreach (var savedItem in saveData.items)
                 {
-                    // ItemData'yı isimle bulmalıyız
-                    ItemData itemData = Resources.FindObjectsOfTypeAll<ItemData>()
-                        .FirstOrDefault(item => item.itemName == savedItem.itemName);
+                    // Item'ı Resources klasöründen yüklemeyi dene
+                    ItemData itemData = LoadItemFromResources(savedItem.itemName);
+                    
+                    // Eğer Resources'dan yüklenemezse, sahne içindeki tüm ItemData'ları tara
+                    if (itemData == null)
+                    {
+                        // Not: Bu yöntem hala kullanılabilir ama tercihen Resources kullanılmalı
+                        itemData = FindItemDataInScene(savedItem.itemName);
+                    }
                     
                     if (itemData != null)
                     {
@@ -213,6 +219,38 @@ public class Inventory : MonoBehaviour
             // UI'ı güncelle
             UpdateSlotUI();
         }
+    }
+
+    // Resources klasöründen ItemData'yı yükle
+    private ItemData LoadItemFromResources(string itemName)
+    {
+        // Resources/Items klasörünü tarar
+        ItemData[] allItems = Resources.LoadAll<ItemData>("Items");
+        foreach (var item in allItems)
+        {
+            if (item.itemName == itemName)
+            {
+                return item;
+            }
+        }
+        
+        return null;
+    }
+
+    // Sahnedeki ItemData'ları bul (yedek yöntem)
+    private ItemData FindItemDataInScene(string itemName)
+    {
+        // Sadece yedek olarak kullanılmalı, bunun yerine Resources kullanmak tercih edilmeli
+        ItemData[] sceneItems = FindObjectsByType<ItemData>(FindObjectsSortMode.None);
+        foreach (var item in sceneItems)
+        {
+            if (item.itemName == itemName)
+            {
+                return item;
+            }
+        }
+        
+        return null;
     }
     
     // Player'ın ölümünden sonra açıkça çağrılabilecek yükleme metodu
