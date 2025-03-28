@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class Inventory : MonoBehaviour
 {
@@ -15,6 +16,19 @@ public class Inventory : MonoBehaviour
     [SerializeField] private Transform inventorySlotParent;
     private UI_ItemSlot[] itemSlot;
 
+    // Serileştirme için
+    [Serializable]
+    private class SavedItem
+    {
+        public string itemName;
+        public int stackSize;
+    }
+
+    [Serializable]
+    private class InventorySaveData
+    {
+        public List<SavedItem> items = new List<SavedItem>();
+    }
 
     private void Awake()
     {
@@ -24,6 +38,9 @@ public class Inventory : MonoBehaviour
             
             inventoryItems = new List<InventoryItem>();
             inventoryDictionary = new Dictionary<ItemData, InventoryItem>();
+            
+            // Envanter verilerini yükle
+            LoadInventory();
         }
         else
         {
@@ -39,6 +56,8 @@ public class Inventory : MonoBehaviour
 
     private void OnDisable()
     {
+        // Oyun kapatılırken envanteri kaydet
+        SaveInventory();
         UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnActiveSceneChanged;
     }
 
@@ -105,6 +124,7 @@ public class Inventory : MonoBehaviour
         }
         
         UpdateSlotUI();
+        SaveInventory(); // Envanteri güncellediğimizde kaydet
     }
 
     public void RemoveItem(ItemData _item)
@@ -123,6 +143,7 @@ public class Inventory : MonoBehaviour
         }
         
         UpdateSlotUI();
+        SaveInventory(); // Envanteri güncellediğimizde kaydet
     }
 
     private void Update()
@@ -132,5 +153,72 @@ public class Inventory : MonoBehaviour
             ItemData newItem = inventoryItems[inventoryItems.Count - 1].data;
             RemoveItem(newItem);
         }
+    }
+    
+    // Envanteri kaydetme fonksiyonu
+    public void SaveInventory()
+    {
+        InventorySaveData saveData = new InventorySaveData();
+        
+        foreach (var item in inventoryItems)
+        {
+            saveData.items.Add(new SavedItem
+            {
+                itemName = item.data.itemName,
+                stackSize = item.stackSize
+            });
+        }
+        
+        string jsonData = JsonUtility.ToJson(saveData);
+        PlayerPrefs.SetString("PlayerInventory", jsonData);
+        PlayerPrefs.Save();
+    }
+    
+    // Envanteri yükleme fonksiyonu
+    public void LoadInventory()
+    {
+        if (PlayerPrefs.HasKey("PlayerInventory"))
+        {
+            string jsonData = PlayerPrefs.GetString("PlayerInventory");
+            InventorySaveData saveData = JsonUtility.FromJson<InventorySaveData>(jsonData);
+            
+            // Mevcut envanteri temizle
+            inventoryItems.Clear();
+            inventoryDictionary.Clear();
+            
+            // Kaydedilen öğeleri yükle
+            if (saveData != null && saveData.items != null)
+            {
+                foreach (var savedItem in saveData.items)
+                {
+                    // ItemData'yı isimle bulmalıyız
+                    ItemData itemData = Resources.FindObjectsOfTypeAll<ItemData>()
+                        .FirstOrDefault(item => item.itemName == savedItem.itemName);
+                    
+                    if (itemData != null)
+                    {
+                        InventoryItem newItem = new InventoryItem(itemData);
+                        // Stack sayısını ayarla (zaten 1 eklenmiş olacak, o yüzden -1 yapıp istediğimiz kadar ekliyoruz)
+                        for (int i = 0; i < savedItem.stackSize - 1; i++)
+                        {
+                            newItem.AddStack();
+                        }
+                        
+                        inventoryItems.Add(newItem);
+                        inventoryDictionary.Add(itemData, newItem);
+                    }
+                }
+            }
+            
+            // UI'ı güncelle
+            UpdateSlotUI();
+        }
+    }
+    
+    // Player'ın ölümünden sonra açıkça çağrılabilecek yükleme metodu
+    public void ReloadInventoryAfterDeath()
+    {
+        LoadInventory();
+        UpdateSlotUI();
     }
 }

@@ -236,17 +236,38 @@ public class Player : Entity
     {
         if (PlayerPrefs.HasKey("CheckpointX") && PlayerPrefs.HasKey("CheckpointY"))
         {
-            transform.position = lastCheckpointPosition;
-            stats.currentHealth = stats.maxHealth.GetValue();
-            stats.currentMana = stats.maxMana.GetValue();
-            
-            if (healthBar != null)
-                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+            // Ölüm durumundan çık ve idle durumuna geç
+            if (stateMachine.currentState == deadState)
+            {
+                // Gerekli değişkenleri sıfırla
+                rb.linearVelocity = Vector2.zero;
                 
-            // Item durumlarını yükle
-            Checkpoint.LoadItemStates(this);
+                // Pozisyonu ayarla
+                transform.position = lastCheckpointPosition;
                 
-            stateMachine.ChangeState(idleState);
+                // Can ve mana değerlerini yenile
+                stats.currentHealth = stats.maxHealth.GetValue();
+                stats.currentMana = stats.maxMana.GetValue();
+                
+                // UI'ı güncelle
+                if (healthBar != null)
+                    healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+                
+                // Item durumlarını yükle
+                Checkpoint.LoadItemStates(this);
+                
+                // Envanteri yeniden yükle
+                if (Inventory.instance != null)
+                {
+                    Inventory.instance.ReloadInventoryAfterDeath();
+                }
+                
+                // Idle durumuna geç
+                stateMachine.ChangeState(idleState);
+                
+                // Oyuncunun yönünü sıfırla
+                ResetPlayerFacing();
+            }
         }
     }
 
@@ -461,14 +482,7 @@ public class Player : Entity
         base.Die();
         stateMachine.ChangeState(deadState);
         
-        // 3 saniye sonra checkpoint'ten yeniden doğ
-        StartCoroutine(RespawnCoroutine());
-    }
-
-    private IEnumerator RespawnCoroutine()
-    {
-        yield return new WaitForSeconds(3f);
-        RespawnAtCheckpoint();
+        // Artık coroutine kullanılmayacak, respawn işlemi animasyon bitiminde PlayerDeadState içinde yapılacak
     }
 
     public override void Damage()
