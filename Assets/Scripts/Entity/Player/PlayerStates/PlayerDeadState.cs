@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerDeadState : PlayerState
 {
+    private bool hasTriggeredRespawn = false;
+
     public PlayerDeadState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
     }
@@ -14,27 +16,34 @@ public class PlayerDeadState : PlayerState
         capsuleCollider.enabled = false;
         rb.bodyType = RigidbodyType2D.Static;
         
+        rb.velocity = Vector2.zero;
+        
+        player.playerInput.DisableAllInput();
+        
+        hasTriggeredRespawn = false;
+        
+        player.entityFX.PlayDeathEffect();
     }
 
     public override void Update()
     {
         base.Update();
         
-        //player.entityFX.StartFadeOutAndDestroy();
-        
-
-        if (triggerCalled)
+        if (triggerCalled && !hasTriggeredRespawn)
         {
-            SceneManager.instance.LoadActiveScene();
+            hasTriggeredRespawn = true;
+            player.RespawnAtCheckpoint();
         }
-        
     }
 
     public override void Exit()
     {
         base.Exit();
         
+        capsuleCollider.enabled = true;
+        rb.bodyType = RigidbodyType2D.Dynamic;
         
+        player.playerInput.EnableAllInput();
     }
     
     

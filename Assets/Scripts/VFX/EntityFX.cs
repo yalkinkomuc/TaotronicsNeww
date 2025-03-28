@@ -20,6 +20,9 @@ public class EntityFX : MonoBehaviour
    [Header("BurnFX")] 
    [SerializeField] public Material burnMat; // Unity'de turuncu flash materyali atanacak
 
+   [Header("Death VFX")]
+   [SerializeField] private string[] deathVFXIds;
+
    private void Start()
    {
       sr = GetComponentInChildren<SpriteRenderer>();
@@ -40,6 +43,20 @@ public class EntityFX : MonoBehaviour
       
       yield return new WaitForSeconds(.2f);
       sr.material = originalMat;
+   }
+   
+   // Yeni ölüm efekti metodu
+   public void PlayDeathEffect()
+   {
+      // Ölüm VFX oynat (eğer varsa)
+      if (deathVFXIds != null && deathVFXIds.Length > 0 && vfxSpawnPoint != null)
+      {
+         string randomDeathVFXId = deathVFXIds[UnityEngine.Random.Range(0, deathVFXIds.Length)];
+         VFXManager.Instance.PlayVFX(randomDeathVFXId, vfxSpawnPoint.position, transform);
+      }
+      
+      // Ölüm fade efektini hemen başlatma - animasyon bitince AnimationFinishTrigger tarafından tetiklenecek
+      // Bu şekilde animasyon tamamlanmadan karakter kaybolmaz
    }
    
    public void StartFadeOutAndDestroy()
