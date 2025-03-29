@@ -4,6 +4,7 @@ public class Boar_AttackState : EnemyState
 {
     private Boar_Enemy enemy;
     private float attackTime = 0.5f; // Saldırı animasyonu süresi
+    private float attackForwardSpeed = 2f; // Saldırı sırasında ileri kayma hızı
     
     public Boar_AttackState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName,Boar_Enemy _enemy) : base(_enemyBase, _stateMachine, _animBoolName)
     {
@@ -17,7 +18,7 @@ public class Boar_AttackState : EnemyState
         // Timer'ı ayarla
         stateTimer = attackTime;
         
-        // Saldırı sırasında durmalı
+        // Saldırı başlangıcında hızı sıfırlama, böylece ani geçiş olmaz
         enemy.SetZeroVelocity();
     }
 
@@ -30,8 +31,9 @@ public class Boar_AttackState : EnemyState
     {
         base.Update();
         
-        // Saldırı animasyonu sırasında yerinde sabitle
-        enemy.SetZeroVelocity();
+        // Saldırı sırasında hafif bir kayma hareketi ver
+        // Boğanın baktığı yönde düşük bir hızla ilerlesin
+        enemy.SetVelocity(attackForwardSpeed * enemy.facingdir, rb.linearVelocity.y);
         
         // Animasyon event'i tetiklendiyse veya süre dolduysa
         if (triggerCalled || stateTimer < 0)
