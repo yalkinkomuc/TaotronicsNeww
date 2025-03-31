@@ -27,17 +27,38 @@ public class SceneBoundary : MonoBehaviour
     [SerializeField] private Color boundaryColor = Color.yellow;
     [SerializeField] private Color exitColor = Color.green;
     
-    private void Start()
+    private void Awake()
     {
-        // Tag'i kontrol et
+        // Tag'i kontrol et ve düzelt
         if (gameObject.tag != "SceneBoundary")
         {
             gameObject.tag = "SceneBoundary";
             Debug.LogWarning("SceneBoundary tag automatically set for " + gameObject.name);
         }
-        
+    }
+    
+    private void Start()
+    {
         // Çıkış collider'larını oluştur
         CreateExitColliders();
+        
+        // Sahne yüklendikten sonra kendini CameraManager'a bildir
+        // Bir frame gecikme ile bildir (güvenli olması için)
+        Invoke("NotifyCameraManager", 0.1f);
+    }
+    
+    private void NotifyCameraManager()
+    {
+        if (CameraManager.instance != null)
+        {
+            // Yeni eklenen metod ile sınırları doğrudan bildir
+            CameraManager.instance.RegisterSceneBoundary(this);
+            Debug.Log($"SceneBoundary registered with camera: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
+        }
+        else
+        {
+            Debug.LogWarning("CameraManager instance not found!");
+        }
     }
     
     private void CreateExitColliders()

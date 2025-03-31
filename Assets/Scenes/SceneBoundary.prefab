@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7005369960958320381}
   - component: {fileID: 3276453664837333337}
-  - component: {fileID: 5100258762732233523}
+  - component: {fileID: 1631495604372568928}
   m_Layer: 0
   m_Name: SceneBoundary
   m_TagString: SceneBoundary
@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa438bfbe8280484fbeeba643bdd04c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftBoundary: -20
-  rightBoundary: 20
-  topBoundary: 5.32
-  bottomBoundary: -7.05
+  leftBoundary: -19
+  rightBoundary: 19
+  topBoundary: 5
+  bottomBoundary: -8.13
   hasLeftExit: 1
   hasRightExit: 1
   hasTopExit: 0
@@ -61,7 +61,7 @@ MonoBehaviour:
   exitHeight: 11.12
   boundaryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   exitColor: {r: 0, g: 1, b: 0, a: 1}
---- !u!60 &5100258762732233523
+--- !u!60 &1631495604372568928
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -107,10 +107,8 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.16438878, y: 5.438494}
-      - {x: -20.02014, y: 5.350269}
-      - {x: -19.985647, y: -7.00099}
-      - {x: 19.93085, y: -7.000989}
-      - {x: 20.06925, y: -5.1726584}
-      - {x: 20.074936, y: 5.2406764}
+    - - {x: 18.99759, y: 5.0357566}
+      - {x: -19.110516, y: 5.03111}
+      - {x: -18.992834, y: -8.010524}
+      - {x: 19.049519, y: -8.0923195}
   m_UseDelaunayMesh: 0
