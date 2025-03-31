@@ -45,6 +45,29 @@ public class PlayerWeaponManager : MonoBehaviour
             weapons[i].gameObject.SetActive(i == index);
         }
         
+        // Player üzerindeki lastActiveWeaponState'i güncelle
+        Player player = GetComponent<Player>();
+        if (player != null)
+        {
+            // Eğer aktif edilen silah boomerang ise
+            if (weapons[index] is BoomerangWeaponStateMachine)
+            {
+                player.UpdateLastActiveWeapon(WeaponState.ThrowBoomerang);
+            }
+            // Eğer aktif edilen silah spellbook ise
+            else if (weapons[index] is SpellbookWeaponStateMachine)
+            {
+                player.UpdateLastActiveWeapon(WeaponState.Spell1);
+            }
+        }
+        
         Debug.Log($"Equipped secondary weapon: {weapons[index].name}");
+    }
+    
+    // Method to restore weapon visibility - called after HideWeapons/ShowWeapons
+    public void RefreshWeaponVisibility()
+    {
+        // Refresh the secondary weapons visibility
+        EquipSecondaryWeapon(currentSecondaryWeaponIndex);
     }
 }

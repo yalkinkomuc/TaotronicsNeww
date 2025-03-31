@@ -137,6 +137,10 @@ public class Player : Entity
     [Header("Checkpoint")]
     private Vector2 lastCheckpointPosition;
 
+    // Weapon visibility control
+    private bool weaponsHidden = false;
+    private WeaponState lastActiveWeaponState = WeaponState.Idle;
+
     public bool CanThrowBoomerang()
     {
         // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
@@ -652,5 +656,106 @@ public class Player : Entity
         stats.currentMana = stats.maxMana.GetValue();
     }
     
+    public void HideWeapons()
+    {
+        if (weaponsHidden) return;
+        
+        // Hangi silahın aktif olduğunu belirle ve kaydet
+        if (boomerangWeapon != null && boomerangWeapon.gameObject.activeInHierarchy)
+        {
+            lastActiveWeaponState = WeaponState.ThrowBoomerang;
+        }
+        else if (spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy)
+        {
+            lastActiveWeaponState = WeaponState.Spell1;
+        }
+        
+        // Find PlayerWeaponManager
+        PlayerWeaponManager weaponManager = GetComponent<PlayerWeaponManager>();
+        if (weaponManager != null && weaponManager.weapons != null)
+        {
+            foreach (WeaponStateMachine weapon in weaponManager.weapons)
+            {
+                if (weapon != null && weapon.gameObject.activeInHierarchy)
+                {
+                    // Hide the weapon but keep track of its previous state
+                    weapon.gameObject.SetActive(false);
+                }
+            }
+        }
+        else
+        {
+            // Fallback if no weapon manager found
+            if (swordWeapon != null) swordWeapon.gameObject.SetActive(false);
+            if (boomerangWeapon != null) boomerangWeapon.gameObject.SetActive(false);
+            if (spellbookWeapon != null) spellbookWeapon.gameObject.SetActive(false);
+        }
+        
+        weaponsHidden = true;
+    }
+
+    public void ShowWeapons()
+    {
+        if (!weaponsHidden) return;
+        
+        // Find PlayerWeaponManager
+        PlayerWeaponManager weaponManager = GetComponent<PlayerWeaponManager>();
+        if (weaponManager != null && weaponManager.weapons != null)
+        {
+            // Always show the primary weapon (sword)
+            if (weaponManager.weapons.Length > 0 && weaponManager.weapons[0] != null)
+            {
+                weaponManager.weapons[0].gameObject.SetActive(true);
+            }
+            
+            // Refresh the secondary weapon state
+            weaponManager.RefreshWeaponVisibility();
+        }
+        else
+        {
+            // Fallback if no weapon manager found - we need to manually activate the weapons
+            if (swordWeapon != null) 
+                swordWeapon.gameObject.SetActive(true);
+            
+            // Son aktif silahı belirle
+            if (lastActiveWeaponState == WeaponState.ThrowBoomerang || 
+                lastActiveWeaponState == WeaponState.CatchBoomerang)
+            {
+                // Boomerang silahını aktif et
+                if (boomerangWeapon != null)
+                    boomerangWeapon.gameObject.SetActive(true);
+                    
+                if (spellbookWeapon != null)
+                    spellbookWeapon.gameObject.SetActive(false);
+            }
+            else if (lastActiveWeaponState == WeaponState.Spell1 || 
+                     lastActiveWeaponState == WeaponState.Spell2)
+            {
+                // Spellbook silahını aktif et
+                if (spellbookWeapon != null)
+                    spellbookWeapon.gameObject.SetActive(true);
+                    
+                if (boomerangWeapon != null)
+                    boomerangWeapon.gameObject.SetActive(false);
+            }
+            else
+            {
+                // Hiçbir özel durum yoksa varsayılan olarak bumerangı aktif et
+                if (boomerangWeapon != null)
+                    boomerangWeapon.gameObject.SetActive(true);
+                    
+                if (spellbookWeapon != null)
+                    spellbookWeapon.gameObject.SetActive(false);
+            }
+        }
+        
+        weaponsHidden = false;
+    }
+
+    // Dışarıdan lastActiveWeaponState'i güncellemek için method
+    public void UpdateLastActiveWeapon(WeaponState weaponState)
+    {
+        lastActiveWeaponState = weaponState;
+    }
 }
 

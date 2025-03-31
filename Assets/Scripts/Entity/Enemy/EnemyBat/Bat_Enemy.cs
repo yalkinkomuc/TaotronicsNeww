@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Bat_Enemy : Enemy
@@ -43,17 +44,17 @@ public class Bat_Enemy : Enemy
         
         stateMachine.ChangeState(deadState);
     }
-    
-    private void OnCollisionStay2D(Collision2D other)
-    {
-        Player player = other.gameObject.GetComponent<Player>();
 
-        if (player != null)
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        Player playerScript = other.gameObject.GetComponent<Player>();
+
+        if (playerScript != null)
         {
-            player.Damage();
+            playerScript.Damage();
         }
     }
-    
+
     // Oyuncuyu algılama ve battle state'e geçme kontrolü
     public bool CheckForBattleTransition()
     {

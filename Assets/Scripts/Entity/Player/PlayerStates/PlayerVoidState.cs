@@ -19,6 +19,9 @@ public class PlayerVoidState : PlayerState
     {
         base.Enter();
         
+        // Hide weapons when entering void state
+        player.HideWeapons();
+        
         // Önce en yakın düşmanı bul
         targetEnemy = FindClosestEnemy();
         
@@ -50,6 +53,9 @@ public class PlayerVoidState : PlayerState
         // State'ten çıkarken bool'u false yap
         player.anim.SetBool("VoidDisappear", false);
         player.anim.SetBool("VoidReappear", false);
+        
+        // Show weapons when exiting void state
+        player.ShowWeapons();
         
         player.ExitGhostMode();
     }
@@ -113,6 +119,9 @@ public class PlayerVoidState : PlayerState
         
         // 3. Oyuncuyu düşmanın karşı tarafında konumlandır
         RepositionPlayerBehindEnemy();
+        
+        // Make sure weapons are still hidden before reappear animation
+        player.HideWeapons();
         
         // 4. Reappear animasyonu oynat
         player.anim.SetBool("VoidReappear", true);
