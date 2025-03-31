@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class SceneBoundary : MonoBehaviour
 {
-    [Header("Scene Boundaries")]
-    public float leftBoundary = -10f;
-    public float rightBoundary = 10f;
-    public float topBoundary = 10f;
-    public float bottomBoundary = -10f;
+    [Header("Boundary Settings")]
+    public float leftBoundary;
+    public float rightBoundary;
+    public float topBoundary;
+    public float bottomBoundary;
     
     [Header("Scene Transitions")]
     [SerializeField] private bool hasLeftExit = false;
@@ -34,12 +34,6 @@ public class SceneBoundary : MonoBehaviour
         {
             gameObject.tag = "SceneBoundary";
             Debug.LogWarning("SceneBoundary tag automatically set for " + gameObject.name);
-        }
-        
-        // Sınırları CameraManager'a uygula
-        if (CameraManager.instance != null)
-        {
-            CameraManager.instance.SetCameraBoundaries(leftBoundary, rightBoundary, topBoundary, bottomBoundary);
         }
         
         // Çıkış collider'larını oluştur
@@ -141,17 +135,45 @@ public class SceneBoundary : MonoBehaviour
     
     private void OnDrawGizmos()
     {
-        // Sınırları çiz
-        Gizmos.color = boundaryColor;
-        Vector3 bottomLeft = new Vector3(leftBoundary, bottomBoundary, 0);
-        Vector3 topLeft = new Vector3(leftBoundary, topBoundary, 0);
-        Vector3 bottomRight = new Vector3(rightBoundary, bottomBoundary, 0);
-        Vector3 topRight = new Vector3(rightBoundary, topBoundary, 0);
+        // Sınırları görselleştir
+        Gizmos.color = new Color(0f, 1f, 0f, 0.8f); // Daha belirgin yeşil
         
-        Gizmos.DrawLine(bottomLeft, topLeft);
-        Gizmos.DrawLine(topLeft, topRight);
-        Gizmos.DrawLine(topRight, bottomRight);
-        Gizmos.DrawLine(bottomRight, bottomLeft);
+        // Sol sınır
+        Gizmos.DrawLine(
+            new Vector3(leftBoundary, bottomBoundary - 2, 0),
+            new Vector3(leftBoundary, topBoundary + 2, 0)
+        );
+        
+        // Sağ sınır
+        Gizmos.DrawLine(
+            new Vector3(rightBoundary, bottomBoundary - 2, 0),
+            new Vector3(rightBoundary, topBoundary + 2, 0)
+        );
+        
+        // Üst sınır
+        Gizmos.DrawLine(
+            new Vector3(leftBoundary - 2, topBoundary, 0),
+            new Vector3(rightBoundary + 2, topBoundary, 0)
+        );
+        
+        // Alt sınır
+        Gizmos.DrawLine(
+            new Vector3(leftBoundary - 2, bottomBoundary, 0),
+            new Vector3(rightBoundary + 2, bottomBoundary, 0)
+        );
+        
+        // Köşeleri belirtmek için küçük kutular çiz
+        float boxSize = 0.5f;
+        Gizmos.DrawCube(new Vector3(leftBoundary, topBoundary, 0), Vector3.one * boxSize);
+        Gizmos.DrawCube(new Vector3(rightBoundary, topBoundary, 0), Vector3.one * boxSize);
+        Gizmos.DrawCube(new Vector3(leftBoundary, bottomBoundary, 0), Vector3.one * boxSize);
+        Gizmos.DrawCube(new Vector3(rightBoundary, bottomBoundary, 0), Vector3.one * boxSize);
+        
+        // Bölgenin içini hafif transparan olarak doldur
+        Gizmos.color = new Color(0f, 1f, 0f, 0.1f);
+        Vector3 size = new Vector3(rightBoundary - leftBoundary, topBoundary - bottomBoundary, 0);
+        Vector3 center = new Vector3((leftBoundary + rightBoundary) / 2, (topBoundary + bottomBoundary) / 2, 0);
+        Gizmos.DrawCube(center, size);
         
         // Çıkışları çiz
         Gizmos.color = exitColor;
@@ -184,6 +206,16 @@ public class SceneBoundary : MonoBehaviour
             Vector3 bottomExitCenter = new Vector3(0, bottomBoundary - exitTriggerThickness/2, 0);
             Vector3 bottomExitSize = new Vector3(width, exitTriggerThickness, 0);
             Gizmos.DrawWireCube(bottomExitCenter, bottomExitSize);
+        }
+    }
+
+    private void OnValidate()
+    {
+        // Sınırları otomatik olarak güncelle
+        if (CameraManager.instance != null)
+        {
+            // Artık SetCameraBoundaries'e gerek yok çünkü CameraManager
+            // otomatik olarak sınırları SceneBoundary'den alıyor
         }
     }
 } 
