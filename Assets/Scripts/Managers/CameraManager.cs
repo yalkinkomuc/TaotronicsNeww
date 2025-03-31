@@ -108,17 +108,6 @@ public class CameraManager : MonoBehaviour
         transposer = virtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
         if (transposer == null)
         {
-            // DestroyPipeline yerine alternatif yöntem
-            // CinemachineComponentBase[] components = virtualCamera.GetComponentPipeline();
-            // foreach (var component in components)
-            // {
-            //     if (component != null)
-            //     {
-            //         Destroy(component);
-            //     }
-            // }
-            
-            // Daha basit yöntem - varsayılan pipeline ile başlar
             transposer = virtualCamera.AddCinemachineComponent<CinemachineFramingTransposer>();
         }
         
@@ -165,8 +154,8 @@ public class CameraManager : MonoBehaviour
     
     private IEnumerator SetupCameraAfterSceneLoad()
     {
-        // Sahnenin tam olarak yüklenmesi için bir frame bekle
-        yield return null;
+        // Sahnenin tam olarak yüklenmesi için bir süre bekle
+        yield return new WaitForSeconds(0.1f);
         
         // Ana kamerayı ve bileşenleri kontrol et
         FindOrCreateMainCamera();
@@ -198,15 +187,19 @@ public class CameraManager : MonoBehaviour
     
     private void LateUpdate()
     {
-        // Kamera sınırlarını uygula
-        if (!hasBoundaries || mainCamera == null) return;
+        ManuallyConstrainCamera();
+    }
+    
+    // Kamerayı manuel olarak sınırlandır
+    private void ManuallyConstrainCamera()
+    {
+        if (!hasBoundaries || mainCamera == null || virtualCamera == null) return;
         
         float halfHeight = mainCamera.orthographicSize;
         float halfWidth = halfHeight * mainCamera.aspect;
         
         // Kameranın mevcut pozisyonu
-        Transform vcamTransform = virtualCamera.transform;
-        Vector3 vcamPos = vcamTransform.position;
+        Vector3 vcamPos = virtualCamera.transform.position;
         
         // Sınırları kontrol et ve uygula
         float newX = Mathf.Clamp(vcamPos.x, leftBoundary + halfWidth, rightBoundary - halfWidth);
@@ -215,7 +208,7 @@ public class CameraManager : MonoBehaviour
         // Eğer pozisyon değiştiyse güncelle
         if (Mathf.Abs(newX - vcamPos.x) > 0.01f || Mathf.Abs(newY - vcamPos.y) > 0.01f)
         {
-            vcamTransform.position = new Vector3(newX, newY, vcamPos.z);
+            virtualCamera.transform.position = new Vector3(newX, newY, vcamPos.z);
         }
         
         // Debug çizgileri çiz

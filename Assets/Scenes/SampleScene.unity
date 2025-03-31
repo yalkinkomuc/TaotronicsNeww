@@ -2970,11 +2970,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7915082941148695092, guid: 824659ff190baaa43ab84dc36fa7fdb1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.9299998
+      value: -11.11
       objectReference: {fileID: 0}
     - target: {fileID: 7915082941148695092, guid: 824659ff190baaa43ab84dc36fa7fdb1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.17
+      value: -3.05
       objectReference: {fileID: 0}
     - target: {fileID: 7915082941148695092, guid: 824659ff190baaa43ab84dc36fa7fdb1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3754,6 +3754,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!60 &1420719071 stripped
+PolygonCollider2D:
+  m_CorrespondingSourceObject: {fileID: 1631495604372568928, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
+  m_PrefabInstance: {fileID: 8911358772089898633}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1420719073 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7005369960958320381, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
+  m_PrefabInstance: {fileID: 8911358772089898633}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1422491180
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4818,6 +4828,7 @@ Transform:
   - {fileID: 1979460830}
   - {fileID: 1782834619}
   - {fileID: 1156135643}
+  - {fileID: 1420719073}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1683066507
@@ -7559,7 +7570,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1683066506}
     m_Modifications:
     - target: {fileID: 578106660111293629, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
       propertyPath: m_Name
@@ -7583,15 +7594,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7005369960958320381, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7005369960958320381, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7005369960958320381, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7005369960958320381, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7610,11 +7621,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
---- !u!61 &8911358772089898634 stripped
-BoxCollider2D:
-  m_CorrespondingSourceObject: {fileID: 8386905255865335859, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
-  m_PrefabInstance: {fileID: 8911358772089898633}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9086952124626229785
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7623,10 +7629,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1683066506}
     m_Modifications:
-    - target: {fileID: 1068345205537196551, guid: bcfcd8d9015a7444997bde56134a86f0, type: 3}
-      propertyPath: m_BoundingShape2D
-      value: 
-      objectReference: {fileID: 8911358772089898634}
     - target: {fileID: 4591237239545909004, guid: bcfcd8d9015a7444997bde56134a86f0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7667,6 +7669,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5731486897371892278, guid: bcfcd8d9015a7444997bde56134a86f0, type: 3}
+      propertyPath: m_BoundingShape2D
+      value: 
+      objectReference: {fileID: 1420719071}
     - target: {fileID: 7339666878853165440, guid: bcfcd8d9015a7444997bde56134a86f0, type: 3}
       propertyPath: m_Name
       value: CameraSystem
@@ -7712,4 +7718,3 @@ SceneRoots:
   - {fileID: 1518358362}
   - {fileID: 800265012}
   - {fileID: 1467961191}
-  - {fileID: 8911358772089898633}
