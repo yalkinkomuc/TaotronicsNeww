@@ -236,7 +236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3429875137707942753
 Transform:
   m_ObjectHideFlags: 0
@@ -385,7 +385,8 @@ MonoBehaviour:
   - Skeleton_Hurt2
   - Skeleton_Hurt3
   vfxSpawnPoint: {fileID: 1893527124932000873}
-  burnMat: {fileID: 0}
+  burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
+  deathVFXIds: []
 --- !u!114 &5671088416529142098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,4 +411,8 @@ MonoBehaviour:
   maxHealth:
     baseValue: 100
     modifiers: 
+  maxMana:
+    baseValue: 0
+    modifiers: 
   currentHealth: 0
+  currentMana: 0

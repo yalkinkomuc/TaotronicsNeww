@@ -192,7 +192,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6353669383580540762
 Transform:
   m_ObjectHideFlags: 0
@@ -336,7 +336,8 @@ MonoBehaviour:
   - BloodVFX1
   - BloodVFX2
   vfxSpawnPoint: {fileID: 1846774773768892862}
-  burnMat: {fileID: 0}
+  burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
+  deathVFXIds: []
 --- !u!114 &1447844343380681819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,7 +362,11 @@ MonoBehaviour:
   maxHealth:
     baseValue: 100
     modifiers: 
+  maxMana:
+    baseValue: 0
+    modifiers: 
   currentHealth: 0
+  currentMana: 0
 --- !u!1 &6768564313349086404
 GameObject:
   m_ObjectHideFlags: 0

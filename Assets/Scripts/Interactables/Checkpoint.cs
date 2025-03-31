@@ -78,10 +78,10 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     private void SaveCheckpoint()
     {
-        // Checkpoint pozisyonunu kaydet
+        // Checkpoint'i aktifleştir ve konumunu kaydet
+        PlayerPrefs.SetInt("CheckpointActivated", 1);
         PlayerPrefs.SetFloat("CheckpointX", transform.position.x);
         PlayerPrefs.SetFloat("CheckpointY", transform.position.y);
-        PlayerPrefs.SetInt("CheckpointActivated", 1);
 
         // Item durumlarını kaydet
         SaveItemStates();

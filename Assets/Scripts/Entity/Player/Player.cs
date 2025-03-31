@@ -223,51 +223,64 @@ public class Player : Entity
 
     private void LoadCheckpoint()
     {
-        if (PlayerPrefs.HasKey("CheckpointX") && PlayerPrefs.HasKey("CheckpointY"))
+        // İlk başlangıçta PlayerSpawnPoint'ten başla
+        GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
+        lastCheckpointPosition = spawnPoint != null ? spawnPoint.transform.position : transform.position;
+
+        // Eğer aktif bir checkpoint varsa, onun konumunu kullan
+        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
         {
             float x = PlayerPrefs.GetFloat("CheckpointX");
             float y = PlayerPrefs.GetFloat("CheckpointY");
             lastCheckpointPosition = new Vector2(x, y);
-            transform.position = lastCheckpointPosition;
         }
+
+        transform.position = lastCheckpointPosition;
     }
 
     public void RespawnAtCheckpoint()
     {
-        if (PlayerPrefs.HasKey("CheckpointX") && PlayerPrefs.HasKey("CheckpointY"))
+        if (stateMachine.currentState == deadState)
         {
-            // Ölüm durumundan çık ve idle durumuna geç
-            if (stateMachine.currentState == deadState)
+            // Gerekli değişkenleri sıfırla
+            rb.linearVelocity = Vector2.zero;
+            
+            // Eğer aktif bir checkpoint varsa oraya, yoksa spawn noktasına ışınla
+            if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
             {
-                // Gerekli değişkenleri sıfırla
-                rb.linearVelocity = Vector2.zero;
-                
-                // Pozisyonu ayarla
+                // Checkpoint'ten devam et
                 transform.position = lastCheckpointPosition;
                 
-                // Can ve mana değerlerini yenile
-                stats.currentHealth = stats.maxHealth.GetValue();
-                stats.currentMana = stats.maxMana.GetValue();
-                
-                // UI'ı güncelle
-                if (healthBar != null)
-                    healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
-                
-                // Item durumlarını yükle
+                // Item ve envanter durumlarını yükle
                 Checkpoint.LoadItemStates(this);
-                
-                // Envanteri yeniden yükle
                 if (Inventory.instance != null)
                 {
                     Inventory.instance.ReloadInventoryAfterDeath();
                 }
-                
-                // Idle durumuna geç
-                stateMachine.ChangeState(idleState);
-                
-                // Oyuncunun yönünü sıfırla
-                ResetPlayerFacing();
             }
+            else
+            {
+                // Spawn noktasından başla
+                GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
+                if (spawnPoint != null)
+                {
+                    transform.position = spawnPoint.transform.position;
+                }
+            }
+            
+            // Can ve mana değerlerini yenile
+            stats.currentHealth = stats.maxHealth.GetValue();
+            stats.currentMana = stats.maxMana.GetValue();
+            
+            // UI'ı güncelle
+            if (healthBar != null)
+                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+            
+            // Idle durumuna geç
+            stateMachine.ChangeState(idleState);
+            
+            // Oyuncunun yönünü sıfırla
+            ResetPlayerFacing();
         }
     }
 
