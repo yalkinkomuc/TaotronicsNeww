@@ -31,6 +31,8 @@ public class CameraManager : MonoBehaviour
     private float topBoundary;
     private float bottomBoundary;
     private bool hasBoundaries = false;
+
+    private Enemy enemy;
     
     // SceneBoundary'den doğrudan çağrılır
     public void RegisterSceneBoundary(SceneBoundary boundary)
@@ -66,6 +68,8 @@ public class CameraManager : MonoBehaviour
         }
 
         confiner = GetComponentInChildren<CinemachineConfiner2D>();
+        
+         enemy = GetComponent<Enemy>();
     }
 
     
@@ -265,6 +269,8 @@ public class CameraManager : MonoBehaviour
         if (PlayerManager.instance?.player == null || transposer == null) return;
         
         Vector3 playerPos = PlayerManager.instance.player.transform.position;
+
+        
         
         // İlk kez çağrıldığında
         if (lastPlayerPos == Vector3.zero)
@@ -275,12 +281,17 @@ public class CameraManager : MonoBehaviour
         
         // Oyuncunun hareket yönünü belirle
         Vector3 moveDirection = playerPos - lastPlayerPos;
+
+        if (enemy == null)
+        {
+            return;
+        }
         
         // Eğer yeterince hareket varsa
-        if (Mathf.Abs(moveDirection.x) > 0.01f)
+        if (Mathf.Abs(moveDirection.x) > 0.01f && enemy.fightBegun ==false)
         {
 
-          
+            
             
             // Sağa hareket
             if (moveDirection.x > 0)
@@ -292,6 +303,10 @@ public class CameraManager : MonoBehaviour
             {
                 targetScreenX = 0.75f; // Ekranın sağında tut
             }
+        }
+        else
+        {
+            return;
         }
         
         // Ekran pozisyonunu yumuşak geçişle güncelle
