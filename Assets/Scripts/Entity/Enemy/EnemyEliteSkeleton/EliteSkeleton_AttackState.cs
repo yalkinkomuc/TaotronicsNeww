@@ -13,6 +13,8 @@ public class EliteSkeleton_AttackState : EnemyState
     public override void Enter()
     {
         base.Enter();
+        
+        enemy.fightBegun = true;
     }
 
     public override void Exit()

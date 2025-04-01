@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using Cinemachine;
 using System.Collections;
+using UnityEngine.Serialization;
 
 public class CameraManager : MonoBehaviour
 {
@@ -10,6 +12,8 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
     private CinemachineFramingTransposer transposer;
     private Camera mainCamera;
+    private CinemachineConfiner2D confiner;
+    [FormerlySerializedAs("SceneBoundsCollider2D")] public PolygonCollider2D[] sceneBoundsCollider2D;
     
     [Header("Camera Settings")]
     [SerializeField] private float xDamping = 1f;
@@ -60,8 +64,23 @@ public class CameraManager : MonoBehaviour
         {
             Destroy(transform.root.gameObject);
         }
+
+        confiner = GetComponentInChildren<CinemachineConfiner2D>();
     }
+
     
+
+    private void UpdateBoundariesOnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        int sceneIndex = scene.buildIndex;
+        if (sceneIndex < sceneBoundsCollider2D.Length && sceneBoundsCollider2D[sceneIndex] != null)
+        {
+            confiner.m_BoundingShape2D = sceneBoundsCollider2D[sceneIndex];
+            confiner.InvalidateCache(); // Yeni collider’ı kullanması için cache'i temizle
+        }
+    }
+
+
     private void FindOrCreateMainCamera()
     {
         mainCamera = Camera.main;
@@ -137,11 +156,15 @@ public class CameraManager : MonoBehaviour
     private void OnEnable()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += UpdateBoundariesOnSceneLoaded;
+
+
     }
     
     private void OnDisable()
     {
         UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= UpdateBoundariesOnSceneLoaded;
     }
     
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
@@ -256,15 +279,18 @@ public class CameraManager : MonoBehaviour
         // Eğer yeterince hareket varsa
         if (Mathf.Abs(moveDirection.x) > 0.01f)
         {
+
+          
+            
             // Sağa hareket
             if (moveDirection.x > 0)
             {
-                targetScreenX = 0.35f; // Ekranın solunda tut
+                targetScreenX = 0.25f; // Ekranın solunda tut
             }
             // Sola hareket
             else
             {
-                targetScreenX = 0.65f; // Ekranın sağında tut
+                targetScreenX = 0.75f; // Ekranın sağında tut
             }
         }
         

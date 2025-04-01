@@ -19,6 +19,11 @@ public class EliteSkeleton_Enemy : Enemy
     public float attackDistance;
     public float attackCooldown;
     public float battleTime;
+
+    public Transform attackCheck;
+    public Vector2 attackSize;
+
+    
     [HideInInspector] public float lastTimeAttacked;
     
     
@@ -64,5 +69,7 @@ public class EliteSkeleton_Enemy : Enemy
         
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position,new Vector3(transform.position.x + attackDistance*facingdir,transform.position.y));
+        
+        Gizmos.DrawWireCube(attackCheck.position,attackSize);
     }
 }

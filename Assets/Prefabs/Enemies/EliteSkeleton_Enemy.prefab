@@ -154,6 +154,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 791ebe4de5102f14caf03dbc00dfc325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4116208353091144686
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1179314500733958781}
+  m_Layer: 7
+  m_Name: AttackCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1179314500733958781
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4116208353091144686}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.551, y: -0.033, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3429875137707942753}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5842355392186153926
 GameObject:
   m_ObjectHideFlags: 0
@@ -254,6 +285,7 @@ Transform:
   - {fileID: 6573837378424383688}
   - {fileID: 3543634340846307245}
   - {fileID: 1893527124932000873}
+  - {fileID: 1179314500733958781}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &8711021213350326901
@@ -364,6 +396,8 @@ MonoBehaviour:
   attackDistance: 0.85
   attackCooldown: 0.2
   battleTime: 4
+  attackCheck: {fileID: 1179314500733958781}
+  attackSize: {x: 0.88, y: 0.54}
   lastTimeAttacked: 0
 --- !u!114 &7637031704639217373
 MonoBehaviour:

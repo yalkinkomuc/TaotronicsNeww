@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3276453664837333337}
   - component: {fileID: 1631495604372568928}
   m_Layer: 0
-  m_Name: SceneBoundary
+  m_Name: SceneBoundaryScene1
   m_TagString: SceneBoundary
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,16 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa438bfbe8280484fbeeba643bdd04c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftBoundary: -19
+  leftBoundary: -13.3
   rightBoundary: 19
   topBoundary: 5
-  bottomBoundary: -10.47
+  bottomBoundary: -8.13
   hasLeftExit: 1
   hasRightExit: 1
   hasTopExit: 0
   hasBottomExit: 0
-  leftSceneIndex: 1
-  rightSceneIndex: 2
+  leftSceneIndex: 2
+  rightSceneIndex: 1
   topSceneIndex: -1
   bottomSceneIndex: -1
   exitTriggerThickness: 0.3
@@ -108,7 +108,7 @@ PolygonCollider2D:
   m_Points:
     m_Paths:
     - - {x: 18.987995, y: 5.0357566}
-      - {x: -19.125347, y: 4.987121}
-      - {x: -19.14358, y: -10.525602}
-      - {x: 18.985971, y: -10.380588}
+      - {x: -13.906509, y: 5.109917}
+      - {x: -13.894482, y: -7.942775}
+      - {x: 19.07763, y: -8.180836}
   m_UseDelaunayMesh: 0

@@ -14,13 +14,15 @@ public class Enemy : Entity
    public Player player { get; protected set; }
    public EnemyStateMachine stateMachine { get; private set; }
 
-   [SerializeField] protected LayerMask whatIsPlayer;
+   [SerializeField] public LayerMask whatIsPlayer;
    public float idleTime;
    public float moveSpeed;
    public float chaseSpeed;
    [SerializeField] private float tooCloseDistance = 3f; // Çok yakın mesafe
    
    public float detectDistance;
+
+   [HideInInspector] public bool fightBegun = false;
    
 
    protected override void Awake()
@@ -45,7 +47,9 @@ public class Enemy : Entity
       base.Update();
       stateMachine.currentState.Update();
       
-      //Debug.Log(IsPlayerDetected().collider.gameObject.name);
+      Debug.Log(fightBegun);
+      
+      
    }
 
    public override void Die()

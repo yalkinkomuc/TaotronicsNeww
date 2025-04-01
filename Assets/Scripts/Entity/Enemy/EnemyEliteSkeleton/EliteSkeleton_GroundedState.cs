@@ -31,6 +31,7 @@ public class EliteSkeleton_GroundedState : EnemyState
         if (enemy.IsPlayerDetected() ||enemy.IsTooCloseToPlayer())
         {
             stateMachine.ChangeState(enemy.battleState);
+            
         }
     }
 }

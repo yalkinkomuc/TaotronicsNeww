@@ -16,6 +16,7 @@ public class EliteSkeleton_BattleState : EnemyState
     public override void Enter()
     {
         base.Enter();
+        enemy.fightBegun = true;
         player = PlayerManager.instance.player.transform;
         // State'e girerken ilk yön kontrolünü yap
         UpdateFacingDirection();
@@ -24,6 +25,7 @@ public class EliteSkeleton_BattleState : EnemyState
     public override void Exit()
     {
         base.Exit();
+        enemy.fightBegun = false;
     }
 
     public override void Update()

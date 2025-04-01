@@ -303,6 +303,8 @@ public class Player : Entity
         
         base.Update();
         stateMachine.currentState.Update();
+        
+        
 
         // Her frame'de referansları güncelle
         UpdateWeaponReferences();
