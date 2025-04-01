@@ -32,7 +32,8 @@ public class CameraManager : MonoBehaviour
     private float bottomBoundary;
     private bool hasBoundaries = false;
 
-    private Enemy enemy;
+    private Enemy enemyScript;
+    
     
     // SceneBoundary'den doğrudan çağrılır
     public void RegisterSceneBoundary(SceneBoundary boundary)
@@ -45,7 +46,7 @@ public class CameraManager : MonoBehaviour
             bottomBoundary = boundary.bottomBoundary;
             hasBoundaries = true;
             
-            Debug.Log($"Camera boundaries registered directly: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
+           // Debug.Log($"Camera boundaries registered directly: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
         }
     }
     
@@ -60,7 +61,7 @@ public class CameraManager : MonoBehaviour
             FindOrCreateMainCamera();
             SetupVirtualCamera();
             
-            Debug.Log("CameraManager initialized!");
+           // Debug.Log("CameraManager initialized!");
         }
         else
         {
@@ -69,10 +70,24 @@ public class CameraManager : MonoBehaviour
 
         confiner = GetComponentInChildren<CinemachineConfiner2D>();
         
-         enemy = GetComponent<Enemy>();
+         
     }
 
-    
+    private void Start()
+    {
+        GameObject enemy = GameObject.FindWithTag("Enemy");
+
+        if (enemy == null)
+        {
+            return;
+        }
+        else
+        {
+            enemyScript = enemy.GetComponent<Enemy>();
+        }
+
+        
+    }
 
     private void UpdateBoundariesOnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
@@ -173,7 +188,7 @@ public class CameraManager : MonoBehaviour
     
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        Debug.Log($"Scene loaded: {scene.name}");
+        //Debug.Log($"Scene loaded: {scene.name}");
         
         // Kamera referanslarını güncelle
         StartCoroutine(SetupCameraAfterSceneLoad());
@@ -282,13 +297,10 @@ public class CameraManager : MonoBehaviour
         // Oyuncunun hareket yönünü belirle
         Vector3 moveDirection = playerPos - lastPlayerPos;
 
-        if (enemy == null)
-        {
-            return;
-        }
+       
         
         // Eğer yeterince hareket varsa
-        if (Mathf.Abs(moveDirection.x) > 0.01f && enemy.fightBegun ==false)
+        if (Mathf.Abs(moveDirection.x) > 0.01f && enemyScript.fightBegun ==false)
         {
 
             
@@ -332,7 +344,7 @@ public class CameraManager : MonoBehaviour
             bottomBoundary = boundary.bottomBoundary;
             hasBoundaries = true;
             
-            Debug.Log($"Camera boundaries set: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
+            //Debug.Log($"Camera boundaries set: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
         }
         else
         {

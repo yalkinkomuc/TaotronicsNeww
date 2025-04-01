@@ -61,7 +61,7 @@ public class PlayerWeaponManager : MonoBehaviour
             }
         }
         
-        Debug.Log($"Equipped secondary weapon: {weapons[index].name}");
+        //Debug.Log($"Equipped secondary weapon: {weapons[index].name}");
     }
     
     // Method to restore weapon visibility - called after HideWeapons/ShowWeapons

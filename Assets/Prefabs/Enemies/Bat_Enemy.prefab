@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4615162018279291874}
   m_Layer: 7
   m_Name: Bat_Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -97,7 +97,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -145,6 +145,7 @@ MonoBehaviour:
   chaseSpeed: 3
   tooCloseDistance: 1
   detectDistance: 1
+  fightBegun: 0
   detectionRange: 1
   flightSpeed: 3
 --- !u!114 &5764120550791581918

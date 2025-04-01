@@ -62,6 +62,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6665926709327994058}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6495689003755100308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5881818674359874116}
+  m_Layer: 7
+  m_Name: AttackCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5881818674359874116
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6495689003755100308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.456, y: 0.027, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6665926709327994058}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7914578213233814749
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,7 +140,7 @@ GameObject:
   - component: {fileID: 8941347060164491720}
   m_Layer: 7
   m_Name: Boar
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,6 +162,7 @@ Transform:
   - {fileID: 1247979664384247722}
   - {fileID: 6407235779556162526}
   - {fileID: 2496232908496173531}
+  - {fileID: 5881818674359874116}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &9150429137835630321
@@ -236,11 +268,14 @@ MonoBehaviour:
   idleTime: 2
   moveSpeed: 3
   chaseSpeed: 4.5
-  tooCloseDistance: 1
+  tooCloseDistance: 3
   detectDistance: 5
-  attackDistance: 0.65
+  fightBegun: 0
+  attackDistance: 0.77
   attackCooldown: 2
   battleTime: 8
+  attackCheck: {fileID: 5881818674359874116}
+  attackSize: {x: 0.57, y: 0.24}
   lastTimeAttacked: 0
 --- !u!114 &8607898122441212196
 MonoBehaviour:

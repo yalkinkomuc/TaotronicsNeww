@@ -3,7 +3,7 @@ using UnityEngine;
 public class SceneTransitionTrigger : MonoBehaviour
 {
     public int targetSceneIndex;
-    [SerializeField] private float transitionDelay = 0.2f;
+    //[SerializeField] private float transitionDelay = 0.2f;
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private bool usePlayerPosition = true;
     [SerializeField] private Vector2 playerPositionOffset = Vector2.zero;

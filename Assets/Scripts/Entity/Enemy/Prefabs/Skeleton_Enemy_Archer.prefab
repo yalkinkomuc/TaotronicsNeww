@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 5748237198415359822}
   m_Layer: 7
   m_Name: Skeleton_Enemy_Archer
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -353,6 +353,7 @@ MonoBehaviour:
   chaseSpeed: 3
   tooCloseDistance: 2
   detectDistance: 13
+  fightBegun: 0
   arrowSpawnPoint: {fileID: 771119517957317904}
   arrowPrefab: {fileID: 4551660470442196087, guid: bb43e13666e1e2448bcd249521cc6c56, type: 3}
   attackCooldown: 0.5

@@ -28,6 +28,10 @@ public class Boar_Enemy : Enemy
     public float attackDistance = 2f;
     public float attackCooldown = 2f;
     public float battleTime = 10f;
+    public Transform attackCheck;
+    public Vector2 attackSize;
+    
+    
     [HideInInspector] public float lastTimeAttacked;
     
     protected override void Awake()
@@ -71,10 +75,10 @@ public class Boar_Enemy : Enemy
     }
     
     // Animasyon olaylarını tetiklemek için kullanılacak
-    public void AnimationFinishTrigger()
-    {
-        stateMachine.currentState.AnimationFinishTrigger();
-    }
+    // public void AnimationFinishTrigger()
+    // {
+    //     stateMachine.currentState.AnimationFinishTrigger();
+    // }
 
     public override void Damage()
     {
@@ -161,5 +165,7 @@ public class Boar_Enemy : Enemy
         
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position,new Vector3(transform.position.x + attackDistance*facingdir,transform.position.y));
+        
+        Gizmos.DrawWireCube(attackCheck.position,attackSize);
     }
 }

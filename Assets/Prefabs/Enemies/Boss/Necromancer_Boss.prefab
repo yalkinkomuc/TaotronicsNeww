@@ -263,11 +263,11 @@ GameObject:
   - component: {fileID: 4508352989967533048}
   m_Layer: 7
   m_Name: Necromancer_Boss
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2762347492465732489
 Transform:
   m_ObjectHideFlags: 0
@@ -393,6 +393,7 @@ MonoBehaviour:
   chaseSpeed: 3
   tooCloseDistance: 3
   detectDistance: 500
+  fightBegun: 0
   spellPrefab: {fileID: 7215539477136866372, guid: 302ad76f4e05bcd4cb4c11062ef69d95, type: 3}
   spellSpawnPoint: {fileID: 6573887789776312726}
   spellCooldown: 3.5

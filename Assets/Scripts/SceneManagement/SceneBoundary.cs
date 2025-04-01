@@ -53,7 +53,7 @@ public class SceneBoundary : MonoBehaviour
         {
             // Yeni eklenen metod ile sınırları doğrudan bildir
             CameraManager.instance.RegisterSceneBoundary(this);
-            Debug.Log($"SceneBoundary registered with camera: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
+            //Debug.Log($"SceneBoundary registered with camera: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
         }
         else
         {
