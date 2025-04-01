@@ -70,11 +70,6 @@ public class CameraManager : MonoBehaviour
 
         confiner = GetComponentInChildren<CinemachineConfiner2D>();
         
-         
-    }
-
-    private void Start()
-    {
         GameObject enemy = GameObject.FindWithTag("Enemy");
 
         if (enemy == null)
@@ -86,6 +81,12 @@ public class CameraManager : MonoBehaviour
             enemyScript = enemy.GetComponent<Enemy>();
         }
 
+         
+    }
+
+    private void Start()
+    {
+        
         
     }
 
@@ -283,6 +284,11 @@ public class CameraManager : MonoBehaviour
     {
         if (PlayerManager.instance?.player == null || transposer == null) return;
         
+        if (enemyScript.fightBegun)
+        {
+            return;
+        }
+        
         Vector3 playerPos = PlayerManager.instance.player.transform.position;
 
         
@@ -297,10 +303,11 @@ public class CameraManager : MonoBehaviour
         // Oyuncunun hareket yönünü belirle
         Vector3 moveDirection = playerPos - lastPlayerPos;
 
+        //if (enemyScript != null) return;
        
         
         // Eğer yeterince hareket varsa
-        if (Mathf.Abs(moveDirection.x) > 0.01f && enemyScript.fightBegun ==false)
+        if (Mathf.Abs(moveDirection.x) > 0.01f)
         {
 
             
@@ -308,12 +315,12 @@ public class CameraManager : MonoBehaviour
             // Sağa hareket
             if (moveDirection.x > 0)
             {
-                targetScreenX = 0.25f; // Ekranın solunda tut
+                targetScreenX = 0.35f; // Ekranın solunda tut
             }
             // Sola hareket
             else
             {
-                targetScreenX = 0.75f; // Ekranın sağında tut
+                targetScreenX = 0.65f; // Ekranın sağında tut
             }
         }
         else

@@ -47,7 +47,7 @@ public class Enemy : Entity
       base.Update();
       stateMachine.currentState.Update();
       
-      Debug.Log(fightBegun);
+      //Debug.Log(fightBegun);
       
       
    }
