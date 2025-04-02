@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class ItemObject : MonoBehaviour, IInteractable
+public class ItemObject : MonoBehaviour
 {
 
     [SerializeField] private Rigidbody2D rb;
@@ -62,20 +62,16 @@ public class ItemObject : MonoBehaviour, IInteractable
             rb.linearVelocity = velocity;
         }
 
-        if (IsGroundDetected())
-        {
-            boxCollider.isTrigger = true;
-            rb.bodyType = RigidbodyType2D.Static;
-        }
+      
     }
 
-    public void Interact()
-    {
-        if (Inventory.instance != null)
-        {
-            PickupItem();
-        }
-    }
+    // public void Interact()
+    // {
+    //     if (Inventory.instance != null)
+    //     {
+    //         PickupItem();
+    //     }
+    // }
 
     public void SetupItem(ItemData _itemData , Vector2 _velocity)
     {
@@ -104,7 +100,7 @@ public class ItemObject : MonoBehaviour, IInteractable
             prompt.HidePrompt();
     }
 
-    public virtual bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position,Vector2.down,groundCheckDistance,whatIsGround);
+    
     
     protected virtual void OnDrawGizmos()
     {
@@ -112,5 +108,13 @@ public class ItemObject : MonoBehaviour, IInteractable
             new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
         
         
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.GetComponent<Player>() != null)
+        {
+            PickupItem();
+        }
     }
 }

@@ -12,7 +12,10 @@ public class Boar_Enemy : Enemy
     public Boar_ChaseState chaseState { get; private set; }
     public Boar_ChargeState chargeState { get; private set; }
     public Boar_AttackState attackState { get; private set; }
-    
+    public Boar_DeadState deadState { get; private set; }
+
+
+
     // Flag to prevent flipping during knockback and for a short time after
     private bool preventFlip = false;
     private float preventFlipTimer = 0f;
@@ -45,6 +48,7 @@ public class Boar_Enemy : Enemy
         chaseState = new Boar_ChaseState(this, stateMachine, "Chase", this);
         chargeState = new Boar_ChargeState(this, stateMachine, "Charge", this);
         attackState = new Boar_AttackState(this, stateMachine,"Attack",this);
+        deadState = new Boar_DeadState(this, stateMachine, "Death", this);
     }
 
     protected override void Start()
@@ -72,6 +76,8 @@ public class Boar_Enemy : Enemy
     public override void Die()
     {
         base.Die();
+        
+        stateMachine.ChangeState(deadState);
     }
     
     // Animasyon olaylarını tetiklemek için kullanılacak
