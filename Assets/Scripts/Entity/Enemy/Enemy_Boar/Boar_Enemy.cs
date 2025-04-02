@@ -20,6 +20,8 @@ public class Boar_Enemy : Enemy
     private bool preventFlip = false;
     private float preventFlipTimer = 0f;
     private float preventFlipDuration = 1f; // Süreyi biraz daha uzattım
+    
+    [SerializeField] private float detectionRange = 15f;
 
     // Knockback'te kullanmak için yön bilgisi
     private int lastHitDirection = 0;
@@ -154,6 +156,39 @@ public class Boar_Enemy : Enemy
         // Diğer durumlarda normal dönüş yap
         base.Flip();
     }
+    
+    public bool CheckForBattleTransition()
+    {
+        if (PlayerManager.instance != null && PlayerManager.instance.player != null)
+        {
+            float distanceToPlayer = Vector2.Distance(
+                transform.position, 
+                PlayerManager.instance.player.transform.position
+            );
+            
+            // Oyuncu algılama mesafesi içinde mi?
+            if (distanceToPlayer <= detectionRange)
+            {
+                // Yarasa ve oyuncu arasında engel var mı kontrol et
+                Vector2 direction = (PlayerManager.instance.player.transform.position - transform.position).normalized;
+                RaycastHit2D hit = Physics2D.Raycast(
+                    transform.position, 
+                    direction, 
+                    distanceToPlayer, 
+                    whatIsGround // Engel katmanı
+                );
+                
+                // Engel yoksa (ray yerle değil oyuncuyla çarpışıyorsa) true döndür
+                if (hit.collider == null || hit.collider.CompareTag("Player"))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
 
     private void OnCollisionStay2D(Collision2D other)
     {
