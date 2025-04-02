@@ -634,7 +634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd240f05a8214e24888d1d45d9b3ad0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bossArenaSceneIndex: 2
+  bossArenaSceneIndex: 1
   prompt: {fileID: 1701932478}
   bossName: Water Scene
   defeatedVisual: {fileID: 0}
@@ -702,7 +702,7 @@ Transform:
   m_GameObject: {fileID: 161651126}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.44, y: -3.2800002, z: 0}
+  m_LocalPosition: {x: 12.44, y: -4.924, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3031,7 +3031,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7915082941148695092, guid: 824659ff190baaa43ab84dc36fa7fdb1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.05
+      value: -4.71
       objectReference: {fileID: 0}
     - target: {fileID: 7915082941148695092, guid: 824659ff190baaa43ab84dc36fa7fdb1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3903,7 +3903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd240f05a8214e24888d1d45d9b3ad0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bossArenaSceneIndex: 1
+  bossArenaSceneIndex: 2
   prompt: {fileID: 1760588326}
   bossName: Necromancer
   defeatedVisual: {fileID: 0}
@@ -3971,7 +3971,7 @@ Transform:
   m_GameObject: {fileID: 1448425655}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.862939, y: -3.2800002, z: 0}
+  m_LocalPosition: {x: 10.862939, y: -4.924, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7469,7 +7469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7024929731429147452, guid: 10b0ad49174097f42af61496df67e13c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.92
+      value: -4.917
       objectReference: {fileID: 0}
     - target: {fileID: 7024929731429147452, guid: 10b0ad49174097f42af61496df67e13c, type: 3}
       propertyPath: m_LocalPosition.z

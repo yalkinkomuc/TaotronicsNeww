@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class ItemObject : MonoBehaviour, IInteractable
 {
+
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Vector2 velocity;
     [SerializeField] private ItemData itemData;
     [SerializeField] private InteractionPrompt prompt;
     [SerializeField] private string uniqueID; // Her eşya için benzersiz ID
@@ -33,10 +36,15 @@ public class ItemObject : MonoBehaviour, IInteractable
     {
         if (Inventory.instance != null)
         {
-            Inventory.instance.AddItem(itemData);
-            ItemCollectionManager.Instance.MarkItemAsCollected(uniqueID);
-            Destroy(gameObject);
+            PickupItem();
         }
+    }
+
+    public void PickupItem()
+    {
+        Inventory.instance.AddItem(itemData);
+        ItemCollectionManager.Instance.MarkItemAsCollected(uniqueID);
+        Destroy(gameObject);
     }
 
     public void ShowInteractionPrompt()
