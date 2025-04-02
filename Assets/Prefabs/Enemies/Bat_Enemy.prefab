@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 731638857859551059}
   - component: {fileID: 5764120550791581918}
   - component: {fileID: 4615162018279291874}
+  - component: {fileID: 2396971675977136577}
   m_Layer: 7
   m_Name: Bat_Enemy
   m_TagString: Enemy
@@ -197,6 +198,24 @@ MonoBehaviour:
     modifiers: 
   currentHealth: 0
   currentMana: 0
+--- !u!114 &2396971675977136577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4694070637326983686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fa997a9b7dfab64babfe8fd5dfe89d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  possibleItemDrop: 1
+  possibleDrop:
+  - {fileID: 11400000, guid: ff36dbd30ad2d74489535cd063f126c2, type: 2}
+  - {fileID: 11400000, guid: 9f844d67e35a65a498e37b09b67e4942, type: 2}
+  dropPrefab: {fileID: 2136502034040675571, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
+  item: {fileID: 11400000, guid: ff36dbd30ad2d74489535cd063f126c2, type: 2}
 --- !u!1 &5306580684060997663
 GameObject:
   m_ObjectHideFlags: 0

@@ -225,7 +225,9 @@ public class Player : Entity
         }
     }
 
-    private void LoadCheckpoint()
+    #region Checkpoint System
+
+     private void LoadCheckpoint()
     {
         // İlk başlangıçta PlayerSpawnPoint'ten başla
         GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
@@ -287,6 +289,9 @@ public class Player : Entity
             ResetPlayerFacing();
         }
     }
+
+    #endregion
+   
 
     public void ResetPlayerFacing()
     {

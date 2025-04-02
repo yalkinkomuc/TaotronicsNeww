@@ -9,6 +9,20 @@ public class ItemObject : MonoBehaviour, IInteractable
     [SerializeField] private ItemData itemData;
     [SerializeField] private InteractionPrompt prompt;
     [SerializeField] private string uniqueID; // Her eşya için benzersiz ID
+    
+    
+    [Header("Ground Check")]
+    [SerializeField] public Transform groundCheck;
+    [SerializeField] protected float groundCheckDistance;
+    [SerializeField] protected LayerMask whatIsGround;
+    
+    
+    private BoxCollider2D boxCollider;
+
+    private void Awake()
+    {
+        boxCollider = GetComponent<BoxCollider2D>();
+    }
 
     private void Start()
     {
@@ -22,14 +36,37 @@ public class ItemObject : MonoBehaviour, IInteractable
 
     private void OnValidate()
     {
+       // SetupVisuals();
+
         if (string.IsNullOrEmpty(uniqueID))
         {
             // Editörde benzersiz ID oluştur
             uniqueID = System.Guid.NewGuid().ToString();
         }
+    }
+
+    private void SetupVisuals()
+    {
+        if (itemData == null)
+         return;
         
         GetComponent<SpriteRenderer>().sprite = itemData.icon;
         gameObject.name = "Item Object - " + itemData.itemName;
+        
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            rb.linearVelocity = velocity;
+        }
+
+        if (IsGroundDetected())
+        {
+            boxCollider.isTrigger = true;
+            rb.bodyType = RigidbodyType2D.Static;
+        }
     }
 
     public void Interact()
@@ -38,6 +75,14 @@ public class ItemObject : MonoBehaviour, IInteractable
         {
             PickupItem();
         }
+    }
+
+    public void SetupItem(ItemData _itemData , Vector2 _velocity)
+    {
+        itemData = _itemData;
+        rb.linearVelocity = _velocity;
+        
+        SetupVisuals();
     }
 
     public void PickupItem()
@@ -57,5 +102,15 @@ public class ItemObject : MonoBehaviour, IInteractable
     {
         if (prompt != null)
             prompt.HidePrompt();
+    }
+
+    public virtual bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position,Vector2.down,groundCheckDistance,whatIsGround);
+    
+    protected virtual void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(groundCheck.position,
+            new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
+        
+        
     }
 }
