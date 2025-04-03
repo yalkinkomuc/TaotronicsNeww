@@ -83,35 +83,24 @@ public class SceneManager : MonoBehaviour
         Player player = PlayerManager.instance?.player;
         if (player != null)
         {
-            // Eğer özel spawn kullanılacaksa
-            if (PlayerPrefs.GetInt("UseCustomSpawn", 0) == 1)
+            // PlayerSpawnPoint'i bul
+            GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
+            
+            if (spawnPoint != null)
             {
-                PlacePlayerAtSceneBorder(player);
+                player.gameObject.SetActive(true);
+                // Oyuncuyu spawn noktasına ışınla
+                player.transform.position = spawnPoint.transform.position;
+                player.ResetPlayerFacing();
             }
             else
             {
-                // PlayerSpawnPoint'i bul
-                GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
-                
-                if (spawnPoint != null)
-                {
-                    player.gameObject.SetActive(true);
-                    // Oyuncuyu spawn noktasına ışınla
-                    player.transform.position = spawnPoint.transform.position;
-                    player.ResetPlayerFacing();
-                }
-                else
-                {
-                    Debug.LogWarning("PlayerSpawnPoint bulunamadı! Lütfen sahnede 'PlayerSpawnPoint' tag'li bir obje olduğundan emin olun.");
-                }
+                Debug.LogWarning("PlayerSpawnPoint bulunamadı! Lütfen sahnede 'PlayerSpawnPoint' tag'li bir obje olduğundan emin olun.");
             }
             
             // Silahları göster
             player.ShowWeapons();
         }
-        
-        // Özel spawn kullanım bayrağını sıfırla
-        PlayerPrefs.SetInt("UseCustomSpawn", 0);
     }
     
     private void PlacePlayerAtSceneBorder(Player player)
