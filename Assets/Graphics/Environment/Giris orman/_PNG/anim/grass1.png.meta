@@ -52,7 +52,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -66,7 +66,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -90,7 +90,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -119,9 +119,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 31
-        width: 31
-        height: 14
+        y: 32
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -140,10 +140,10 @@ TextureImporter:
       name: grass1_1
       rect:
         serializedVersion: 2
-        x: 33
-        y: 31
-        width: 30
-        height: 14
+        x: 32
+        y: 32
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -162,10 +162,10 @@ TextureImporter:
       name: grass1_2
       rect:
         serializedVersion: 2
-        x: 65
-        y: 31
-        width: 30
-        height: 14
+        x: 64
+        y: 32
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,20 +184,20 @@ TextureImporter:
       name: grass1_3
       rect:
         serializedVersion: 2
-        x: 97
-        y: 31
-        width: 30
-        height: 14
+        x: 96
+        y: 32
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: eab717dbc54d0abd0800000000000000
-      internalID: -2620861488349217874
+      spriteID: 1849d37b16f4a014caff5b465046f9fd
+      internalID: 820370325
       vertices: []
       indices: 
       edges: []
@@ -208,18 +208,18 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 31
-        height: 13
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6a59b578f6acee210800000000000000
-      internalID: 1364250317500945830
+      spriteID: 2dc1d2cc04a65fb428b52e23ca3279f6
+      internalID: 1457364300
       vertices: []
       indices: 
       edges: []
@@ -230,18 +230,18 @@ TextureImporter:
         serializedVersion: 2
         x: 32
         y: 0
-        width: 31
-        height: 13
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7b566836a868a04f0800000000000000
-      internalID: -861728449754667593
+      spriteID: 4f18cc891eb8b9f469f789c0ea4adeb4
+      internalID: -56395067
       vertices: []
       indices: 
       edges: []
@@ -250,7 +250,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: afda37c3b06689a4998ed8899cee01bc
     internalID: 0
     vertices: []
     indices: 
@@ -263,9 +263,9 @@ TextureImporter:
       grass1_0: -4133103754698827007
       grass1_1: -7357564282862962928
       grass1_2: 5085775619655523851
-      grass1_3: -2620861488349217874
-      grass1_4: 1364250317500945830
-      grass1_5: -861728449754667593
+      grass1_3: 820370325
+      grass1_4: 1457364300
+      grass1_5: -56395067
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

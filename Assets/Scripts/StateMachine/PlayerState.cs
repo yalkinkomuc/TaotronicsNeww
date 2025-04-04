@@ -6,7 +6,7 @@ public class PlayerState
    protected Player player;
    protected float horizontal;
    protected Rigidbody2D rb;
-   protected CapsuleCollider2D capsuleCollider;
+   protected BoxCollider2D boxCollider;
    protected float xInput;
    protected float yInput;
    protected float stateTimer;
@@ -28,7 +28,7 @@ public class PlayerState
       player.anim.SetBool(animBoolName, true);
       
       rb = player.rb;
-      capsuleCollider = player.capsuleCollider;
+      boxCollider = player.boxCollider;
       
       triggerCalled = false;
       

@@ -13,7 +13,7 @@ public class PlayerDeadState : PlayerState
     {
         base.Enter();
         
-         capsuleCollider.enabled = false;
+         boxCollider.enabled = false;
          rb.bodyType = RigidbodyType2D.Static;
         
         rb.linearVelocity = Vector2.zero;
@@ -40,7 +40,7 @@ public class PlayerDeadState : PlayerState
     {
         base.Exit();
         
-         capsuleCollider.enabled = true;
+         boxCollider.enabled = true;
          rb.bodyType = RigidbodyType2D.Dynamic;
         
         player.playerInput.EnableAllInput();

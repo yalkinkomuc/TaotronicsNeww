@@ -24,7 +24,7 @@ public class Player : Entity
     [SerializeField] public Vector2 boomerangCatchForce;
     
     [Header("Collider")]
-    public CapsuleCollider2D capsuleCollider;
+    public BoxCollider2D boxCollider;
     
     private float xInput;
     private float yInput;
@@ -141,6 +141,86 @@ public class Player : Entity
     private bool weaponsHidden = false;
     private WeaponState lastActiveWeaponState = WeaponState.Idle;
 
+    [Header("Ground Check")]
+    [SerializeField] private float groundCheckWidth = 0.4f;
+    [SerializeField] private float groundCheckHeight = 0.1f;
+    [SerializeField] private float groundCheckExtraHeight = 0.05f;
+    [SerializeField] private float sideRaySpacing = 0.1f;
+
+    public override bool IsGroundDetected()
+    {
+        Vector2 boxCenter = (Vector2)transform.position + 
+                          new Vector2(0, -boxCollider.size.y / 2);
+
+        // Ana merkez kontrolü
+        RaycastHit2D centerHit = Physics2D.BoxCast(
+            boxCenter,
+            new Vector2(groundCheckWidth * 0.8f, groundCheckHeight),
+            0f,
+            Vector2.down,
+            groundCheckExtraHeight,
+            whatIsGround
+        );
+
+        // Çoklu yan kontroller
+        Vector2 leftStart = boxCenter + new Vector2(-groundCheckWidth/2, 0);
+        Vector2 rightStart = boxCenter + new Vector2(groundCheckWidth/2, 0);
+
+        // Sol taraf kontrolleri
+        RaycastHit2D leftHit = Physics2D.Raycast(leftStart, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+        RaycastHit2D leftInnerHit = Physics2D.Raycast(leftStart + Vector2.right * sideRaySpacing, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+
+        // Sağ taraf kontrolleri
+        RaycastHit2D rightHit = Physics2D.Raycast(rightStart, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+        RaycastHit2D rightInnerHit = Physics2D.Raycast(rightStart + Vector2.left * sideRaySpacing, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+
+        if (centerHit.collider != null)
+        {
+            float slopeAngle = Vector2.Angle(centerHit.normal, Vector2.up);
+            if (slopeAngle <= 45f)
+            {
+                // Eğim açısı uygunsa ve merkez vuruş varsa, karakteri yüzeye yapıştır
+                if (rb.linearVelocity.y < 0)
+                {
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+                }
+                return true;
+            }
+        }
+
+        // Herhangi bir yan kontrol yere değiyorsa
+        bool sideHit = (leftHit.collider != null || rightHit.collider != null || 
+                        leftInnerHit.collider != null || rightInnerHit.collider != null);
+
+        if (sideHit && rb.linearVelocity.y < 0)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+        }
+
+        return sideHit;
+    }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying || boxCollider == null) return;
+
+        Vector2 boxCenter = (Vector2)transform.position + 
+                          new Vector2(0, -boxCollider.size.y / 2);
+        
+        // Ana box
+        Gizmos.color = IsGroundDetected() ? Color.green : Color.red;
+        Gizmos.DrawWireCube(boxCenter, new Vector3(groundCheckWidth, groundCheckHeight, 0));
+        
+        // Kenar raycast'leri
+        Vector2 leftPoint = boxCenter + new Vector2(-groundCheckWidth/2, 0);
+        Vector2 rightPoint = boxCenter + new Vector2(groundCheckWidth/2, 0);
+        
+        Gizmos.DrawLine(leftPoint, leftPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
+        Gizmos.DrawLine(rightPoint, rightPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
+    }
+#endif
+
     public bool CanThrowBoomerang()
     {
         // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
@@ -197,6 +277,13 @@ public class Player : Entity
     protected override void Start()
     {
         base.Start();
+        
+        // Rigidbody2D ayarlarını optimize et
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        
         healthBar = GetComponent<HealthBar>();
         ResetPlayerFacing();
         
@@ -204,9 +291,9 @@ public class Player : Entity
         LoadCheckpoint();
         
         stateMachine.Initialize(idleState);
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
 
-        normalOffset = capsuleCollider.offset;
+        normalOffset = boxCollider.offset;
         crouchOffset = new Vector2(normalOffset.x, normalOffset.y-0.1f);
         
         if (boomerangWeapon == null)
@@ -305,8 +392,20 @@ public class Player : Entity
    
     protected override void Update()
     {
-        
         base.Update();
+
+        // Hızlı düşüş kontrolü
+        if (rb.linearVelocity.y < -10f) // Eşik değerini düşürdüm
+        {
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            
+            if (IsGroundDetected())
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+                rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
+            }
+        }
+
         stateMachine.currentState.Update();
         
         
@@ -487,15 +586,14 @@ public class Player : Entity
 
     public void EnterCrouchMode()
     {
-        capsuleCollider.size = new Vector2(capsuleCollider.size.x, crouchHeight); 
-        capsuleCollider.offset = crouchOffset;
-        
+        boxCollider.size = new Vector2(boxCollider.size.x, crouchHeight); 
+        boxCollider.offset = crouchOffset;
     }
 
     public void ExitCrouchMode()
     {
-        capsuleCollider.size = new Vector2(capsuleCollider.size.x, normalHeight); 
-        capsuleCollider.offset = normalOffset; 
+        boxCollider.size = new Vector2(boxCollider.size.x, normalHeight); 
+        boxCollider.offset = normalOffset; 
     }
 
     #endregion
