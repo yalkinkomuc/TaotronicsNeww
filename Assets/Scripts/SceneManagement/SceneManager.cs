@@ -46,26 +46,31 @@ public class SceneManager : MonoBehaviour
     
     private IEnumerator LoadSceneWithTransition(int sceneIndex)
     {
-        // Geçiş efekti varsa kullan
+        // Geçiş efekti oluştur
         if (transitionEffectPrefab != null)
         {
             GameObject transitionObj = Instantiate(transitionEffectPrefab);
             DontDestroyOnLoad(transitionObj);
-            
-            // Geçiş efekti tamamlanması için bekleme süresi
-            yield return new WaitForSeconds(fadeTime);
         }
         
         // Sahneyi yükle
         AsyncOperation asyncLoad = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex);
+        asyncLoad.allowSceneActivation = false;
         
-        // Yükleme tamamlanana kadar bekle
-        while (!asyncLoad.isDone)
+        // Yükleme ilerlemesini bekle
+        while (asyncLoad.progress < 0.9f)
         {
             yield return null;
         }
         
-        // Oyuncuyu doğru pozisyona yerleştir (OnSceneLoaded'da yapılacak)
+        // Sahneyi aktifleştir
+        asyncLoad.allowSceneActivation = true;
+        
+        // Sahne tamamen yüklenene kadar bekle
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
     }
 
     private void OnEnable()

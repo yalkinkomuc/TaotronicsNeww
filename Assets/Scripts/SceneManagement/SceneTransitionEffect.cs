@@ -7,13 +7,18 @@ public class SceneTransitionEffect : MonoBehaviour
     [SerializeField] private float fadeInTime = 0.5f;
     [SerializeField] private float fadeOutTime = 0.5f;
     [SerializeField] private Color fadeColor = Color.black;
+    [SerializeField] private float waitAfterSceneLoad = 1f; // Sahne yüklendikten sonra beklenecek süre
     
     private Image fadeImage;
+    private Canvas canvas;
     
     private void Awake()
     {
         // Canvas ve Image oluştur
         CreateUIElements();
+        
+        // Hemen siyah ekranı göster
+        fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 1);
         
         // Geçiş animasyonunu başlat
         StartCoroutine(TransitionRoutine());
@@ -25,11 +30,15 @@ public class SceneTransitionEffect : MonoBehaviour
         GameObject canvasObj = new GameObject("TransitionCanvas");
         canvasObj.transform.SetParent(transform);
         
-        Canvas canvas = canvasObj.AddComponent<Canvas>();
+        canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 999; // En üstte göster
         
-        canvasObj.AddComponent<CanvasScaler>();
+        CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = 0.5f;
+        
         canvasObj.AddComponent<GraphicRaycaster>();
         
         // Fade image oluştur
@@ -37,7 +46,7 @@ public class SceneTransitionEffect : MonoBehaviour
         imageObj.transform.SetParent(canvasObj.transform);
         
         fadeImage = imageObj.AddComponent<Image>();
-        fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 0); // Alpha 0 ile başla
+        fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 1); // Başlangıçta tamamen siyah
         
         // Image'ı ekranın tamamını kaplayacak şekilde ayarla
         RectTransform rectTransform = fadeImage.rectTransform;
@@ -49,21 +58,16 @@ public class SceneTransitionEffect : MonoBehaviour
     
     private IEnumerator TransitionRoutine()
     {
-        // Fade in
-        float timer = 0f;
-        while (timer < fadeInTime)
-        {
-            timer += Time.deltaTime;
-            float alpha = Mathf.Clamp01(timer / fadeInTime);
-            fadeImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, alpha);
-            yield return null;
-        }
+        // Başlangıçta tamamen siyah ekran
         
-        // Sahne yüklenip OnSceneLoaded çalışana kadar bekle
-        yield return new WaitForSeconds(0.2f);
+        // Sahne yüklenene kadar bekle
+        yield return new WaitForSeconds(0.1f);
         
-        // Fade out
-        timer = fadeOutTime;
+        // Sahne yüklendikten sonra ekstra bekleme süresi
+        yield return new WaitForSeconds(waitAfterSceneLoad);
+        
+        // Fade out (ekran açılması)
+        float timer = fadeOutTime;
         while (timer > 0f)
         {
             timer -= Time.deltaTime;
@@ -75,4 +79,4 @@ public class SceneTransitionEffect : MonoBehaviour
         // Efekti kaldır
         Destroy(gameObject);
     }
-} 
+}
