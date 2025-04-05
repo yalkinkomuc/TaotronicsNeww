@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class SkeletonArcher_MoveState : SkeletonArcher_GroundedState
 {
-
     //private Enemy_ArcherSkeleton enemy;
     public SkeletonArcher_MoveState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName,Enemy_ArcherSkeleton _enemy) : base(_enemyBase, _stateMachine, _animBoolName,_enemy)
     {
@@ -12,6 +11,7 @@ public class SkeletonArcher_MoveState : SkeletonArcher_GroundedState
     public override void Enter()
     {
         base.Enter();
+        enemy.startPosition = enemy.transform.position;
     }
 
     public override void Exit()
@@ -22,17 +22,12 @@ public class SkeletonArcher_MoveState : SkeletonArcher_GroundedState
     public override void Update()
     {
         base.Update();
-        Debug.Log("Archer in move State");
-        enemy.SetVelocity(enemy.moveSpeed*enemy.facingdir,enemy.rb.linearVelocity.y);
-
-        if (enemy.IsWallDetected() || !enemy.IsGroundDetected())
+        
+        enemy.UpdatePatrol();
+        
+        if (enemy.CheckForBattleTransition())
         {
-            
-            Debug.Log("Archer aşağı düşecek");
-            enemy.Flip();
-            enemy.SetZeroVelocity();
             stateMachine.ChangeState(enemy.idleState);
         }
-
     }
 }

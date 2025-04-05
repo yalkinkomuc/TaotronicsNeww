@@ -21,6 +21,10 @@ public class Enemy : Entity
    [SerializeField] private float tooCloseDistance = 3f; // Çok yakın mesafe
    
    public float detectDistance;
+   [SerializeField] protected float patrolDistance = 5f; // Patrol mesafesi
+   [SerializeField] protected float patrolSpeed = 2f; // Patrol hızı
+   public Vector2 startPosition { get; set; } // Başlangıç pozisyonu
+   protected int patrolDirection = 1; // 1: sağ, -1: sol
 
    [HideInInspector] public bool fightBegun = false;
    
@@ -101,5 +105,43 @@ public class Enemy : Entity
         
    }
 
+   public virtual bool CheckForBattleTransition()
+   {
+       if (IsPlayerDetected() || IsTooCloseToPlayer())
+       {
+           fightBegun = true;
+           return true;
+       }
+       return false;
+   }
+
+   public virtual bool ShouldFlipPatrol()
+   {
+       // Duvara çarpma kontrolü
+       if (IsWallDetected())
+           return true;
+           
+       // Uçurum kontrolü
+       if (!IsGroundDetected())
+           return true;
+           
+       // Mesafe kontrolü
+       float distanceFromStart = transform.position.x - startPosition.x;
+       if ((distanceFromStart >= patrolDistance && patrolDirection == 1) || 
+           (distanceFromStart <= -patrolDistance && patrolDirection == -1))
+           return true;
+           
+       return false;
+   }
    
+   public virtual void UpdatePatrol()
+   {
+       if (ShouldFlipPatrol())
+       {
+           patrolDirection *= -1;
+           Flip();
+       }
+       
+       SetVelocity(patrolDirection * patrolSpeed, rb.linearVelocity.y);
+   }
 }

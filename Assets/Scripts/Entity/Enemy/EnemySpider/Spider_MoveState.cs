@@ -9,6 +9,7 @@ public class Spider_MoveState : Spider_GroundedState
     public override void Enter()
     {
         base.Enter();
+        enemy.startPosition = enemy.transform.position;
     }
 
     public override void Exit()
@@ -20,12 +21,10 @@ public class Spider_MoveState : Spider_GroundedState
     {
         base.Update();
         
-        enemy.SetVelocity(enemy.moveSpeed*enemy.facingdir,enemy.rb.linearVelocity.y);
-
-        if (enemy.IsWallDetected() || !enemy.IsGroundDetected())
+        enemy.UpdatePatrol();
+        
+        if (enemy.CheckForBattleTransition())
         {
-            enemy.Flip();
-            enemy.SetZeroVelocity();
             stateMachine.ChangeState(enemy.idleState);
         }
     }

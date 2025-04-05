@@ -9,6 +9,7 @@ public class EliteSkeleton_MoveState : EliteSkeleton_GroundedState
     public override void Enter()
     {
         base.Enter();
+        enemy.startPosition = enemy.transform.position;
     }
 
     public override void Exit()
@@ -20,14 +21,10 @@ public class EliteSkeleton_MoveState : EliteSkeleton_GroundedState
     {
         base.Update();
         
-        Debug.Log("im in move state");
+        enemy.UpdatePatrol();
         
-        enemy.SetVelocity(enemy.moveSpeed*enemy.facingdir,enemy.rb.linearVelocity.y);
-
-        if (enemy.IsWallDetected() || !enemy.IsGroundDetected())
+        if (enemy.CheckForBattleTransition())
         {
-            enemy.Flip();
-            enemy.SetZeroVelocity();
             stateMachine.ChangeState(enemy.idleState);
         }
     }
