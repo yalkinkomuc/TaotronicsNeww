@@ -2,16 +2,15 @@ using UnityEngine;
 
 public class Boar_MoveState : EnemyState
 {
-
     private Boar_Enemy enemy;
     
     private Vector2 startPosition;
     private float patrolDistance = 8f;
     private float patrolSpeed = 2f;
     private int moveDirection = 1; // 1: sağ, -1: sol
+    
     public Boar_MoveState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName,Boar_Enemy _enemy) : base(_enemyBase, _stateMachine, _animBoolName)
     {
-
         enemy = _enemy;
     }
 
@@ -40,21 +39,13 @@ public class Boar_MoveState : EnemyState
     public override void Update()
     {
         base.Update();
-        
-        // enemy.SetVelocity(enemy.moveSpeed*enemy.facingdir,enemy.rb.linearVelocity.y);
-        //
-        // if (enemy.IsWallDetected() || !enemy.IsGroundDetected())
-        // {
-        //     enemy.Flip();
-        //     enemy.SetZeroVelocity();
-        //     stateMachine.ChangeState(enemy.idleState);
-        // }
-        //
-        // if (enemy.IsPlayerDetected() || enemy.IsTooCloseToPlayer())
-        // {
-        //     stateMachine.ChangeState(enemy.chargeState);
-        // }
 
+        // Duvar veya uçurum kontrolü
+        if (enemy.IsWallDetected() || !enemy.IsGroundDetected())
+        {
+            moveDirection *= -1;
+            enemy.Flip();
+        }
         
         // Oyuncuyu algılama kontrolü
         if (enemy.CheckForBattleTransition())
@@ -62,13 +53,7 @@ public class Boar_MoveState : EnemyState
             stateMachine.ChangeState(enemy.chaseState);
             return;
         }
-
-
-        // if (enemy.IsWallDetected())
-        // {
-        //     enemy.Flip();
-        // }
-        //
+        
         // Pozisyon kontrolü
         float distanceFromStart = enemyBase.transform.position.x - startPosition.x;
         
@@ -76,16 +61,15 @@ public class Boar_MoveState : EnemyState
         if (distanceFromStart >= patrolDistance && moveDirection == 1)
         {
             moveDirection = -1;
-            enemyBase.Flip(); // Sprite'ı çevir
+            enemy.Flip();
         }
         else if (distanceFromStart <= -patrolDistance && moveDirection == -1)
         {
             moveDirection = 1;
-            enemyBase.Flip(); // Sprite'ı çevir
+            enemy.Flip();
         }
         
         // Belirlenen yönde hareket et
-        enemyBase.SetVelocity(moveDirection * patrolSpeed, 0);
-        
+        enemy.SetVelocity(moveDirection * patrolSpeed, enemy.rb.linearVelocity.y);
     }
 }
