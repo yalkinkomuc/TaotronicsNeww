@@ -9,6 +9,7 @@ public class PlayerSpell2State : PlayerState
     private const float MAX_CHARGE_TIME = 1000f;
     private float currentChargeTime;
     private bool hasSpawnedSpell;
+    private bool isSpellActive;
 
     public PlayerSpell2State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -20,6 +21,7 @@ public class PlayerSpell2State : PlayerState
         
         currentChargeTime = 0f;
         hasSpawnedSpell = false;
+        isSpellActive = false;
         
         player.anim.Play(SPELL2_ANIM_NAME);
     }
@@ -35,6 +37,7 @@ public class PlayerSpell2State : PlayerState
         if (currentChargeTime >= MIN_CHARGE_TIME && !hasSpawnedSpell)
         {
             hasSpawnedSpell = true;
+            isSpellActive = true;
             player.StartCoroutine(DelayedSpawnFireSpell());
         }
         
@@ -44,6 +47,7 @@ public class PlayerSpell2State : PlayerState
             // Mana kontrolü
             if (!player.HasEnoughMana(player.spell2ManaDrainPerSecond * Time.deltaTime))
             {
+                CleanupSpell();
                 stateMachine.ChangeState(player.idleState);
                 return;
             }
@@ -52,6 +56,7 @@ public class PlayerSpell2State : PlayerState
         // T tuşu bırakıldığında veya max süre dolduğunda
         if (!player.playerInput.spell2Input || currentChargeTime >= MAX_CHARGE_TIME)
         {
+            CleanupSpell();
             stateMachine.ChangeState(player.idleState);
         }
     }
@@ -59,6 +64,7 @@ public class PlayerSpell2State : PlayerState
     public override void Exit()
     {
         base.Exit();
+        CleanupSpell();
         
         player.anim.speed = 1;
         
@@ -70,12 +76,16 @@ public class PlayerSpell2State : PlayerState
         {
             player.swordWeapon.animator.speed = 1;
         }
-        
+    }
+
+    private void CleanupSpell()
+    {
         if (currentFireSpell != null)
         {
             GameObject.Destroy(currentFireSpell.gameObject);
             currentFireSpell = null;
         }
+        isSpellActive = false;
     }
 
     private IEnumerator DelayedSpawnFireSpell()
@@ -86,7 +96,7 @@ public class PlayerSpell2State : PlayerState
 
     private void SpawnFireSpell()
     {
-        if (player.fireSpellPrefab != null && player.fireSpellPoint != null)
+        if (player.fireSpellPrefab != null && player.fireSpellPoint != null && isSpellActive)
         {
             GameObject spellObj = GameObject.Instantiate(player.fireSpellPrefab, 
                 player.fireSpellPoint.position, 
