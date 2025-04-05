@@ -9,14 +9,15 @@ public class Player : Entity
     
     public IPlayerInput playerInput {get;private set;}
     
+    [HideInInspector]
     public HealthBar healthBar;
 
 
     [Header("AttackDetails")] 
-    public Vector2[] attackMovement;
+    //public Vector2[] attackMovement;
 
     public Transform attackCheck;
-    public float attackCheckRadius;
+    //public float attackCheckRadius;
     public Vector2 attackSize;
     
     [SerializeField] private GameObject boomerangPrefab;
@@ -24,6 +25,7 @@ public class Player : Entity
     [SerializeField] public Vector2 boomerangCatchForce;
     
     [FormerlySerializedAs("boxCollider")] [Header("Collider")]
+    [HideInInspector]
     public CapsuleCollider2D capsuleCollider;
     
     private float xInput;
@@ -48,6 +50,8 @@ public class Player : Entity
     public GameObject groundDashEffectPrefab;
     public int effectCount = 3;
     public float spawnInterval = 0.05f;
+    
+    
     public float dashDirection {get;private set;}
     
     

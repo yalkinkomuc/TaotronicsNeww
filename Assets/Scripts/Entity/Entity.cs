@@ -20,6 +20,8 @@ public class Entity : MonoBehaviour
     [SerializeField] protected float wallCheckDistance = 0;
     
     [Header("Flip Controller")]
+    
+    [HideInInspector]
     public int facingdir  = 1;
     protected bool facingright = true;
     
