@@ -23,8 +23,8 @@ public class Player : Entity
     [SerializeField] private Transform boomerangLaunchPoint;
     [SerializeField] public Vector2 boomerangCatchForce;
     
-    [Header("Collider")]
-    public BoxCollider2D boxCollider;
+    [FormerlySerializedAs("boxCollider")] [Header("Collider")]
+    public CapsuleCollider2D capsuleCollider;
     
     private float xInput;
     private float yInput;
@@ -150,7 +150,7 @@ public class Player : Entity
     public override bool IsGroundDetected()
     {
         Vector2 boxCenter = (Vector2)transform.position + 
-                          new Vector2(0, -boxCollider.size.y / 2);
+                          new Vector2(0, -capsuleCollider.size.y / 2);
 
         // Ana merkez kontrolü
         RaycastHit2D centerHit = Physics2D.BoxCast(
@@ -203,10 +203,10 @@ public class Player : Entity
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (!Application.isPlaying || boxCollider == null) return;
+        if (!Application.isPlaying || capsuleCollider == null) return;
 
         Vector2 boxCenter = (Vector2)transform.position + 
-                          new Vector2(0, -boxCollider.size.y / 2);
+                          new Vector2(0, -capsuleCollider.size.y / 2);
         
         // Ana box
         Gizmos.color = IsGroundDetected() ? Color.green : Color.red;
@@ -291,9 +291,9 @@ public class Player : Entity
         LoadCheckpoint();
         
         stateMachine.Initialize(idleState);
-        boxCollider = GetComponent<BoxCollider2D>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
 
-        normalOffset = boxCollider.offset;
+        normalOffset = capsuleCollider.offset;
         crouchOffset = new Vector2(normalOffset.x, normalOffset.y-0.1f);
         
         if (boomerangWeapon == null)
@@ -586,14 +586,14 @@ public class Player : Entity
 
     public void EnterCrouchMode()
     {
-        boxCollider.size = new Vector2(boxCollider.size.x, crouchHeight); 
-        boxCollider.offset = crouchOffset;
+        capsuleCollider.size = new Vector2(capsuleCollider.size.x, crouchHeight); 
+        capsuleCollider.offset = crouchOffset;
     }
 
     public void ExitCrouchMode()
     {
-        boxCollider.size = new Vector2(boxCollider.size.x, normalHeight); 
-        boxCollider.offset = normalOffset; 
+        capsuleCollider.size = new Vector2(capsuleCollider.size.x, normalHeight); 
+        capsuleCollider.offset = normalOffset; 
     }
 
     #endregion
