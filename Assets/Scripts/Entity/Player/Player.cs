@@ -115,7 +115,7 @@ public class Player : Entity
 
     [Header("Spell Settings")]
     [SerializeField] private GameObject iceShardPrefab;
-    [SerializeField] private float spellSpacing = 1f;
+    [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
     [SerializeField] private int shardCount = 3;
     
@@ -719,21 +719,11 @@ public class Player : Entity
 
     private IEnumerator CastIceShards()
     {
-        float xOffset = 1f * facingdir;
-        float startX = transform.position.x + xOffset;
-        float spawnY = transform.position.y + 0.3f;
+        Vector3[] spawnPositions = spell1State.GetSpawnPositions();
 
         for (int i = 0; i < shardCount; i++)
         {
-            Vector3 spawnPos = new Vector3(
-                startX + (spellSpacing * i * facingdir),
-                spawnY,
-                transform.position.z
-            );
-
-            // Sadece instantiate et, collider'ı animasyon event ile aktifleştirelim
-            Instantiate(iceShardPrefab, spawnPos, Quaternion.identity);
-
+            Instantiate(iceShardPrefab, spawnPositions[i], Quaternion.identity);
             yield return new WaitForSeconds(delayBetweenShards);
         }
     }
