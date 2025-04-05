@@ -96,7 +96,7 @@ public class CameraManager : MonoBehaviour
         if (sceneIndex < sceneBoundsCollider2D.Length && sceneBoundsCollider2D[sceneIndex] != null)
         {
             confiner.m_BoundingShape2D = sceneBoundsCollider2D[sceneIndex];
-            confiner.InvalidateCache(); // Yeni collider’ı kullanması için cache'i temizle
+            confiner.InvalidateCache(); // Yeni collider'ı kullanması için cache'i temizle
         }
     }
 
@@ -284,14 +284,13 @@ public class CameraManager : MonoBehaviour
     {
         if (PlayerManager.instance?.player == null || transposer == null) return;
         
-        if (enemyScript.fightBegun)
+        // Enemy script null kontrolü
+        if (enemyScript != null && enemyScript.fightBegun)
         {
             return;
         }
         
         Vector3 playerPos = PlayerManager.instance.player.transform.position;
-
-        
         
         // İlk kez çağrıldığında
         if (lastPlayerPos == Vector3.zero)
@@ -302,16 +301,10 @@ public class CameraManager : MonoBehaviour
         
         // Oyuncunun hareket yönünü belirle
         Vector3 moveDirection = playerPos - lastPlayerPos;
-
-        //if (enemyScript != null) return;
-       
         
         // Eğer yeterince hareket varsa
         if (Mathf.Abs(moveDirection.x) > 0.01f)
         {
-
-            
-            
             // Sağa hareket
             if (moveDirection.x > 0)
             {
