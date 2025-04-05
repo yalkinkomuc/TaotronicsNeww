@@ -4,7 +4,7 @@ using System.Collections;
 
 public class SceneTransitionEffect : MonoBehaviour
 {
-    [SerializeField] private float fadeInTime = 0.5f;
+    //[SerializeField] private float fadeInTime = 0.5f;
     [SerializeField] private float fadeOutTime = 0.5f;
     [SerializeField] private Color fadeColor = Color.black;
     [SerializeField] private float waitAfterSceneLoad = 1f; // Sahne yüklendikten sonra beklenecek süre

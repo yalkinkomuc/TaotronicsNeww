@@ -7,7 +7,7 @@ public class SceneManager : MonoBehaviour
     public static SceneManager instance { get; private set; }
     
     [Header("Scene Transition")]
-    [SerializeField] private float fadeTime = 0.5f;
+    //[SerializeField] private float fadeTime = 0.5f;
     [SerializeField] private Color fadeColor = Color.black;
     [SerializeField] private GameObject transitionEffectPrefab;
 

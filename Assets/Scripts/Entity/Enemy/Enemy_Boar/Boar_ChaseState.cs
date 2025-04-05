@@ -29,7 +29,7 @@ public class Boar_ChaseState : EnemyState
     public override void Exit()
     {
         base.Exit();
-        enemy.moveSpeed = enemy.moveSpeed;
+        //enemy.moveSpeed = enemy.moveSpeed;
     }
 
     public override void Update()

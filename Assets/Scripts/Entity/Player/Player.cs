@@ -201,7 +201,7 @@ public class Player : Entity
     }
 
 #if UNITY_EDITOR
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (!Application.isPlaying || capsuleCollider == null) return;
 
