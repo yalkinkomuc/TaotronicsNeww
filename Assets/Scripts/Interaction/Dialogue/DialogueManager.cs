@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class DialogueManager : MonoBehaviour
     private bool isTyping;
     private string currentLine;
     private Coroutine typingCoroutine;
+    
+    // Diyalog sona erdiğinde tetiklenecek event
+    public event Action OnDialogueEnd;
 
     private void Awake()
     {
@@ -193,5 +197,8 @@ public class DialogueManager : MonoBehaviour
         dialogueCanvas.SetActive(false);
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
+            
+        // Diyalog sona erdiğinde event'i tetikle
+        OnDialogueEnd?.Invoke();
     }
 } 

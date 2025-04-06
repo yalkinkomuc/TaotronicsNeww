@@ -6,7 +6,7 @@ public class DialogueNPC : MonoBehaviour, IInteractable
     [SerializeField] private DialogueData dialogueData;
     private bool playerInRange;
 
-    public void Interact()
+    public virtual void Interact()
     {
         // DialogueManager null kontrolü
         if (DialogueManager.Instance == null)
