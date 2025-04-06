@@ -28,6 +28,7 @@ public class Enemy : Entity
 
    [HideInInspector] public bool fightBegun = false;
    
+   [SerializeField] protected bool isDefeated = false;
 
    protected override void Awake()
    {
@@ -60,10 +61,24 @@ public class Enemy : Entity
    {
        base.Die();
        
-       
-       
+       if (!isDefeated)
+       {
+           isDefeated = true;
+           
+           // Düşman öldüğünde event'i tetikle
+           GameEvents.EnemyDefeated(this);
+           
+           // Gerekli animasyonları oynat ve birkaç saniye sonra yok et
+           StartCoroutine(DestroyAfterDelay(2f));
+       }
    }
    
+   private IEnumerator DestroyAfterDelay(float delay)
+   {
+       yield return new WaitForSeconds(delay);
+       Destroy(gameObject);
+   }
+
    public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
 
    public RaycastHit2D IsPlayerDetected() 

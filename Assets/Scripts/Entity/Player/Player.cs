@@ -151,6 +151,12 @@ public class Player : Entity
     [SerializeField] private float groundCheckExtraHeight = 0.05f;
     [SerializeField] private float sideRaySpacing = 0.1f;
 
+    [Header("Currency and Experience")]
+    [SerializeField] private int gold = 0;
+    [SerializeField] private int experience = 0;
+    [SerializeField] private int level = 1;
+    [SerializeField] private int experienceToNextLevel = 100;
+
     public override bool IsGroundDetected()
     {
         Vector2 boxCenter = (Vector2)transform.position + 
@@ -855,6 +861,53 @@ public class Player : Entity
     public void UpdateLastActiveWeapon(WeaponState weaponState)
     {
         lastActiveWeaponState = weaponState;
+    }
+
+    public void AddGold(int amount)
+    {
+        if (amount <= 0) return;
+        
+        gold += amount;
+        Debug.Log($"Added {amount} gold. Total gold: {gold}");
+        
+        // Burada UI güncellemesi yapılabilir
+    }
+    
+    public void AddExperience(int amount)
+    {
+        if (amount <= 0) return;
+        
+        experience += amount;
+        Debug.Log($"Added {amount} XP. Total XP: {experience}");
+        
+        // Seviye atlama kontrolü
+        CheckLevelUp();
+        
+        // Burada UI güncellemesi yapılabilir
+    }
+    
+    private void CheckLevelUp()
+    {
+        while (experience >= experienceToNextLevel)
+        {
+            // Seviye atla
+            level++;
+            experience -= experienceToNextLevel;
+            
+            // Yeni seviye için gereken tecrübe puanını artır
+            experienceToNextLevel = (int)(experienceToNextLevel * 1.5f);
+            
+            Debug.Log($"Level up! New level: {level}");
+            
+            // Seviye atlama bonusları (can, mana vs artırılabilir)
+            stats.maxHealth.AddModifier(10);
+            stats.maxMana.AddModifier(5);
+            stats.currentHealth = stats.maxHealth.GetValue();
+            stats.currentMana = stats.maxMana.GetValue();
+            
+            // Seviye atlama efekti oynatılabilir
+            // ...
+        }
     }
 }
 
