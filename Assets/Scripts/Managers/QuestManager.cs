@@ -15,6 +15,10 @@ public class QuestManager : MonoBehaviour, IManager
     private int totalEnemyCount = 0;
     private int defeatedEnemyCount = 0;
     
+    // Belirli düşman tiplerini takip etmek için dictionary
+    private Dictionary<string, int> targetEnemyCounts = new Dictionary<string, int>();
+    private Dictionary<string, int> defeatedTargetEnemyCounts = new Dictionary<string, int>();
+    
     // Ödül nesneleri için referanslar
     [Header("Ödül Ayarları")]
     [SerializeField] private ItemData[] rewardItems; // Editor'da atanabilecek item'lar
@@ -30,7 +34,7 @@ public class QuestManager : MonoBehaviour, IManager
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -79,6 +83,30 @@ public class QuestManager : MonoBehaviour, IManager
         
         totalEnemyCount = sceneEnemies.Count;
         Debug.Log($"Found {totalEnemyCount} enemies in the current scene");
+        
+        // Hedef düşman tiplerini say (tag'lere göre)
+        targetEnemyCounts.Clear();
+        defeatedTargetEnemyCounts.Clear();
+        
+        foreach (Enemy enemy in sceneEnemies)
+        {
+            string enemyTag = enemy.gameObject.tag;
+            if (targetEnemyCounts.ContainsKey(enemyTag))
+            {
+                targetEnemyCounts[enemyTag]++;
+            }
+            else
+            {
+                targetEnemyCounts[enemyTag] = 1;
+                defeatedTargetEnemyCounts[enemyTag] = 0;
+            }
+        }
+        
+        // Debug için hedef düşman sayılarını göster
+        foreach (var kvp in targetEnemyCounts)
+        {
+            Debug.Log($"Enemy type [{kvp.Key}]: {kvp.Value} found");
+        }
     }
     
     // NPC tarafından başlatılan görevi oluşturmak için
@@ -111,11 +139,59 @@ public class QuestManager : MonoBehaviour, IManager
         switch (questData.questType)
         {
             case QuestType.KillEnemies:
-                QuestObjective killObjective = new QuestObjective(
-                    $"Düşmanları öldür (0/{totalEnemyCount})",
-                    totalEnemyCount
-                );
-                newQuest.objectives = new QuestObjective[] { killObjective };
+                if (questData.useAllEnemiesInScene)
+                {
+                    // Eski yöntem: Sahnedeki tüm düşmanları öldür
+                    QuestObjective killObjective = new QuestObjective(
+                        $"Düşmanları öldür (0/{totalEnemyCount})",
+                        totalEnemyCount
+                    );
+                    newQuest.objectives = new QuestObjective[] { killObjective };
+                }
+                else
+                {
+                    // Yeni yöntem: Belirli düşman tiplerini öldür
+                    if (questData.targetEnemyTags != null && questData.targetEnemyTags.Length > 0)
+                    {
+                        List<QuestObjective> objectives = new List<QuestObjective>();
+                        
+                        for (int i = 0; i < questData.targetEnemyTags.Length; i++)
+                        {
+                            string enemyTag = questData.targetEnemyTags[i];
+                            int requiredAmount = (questData.enemyAmounts != null && i < questData.enemyAmounts.Length) 
+                                ? questData.enemyAmounts[i] 
+                                : 1; // Varsayılan olarak 1 adet öldürme
+                            
+                            // Düşman sayısını kontrol et
+                            int availableEnemies = 0;
+                            if (targetEnemyCounts.ContainsKey(enemyTag))
+                            {
+                                availableEnemies = targetEnemyCounts[enemyTag];
+                            }
+                            
+                            // Eğer yeterli düşman yoksa, mevcut sayıyı kullan
+                            int actualRequiredAmount = Mathf.Min(requiredAmount, availableEnemies);
+                            
+                            QuestObjective objective = new QuestObjective(
+                                $"{enemyTag} düşmanlarını öldür (0/{actualRequiredAmount})",
+                                actualRequiredAmount
+                            );
+                            
+                            objectives.Add(objective);
+                        }
+                        
+                        newQuest.objectives = objectives.ToArray();
+                    }
+                    else
+                    {
+                        // Hedef düşman tanımlanmamışsa, varsayılan olarak tüm düşmanları kullan
+                        QuestObjective killObjective = new QuestObjective(
+                            $"Düşmanları öldür (0/{totalEnemyCount})",
+                            totalEnemyCount
+                        );
+                        newQuest.objectives = new QuestObjective[] { killObjective };
+                    }
+                }
                 break;
                 
             case QuestType.CollectItems:
@@ -183,13 +259,21 @@ public class QuestManager : MonoBehaviour, IManager
         // Düşman listesinden çıkar
         if (sceneEnemies.Contains(enemy))
         {
+            string enemyTag = enemy.gameObject.tag;
             sceneEnemies.Remove(enemy);
             defeatedEnemyCount++;
+            
+            // Belirli düşman tipini takip et
+            if (defeatedTargetEnemyCounts.ContainsKey(enemyTag))
+            {
+                defeatedTargetEnemyCounts[enemyTag]++;
+                Debug.Log($"Enemy of type [{enemyTag}] defeated! {defeatedTargetEnemyCounts[enemyTag]}/{targetEnemyCounts[enemyTag]}");
+            }
             
             Debug.Log($"Enemy defeated! {defeatedEnemyCount}/{totalEnemyCount}");
             
             // Kill quest'lerin hepsini güncelle
-            UpdateKillQuests();
+            UpdateKillQuests(enemy);
             
             // Tüm düşmanlar öldürüldü mü kontrol et
             if (sceneEnemies.Count == 0 && totalEnemyCount > 0)
@@ -206,18 +290,29 @@ public class QuestManager : MonoBehaviour, IManager
         Debug.Log($"Quest reward granted: {reward.GetRewardDescription()}");
     }
     
-    private void UpdateKillQuests()
+    private void UpdateKillQuests(Enemy defeatedEnemy)
     {
+        string enemyTag = defeatedEnemy.gameObject.tag;
+        
         // Aktif görevleri tarayarak düşman öldürme içeren tüm görevleri güncelle
         foreach (Quest quest in activeQuests)
         {
             // Her görevin hedeflerini kontrol et
             if (quest.objectives.Length > 0)
             {
+                bool questUpdated = false;
+                
                 foreach (QuestObjective objective in quest.objectives)
                 {
-                    // Eğer açıklama "Düşmanları öldür" içeriyorsa bu bir kill quest
-                    if (objective.description.Contains("Düşmanları öldür"))
+                    // Eğer açıklama "düşmanlarını öldür" içeriyorsa bu bir belirli düşman öldürme görevi
+                    if (objective.description.Contains($"{enemyTag} düşmanlarını öldür"))
+                    {
+                        objective.UpdateProgress(1);
+                        objective.description = $"{enemyTag} düşmanlarını öldür ({objective.currentAmount}/{objective.requiredAmount})";
+                        questUpdated = true;
+                    }
+                    // Genel düşman öldürme görevi ise
+                    else if (objective.description.Contains("Düşmanları öldür"))
                     {
                         objective.currentAmount = defeatedEnemyCount;
                         objective.description = $"Düşmanları öldür ({defeatedEnemyCount}/{totalEnemyCount})";
@@ -226,11 +321,16 @@ public class QuestManager : MonoBehaviour, IManager
                         {
                             objective.isCompleted = true;
                         }
+                        
+                        questUpdated = true;
                     }
                 }
                 
-                // Görevi güncelle
-                quest.UpdateQuest();
+                // Görev güncellendiyse UpdateQuest metodunu çağır
+                if (questUpdated)
+                {
+                    quest.UpdateQuest();
+                }
             }
         }
     }

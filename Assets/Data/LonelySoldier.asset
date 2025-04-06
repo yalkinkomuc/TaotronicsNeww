@@ -16,10 +16,14 @@ MonoBehaviour:
   title: Massive Black Hole
   description: Kill all the enemies in the area.
   questType: 0
+  targetEnemyTags:
+  - QuestEnemies
+  enemyAmounts: 02000000
+  useAllEnemiesInScene: 0
   itemName: 
   itemAmount: 0
   targetNPCName: 
   requiredQuestIds: []
-  questStartDialogue: {fileID: 0}
-  questActiveDialogue: {fileID: 0}
-  questCompletedDialogue: {fileID: 0}
+  questStartDialogue: {fileID: 11400000, guid: 3cb3147c94a4e0942b5b92ea86b2e108, type: 2}
+  questActiveDialogue: {fileID: 11400000, guid: dcf50079719e38b43ab5561de48cab3a, type: 2}
+  questCompletedDialogue: {fileID: 11400000, guid: b4079aa14469ec446b4ba82582ef07d1, type: 2}

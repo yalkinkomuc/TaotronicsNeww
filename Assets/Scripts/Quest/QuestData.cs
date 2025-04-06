@@ -12,6 +12,12 @@ public class QuestData : ScriptableObject
     [Header("Quest Type")]
     public QuestType questType; // Görev tipi
     
+    [Header("Kill Enemies Quest Details")]
+    [Tooltip("Eğer görev tipini KillEnemies seçtiyseniz doldurun")]
+    public string[] targetEnemyTags; // Hedef düşman tag'leri
+    public int[] enemyAmounts; // Her düşman tipi için gereken öldürme sayısı
+    public bool useAllEnemiesInScene; // Sahnedeki tüm düşmanları kullan
+
     [Header("Collect Item Quest Details")]
     [Tooltip("Eğer görev tipini CollectItems seçtiyseniz doldurun")]
     public string itemName; // Toplanacak eşya adı
