@@ -3834,7 +3834,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1377457612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3859,6 +3859,8 @@ MonoBehaviour:
   secondComboKnockbackXMultiplier: 0
   thirdComboKnockbackXMultiplier: 0
   knockbackDuration: 0.2
+  isAttackActive: 0
+  hitEntitiesInCurrentAttack: []
   healthBar: {fileID: 0}
   attackCheck: {fileID: 2044795576}
   attackSize: {x: 1.3, y: 0.4}
@@ -3907,6 +3909,8 @@ MonoBehaviour:
   experience: 0
   level: 1
   experienceToNextLevel: 100
+  parryRadius: 0.84
+  parryCooldown: 1
 --- !u!4 &1377457613
 Transform:
   m_ObjectHideFlags: 0
@@ -3997,7 +4001,7 @@ MonoBehaviour:
     baseValue: 5
     modifiers: 
   maxHealth:
-    baseValue: 100
+    baseValue: 10000
     modifiers: 
   maxMana:
     baseValue: 100
@@ -7946,11 +7950,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3429875137707942753, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.47
+      value: -17.43
       objectReference: {fileID: 0}
     - target: {fileID: 3429875137707942753, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.0886436
+      value: -2.48
       objectReference: {fileID: 0}
     - target: {fileID: 3429875137707942753, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7984,13 +7988,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: attackDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
       value: EliteSkeleton_Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8678,7 +8686,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.x
