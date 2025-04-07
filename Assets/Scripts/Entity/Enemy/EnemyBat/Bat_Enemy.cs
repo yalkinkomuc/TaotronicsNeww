@@ -4,7 +4,7 @@ using UnityEngine;
 public class Bat_Enemy : Enemy
 {
     [Header("Detection Settings")]
-    [SerializeField] private float detectionRange = 15f;
+    //[SerializeField] private float detectionRange = 15f;
     
     [Header("Movement Settings")]
     [SerializeField] private float flightSpeed = 3f;
@@ -56,36 +56,9 @@ public class Bat_Enemy : Enemy
     }
 
     // Oyuncuyu algılama ve battle state'e geçme kontrolü
-    public bool CheckForBattleTransition()
+    public override bool CheckForBattleTransition()
     {
-        if (PlayerManager.instance != null && PlayerManager.instance.player != null)
-        {
-            float distanceToPlayer = Vector2.Distance(
-                transform.position, 
-                PlayerManager.instance.player.transform.position
-            );
-            
-            // Oyuncu algılama mesafesi içinde mi?
-            if (distanceToPlayer <= detectionRange)
-            {
-                // Yarasa ve oyuncu arasında engel var mı kontrol et
-                Vector2 direction = (PlayerManager.instance.player.transform.position - transform.position).normalized;
-                RaycastHit2D hit = Physics2D.Raycast(
-                    transform.position, 
-                    direction, 
-                    distanceToPlayer, 
-                    whatIsGround // Engel katmanı
-                );
-                
-                // Engel yoksa (ray yerle değil oyuncuyla çarpışıyorsa) true döndür
-                if (hit.collider == null || hit.collider.CompareTag("Player"))
-                {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
+        return base.CheckForBattleTransition();
     }
 
     public float GetFlightSpeed()

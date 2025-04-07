@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerParryState : PlayerState
 {
-    [SerializeField] private float parryRadius = 2f; // Parry etki yarıçapı
+    //[SerializeField] private float parryRadius = 2f; // Parry etki yarıçapı
     private bool hasCheckedParry = false; // Parry kontrolü yapıldı mı
     private bool parrySuccessful = false; // Parry başarılı oldu mu?
     private float parryInvulnerabilityDuration = 0.8f; // Başarılı parry sonrası hasar alma koruması süresi

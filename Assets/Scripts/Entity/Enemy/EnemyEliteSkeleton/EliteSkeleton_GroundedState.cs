@@ -32,7 +32,7 @@ public class EliteSkeleton_GroundedState : EnemyState
     {
         base.Update();
         
-        Debug.Log("im in grounded state");
+       // Debug.Log("im in grounded state");
         
         if (enemy.fightBegun)
         {

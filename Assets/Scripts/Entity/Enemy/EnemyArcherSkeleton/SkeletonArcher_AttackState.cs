@@ -33,7 +33,7 @@ public class SkeletonArcher_AttackState : EnemyState
         base.Update();
         enemy.SetZeroVelocity();
 
-        Debug.Log("Archer in attack State");
+       // Debug.Log("Archer in attack State");
 
         // Bekleme süresi bittiyse ve henüz ok atmadıysak
         if (stateTimer < 0 && !hasShot)

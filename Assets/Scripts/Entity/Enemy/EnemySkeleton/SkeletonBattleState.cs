@@ -28,7 +28,7 @@ public class SkeletonBattleState : EnemyState
     {
         base.Update();
         
-        Debug.Log("im in battleState");
+       // Debug.Log("im in battleState");
         
         if(player.position.x > enemy.transform.position.x)
             moveDir = 1;

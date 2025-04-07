@@ -98,26 +98,45 @@ public class PlayerAnimTriggers : MonoBehaviour
                         break;
                 }
                 
-                enemy.Damage();
-                hit.GetComponent<CharacterStats>().TakeDamage(currentDamage);
+                // TakeDamage doğrudan çağır, enemy.Damage() çağırma
+                enemy.stats.TakeDamage(currentDamage);
                 
+                // Görsel efektler için HitFX çağır
+                if (enemy.entityFX != null)
+                {
+                    enemy.entityFX.StartCoroutine("HitFX");
+                }
+                
+                // Static düşmanlar için erken çıkış
                 if (enemy.rb.bodyType == RigidbodyType2D.Static)
                 {
                    return;
                 }
+                
+                // Knockback uygula
                 StartCoroutine(enemy.HitKnockback(knockbackForce));
             }
             else if (player.stateMachine.currentState == player.crouchAttackState)
             {
                 // Çömelme saldırısı için hasar ve knockback
                 currentDamage *= 1.2f; // Çömelme saldırısı biraz daha fazla hasar versin
-                enemy.Damage();
-                hit.GetComponent<CharacterStats>().TakeDamage(currentDamage);
                 
+                // TakeDamage doğrudan çağır, enemy.Damage() çağırma
+                enemy.stats.TakeDamage(currentDamage);
+                
+                // Görsel efektler için HitFX çağır
+                if (enemy.entityFX != null)
+                {
+                    enemy.entityFX.StartCoroutine("HitFX");
+                }
+                
+                // Static düşmanlar için erken çıkış
                 if (enemy.rb.bodyType == RigidbodyType2D.Static)
                 {
                    return;
                 }
+                
+                // Knockback uygula
                 StartCoroutine(enemy.HitKnockback(enemy.knockbackDirection));
             }
          }
@@ -243,10 +262,26 @@ public class PlayerAnimTriggers : MonoBehaviour
             // Düşmanı vurulmuş olarak işaretle
             player.MarkEntityAsHit(enemy);
             
-            // Ekstra hasar ver (parry sonrası counter hasar)
-            float parryDamage = player.stats.baseDamage.GetValue() * 1.5f; // %50 fazla hasar
-            enemy.Damage();
+            // Elite Skeleton için stunned durumunu kontrol et
+            float damageMultiplier = 1.5f; // Normal durumda %50 fazla hasar
+            
+            // Eğer Elite Skeleton ve stunned durumdaysa daha fazla hasar ver
+            if (enemy is EliteSkeleton_Enemy eliteSkeleton && 
+                eliteSkeleton.stateMachine.currentState == eliteSkeleton.stunnedState)
+            {
+               damageMultiplier = 2.5f; // Stunned durumunda %150 fazla hasar
+               Debug.Log("Critical hit on stunned enemy!");
+            }
+            
+            // Ekstra hasar ver - enemy.Damage() çağrımını yapmıyoruz burada
+            float parryDamage = player.stats.baseDamage.GetValue() * damageMultiplier;
             enemy.stats.TakeDamage(parryDamage);
+            
+            // Sadece görsel efektler ve knockback için Damage() çağırıyoruz
+            if (enemy.entityFX != null)
+            {
+               enemy.entityFX.StartCoroutine("HitFX");
+            }
             
             Vector2 knockbackForce = new Vector2(enemy.knockbackDirection.x * 1.5f, enemy.knockbackDirection.y);
             StartCoroutine(enemy.HitKnockback(knockbackForce));

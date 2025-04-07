@@ -157,7 +157,7 @@ public class Boar_Enemy : Enemy
         base.Flip();
     }
     
-    public bool CheckForBattleTransition()
+    public override bool CheckForBattleTransition()
     {
         if (PlayerManager.instance != null && PlayerManager.instance.player != null)
         {

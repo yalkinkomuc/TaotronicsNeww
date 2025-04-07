@@ -24,7 +24,7 @@ public class SkeletonArcher_IdleState : SkeletonArcher_GroundedState
     {
         base.Update();
 
-        Debug.Log("Archer in idle  State");
+       // Debug.Log("Archer in idle  State");
         
         if (enemy.CanSeePlayer())
         {

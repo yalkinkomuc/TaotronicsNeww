@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerSpell1State : PlayerState
 {
     private Vector3[] spawnPositions;
-    private bool positionsCalculated = false;
+    //private bool positionsCalculated;
 
     public PlayerSpell1State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -14,7 +14,7 @@ public class PlayerSpell1State : PlayerState
     {
         base.Enter();
         CalculateSpawnPositions();
-        positionsCalculated = true;
+       // positionsCalculated = true;
     }
 
     private void CalculateSpawnPositions()
@@ -36,7 +36,7 @@ public class PlayerSpell1State : PlayerState
     public override void Exit()
     {
         base.Exit();
-        positionsCalculated = false;
+        //positionsCalculated = false;
     }
 
     public override void Update()

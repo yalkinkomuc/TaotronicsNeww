@@ -22,7 +22,7 @@ public class SkeletonGroundedState : EnemyState
     {
         base.Update();
         
-        Debug.Log("im in groundedState");
+        //Debug.Log("im in groundedState");
 
         if (enemy.IsPlayerDetected() ||enemy.IsTooCloseToPlayer())
         {
