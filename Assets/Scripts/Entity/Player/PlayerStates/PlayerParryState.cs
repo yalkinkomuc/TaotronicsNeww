@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerParryState : PlayerState
 {
-    private float parryInvulnerabilityDuration = 0.8f; // Başarılı parry sonrası hasar alma koruması süresi
+    private float blockDuration = 0.3f; // Block durumu süresi (basılı tutulmazsa)
     
     public PlayerParryState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -14,23 +14,23 @@ public class PlayerParryState : PlayerState
         
         // Block durumunda hasar almayı engelle
         player.stats.MakeInvincible(true);
+        
+        // Parry penceresi açık olan düşman var mı kontrol et
+        CheckForSuccessfulParry();
     }
 
     public override void Update()
     {
         base.Update();
 
-        // Q tuşu bırakıldığında idle'a dön
-        if (!player.playerInput.parryInput)
+        // Block tuşu bırakılırsa idle'a dön
+        if (!player.playerInput.blockInput)
         {
             stateMachine.ChangeState(player.idleState);
             return;
         }
         
         player.SetZeroVelocity();
-        
-        // EliteSkeleton'un parry penceresi içinde olup olmadığını kontrol et
-        CheckForSuccessfulParry();
     }
 
     public override void Exit()
@@ -53,7 +53,7 @@ public class PlayerParryState : PlayerState
             
             if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
             {
-                // Parry penceresi içindeyken başarılı parry state'ine geç
+                // Parry penceresi açıkken tam zamanında Q'ya basılmış, başarılı parry state'ine geç
                 stateMachine.ChangeState(player.succesfulParryState);
                 return;
             }

@@ -10,6 +10,7 @@ public interface IPlayerInput
      bool crouchInputReleased { get; }
      bool attackInput { get; }
      bool interactionInput { get; }
+     bool blockInput { get; }
      bool parryInput { get; }
      bool spell1Input { get; }
      bool spell2Input { get; }

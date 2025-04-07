@@ -918,29 +918,38 @@ public class Player : Entity
 
     private void CheckForParryInput()
     {
-        // Parry durumunda zaten olduğumuzda geri dönüş
-        if (stateMachine.currentState is PlayerParryState)
-        {
-            // Halihazırda parry state'deyiz, input kontrolü Update'de yapılıyor
-            return;
-        }
-            
         // Cooldown kontrolü
         if (parryTimer > 0)
             return;
-            
-        // Parry tuşuna basıldıysa
+        
+        // PARRY - Eğer parry tuşuna bir kez basıldıysa ve düşmanın parry penceresi açıksa
         if (playerInput.parryInput)
         {
-            // Parry state'e geç
-            stateMachine.ChangeState(parryState);
+            // Düşmanın parry penceresi açıksa anında SuccessfulParryState'e geç
+            if (IsEnemyParryWindowOpen())
+            {
+                stateMachine.ChangeState(succesfulParryState);
+            }
+            // Değilse normal block state'ine geç
+            else
+            {
+                stateMachine.ChangeState(parryState);
+            }
             
             // Cooldown başlat
             parryTimer = parryCooldown;
         }
+        // BLOCK - Eğer block tuşuna basılı tutuluyorsa ve şu anda block durumunda değilsek
+        else if (playerInput.blockInput && !(stateMachine.currentState is PlayerParryState))
+        {
+            // Block state'ine geç
+            stateMachine.ChangeState(parryState);
+            
+            // Not: Block yaparken cooldown'u yenileme
+        }
     }
     
-    public void CheckForParryableEnemies()
+    private bool IsEnemyParryWindowOpen()
     {
         // Parry yarıçapında düşmanları kontrol et
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, parryRadius, passableEnemiesLayerMask);
@@ -951,26 +960,19 @@ public class Player : Entity
             EliteSkeleton_Enemy eliteSkeleton = hit.GetComponent<EliteSkeleton_Enemy>();
             if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
             {
-                // Bu düşmana zaten parry yaptık mı kontrol et
-                if (HasHitEntity(eliteSkeleton))
-                    continue;
-                    
-                // Bu düşmanı vurulmuş olarak işaretle 
-                MarkEntityAsHit(eliteSkeleton);
-                
-                // Parry başarılı oldu, düşmanı parry et
-                eliteSkeleton.GetParried();
-                
-                // Başarılı parry state'ine geç
-                stateMachine.ChangeState(succesfulParryState);
-                return;
+                return true;
             }
             
-            // Diğer Enemy tiplerinde de parry mekanizması olursa burada eklenebilir
+            // Diğer düşman tipleri için de kontrol eklenebilir
         }
+        
+        return false;
     }
     
-    
+    public void CheckForParryableEnemies()
+    {
+        // Bu metoda artık ihtiyaç yok, tüm kontroller CheckForParryInput'ta yapılıyor
+    }
 
     #endregion
 
