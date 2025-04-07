@@ -159,4 +159,32 @@ public class Enemy : Entity
        
        SetVelocity(patrolDirection * patrolSpeed, rb.linearVelocity.y);
    }
+
+   public override void Damage()
+   {
+       if (stats.isInvincible)
+       {
+           return;
+       }
+       
+       entityFX.StartCoroutine("HitFX");
+       
+       // Oyuncunun konumuna göre knockback yönünü hesapla
+       Vector2 knockbackDir = knockbackDirection;
+       if (player != null)
+       {
+           // Oyuncunun düşmana göre konumunu belirle
+           float playerDirection = player.transform.position.x - transform.position.x;
+           int knockbackDirMult = playerDirection > 0 ? -1 : 1; // Oyuncunun ters yönüne knockback
+           
+           // Yönü ayarla
+           knockbackDir = new Vector2(knockbackDirection.x * knockbackDirMult, knockbackDirection.y);
+       }
+       
+       // Knockback uygula
+       StartCoroutine(HitKnockback(knockbackDir));
+      
+       Debug.Log(gameObject.name + " was damaged ");
+       stats.TakeDamage(stats.baseDamage.GetValue());
+   }
 }

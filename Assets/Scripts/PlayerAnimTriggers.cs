@@ -241,54 +241,6 @@ public class PlayerAnimTriggers : MonoBehaviour
       }
    }
 
-   // Başarılı parry durumunda düşmana ekstra hasar vermek için
-   private void ParryAttackTrigger()
-   {
-      if (player == null)
-         return;
-         
-      // Parry yarıçapında düşmanları kontrol et
-      Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
-      
-      foreach (var hit in colliders)
-      {
-         Enemy enemy = hit.GetComponent<Enemy>();
-         if (enemy != null)
-         {
-            // Eğer bu düşmana zaten vurduysak tekrar vurma
-            if (player.HasHitEntity(enemy))
-               continue;
-               
-            // Düşmanı vurulmuş olarak işaretle
-            player.MarkEntityAsHit(enemy);
-            
-            // Elite Skeleton için stunned durumunu kontrol et
-            float damageMultiplier = 1.5f; // Normal durumda %50 fazla hasar
-            
-            // Eğer Elite Skeleton ve stunned durumdaysa daha fazla hasar ver
-            if (enemy is EliteSkeleton_Enemy eliteSkeleton && 
-                eliteSkeleton.stateMachine.currentState == eliteSkeleton.stunnedState)
-            {
-               damageMultiplier = 2.5f; // Stunned durumunda %150 fazla hasar
-               Debug.Log("Critical hit on stunned enemy!");
-            }
-            
-            // Ekstra hasar ver - enemy.Damage() çağrımını yapmıyoruz burada
-            float parryDamage = player.stats.baseDamage.GetValue() * damageMultiplier;
-            enemy.stats.TakeDamage(parryDamage);
-            
-            // Sadece görsel efektler ve knockback için Damage() çağırıyoruz
-            if (enemy.entityFX != null)
-            {
-               enemy.entityFX.StartCoroutine("HitFX");
-            }
-            
-            Vector2 knockbackForce = new Vector2(enemy.knockbackDirection.x * 1.5f, enemy.knockbackDirection.y);
-            StartCoroutine(enemy.HitKnockback(knockbackForce));
-         }
-      }
-   }
-   
    // Parry animasyonu bittiğinde çağrılacak
    private void ParryAnimationFinished()
    {

@@ -3,9 +3,10 @@ using UnityEngine;
 public class PlayerParryState : PlayerState
 {
     //[SerializeField] private float parryRadius = 2f; // Parry etki yarıçapı
-    private bool hasCheckedParry = false; // Parry kontrolü yapıldı mı
     private bool parrySuccessful = false; // Parry başarılı oldu mu?
     private float parryInvulnerabilityDuration = 0.8f; // Başarılı parry sonrası hasar alma koruması süresi
+    private float parryCheckCooldown = 0.05f; // Parry kontrolü arasındaki süre
+    private float lastParryCheckTime = 0f; // Son parry kontrolü zamanı
     
     public PlayerParryState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -16,8 +17,11 @@ public class PlayerParryState : PlayerState
         base.Enter();
 
         stateTimer = 0.5f; // Parry penceresi (saniye)
-        hasCheckedParry = false; // Parry kontrol durumunu sıfırla
         parrySuccessful = false; // Parry başarı durumunu sıfırla
+        lastParryCheckTime = 0f; // Son parry kontrolü zamanını sıfırla
+        
+        // Yeni bir saldırı başladığını belirt (hit listesini temizler)
+        player.StartNewAttack();
     }
 
     public override void Update()
@@ -31,11 +35,14 @@ public class PlayerParryState : PlayerState
         
         player.SetZeroVelocity();
         
-        // Parry kontrolünü sadece bir kez yap
-        if (!hasCheckedParry)
+        // Belirli aralıklarla sürekli parry kontrolü yap
+        if (Time.time >= lastParryCheckTime + parryCheckCooldown)
         {
-            hasCheckedParry = true; // İşaretleme yapıldı
+            lastParryCheckTime = Time.time;
             CheckParryableEnemies();
+            
+            // Ayrıca player'ın CheckForParryableEnemies metodunu da çağır
+            player.CheckForParryableEnemies();
         }
     }
 
@@ -62,6 +69,13 @@ public class PlayerParryState : PlayerState
             
             if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
             {
+                // Bu düşmana zaten parry yaptık mı kontrol et
+                if (player.HasHitEntity(eliteSkeleton))
+                    continue;
+                
+                // Bu düşmanı vurulmuş olarak işaretle
+                player.MarkEntityAsHit(eliteSkeleton);
+                
                 // Parry başarılı!
                 parrySuccessful = true;
                 Debug.Log("Parry successful!");
@@ -71,9 +85,6 @@ public class PlayerParryState : PlayerState
                 
                 // Parry başarılı olduğunda süreyi uzat
                 stateTimer = 0.6f;
-                
-                // İlk başarılı parry sonrası diğerlerini kontrol etmeyi bırak
-                break;
             }
         }
     }

@@ -32,7 +32,7 @@ public class Entity : MonoBehaviour
     [SerializeField] public float thirdComboKnockbackXMultiplier;
     [SerializeField] protected float knockbackDuration;
 
-    protected bool isKnocked;
+    public bool isKnocked;
     protected float originalMoveSpeed;
     protected float originalChaseSpeed;
 
@@ -88,12 +88,9 @@ public class Entity : MonoBehaviour
     
     public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
-       
         isKnocked = true;
-
-
         
-        rb.linearVelocity = new Vector2(knockbackDirectionParam.x * -facingdir, knockbackDirectionParam.y);
+        rb.linearVelocity = new Vector2(knockbackDirectionParam.x, knockbackDirectionParam.y);
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
     }

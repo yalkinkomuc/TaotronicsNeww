@@ -31,8 +31,8 @@ public class EliteSkeleton_StunnedState : EnemyState
         // Stun süresini ayarla
         stateTimer = enemy.parryStunDuration;
         
-        // Hızı sıfırla
-        enemy.SetZeroVelocity();
+        // Artık hızı sıfırlamıyoruz, çünkü knockback'i GetParried'de uyguluyoruz
+        // enemy.SetZeroVelocity();
         
         // Saldırı collider'ını devre dışı bırak
         enemy.isAttackActive = false;
@@ -61,8 +61,11 @@ public class EliteSkeleton_StunnedState : EnemyState
     {
         base.Update();
         
-        // Düşman stun durumundayken hareket edemez
-        enemy.SetZeroVelocity();
+        // Knockback bittiğinde (isKnocked false olduğunda) düşmanın hızını sıfırla
+        if (!enemy.isKnocked)
+        {
+            enemy.SetZeroVelocity();
+        }
         
         // Stun süresi bittiğinde battle state'e dön
         if (stateTimer < 0)

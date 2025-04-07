@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using System.Collections;
 
 public class EliteSkeleton_Enemy : Enemy
 {
@@ -89,9 +90,22 @@ public class EliteSkeleton_Enemy : Enemy
         
         Debug.Log("Elite Skeleton was parried!");
         
-        // Düşmana daha fazla hasar ver
-        float parryDamage = stats.maxHealth.GetValue() * 0.15f; // Düşmanın max sağlığının %15'i hasar
-        stats.TakeDamage(parryDamage);
+        // Parry knockback'i uygula (oyuncu yönünün tersine savrulsun)
+        if (player != null)
+        {
+            // Knockback kuvveti
+            Vector2 parryKnockbackForce;
+            
+            // Oyuncunun düşmana göre konumunu belirle
+            float playerDirection = player.transform.position.x - transform.position.x;
+            int knockbackDir = playerDirection > 0 ? -1 : 1; // Oyuncunun ters yönüne knockback
+            
+            // Knockback gücü hesapla - yön olarak oyuncunun durduğu yerin tersine
+            parryKnockbackForce = new Vector2(knockbackDirection.x * 1.5f * knockbackDir, knockbackDirection.y * 0.8f);
+            
+            // Knockback uygula
+            StartCoroutine(HitKnockback(parryKnockbackForce));
+        }
         
         // Sersemleme durumuna geç
         stateMachine.ChangeState(stunnedState);

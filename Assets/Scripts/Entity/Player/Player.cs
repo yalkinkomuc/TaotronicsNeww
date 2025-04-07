@@ -999,5 +999,35 @@ public class Player : Entity
         yield return new WaitForSeconds(duration);
         isInvulnerable = false;
     }
+
+    /// <summary>
+    /// Sürekli olarak yakındaki düşmanların parry penceresi açık mı kontrol eder
+    /// PlayerParryState içinden çağrılır
+    /// </summary>
+    public void CheckForParryableEnemies()
+    {
+        // Parry yarıçapında düşmanları kontrol et
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, parryRadius, passableEnemiesLayerMask);
+        
+        foreach (var hit in colliders)
+        {
+            // Elite Skeleton varsa ve parry penceresi açıksa
+            EliteSkeleton_Enemy eliteSkeleton = hit.GetComponent<EliteSkeleton_Enemy>();
+            if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
+            {
+                // Bu düşmana zaten parry yaptık mı kontrol et
+                if (HasHitEntity(eliteSkeleton))
+                    continue;
+                    
+                // Bu düşmanı vurulmuş olarak işaretle 
+                MarkEntityAsHit(eliteSkeleton);
+                
+                // Parry başarılı oldu, düşmanı parry et
+                eliteSkeleton.GetParried();
+            }
+            
+            // Diğer Enemy tiplerinde de parry mekanizması olursa burada eklenebilir
+        }
+    }
 }
 
