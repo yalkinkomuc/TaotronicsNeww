@@ -2,26 +2,42 @@ using UnityEngine;
 
 public class EnemyAnimationTriggers : MonoBehaviour
 {
-
-    private Boar_Enemy enemyBoar => GetComponentInParent<Boar_Enemy>();
+    protected Enemy enemy => GetComponentInParent<Enemy>();
+    
     protected virtual void AnimationTrigger()
     {
-       
+        if (enemy != null)
+        {
+            enemy.AnimationFinishTrigger();
+        }
     }
     
-    
-    private void AttackTrigger()
+    // Attack hitbox'ını aktif et - Animation Event tarafından çağrılır
+    protected virtual void EnableAttackCollider()
     {
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(enemyBoar.attackCheck.position,enemyBoar.attackSize,0,enemyBoar.whatIsPlayer);
-
-        foreach (var hit in colliders)
+        if (enemy != null)
         {
-            if (hit.GetComponent<Player>())
-            {
-                float currentDamage = enemyBoar.stats.baseDamage.GetValue();
-                hit.GetComponent<Player>().Damage();
-                hit.GetComponent<PlayerStats>().TakeDamage(currentDamage);
-            }
+            // Saldırı aktif olarak işaretle
+            enemy.isAttackActive = true;
         }
+    }
+    
+    // Attack hitbox'ını deaktif et - Animation Event tarafından çağrılır
+    protected virtual void DisableAttackCollider()
+    {
+        if (enemy != null)
+        {
+            // Saldırıyı deaktif yap
+            enemy.isAttackActive = false;
+        }
+    }
+    
+    // Bu metot tüm düşman türleri için overridable base implementasyon sağlar
+    // Alt sınıflarda override edilebilir
+    protected virtual void AttackTrigger()
+    {
+        // Düşman yoksa veya saldırı aktif değilse işlem yapma
+        if (enemy == null || !enemy.isAttackActive)
+            return;
     }
 } 

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : Entity
 {
@@ -156,6 +157,9 @@ public class Player : Entity
     [SerializeField] private int experience = 0;
     [SerializeField] private int level = 1;
     [SerializeField] private int experienceToNextLevel = 100;
+
+    // Dummy nesneleri için ayrı bir liste (Entity'den türemedikleri için)
+    [HideInInspector] public HashSet<int> hitDummyIDs = new HashSet<int>();
 
     public override bool IsGroundDetected()
     {
@@ -908,6 +912,17 @@ public class Player : Entity
             // Seviye atlama efekti oynatılabilir
             // ...
         }
+    }
+
+    /// <summary>
+    /// Yeni bir saldırı başlatırken çağrılır
+    /// </summary>
+    public void StartNewAttack()
+    {
+        // Vurulan entityleri sıfırla
+        ClearHitEntities();
+        hitDummyIDs.Clear();
+        isAttackActive = false; // Aktif edilene kadar pasif
     }
 }
 

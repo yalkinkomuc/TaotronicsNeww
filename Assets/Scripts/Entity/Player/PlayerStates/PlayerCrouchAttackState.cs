@@ -9,6 +9,9 @@ public class PlayerCrouchAttackState : PlayerState
     public override void Enter()
     {
         base.Enter();
+        
+        // Yeni saldırı başlatıldığında vurulan entityleri sıfırla
+        player.StartNewAttack();
     }
 
     public override void Update()

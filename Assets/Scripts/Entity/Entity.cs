@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
@@ -34,6 +35,10 @@ public class Entity : MonoBehaviour
     protected bool isKnocked;
     protected float originalMoveSpeed;
     protected float originalChaseSpeed;
+
+    [Header("Combat")]
+    [HideInInspector] public bool isAttackActive = false;
+    [HideInInspector] public List<Entity> hitEntitiesInCurrentAttack = new List<Entity>();
 
     protected virtual void Awake()
     {
@@ -183,6 +188,33 @@ public class Entity : MonoBehaviour
         {
             enemy.moveSpeed = originalMoveSpeed;
             enemy.chaseSpeed = originalChaseSpeed;
+        }
+    }
+
+    /// <summary>
+    /// Mevcut saldırıda vurulan entityleri temizler
+    /// </summary>
+    public void ClearHitEntities()
+    {
+        hitEntitiesInCurrentAttack.Clear();
+    }
+    
+    /// <summary>
+    /// Bu entity'nin verilen entity'ye bu saldırı sırasında zaten vurmuş olup olmadığını kontrol eder
+    /// </summary>
+    public bool HasHitEntity(Entity entity)
+    {
+        return hitEntitiesInCurrentAttack.Contains(entity);
+    }
+    
+    /// <summary>
+    /// Entity'yi mevcut saldırıda vurulmuş olarak işaretler
+    /// </summary>
+    public void MarkEntityAsHit(Entity entity)
+    {
+        if (!hitEntitiesInCurrentAttack.Contains(entity))
+        {
+            hitEntitiesInCurrentAttack.Add(entity);
         }
     }
 }

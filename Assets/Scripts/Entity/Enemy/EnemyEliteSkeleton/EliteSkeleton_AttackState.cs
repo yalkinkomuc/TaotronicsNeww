@@ -15,6 +15,10 @@ public class EliteSkeleton_AttackState : EnemyState
         base.Enter();
         
         enemy.fightBegun = true;
+        
+        // Reset hit entities when starting a new attack
+        enemy.ClearHitEntities();
+        enemy.isAttackActive = false; // Will be enabled by animation event
     }
 
     public override void Exit()

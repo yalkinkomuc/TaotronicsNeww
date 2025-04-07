@@ -19,8 +19,33 @@ public class PlayerAnimTriggers : MonoBehaviour
 
    private void ThrowBoomerangTrigger() => player.ThrowBoomerang();
    
+   // Attack hitbox'ını aktif et - Animation Event tarafından çağrılır
+   private void EnableAttackCollider()
+   {
+      if (player != null)
+      {
+         // Saldırı aktif olarak işaretle
+         player.isAttackActive = true;
+      }
+   }
+   
+   // Attack hitbox'ını deaktif et - Animation Event tarafından çağrılır
+   private void DisableAttackCollider()
+   {
+      if (player != null)
+      {
+         // Saldırıyı deaktif yap
+         player.isAttackActive = false;
+      }
+   }
+   
+   // Her animasyon frame'inde çağrılabilir
    private void AttackTrigger()
    {
+      // Saldırı aktif değilse hiçbir şey yapma
+      if (player == null || !player.isAttackActive)
+         return;
+      
       // Saldırı pozisyonunu belirle - normal veya crouch durumuna göre
       Vector2 attackPosition = player.attackCheck.position;
 
@@ -34,9 +59,16 @@ public class PlayerAnimTriggers : MonoBehaviour
 
       foreach (var hit in colliders)
       {
-         if (hit.GetComponent<Enemy>() != null)
+         // Düşman kontrolü
+         Enemy enemy = hit.GetComponent<Enemy>();
+         if (enemy != null)
          {
-            Enemy enemy = hit.GetComponent<Enemy>();
+            // Bu düşmana zaten vurduk mu kontrol et
+            if (player.HasHitEntity(enemy))
+               continue;  // Zaten vurmuşsak atla
+               
+            // Bu düşmanı vurulmuş olarak işaretle
+            player.MarkEntityAsHit(enemy);
             
             float currentDamage = player.stats.baseDamage.GetValue();
             
@@ -90,11 +122,23 @@ public class PlayerAnimTriggers : MonoBehaviour
             }
          }
 
-         if (hit.GetComponent<Dummy>() != null)
+         // Training dummy kontrolü
+         Dummy dummy = hit.GetComponent<Dummy>();
+         if (dummy != null)
          {
-            hit.GetComponent<Dummy>().PlayRandomHit();
+            // Dummy objelerinin ID'sini kullanarak kontrol et
+            int dummyID = dummy.gameObject.GetInstanceID();
+            
+            // Eğer bu dummy'ye zaten vurduysak, atla
+            if (player.hitDummyIDs.Contains(dummyID))
+               continue;
+               
+            // Vurulan dummy ID'sini listeye ekle
+            player.hitDummyIDs.Add(dummyID);
+            
+            // Dummy'nin random hit animasyonunu oynat
+            dummy.PlayRandomHit();
          }
-         
       }
    }
 
@@ -119,6 +163,16 @@ public class PlayerAnimTriggers : MonoBehaviour
       else
       {
          Gizmos.color = Color.green;
+      }
+      
+      // Saldırı aktifse daha belirgin göster
+      if (p.isAttackActive)
+      {
+          Gizmos.color = new Color(Gizmos.color.r, Gizmos.color.g, Gizmos.color.b, 0.8f);
+      }
+      else 
+      {
+          Gizmos.color = new Color(Gizmos.color.r, Gizmos.color.g, Gizmos.color.b, 0.3f);
       }
       
       Gizmos.DrawWireCube(attackPosition, p.attackSize);

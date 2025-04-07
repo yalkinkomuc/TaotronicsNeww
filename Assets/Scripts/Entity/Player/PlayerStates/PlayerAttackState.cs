@@ -23,9 +23,9 @@ public class PlayerAttackState : PlayerState
         }
         
         player.anim.SetInteger("comboCounter", comboCounter);
-
         stateTimer = .1f;
-
+        
+        player.StartNewAttack();
     }
 
     public override void Exit()
