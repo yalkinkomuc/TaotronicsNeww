@@ -3912,6 +3912,7 @@ MonoBehaviour:
   experienceToNextLevel: 100
   parryRadius: 1.02
   parryCooldown: 1
+  parryEffectPrefab: {fileID: 6790647974808866659, guid: 6b414d20df288a443a4f888a59c2f32a, type: 3}
 --- !u!4 &1377457613
 Transform:
   m_ObjectHideFlags: 0
@@ -3921,7 +3922,7 @@ Transform:
   m_GameObject: {fileID: 1377457611}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.26, y: -3.47, z: 0}
+  m_LocalPosition: {x: 3.076, y: -4.118, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7989,21 +7990,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
-      propertyPath: attackDistance
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
-      propertyPath: parryStunDuration
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
       value: EliteSkeleton_Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8140,6 +8129,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1655988990}
     m_Modifications:
+    - target: {fileID: 1148455196740695831, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: thirdComboKnockbackXMultiplier
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148455196740695831, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
+      propertyPath: secondComboKnockbackXMultiplier
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2128240008628340159, guid: 3d97c9fd92171e446884b1e67c2c1490, type: 3}
       propertyPath: m_Name
       value: Skeleton_Enemy_Archer
@@ -8688,10 +8685,6 @@ PrefabInstance:
     - target: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_Name
       value: Skeleton_Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.x

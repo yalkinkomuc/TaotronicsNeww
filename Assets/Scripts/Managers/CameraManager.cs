@@ -19,6 +19,9 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private float xDamping = 1f;
     [SerializeField] private float yDamping = 1f;
     [SerializeField] private float screenY = 0.6f;
+    [SerializeField] private float screenYMin = 0.4f; // Minimum screenY değeri (yukarıda)
+    [SerializeField] private float screenYMax = 0.7f; // Maximum screenY değeri (aşağıda)  
+    [SerializeField] private float screenYTransitionSpeed = 2f; // Y geçiş hızı
     
     [Header("Player Following")]
     private Vector3 lastPlayerPos;
@@ -226,6 +229,9 @@ public class CameraManager : MonoBehaviour
     {
         // Oyuncunun hareket yönünü takip et
         UpdatePlayerDirectionAndCamera();
+        
+        // Oyuncunun dikey pozisyonuna göre kamerayı ayarla
+        AdjustCameraVerticalPosition();
     }
     
     private void LateUpdate()
@@ -351,5 +357,34 @@ public class CameraManager : MonoBehaviour
             hasBoundaries = false;
             Debug.LogWarning("No SceneBoundary found in scene!");
         }
+    }
+    
+    private void AdjustCameraVerticalPosition()
+    {
+        if (!hasBoundaries || PlayerManager.instance?.player == null || transposer == null) return;
+        
+        // Enemy savaşı kontrol et
+        if (enemyScript != null && enemyScript.fightBegun)
+        {
+            return;
+        }
+        
+        // Sahne yüksekliği
+        float sceneHeight = topBoundary - bottomBoundary;
+        
+        // Sahnenin alt kısmından 0.3 (yüzde 30) yüksekliğindeki eşik noktası
+        float thresholdY = bottomBoundary + (sceneHeight * 0.3f);
+        
+        float playerY = PlayerManager.instance.player.transform.position.y;
+        
+        // Oyuncunun eşik noktasına göre pozisyonu (0 = eşikte, 1 = en üstte)
+        float normalizedPosition = Mathf.Clamp01((playerY - thresholdY) / (topBoundary - thresholdY));
+        
+        // Oyuncu eşiğin üzerindeyse (0.3 yüksekliğin üzerinde) kamerayı aşağı indir
+        // normalizedPosition 0 olduğunda (eşikte) screenYMin, 1 olduğunda (en üstte) screenYMax kullan
+        float targetScreenY = Mathf.Lerp(screenYMin, screenYMax, normalizedPosition);
+        
+        // Kamera konumunu yumuşak geçişle ayarla
+        transposer.m_ScreenY = Mathf.Lerp(transposer.m_ScreenY, targetScreenY, Time.deltaTime * screenYTransitionSpeed);
     }
 } 

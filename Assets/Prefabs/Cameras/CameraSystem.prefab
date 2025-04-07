@@ -53,6 +53,9 @@ MonoBehaviour:
   xDamping: 1
   yDamping: 1
   screenY: 0.6
+  screenYMin: 0.4
+  screenYMax: 0.7
+  screenYTransitionSpeed: 5
   screenXTransitionSpeed: 5
 --- !u!1 &7339666878853165440
 GameObject:
