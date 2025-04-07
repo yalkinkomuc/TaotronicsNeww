@@ -7,6 +7,7 @@ public class EliteSkeleton_BattleState : EnemyState
     private int moveDir;
     private float directionCheckCooldown = 0.2f; // Yön kontrolü için cooldown
     private float lastDirectionCheckTime;
+    private float battleTimeCounter; // Battle time'ı takip etmek için sayaç
     
     public EliteSkeleton_BattleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName, EliteSkeleton_Enemy _enemy) : base(_enemyBase, _stateMachine, _animBoolName)
     {
@@ -16,8 +17,13 @@ public class EliteSkeleton_BattleState : EnemyState
     public override void Enter()
     {
         base.Enter();
+        
         enemy.fightBegun = true;
         player = PlayerManager.instance.player.transform;
+        
+        // Battle time sayacını ayarla
+        battleTimeCounter = enemy.battleTime;
+        
         // State'e girerken ilk yön kontrolünü yap
         UpdateFacingDirection();
     }
@@ -25,7 +31,6 @@ public class EliteSkeleton_BattleState : EnemyState
     public override void Exit()
     {
         base.Exit();
-        enemy.fightBegun = false;
     }
 
     public override void Update()
@@ -48,20 +53,28 @@ public class EliteSkeleton_BattleState : EnemyState
             stateMachine.ChangeState(enemy.idleState);
         }
 
-        // Saldırı mesafesi kontrolü
-        if (enemy.IsPlayerDetected())
+        // Eğer oyuncuyu görüyorsa battle time sayacını sıfırla
+        if (enemy.IsPlayerDetected() || enemy.IsTooCloseToPlayer())
         {
-            stateTimer = enemy.battleTime;
-            if (enemy.IsPlayerDetected().distance < enemy.attackDistance && CanAttack())
+            battleTimeCounter = enemy.battleTime; // Oyuncuyu gördüğünde sayacı sıfırla
+            
+            // Saldırı mesafesi kontrolü
+            if (enemy.IsPlayerDetected() && enemy.IsPlayerDetected().distance < enemy.attackDistance && CanAttack())
             {
                 enemy.SetZeroVelocity(); // Saldırı öncesi durmayı sağla
                 stateMachine.ChangeState(enemy.attackState);
+                return;
             }
         }
         else
         {
-            if (stateTimer < 0 || Vector2.Distance(player.transform.position,enemy.transform.position) <15)
+            // Oyuncuyu görmüyorsa battle time sayacını azalt
+            battleTimeCounter -= Time.deltaTime;
+            
+            // Eğer süre dolduysa savaşı bitir
+            if (battleTimeCounter <= 0)
             {
+                enemy.fightBegun = false;
                 stateMachine.ChangeState(enemy.idleState);
             }
         }

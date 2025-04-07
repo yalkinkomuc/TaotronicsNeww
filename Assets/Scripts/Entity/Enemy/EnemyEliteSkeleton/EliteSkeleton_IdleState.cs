@@ -10,8 +10,10 @@ public class EliteSkeleton_IdleState : EliteSkeleton_GroundedState
     {
         base.Enter();
         
+        if (enemy.fightBegun)
+            return;
+            
         stateTimer = enemy.idleTime;
-
     }
 
     public override void Exit()

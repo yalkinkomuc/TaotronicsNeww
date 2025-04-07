@@ -15,6 +15,12 @@ public class EliteSkeleton_GroundedState : EnemyState
         base.Enter();
         
         player = PlayerManager.instance.player.transform;
+        
+        if (enemy.fightBegun)
+        {
+            stateMachine.ChangeState(enemy.battleState);
+            return;
+        }
     }
 
     public override void Exit()
@@ -28,10 +34,15 @@ public class EliteSkeleton_GroundedState : EnemyState
         
         Debug.Log("im in grounded state");
         
-        if (enemy.IsPlayerDetected() ||enemy.IsTooCloseToPlayer())
+        if (enemy.fightBegun)
         {
             stateMachine.ChangeState(enemy.battleState);
-            
+            return;
+        }
+        
+        if (enemy.IsPlayerDetected() || enemy.IsTooCloseToPlayer())
+        {
+            stateMachine.ChangeState(enemy.battleState);
         }
     }
 }
