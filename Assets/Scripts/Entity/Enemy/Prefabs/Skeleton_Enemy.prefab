@@ -138,6 +138,9 @@ MonoBehaviour:
   secondComboKnockbackXMultiplier: 2.5
   thirdComboKnockbackXMultiplier: 4.5
   knockbackDuration: 0.2
+  isKnocked: 0
+  isAttackActive: 0
+  hitEntitiesInCurrentAttack: []
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 256
@@ -146,7 +149,10 @@ MonoBehaviour:
   chaseSpeed: 3
   tooCloseDistance: 3
   detectDistance: 15
+  patrolDistance: 5
+  patrolSpeed: 2
   fightBegun: 0
+  isDefeated: 0
 --- !u!114 &7743403020825798319
 MonoBehaviour:
   m_ObjectHideFlags: 0

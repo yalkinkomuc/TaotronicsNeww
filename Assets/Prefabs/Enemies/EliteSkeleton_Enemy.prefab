@@ -383,9 +383,12 @@ MonoBehaviour:
   wallCheckDistance: 0.84
   facingdir: 1
   knockbackDirection: {x: 2, y: 3}
-  secondComboKnockbackXMultiplier: 0
-  thirdComboKnockbackXMultiplier: 0
+  secondComboKnockbackXMultiplier: 2
+  thirdComboKnockbackXMultiplier: 4
   knockbackDuration: 0.2
+  isKnocked: 0
+  isAttackActive: 0
+  hitEntitiesInCurrentAttack: []
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 256
@@ -394,12 +397,18 @@ MonoBehaviour:
   chaseSpeed: 3.5
   tooCloseDistance: 3
   detectDistance: 15
+  patrolDistance: 5
+  patrolSpeed: 2
   fightBegun: 0
-  attackDistance: 0.85
+  isDefeated: 0
+  attackDistance: 0.7
   attackCooldown: 0.2
   battleTime: 4
   attackCheck: {fileID: 1179314500733958781}
   attackSize: {x: 0.88, y: 0.54}
+  isParryWindowOpen: 0
+  parryWindowDuration: 0.3
+  parryStunDuration: 1
   lastTimeAttacked: 0
 --- !u!114 &7637031704639217373
 MonoBehaviour:

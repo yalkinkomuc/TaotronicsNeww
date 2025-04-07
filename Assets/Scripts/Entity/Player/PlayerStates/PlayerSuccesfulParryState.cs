@@ -4,6 +4,9 @@ public class PlayerSuccesfulParryState : PlayerState
 {
     private float parryInvulnerabilityDuration = 0.8f; // Başarılı parry sonrası hasar alma koruması süresi
     
+    [SerializeField] private GameObject parryEffectPrefab; // Başarılı parry efekti
+    private Transform parryEffectSpawnPoint; // Efektin spawn edileceği nokta
+    
     public PlayerSuccesfulParryState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
     }
@@ -79,6 +82,9 @@ public class PlayerSuccesfulParryState : PlayerState
                 // Düşmana parry bilgisini bildir
                 eliteSkeleton.GetParried();
                 
+                // Başarılı parry efekti oluştur
+                SpawnParryEffect(eliteSkeleton.transform.position);
+                
                 foundParryableEnemy = true;
                 break;
             }
@@ -90,5 +96,32 @@ public class PlayerSuccesfulParryState : PlayerState
             Debug.LogWarning("No parryable enemy found in SuccessfulParryState!");
             stateTimer = 0; // State'den hızlıca çıkmasını sağla
         }
+    }
+    
+    private void SpawnParryEffect(Vector3 enemyPosition)
+    {
+        // Eğer parry efekti prefab tanımlanmamışsa Player'dan al (oraya eklenebilir)
+        if (parryEffectPrefab == null && player.parryEffectPrefab != null)
+        {
+            parryEffectPrefab = player.parryEffectPrefab;
+        }
+        
+        // Eğer hala null ise bir uyarı ver ve çık
+        if (parryEffectPrefab == null)
+        {
+            Debug.LogWarning("Parry effect prefab is missing!");
+            return;
+        }
+        
+        // Oyuncu ile düşman arasındaki orta noktayı hesapla (efekt için ideal pozisyon)
+        Vector3 midPoint = (player.transform.position + enemyPosition) * 0.5f;
+        
+        // Parry efektini oluştur ve yönünü ayarla
+        GameObject effect = GameObject.Instantiate(parryEffectPrefab, midPoint, Quaternion.identity);
+        
+        // Efektin ölçeğini veya rotasyonunu gerekirse ayarla
+        
+        // Efekti belli bir süre sonra yok et (eğer kendi kendini yok etmiyorsa)
+        GameObject.Destroy(effect, 2f);
     }
 }
