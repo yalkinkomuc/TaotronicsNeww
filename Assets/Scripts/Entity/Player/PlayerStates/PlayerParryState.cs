@@ -3,6 +3,8 @@ using UnityEngine;
 public class PlayerParryState : PlayerState
 {
     private float blockDuration = 0.3f; // Block durumu süresi (basılı tutulmazsa)
+    private float lastCheckTime = 0f; // Son kontrol zamanı
+    private float checkInterval = 0.05f; // Kontrol aralığı
     
     public PlayerParryState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -15,8 +17,11 @@ public class PlayerParryState : PlayerState
         // Block durumunda hasar almayı engelle
         player.stats.MakeInvincible(true);
         
-        // Parry penceresi açık olan düşman var mı kontrol et
-        CheckForSuccessfulParry();
+        // Parry penceresini ilk giriş anında kontrol et (sadece Q'ya kısa basıldığında)
+        if (player.playerInput.parryInput && !player.playerInput.blockInput)
+        {
+            CheckForParryOpportunity();
+        }
     }
 
     public override void Update()
@@ -31,6 +36,13 @@ public class PlayerParryState : PlayerState
         }
         
         player.SetZeroVelocity();
+        
+        // Belirli aralıklarla parry fırsatını kontrol et (sadece Q'ya kısa basıldığında)
+        if (player.playerInput.parryInput && Time.time >= lastCheckTime + checkInterval)
+        {
+            lastCheckTime = Time.time;
+            CheckForParryOpportunity();
+        }
     }
 
     public override void Exit()
@@ -41,9 +53,9 @@ public class PlayerParryState : PlayerState
         player.stats.MakeInvincible(false);
     }
     
-    private void CheckForSuccessfulParry()
+    private void CheckForParryOpportunity()
     {
-        // Oyuncunun etrafındaki tüm düşmanları kontrol et (parry yarıçapı içinde)
+        // Parry yarıçapında düşmanları kontrol et
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
         
         foreach (var col in colliders)

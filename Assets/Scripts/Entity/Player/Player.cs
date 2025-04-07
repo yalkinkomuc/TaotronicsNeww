@@ -918,34 +918,24 @@ public class Player : Entity
 
     private void CheckForParryInput()
     {
-        // Cooldown kontrolü
-        if (parryTimer > 0)
-            return;
-        
-        // PARRY - Eğer parry tuşuna bir kez basıldıysa ve düşmanın parry penceresi açıksa
-        if (playerInput.parryInput)
+        // PARRY - Eğer parry tuşuna bir kez basıldıysa
+        if (playerInput.parryInput && parryTimer <= 0)
         {
-            // Düşmanın parry penceresi açıksa anında SuccessfulParryState'e geç
-            if (IsEnemyParryWindowOpen())
-            {
-                stateMachine.ChangeState(succesfulParryState);
-            }
-            // Değilse normal block state'ine geç
-            else
-            {
-                stateMachine.ChangeState(parryState);
-            }
-            
-            // Cooldown başlat
-            parryTimer = parryCooldown;
-        }
-        // BLOCK - Eğer block tuşuna basılı tutuluyorsa ve şu anda block durumunda değilsek
-        else if (playerInput.blockInput && !(stateMachine.currentState is PlayerParryState))
-        {
-            // Block state'ine geç
+            // Parry Q'ya anlık basma, sadece parryState'e geçer
             stateMachine.ChangeState(parryState);
             
-            // Not: Block yaparken cooldown'u yenileme
+            // Parry için cooldown başlat
+            parryTimer = parryCooldown;
+            return;
+        }
+        
+        // BLOCK - Eğer block tuşuna basılı tutuluyorsa ve şu anda block durumunda değilsek
+        // VE parry ile aynı frame'de değilse (parryInput ile çakışma olmaması için)
+        if (playerInput.blockInput && !playerInput.parryInput && !(stateMachine.currentState is PlayerParryState))
+        {
+            // Block için hiçbir düşman kontrolü yapmadan direkt block state'ine geç
+            stateMachine.ChangeState(parryState);
+            // Block için cooldown yok
         }
     }
     
@@ -967,11 +957,6 @@ public class Player : Entity
         }
         
         return false;
-    }
-    
-    public void CheckForParryableEnemies()
-    {
-        // Bu metoda artık ihtiyaç yok, tüm kontroller CheckForParryInput'ta yapılıyor
     }
 
     #endregion

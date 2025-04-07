@@ -52,6 +52,8 @@ public class PlayerSuccesfulParryState : PlayerState
         // Oyuncunun etrafındaki tüm düşmanları kontrol et (parry yarıçapı içinde)
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
         
+        bool foundParryableEnemy = false;
+        
         foreach (var col in colliders)
         {
             // Elite Skeleton kontrolü
@@ -59,9 +61,8 @@ public class PlayerSuccesfulParryState : PlayerState
             
             if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
             {
-                // Bu düşmana zaten parry yaptık mı kontrol et
-                if (player.HasHitEntity(eliteSkeleton))
-                    continue;
+                // Bu düşmana zaten parry yaptık mı kontrol etmeye gerek yok
+                // Çünkü başarılı parry state'ine girdiysen zaten yapacaksın
                 
                 // Bu düşmanı vurulmuş olarak işaretle
                 player.MarkEntityAsHit(eliteSkeleton);
@@ -72,9 +73,16 @@ public class PlayerSuccesfulParryState : PlayerState
                 // Düşmana parry bilgisini bildir
                 eliteSkeleton.GetParried();
                 
-                // İlk düşmanı parry yaptıktan sonra döngüden çık
+                foundParryableEnemy = true;
                 break;
             }
+        }
+        
+        // Eğer parry yapılacak düşman bulunamadıysa (çok nadir bir durum), idle durumuna dön
+        if (!foundParryableEnemy)
+        {
+            Debug.LogWarning("No parryable enemy found in SuccessfulParryState!");
+            stateTimer = 0; // State'den hızlıca çıkmasını sağla
         }
     }
 }
