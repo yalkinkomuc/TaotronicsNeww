@@ -3859,6 +3859,7 @@ MonoBehaviour:
   secondComboKnockbackXMultiplier: 0
   thirdComboKnockbackXMultiplier: 0
   knockbackDuration: 0.2
+  isKnocked: 0
   isAttackActive: 0
   hitEntitiesInCurrentAttack: []
   healthBar: {fileID: 0}
@@ -3909,7 +3910,7 @@ MonoBehaviour:
   experience: 0
   level: 1
   experienceToNextLevel: 100
-  parryRadius: 0.84
+  parryRadius: 1.02
   parryCooldown: 1
 --- !u!4 &1377457613
 Transform:
@@ -7990,6 +7991,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: attackDistance
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4427830143727512847, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: parryStunDuration
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
