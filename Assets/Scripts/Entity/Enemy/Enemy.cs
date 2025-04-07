@@ -169,17 +169,8 @@ public class Enemy : Entity
        
        entityFX.StartCoroutine("HitFX");
        
-       // Oyuncunun konumuna göre knockback yönünü hesapla
-       Vector2 knockbackDir = knockbackDirection;
-       if (player != null)
-       {
-           // Oyuncunun düşmana göre konumunu belirle
-           float playerDirection = player.transform.position.x - transform.position.x;
-           int knockbackDirMult = playerDirection > 0 ? -1 : 1; // Oyuncunun ters yönüne knockback
-           
-           // Yönü ayarla
-           knockbackDir = new Vector2(knockbackDirection.x * knockbackDirMult, knockbackDirection.y);
-       }
+       // Knocked back in the opposite direction the enemy is facing
+       Vector2 knockbackDir = new Vector2(knockbackDirection.x * -facingdir, knockbackDirection.y);
        
        // Knockback uygula
        StartCoroutine(HitKnockback(knockbackDir));

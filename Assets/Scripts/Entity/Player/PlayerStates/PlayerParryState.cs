@@ -16,7 +16,7 @@ public class PlayerParryState : PlayerState
     {
         base.Enter();
 
-        stateTimer = 0.5f; // Parry penceresi (saniye)
+        stateTimer = 0.2f; // Parry penceresi (saniye)
         parrySuccessful = false; // Parry başarı durumunu sıfırla
         lastParryCheckTime = 0f; // Son parry kontrolü zamanını sıfırla
         

@@ -81,20 +81,23 @@ public class PlayerAnimTriggers : MonoBehaviour
                     case 0:
                         currentDamage *= 1f;
                         Debug.Log(currentDamage);
-                        knockbackForce = enemy.knockbackDirection; // Normal knockback
+                        // Düşmanın baktığı yönün tersine knockback
+                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
                         break;
                     case 1:
                         currentDamage *= player.stats.secondComboDamageMultiplier.GetValue();
                         Debug.Log(currentDamage);
-                        knockbackForce = new Vector2(enemy.knockbackDirection.x*enemy.secondComboKnockbackXMultiplier,enemy.knockbackDirection.y); // Daha güçlü
+                        // İkinci combo için daha güçlü knockback, düşmanın baktığı yönün tersine
+                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.secondComboKnockbackXMultiplier, enemy.knockbackDirection.y);
                         break;
                     case 2:
-                       currentDamage *= player.stats.thirdComboDamageMultiplier.GetValue();;
-                       Debug.Log(currentDamage);
-                       knockbackForce = new Vector2(enemy.knockbackDirection.x*enemy.thirdComboKnockbackXMultiplier,enemy.knockbackDirection.y); // En güçlü
+                        currentDamage *= player.stats.thirdComboDamageMultiplier.GetValue();
+                        Debug.Log(currentDamage);
+                        // Üçüncü combo için en güçlü knockback, düşmanın baktığı yönün tersine
+                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.thirdComboKnockbackXMultiplier, enemy.knockbackDirection.y);
                         break;
                     default:
-                       knockbackForce = enemy.knockbackDirection;
+                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
                         break;
                 }
                 
@@ -136,8 +139,9 @@ public class PlayerAnimTriggers : MonoBehaviour
                    return;
                 }
                 
-                // Knockback uygula
-                StartCoroutine(enemy.HitKnockback(enemy.knockbackDirection));
+                // Knockback uygula - düşmanın baktığı yönün tersine
+                Vector2 knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
+                StartCoroutine(enemy.HitKnockback(knockbackForce));
             }
          }
 

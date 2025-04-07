@@ -90,22 +90,12 @@ public class EliteSkeleton_Enemy : Enemy
         
         Debug.Log("Elite Skeleton was parried!");
         
-        // Parry knockback'i uygula (oyuncu yönünün tersine savrulsun)
-        if (player != null)
-        {
-            // Knockback kuvveti
-            Vector2 parryKnockbackForce;
-            
-            // Oyuncunun düşmana göre konumunu belirle
-            float playerDirection = player.transform.position.x - transform.position.x;
-            int knockbackDir = playerDirection > 0 ? -1 : 1; // Oyuncunun ters yönüne knockback
-            
-            // Knockback gücü hesapla - yön olarak oyuncunun durduğu yerin tersine
-            parryKnockbackForce = new Vector2(knockbackDirection.x * 1.5f * knockbackDir, knockbackDirection.y * 0.8f);
-            
-            // Knockback uygula
-            StartCoroutine(HitKnockback(parryKnockbackForce));
-        }
+        // Parry knockback'i uygula - düşmanın her zaman arkaya (baktığı yönün tersine) doğru savrulması için
+        // Knockback'i karakterin baktığı yönün tersine uygula (facing direction)
+        Vector2 parryKnockbackForce = new Vector2(knockbackDirection.x * -facingdir * 1.5f, knockbackDirection.y * 0.8f);
+        
+        // Knockback uygula
+        StartCoroutine(HitKnockback(parryKnockbackForce));
         
         // Sersemleme durumuna geç
         stateMachine.ChangeState(stunnedState);

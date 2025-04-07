@@ -87,7 +87,6 @@ public class Entity : MonoBehaviour
 
     public virtual void DamageWithoutKnockback()
     {
-
         if (stats.isInvincible)
         {
             return;
@@ -101,8 +100,9 @@ public class Entity : MonoBehaviour
     public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
         isKnocked = true;
-        
-        rb.linearVelocity = new Vector2(knockbackDirectionParam.x, knockbackDirectionParam.y);
+
+        // Knockback kuvvetini doğrudan uygula
+        rb.linearVelocity = knockbackDirectionParam;
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
     }
