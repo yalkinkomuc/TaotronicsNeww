@@ -212,10 +212,18 @@ public class Player : Entity
             }
         }
 
+        // Parry timer'ı güncelle
+        if (parryTimer > 0)
+        {
+            parryTimer -= Time.deltaTime;
+        }
+        
+        // Başarılı parry kontrolü - Her şeyden önce yapılır
+        CheckForSuccessfulParry();
+        
+        // Diğer temel input kontrolleri
         stateMachine.currentState.Update();
         
-        
-
         // Her frame'de referansları güncelle
         UpdateWeaponReferences();
 
@@ -252,20 +260,10 @@ public class Player : Entity
         CheckForDashInput();
         CheckForGroundDashInput();
         CheckForSpellInput();
-
-        // Parry timer'ı güncelle
-        if (parryTimer > 0)
-        {
-            parryTimer -= Time.deltaTime;
-        }
         
-        // Parry input kontrolü
-        CheckForParryInput();
-
-       
-
-       
-
+        // Block input kontrolü - sadece basılı tutma için
+        CheckForBlockInput();
+        
         // Interaction kontrolü
         if (playerInput.interactionInput && currentInteractable != null)
         {
@@ -914,26 +912,37 @@ public class Player : Entity
 
     #endregion
 
-    #region Parry Region
+    #region Parry and Block Region
 
-    private void CheckForParryInput()
+    private void CheckForSuccessfulParry()
     {
-        // PARRY - Eğer parry tuşuna bir kez basıldıysa
+        // Sadece parry tuşuna anlık basış varsa (GetKeyDown) && parry cooldown'u dolmuşsa
         if (playerInput.parryInput && parryTimer <= 0)
         {
-            // Parry Q'ya anlık basma, sadece parryState'e geçer
-            stateMachine.ChangeState(parryState);
+            // Düşmanın parry penceresi açık mı diye kontrol et
+            if (IsEnemyParryWindowOpen())
+            {
+                // Başarılı parry durumuna geç
+                stateMachine.ChangeState(succesfulParryState);
+            }
+            else
+            {
+                // Parry penceresi açık değilse, sadece block state'ine geç
+                stateMachine.ChangeState(parryState);
+            }
             
             // Parry için cooldown başlat
             parryTimer = parryCooldown;
-            return;
         }
-        
-        // BLOCK - Eğer block tuşuna basılı tutuluyorsa ve şu anda block durumunda değilsek
-        // VE parry ile aynı frame'de değilse (parryInput ile çakışma olmaması için)
-        if (playerInput.blockInput && !playerInput.parryInput && !(stateMachine.currentState is PlayerParryState))
+    }
+    
+    private void CheckForBlockInput()
+    {
+        // Block tuşu basılı tutuluyorsa (GetKey) ve şu anda block durumunda değilsek
+        // NOT: Burada parryInput ile çakışma kontrolü yapma, çünkü CheckForSuccessfulParry zaten önce çalıştı
+        if (playerInput.blockInput && !(stateMachine.currentState is PlayerParryState))
         {
-            // Block için hiçbir düşman kontrolü yapmadan direkt block state'ine geç
+            // Block için direkt block state'ine geç
             stateMachine.ChangeState(parryState);
             // Block için cooldown yok
         }
