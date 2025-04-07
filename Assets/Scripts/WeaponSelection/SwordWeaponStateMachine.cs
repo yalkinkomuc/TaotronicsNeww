@@ -85,7 +85,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 animator.SetBool("SwordCatchBoomerang", true);
                 break;
             case WeaponState.Parry:
-                animator.SetBool("SwordParry", true);
+                animator.SetBool("SwordBlock", true);
                 break;
             case WeaponState.Spell1:
                 animator.SetBool("SwordSpell1", true);

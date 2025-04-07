@@ -12,7 +12,7 @@ public class PCInput : IPlayerInput
     public bool crouchInputReleased => inputEnabled && Input.GetKeyUp(KeyCode.S);
     public bool attackInput => inputEnabled && Input.GetKeyDown(KeyCode.Mouse0);
     public bool interactionInput => inputEnabled && Input.GetKeyDown(KeyCode.E);
-    public bool parryInput => inputEnabled && Input.GetKeyDown(KeyCode.Q);
+    public bool parryInput => inputEnabled && Input.GetKey(KeyCode.Q);
     public bool spell1Input => inputEnabled && Input.GetKeyDown(KeyCode.R);
     public bool spell2Input => inputEnabled && Input.GetKey(KeyCode.T);
     public bool boomerangInput => inputEnabled && Input.GetKeyDown(KeyCode.Mouse1);

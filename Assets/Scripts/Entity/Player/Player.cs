@@ -918,8 +918,15 @@ public class Player : Entity
 
     private void CheckForParryInput()
     {
-        // Parry durumundayken veya cooldown varken tekrar parry yapılamaz
-        if (stateMachine.currentState is PlayerParryState || parryTimer > 0)
+        // Parry durumunda zaten olduğumuzda geri dönüş
+        if (stateMachine.currentState is PlayerParryState)
+        {
+            // Halihazırda parry state'deyiz, input kontrolü Update'de yapılıyor
+            return;
+        }
+            
+        // Cooldown kontrolü
+        if (parryTimer > 0)
             return;
             
         // Parry tuşuna basıldıysa
@@ -953,6 +960,10 @@ public class Player : Entity
                 
                 // Parry başarılı oldu, düşmanı parry et
                 eliteSkeleton.GetParried();
+                
+                // Başarılı parry state'ine geç
+                stateMachine.ChangeState(succesfulParryState);
+                return;
             }
             
             // Diğer Enemy tiplerinde de parry mekanizması olursa burada eklenebilir
