@@ -101,6 +101,7 @@ public class Player : Entity
     public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
     public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
     public PlayerVoidState voidState {get;private set;}
+    public PlayerSuccesfulParryState succesfulParryState {get;private set;}
     
     #endregion
     
@@ -314,12 +315,13 @@ public class Player : Entity
         crouchAttackState = new PlayerCrouchAttackState(this, stateMachine, "GroundAttack");
         deadState = new PlayerDeadState(this,stateMachine,"Death");
         stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
-        parryState = new PlayerParryState(this,stateMachine,"ParrySuccess");
+        parryState = new PlayerParryState(this,stateMachine,"Block");
         throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
         catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
         spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
         spell2State = new PlayerSpell2State(this, stateMachine, "Spell2");
         voidState = new PlayerVoidState(this,stateMachine,"VoidDisappear");
+        succesfulParryState = new PlayerSuccesfulParryState(this, stateMachine, "SuccesfulParry");
     }
     
     private void AssignWeapons()

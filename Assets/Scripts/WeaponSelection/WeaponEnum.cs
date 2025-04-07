@@ -19,5 +19,6 @@ public enum WeaponState
     Parry,
     Spell1,
     Spell2,
+    SuccesfulParry,
 
 }

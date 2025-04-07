@@ -32,7 +32,9 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SwordStunned",false);
         animator.SetBool("SwordThrowBoomerang",false);
         animator.SetBool("SwordCatchBoomerang",false);
-        animator.SetBool("SwordParry",false);
+        animator.SetBool("SwordBlock",false);
+        
+        animator.SetBool("SwordSuccesfulParry",false);
        
         // Bool yerine integer kullanıyoruz
         animator.SetInteger("SwordComboCounter", 0);
@@ -90,6 +92,9 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Spell2:
                 animator.SetBool("SwordSpell2", true);
+                break;
+            case WeaponState.SuccesfulParry:
+                animator.SetBool("SwordSuccesfulParry", true);
                 break;
 
 
@@ -167,6 +172,12 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Spell2);
         }
+        else if (player.stateMachine.currentState == player.succesfulParryState)
+        {
+            ChangeState(WeaponState.SuccesfulParry);
+        }
+        
+        
         
        
         
