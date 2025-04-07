@@ -161,6 +161,11 @@ public class Player : Entity
     // Dummy nesneleri için ayrı bir liste (Entity'den türemedikleri için)
     [HideInInspector] public HashSet<int> hitDummyIDs = new HashSet<int>();
 
+    [Header("Parry Settings")]
+    [SerializeField] public float parryRadius = 2f; // Parry etki yarıçapı (public yaptık)
+    [SerializeField] private float parryCooldown = 1f; // Parry cooldown süresi
+    private float parryTimer = 0f; // Parry cooldown sayacı
+
     public override bool IsGroundDetected()
     {
         Vector2 boxCenter = (Vector2)transform.position + 
@@ -226,14 +231,45 @@ public class Player : Entity
         Gizmos.color = IsGroundDetected() ? Color.green : Color.red;
         Gizmos.DrawWireCube(boxCenter, new Vector3(groundCheckWidth, groundCheckHeight, 0));
         
+        
+        Gizmos.DrawWireCube(attackCheck.position,attackSize);
+        
         // Kenar raycast'leri
         Vector2 leftPoint = boxCenter + new Vector2(-groundCheckWidth/2, 0);
         Vector2 rightPoint = boxCenter + new Vector2(groundCheckWidth/2, 0);
         
         Gizmos.DrawLine(leftPoint, leftPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
         Gizmos.DrawLine(rightPoint, rightPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
+
+        // Parry yarıçapını her zaman göster
+        Gizmos.color = new Color(0, 0.5f, 1f, 0.3f); // Daha rahat görünür mavi renk
+        Gizmos.DrawWireSphere(transform.position, parryRadius);
+        
+        if (stateMachine != null && stateMachine.currentState is PlayerParryState)
+        {
+            // Parry durumundayken daha belirgin göster
+            Gizmos.color = new Color(0, 0.5f, 1f, 0.8f);
+            Gizmos.DrawWireSphere(transform.position, parryRadius);
+        }
     }
 #endif
+
+    private void OnDrawGizmosSelected() 
+    {
+        // Eğer Application.isPlaying ise bu metod zaten OnDrawGizmos'dan çağrılmış olacak
+        if (Application.isPlaying) return;
+        
+        // Oyun çalışmıyorken de parry yarıçapını göster
+        Gizmos.color = new Color(0, 0.5f, 1f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, parryRadius);
+        
+        // Saldırı kutusu
+        if (attackCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(attackCheck.position, attackSize);
+        }
+    }
 
     public bool CanThrowBoomerang()
     {
@@ -275,7 +311,7 @@ public class Player : Entity
         crouchAttackState = new PlayerCrouchAttackState(this, stateMachine, "GroundAttack");
         deadState = new PlayerDeadState(this,stateMachine,"Death");
         stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
-        parryState = new PlayerParryState(this,stateMachine,"Parry");
+        parryState = new PlayerParryState(this,stateMachine,"ParrySuccess");
         
         throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
         catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
@@ -461,7 +497,16 @@ public class Player : Entity
         CheckForGroundDashInput();
         CheckForSpellInput();
 
+        // Parry timer'ı güncelle
+        if (parryTimer > 0)
+        {
+            parryTimer -= Time.deltaTime;
+        }
         
+        // Parry input kontrolü
+        CheckForParryInput();
+
+       
 
        
 
@@ -651,10 +696,7 @@ public class Player : Entity
 
     #region DrawGizmosAndTriggerEvents
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawWireCube(attackCheck.position,attackSize);
-    }
+    
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -923,6 +965,39 @@ public class Player : Entity
         ClearHitEntities();
         hitDummyIDs.Clear();
         isAttackActive = false; // Aktif edilene kadar pasif
+    }
+
+    private void CheckForParryInput()
+    {
+        // Parry durumundayken veya cooldown varken tekrar parry yapılamaz
+        if (stateMachine.currentState is PlayerParryState || parryTimer > 0)
+            return;
+            
+        // Parry tuşuna basıldıysa
+        if (playerInput.parryInput)
+        {
+            // Parry state'e geç
+            stateMachine.ChangeState(parryState);
+            
+            // Cooldown başlat
+            parryTimer = parryCooldown;
+        }
+    }
+
+    /// <summary>
+    /// Oyuncuya geçici invulnerability vermek için (flash efekti olmadan)
+    /// </summary>
+    public void SetTemporaryInvulnerability(float duration)
+    {
+        StartCoroutine(SimpleInvulnerabilityCoroutine(duration));
+    }
+    
+    // Flash efekti olmadan sadece invulnerability veren metot
+    private IEnumerator SimpleInvulnerabilityCoroutine(float duration)
+    {
+        isInvulnerable = true;
+        yield return new WaitForSeconds(duration);
+        isInvulnerable = false;
     }
 }
 

@@ -24,11 +24,33 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
             enemyEliteSkeleton.isAttackActive = false;
         }
     }
+    
+    // Parry penceresi açma - Animation Event tarafından çağrılacak
+    private void OpenParryWindow()
+    {
+        if (enemyEliteSkeleton != null)
+        {
+            enemyEliteSkeleton.isParryWindowOpen = true;
+            Debug.Log("Parry window opened!");
+        }
+    }
+    
+    // Parry penceresi kapatma - Animation Event tarafından çağrılacak
+    private void CloseParryWindow()
+    {
+        if (enemyEliteSkeleton != null)
+        {
+            enemyEliteSkeleton.isParryWindowOpen = false;
+            Debug.Log("Parry window closed!");
+        }
+    }
 
     protected override void AttackTrigger()
     {
-        // Düşman yoksa veya saldırı aktif değilse işlem yapma
-        if (enemyEliteSkeleton == null || !enemyEliteSkeleton.isAttackActive)
+        // Düşman yoksa, saldırı aktif değilse veya stun durumundaysa işlem yapma
+        if (enemyEliteSkeleton == null || 
+            !enemyEliteSkeleton.isAttackActive || 
+            enemyEliteSkeleton.stateMachine.currentState == enemyEliteSkeleton.stunnedState)
             return;
             
         Collider2D[] colliders = Physics2D.OverlapBoxAll(
@@ -49,6 +71,10 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
                 // Bu oyuncuyu vurulmuş olarak işaretle
                 enemyEliteSkeleton.MarkEntityAsHit(player);
                 
+                // Eğer oyuncu parry durumundaysa hasar verme
+                if (player.stateMachine.currentState is PlayerParryState)
+                    continue;
+                    
                 // Hasar ver
                 float currentDamage = enemyEliteSkeleton.stats.baseDamage.GetValue();
                 player.Damage();

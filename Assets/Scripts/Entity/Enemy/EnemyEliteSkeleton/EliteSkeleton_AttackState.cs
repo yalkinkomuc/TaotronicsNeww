@@ -25,6 +25,10 @@ public class EliteSkeleton_AttackState : EnemyState
     {
         base.Exit();
         
+        // Make sure attack and parry windows are closed when exiting
+        enemy.isAttackActive = false;
+        enemy.isParryWindowOpen = false;
+        
         enemy.lastTimeAttacked = Time.time;
     }
 
@@ -32,7 +36,11 @@ public class EliteSkeleton_AttackState : EnemyState
     {
         base.Update();
         
-        Debug.Log("im in attack state");
+        // Eğer düşman stunned state'e geçerse (parry yediyse) bu state'den çık
+        if (enemy.stateMachine.currentState == enemy.stunnedState)
+        {
+            return;
+        }
         
         enemy.SetZeroVelocity();
 
@@ -40,5 +48,11 @@ public class EliteSkeleton_AttackState : EnemyState
         {
             stateMachine.ChangeState(enemy.battleState);
         }
+    }
+    
+    // Animation Event ile açılıp kapanacak parry penceresi
+    public bool IsParryWindowOpen()
+    {
+        return enemy.isParryWindowOpen;
     }
 }

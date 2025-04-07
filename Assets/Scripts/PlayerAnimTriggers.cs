@@ -222,6 +222,44 @@ public class PlayerAnimTriggers : MonoBehaviour
       }
    }
 
-  
+   // Başarılı parry durumunda düşmana ekstra hasar vermek için
+   private void ParryAttackTrigger()
+   {
+      if (player == null)
+         return;
+         
+      // Parry yarıçapında düşmanları kontrol et
+      Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
+      
+      foreach (var hit in colliders)
+      {
+         Enemy enemy = hit.GetComponent<Enemy>();
+         if (enemy != null)
+         {
+            // Eğer bu düşmana zaten vurduysak tekrar vurma
+            if (player.HasHitEntity(enemy))
+               continue;
+               
+            // Düşmanı vurulmuş olarak işaretle
+            player.MarkEntityAsHit(enemy);
+            
+            // Ekstra hasar ver (parry sonrası counter hasar)
+            float parryDamage = player.stats.baseDamage.GetValue() * 1.5f; // %50 fazla hasar
+            enemy.Damage();
+            enemy.stats.TakeDamage(parryDamage);
+            
+            Vector2 knockbackForce = new Vector2(enemy.knockbackDirection.x * 1.5f, enemy.knockbackDirection.y);
+            StartCoroutine(enemy.HitKnockback(knockbackForce));
+         }
+      }
+   }
    
+   // Parry animasyonu bittiğinde çağrılacak
+   private void ParryAnimationFinished()
+   {
+      if (player != null && player.stateMachine.currentState is PlayerParryState)
+      {
+         player.AnimationFinishTrigger();
+      }
+   }
 }

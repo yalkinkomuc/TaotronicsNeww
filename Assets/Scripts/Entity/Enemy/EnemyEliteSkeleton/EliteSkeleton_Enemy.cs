@@ -12,6 +12,7 @@ public class EliteSkeleton_Enemy : Enemy
     public EliteSkeleton_BattleState battleState { get; private set; }
     public EliteSkeleton_AttackState attackState { get; private set; }
     public EliteSkeleton_DeadState deadState { get; private set; }
+    public EliteSkeleton_StunnedState stunnedState { get; private set; }
     #endregion
 
 
@@ -22,6 +23,12 @@ public class EliteSkeleton_Enemy : Enemy
 
     public Transform attackCheck;
     public Vector2 attackSize;
+
+    
+    [Header("Parry System")]
+    [HideInInspector] public bool isParryWindowOpen = false; // Parry penceresi aktif mi?
+    [HideInInspector] public float parryWindowDuration = 0.3f; // Parry penceresi süresi
+    [SerializeField] public float parryStunDuration = 1.5f; // Parry sonrası düşmanın sersemleme süresi
 
     
     [HideInInspector] public float lastTimeAttacked;
@@ -39,6 +46,7 @@ public class EliteSkeleton_Enemy : Enemy
         battleState = new EliteSkeleton_BattleState(this,stateMachine,"Move",this);
         attackState = new EliteSkeleton_AttackState(this,stateMachine,"Attack",this);
         deadState = new EliteSkeleton_DeadState(this,stateMachine,"Death",this);
+        stunnedState = new EliteSkeleton_StunnedState(this,stateMachine,"Stunned",this);
         
     }
 
@@ -63,12 +71,48 @@ public class EliteSkeleton_Enemy : Enemy
         stateMachine.ChangeState(deadState);
     }
 
+    // Parry olduğunda çağrılacak metod
+    public void GetParried()
+    {
+        // Parry yediğinde saldırı ve parry collider'larını devre dışı bırak
+        isAttackActive = false;
+        isParryWindowOpen = false;
+        
+        // Düşmanın hızını hemen sıfırla
+        SetZeroVelocity();
+        
+        // Sersemlemiş efekti
+        if (entityFX != null)
+        {
+            entityFX.StartCoroutine("HitFX");
+        }
+        
+        Debug.Log("Elite Skeleton was parried!");
+        
+        // Düşmana daha fazla hasar ver
+        float parryDamage = stats.maxHealth.GetValue() * 0.15f; // Düşmanın max sağlığının %15'i hasar
+        stats.TakeDamage(parryDamage);
+        
+        // Sersemleme durumuna geç
+        stateMachine.ChangeState(stunnedState);
+    }
+
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
         
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position,new Vector3(transform.position.x + attackDistance*facingdir,transform.position.y));
+        
+        // Parry penceresi aktifse farklı renk göster
+        if (isParryWindowOpen)
+        {
+            Gizmos.color = Color.cyan;
+        }
+        else
+        {
+            Gizmos.color = Color.red;
+        }
         
         Gizmos.DrawWireCube(attackCheck.position,attackSize);
     }
