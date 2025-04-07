@@ -47,18 +47,23 @@ public class Entity : MonoBehaviour
 
     protected virtual void Start()
     {
+        SetupComponents();
+    }
+    
+    protected virtual void Update()
+    {
+        
+    }
+
+    private void SetupComponents()
+    {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         entityFX = GetComponent<EntityFX>();
         stats = GetComponent<CharacterStats>();
     }
 
-    protected virtual void Update()
-    {
-        
-    }
-
-  
+    
     public virtual void Damage()
     {
         if (stats.isInvincible)
@@ -72,6 +77,13 @@ public class Entity : MonoBehaviour
         Debug.Log(gameObject.name + " was damaged ");
         stats.TakeDamage(stats.baseDamage.GetValue());
     }
+    
+    public virtual void Die()
+    {
+
+    }
+
+    #region Knockback
 
     public virtual void DamageWithoutKnockback()
     {
@@ -94,18 +106,18 @@ public class Entity : MonoBehaviour
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
     }
-    
-    
-    public virtual void Die()
-    {
 
-    }
-    
-    
+    #endregion
+
+    #region Collider Checks
+
     public virtual bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position,Vector2.down,groundCheckDistance,whatIsGround);
     public virtual bool IsWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingdir, wallCheckDistance, whatIsGround);
-    
 
+    #endregion
+    
+    #region Velocity
+    
     
     public void SetVelocity(float xVelocity, float yVelocity)
     {
@@ -129,6 +141,10 @@ public class Entity : MonoBehaviour
         }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
+    
+    
+    #endregion
+   
     #region Flip
 
     public virtual void FlipController(float _x)
@@ -157,15 +173,8 @@ public class Entity : MonoBehaviour
 
 
     #endregion
-   
-    
-    protected virtual void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(groundCheck.position,
-            new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
-        
-        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance*facingdir, wallCheck.position.y));
-    }
+  
+    #region BurnEffect
 
     public virtual void ApplyBurnEffect()
     {
@@ -188,9 +197,15 @@ public class Entity : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region HitList
+
     /// <summary>
     /// Mevcut saldırıda vurulan entityleri temizler
     /// </summary>
+    ///
+    ///
     public void ClearHitEntities()
     {
         hitEntitiesInCurrentAttack.Clear();
@@ -214,4 +229,17 @@ public class Entity : MonoBehaviour
             hitEntitiesInCurrentAttack.Add(entity);
         }
     }
+
+    #endregion
+
+    
+    
+    protected virtual void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(groundCheck.position,
+            new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
+        
+        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance*facingdir, wallCheck.position.y));
+    }
+
 }

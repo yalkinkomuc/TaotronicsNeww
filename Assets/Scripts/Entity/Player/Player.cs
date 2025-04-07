@@ -165,281 +165,36 @@ public class Player : Entity
     [SerializeField] public float parryRadius = 2f; // Parry etki yarıçapı (public yaptık)
     [SerializeField] private float parryCooldown = 1f; // Parry cooldown süresi
     private float parryTimer = 0f; // Parry cooldown sayacı
-
-    public override bool IsGroundDetected()
-    {
-        Vector2 boxCenter = (Vector2)transform.position + 
-                          new Vector2(0, -capsuleCollider.size.y / 2);
-
-        // Ana merkez kontrolü
-        RaycastHit2D centerHit = Physics2D.BoxCast(
-            boxCenter,
-            new Vector2(groundCheckWidth * 0.8f, groundCheckHeight),
-            0f,
-            Vector2.down,
-            groundCheckExtraHeight,
-            whatIsGround
-        );
-
-        // Çoklu yan kontroller
-        Vector2 leftStart = boxCenter + new Vector2(-groundCheckWidth/2, 0);
-        Vector2 rightStart = boxCenter + new Vector2(groundCheckWidth/2, 0);
-
-        // Sol taraf kontrolleri
-        RaycastHit2D leftHit = Physics2D.Raycast(leftStart, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
-        RaycastHit2D leftInnerHit = Physics2D.Raycast(leftStart + Vector2.right * sideRaySpacing, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
-
-        // Sağ taraf kontrolleri
-        RaycastHit2D rightHit = Physics2D.Raycast(rightStart, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
-        RaycastHit2D rightInnerHit = Physics2D.Raycast(rightStart + Vector2.left * sideRaySpacing, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
-
-        if (centerHit.collider != null)
-        {
-            float slopeAngle = Vector2.Angle(centerHit.normal, Vector2.up);
-            if (slopeAngle <= 45f)
-            {
-                // Eğim açısı uygunsa ve merkez vuruş varsa, karakteri yüzeye yapıştır
-                if (rb.linearVelocity.y < 0)
-                {
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
-                }
-                return true;
-            }
-        }
-
-        // Herhangi bir yan kontrol yere değiyorsa
-        bool sideHit = (leftHit.collider != null || rightHit.collider != null || 
-                        leftInnerHit.collider != null || rightInnerHit.collider != null);
-
-        if (sideHit && rb.linearVelocity.y < 0)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
-        }
-
-        return sideHit;
-    }
-
-#if UNITY_EDITOR
-    protected override void OnDrawGizmos()
-    {
-        if (!Application.isPlaying || capsuleCollider == null) return;
-
-        Vector2 boxCenter = (Vector2)transform.position + 
-                          new Vector2(0, -capsuleCollider.size.y / 2);
-        
-        // Ana box
-        Gizmos.color = IsGroundDetected() ? Color.green : Color.red;
-        Gizmos.DrawWireCube(boxCenter, new Vector3(groundCheckWidth, groundCheckHeight, 0));
-        
-        
-        Gizmos.DrawWireCube(attackCheck.position,attackSize);
-        
-        // Kenar raycast'leri
-        Vector2 leftPoint = boxCenter + new Vector2(-groundCheckWidth/2, 0);
-        Vector2 rightPoint = boxCenter + new Vector2(groundCheckWidth/2, 0);
-        
-        Gizmos.DrawLine(leftPoint, leftPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
-        Gizmos.DrawLine(rightPoint, rightPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
-
-        // Parry yarıçapını her zaman göster
-        Gizmos.color = new Color(0, 0.5f, 1f, 0.3f); // Daha rahat görünür mavi renk
-        Gizmos.DrawWireSphere(transform.position, parryRadius);
-        
-        if (stateMachine != null && stateMachine.currentState is PlayerParryState)
-        {
-            // Parry durumundayken daha belirgin göster
-            Gizmos.color = new Color(0, 0.5f, 1f, 0.8f);
-            Gizmos.DrawWireSphere(transform.position, parryRadius);
-        }
-    }
-#endif
-
-    private void OnDrawGizmosSelected() 
-    {
-        // Eğer Application.isPlaying ise bu metod zaten OnDrawGizmos'dan çağrılmış olacak
-        if (Application.isPlaying) return;
-        
-        // Oyun çalışmıyorken de parry yarıçapını göster
-        Gizmos.color = new Color(0, 0.5f, 1f, 0.5f);
-        Gizmos.DrawWireSphere(transform.position, parryRadius);
-        
-        // Saldırı kutusu
-        if (attackCheck != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(attackCheck.position, attackSize);
-        }
-    }
-
-    public bool CanThrowBoomerang()
-    {
-        // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
-        bool isBoomerangActive = boomerangWeapon != null && boomerangWeapon.gameObject.activeInHierarchy;
-        return boomerangCooldownTimer <= 0f && isBoomerangActive;
-    }
-
-    public bool CanCastSpells()
-    {
-        return spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy;
-    }
-
-    public bool HasEnoughMana(float manaCost)
-    {
-        return stats.currentMana >= manaCost;
-    }
-
-    public bool UseMana(float manaCost)
-    {
-        return stats.UseMana(manaCost);
-    }
-
+    
+    
     protected override void Awake()
     {
         base.Awake();
         playerInput = new PCInput(); // PCInputa çevirebilirsin********************
-        
         stateMachine = new PlayerStateMachine();
         
-        idleState = new PlayerIdleState(this,stateMachine,"Idle");
-        moveState = new PlayerMoveState(this,stateMachine,"Move");
         
-        dashState = new PlayerDashState(this,stateMachine,"Dash");
-        airState = new PlayerAirState(this,stateMachine,"Jump");
-        crouchState = new PlayerCrouchState(this,stateMachine,"Crouch");
-        groundDashState = new PlayerGroundDashState(this,stateMachine,"GroundDash");
-        attackState = new PlayerAttackState(this, stateMachine, "Attack");
-        crouchAttackState = new PlayerCrouchAttackState(this, stateMachine, "GroundAttack");
-        deadState = new PlayerDeadState(this,stateMachine,"Death");
-        stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
-        parryState = new PlayerParryState(this,stateMachine,"ParrySuccess");
-        
-        throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
-        catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
-
-
-        spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
-        spell2State = new PlayerSpell2State(this, stateMachine, "Spell2");
-        voidState = new PlayerVoidState(this,stateMachine,"VoidDisappear");
-
-
+        SetupStates();
     }
-
+    
     protected override void Start()
     {
         base.Start();
         
-        // Rigidbody2D ayarlarını optimize et
-        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
-        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        
-        healthBar = GetComponent<HealthBar>();
-        ResetPlayerFacing();
-        
-        // Checkpoint pozisyonunu yükle
-        LoadCheckpoint();
-        
         stateMachine.Initialize(idleState);
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
-
-        normalOffset = capsuleCollider.offset;
-        crouchOffset = new Vector2(normalOffset.x, normalOffset.y-0.1f);
         
-        if (boomerangWeapon == null)
-        {
-            boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>();
-        }
+        SetupRigidbody();
+        SetupComponents();
+        SetupCrouchCollider();
         
-        if (spellbookWeapon == null)
-        {
-            spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>();
-        }
+        ResetPlayerFacing();
+        LoadCheckpoint();
 
-        if (swordWeapon == null)
-        {
-            swordWeapon = GetComponentInChildren<SwordWeaponStateMachine>();
-        }
-    }
-
-    #region Checkpoint System
-
-     private void LoadCheckpoint()
-    {
-        // İlk başlangıçta PlayerSpawnPoint'ten başla
-        GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
-        lastCheckpointPosition = spawnPoint != null ? spawnPoint.transform.position : transform.position;
-
-        // Eğer aktif bir checkpoint varsa, onun konumunu kullan
-        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
-        {
-            float x = PlayerPrefs.GetFloat("CheckpointX");
-            float y = PlayerPrefs.GetFloat("CheckpointY");
-            lastCheckpointPosition = new Vector2(x, y);
-        }
-
-        transform.position = lastCheckpointPosition;
-    }
-
-    public void RespawnAtCheckpoint()
-    {
-        if (stateMachine.currentState == deadState)
-        {
-            // Gerekli değişkenleri sıfırla
-            rb.linearVelocity = Vector2.zero;
-            
-            // Eğer aktif bir checkpoint varsa oraya, yoksa spawn noktasına ışınla
-            if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
-            {
-                // Checkpoint'ten devam et
-                transform.position = lastCheckpointPosition;
-                
-                // Item ve envanter durumlarını yükle
-                Checkpoint.LoadItemStates(this);
-                if (Inventory.instance != null)
-                {
-                    Inventory.instance.ReloadInventoryAfterDeath();
-                }
-            }
-            else
-            {
-                // Spawn noktasından başla
-                GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
-                if (spawnPoint != null)
-                {
-                    transform.position = spawnPoint.transform.position;
-                }
-            }
-            
-            // Can ve mana değerlerini yenile
-            stats.currentHealth = stats.maxHealth.GetValue();
-            stats.currentMana = stats.maxMana.GetValue();
-            
-            // UI'ı güncelle
-            if (healthBar != null)
-                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
-            
-            // Idle durumuna geç
-            stateMachine.ChangeState(idleState);
-            
-            // Oyuncunun yönünü sıfırla
-            ResetPlayerFacing();
-        }
-    }
-
-    #endregion
-   
-
-    public void ResetPlayerFacing()
-    {
-        transform.rotation = Quaternion.identity;
-        facingdir = 1;
-        facingright = true;
+        AssignWeapons();
     }
 
     
-   
-   
+
     protected override void Update()
     {
         base.Update();
@@ -524,17 +279,232 @@ public class Player : Entity
         }
     }
 
-    public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
+    #region SetupSection
 
+    private void SetupCrouchCollider()
+    {
+        normalOffset = capsuleCollider.offset;
+        crouchOffset = new Vector2(normalOffset.x, normalOffset.y-0.1f);
+    }
+
+    private void SetupComponents()
+    {
+        healthBar = GetComponent<HealthBar>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
+    }
+    
+    private void SetupRigidbody()
+    {
+        // Rigidbody2D ayarlarını optimize et
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+    }
+    
+    private void SetupStates()
+    {
+        idleState = new PlayerIdleState(this,stateMachine,"Idle");
+        moveState = new PlayerMoveState(this,stateMachine,"Move");
+        dashState = new PlayerDashState(this,stateMachine,"Dash");
+        airState = new PlayerAirState(this,stateMachine,"Jump");
+        crouchState = new PlayerCrouchState(this,stateMachine,"Crouch");
+        groundDashState = new PlayerGroundDashState(this,stateMachine,"GroundDash");
+        attackState = new PlayerAttackState(this, stateMachine, "Attack");
+        crouchAttackState = new PlayerCrouchAttackState(this, stateMachine, "GroundAttack");
+        deadState = new PlayerDeadState(this,stateMachine,"Death");
+        stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
+        parryState = new PlayerParryState(this,stateMachine,"ParrySuccess");
+        throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
+        catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
+        spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
+        spell2State = new PlayerSpell2State(this, stateMachine, "Spell2");
+        voidState = new PlayerVoidState(this,stateMachine,"VoidDisappear");
+    }
+    
+    private void AssignWeapons()
+    {
+        if (boomerangWeapon == null)
+        {
+            boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>();
+        }
+        
+        if (spellbookWeapon == null)
+        {
+            spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>();
+        }
+
+        if (swordWeapon == null)
+        {
+            swordWeapon = GetComponentInChildren<SwordWeaponStateMachine>();
+        }
+    }
+
+    #endregion
+    
+    
+
+    #region DrawGizmos
+
+#if UNITY_EDITOR
+    
+    
+    protected override void OnDrawGizmos()
+    {
+        if (!Application.isPlaying || capsuleCollider == null) return;
+
+        Vector2 boxCenter = (Vector2)transform.position + 
+                            new Vector2(0, -capsuleCollider.size.y / 2);
+        
+        // Ana box
+        Gizmos.color = IsGroundDetected() ? Color.green : Color.red;
+        Gizmos.DrawWireCube(boxCenter, new Vector3(groundCheckWidth, groundCheckHeight, 0));
+        
+        
+        Gizmos.DrawWireCube(attackCheck.position,attackSize);
+        
+        // Kenar raycast'leri
+        Vector2 leftPoint = boxCenter + new Vector2(-groundCheckWidth/2, 0);
+        Vector2 rightPoint = boxCenter + new Vector2(groundCheckWidth/2, 0);
+        
+        Gizmos.DrawLine(leftPoint, leftPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
+        Gizmos.DrawLine(rightPoint, rightPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
+
+        // Parry yarıçapını her zaman göster
+        Gizmos.color = new Color(0, 0.5f, 1f, 0.3f); // Daha rahat görünür mavi renk
+        Gizmos.DrawWireSphere(transform.position, parryRadius);
+        
+        if (stateMachine != null && stateMachine.currentState is PlayerParryState)
+        {
+            // Parry durumundayken daha belirgin göster
+            Gizmos.color = new Color(0, 0.5f, 1f, 0.8f);
+            Gizmos.DrawWireSphere(transform.position, parryRadius);
+        }
+    }
+#endif
+    
+    private void OnDrawGizmosSelected() 
+    {
+        // Eğer Application.isPlaying ise bu metod zaten OnDrawGizmos'dan çağrılmış olacak
+        if (Application.isPlaying) return;
+        
+        // Oyun çalışmıyorken de parry yarıçapını göster
+        Gizmos.color = new Color(0, 0.5f, 1f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, parryRadius);
+        
+        // Saldırı kutusu
+        if (attackCheck != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(attackCheck.position, attackSize);
+        }
+    }
+    
+
+
+
+    #endregion
+    
+    #region ManaManagement
+
+    public bool HasEnoughMana(float manaCost)
+    {
+        return stats.currentMana >= manaCost;
+    }
+
+    public bool UseMana(float manaCost)
+    {
+        return stats.UseMana(manaCost);
+    }
+    
+    private void RefillMana()
+    {
+        stats.currentMana = stats.maxMana.GetValue();
+    }
+
+    #endregion
+    
+    #region Checkpoint System
+
+     private void LoadCheckpoint()
+    {
+        // İlk başlangıçta PlayerSpawnPoint'ten başla
+        GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
+        lastCheckpointPosition = spawnPoint != null ? spawnPoint.transform.position : transform.position;
+
+        // Eğer aktif bir checkpoint varsa, onun konumunu kullan
+        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+        {
+            float x = PlayerPrefs.GetFloat("CheckpointX");
+            float y = PlayerPrefs.GetFloat("CheckpointY");
+            lastCheckpointPosition = new Vector2(x, y);
+        }
+
+        transform.position = lastCheckpointPosition;
+    }
+
+    public void RespawnAtCheckpoint()
+    {
+        if (stateMachine.currentState == deadState)
+        {
+            // Gerekli değişkenleri sıfırla
+            rb.linearVelocity = Vector2.zero;
+            
+            // Eğer aktif bir checkpoint varsa oraya, yoksa spawn noktasına ışınla
+            if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+            {
+                // Checkpoint'ten devam et
+                transform.position = lastCheckpointPosition;
+                
+                // Item ve envanter durumlarını yükle
+                Checkpoint.LoadItemStates(this);
+                if (Inventory.instance != null)
+                {
+                    Inventory.instance.ReloadInventoryAfterDeath();
+                }
+            }
+            else
+            {
+                // Spawn noktasından başla
+                GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
+                if (spawnPoint != null)
+                {
+                    transform.position = spawnPoint.transform.position;
+                }
+            }
+            
+            // Can ve mana değerlerini yenile
+            stats.currentHealth = stats.maxHealth.GetValue();
+            stats.currentMana = stats.maxMana.GetValue();
+            
+            // UI'ı güncelle
+            if (healthBar != null)
+                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+            
+            // Idle durumuna geç
+            stateMachine.ChangeState(idleState);
+            
+            // Oyuncunun yönünü sıfırla
+            ResetPlayerFacing();
+        }
+    }
+
+    #endregion
+    
+    #region BoomerangRegion
+    
+    public bool CanThrowBoomerang()
+    {
+        // Bumerang cooldown kontrolü ve bumerang silahının aktif olup olmadığını kontrol et
+        bool isBoomerangActive = boomerangWeapon != null && boomerangWeapon.gameObject.activeInHierarchy;
+        return boomerangCooldownTimer <= 0f && isBoomerangActive;
+    }
+    
     public void StartBoomerangKnockbackCoroutine()
     {
         StartCoroutine(HitKnockback(boomerangCatchForce));
     }
-
-     public void StartStunnedKnockbackCoroutine()
-    {
-        StartCoroutine(HitKnockback(stunKnocback));
-    }
+    
     public void ThrowBoomerang()
     {
         // Bumerang atma koşullarını kontrol et
@@ -551,9 +521,25 @@ public class Player : Entity
         {
             boomerangWeapon.gameObject.SetActive(false);
         }
+        
+        
     }
-   
-
+    
+    public void CatchBoomerang()
+    {
+        // Bumerang silahını bul ve aktif et
+        BoomerangWeaponStateMachine boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
+        if (boomerangWeapon != null)
+        {
+            boomerangWeapon.gameObject.SetActive(true);
+        }
+        
+        stateMachine.ChangeState(catchBoomerangState);
+    }
+    // Bumerangın yakalanması için metod
+    
+    #endregion
+    
     #region Dash
 
     private void CheckForDashInput()
@@ -620,8 +606,7 @@ public class Player : Entity
         StartCoroutine(groundDashState.SpawnGroundDashEffects());
     }
     #endregion
-  
-
+    
     #region GhostMode
 
     public void EnterGhostMode()
@@ -639,7 +624,6 @@ public class Player : Entity
     }
 
     #endregion
-   
     
     #region CrouchMode
 
@@ -656,15 +640,8 @@ public class Player : Entity
     }
 
     #endregion
-
-
-    public override void Die()
-    {
-        base.Die();
-        stateMachine.ChangeState(deadState);
-        
-        // Artık coroutine kullanılmayacak, respawn işlemi animasyon bitiminde PlayerDeadState içinde yapılacak
-    }
+    
+    #region Damage Region
 
     public override void Damage()
     {
@@ -684,15 +661,7 @@ public class Player : Entity
         }
     }
 
-    private IEnumerator InvulnerabilityCoroutine()
-    {
-        isInvulnerable = true;
-        // Flash efektini invulnerability süresi boyunca çalıştır
-        StartCoroutine(entityFX.FlashFX(invulnerabilityDuration));
-        yield return new WaitForSeconds(invulnerabilityDuration);
-        isInvulnerable = false;
-    }
-
+    #endregion
 
     #region DrawGizmosAndTriggerEvents
 
@@ -723,21 +692,29 @@ public class Player : Entity
 
     #endregion
 
-
-    public void CatchBoomerang()
+    #region Spell Section
+    
+    public bool CanCastSpells()
     {
-        // Bumerang silahını bul ve aktif et
-        BoomerangWeaponStateMachine boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
-        if (boomerangWeapon != null)
-        {
-            boomerangWeapon.gameObject.SetActive(true);
-        }
-        
-        stateMachine.ChangeState(catchBoomerangState);
+        return spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy;
     }
-    // Bumerangın yakalanması için metod
-   
 
+    public void SpellOneTrigger()
+    {
+        StartCoroutine(CastIceShards());
+    }
+
+    private IEnumerator CastIceShards()
+    {
+        Vector3[] spawnPositions = spell1State.GetSpawnPositions();
+
+        for (int i = 0; i < shardCount; i++)
+        {
+            Instantiate(iceShardPrefab, spawnPositions[i], Quaternion.identity);
+            yield return new WaitForSeconds(delayBetweenShards);
+        }
+    }
+    
     private void CheckForSpellInput()
     {
         // Eğer spellbook aktif değilse büyü kullanamaz
@@ -761,29 +738,6 @@ public class Player : Entity
         }
     }
 
-    private void UpdateWeaponReferences()
-    {
-        // Tüm silah referanslarını güncelle (aktif veya inaktif)
-        boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
-        spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>(true);
-    }
-
-    public void SpellOneTrigger()
-    {
-        StartCoroutine(CastIceShards());
-    }
-
-    private IEnumerator CastIceShards()
-    {
-        Vector3[] spawnPositions = spell1State.GetSpawnPositions();
-
-        for (int i = 0; i < shardCount; i++)
-        {
-            Instantiate(iceShardPrefab, spawnPositions[i], Quaternion.identity);
-            yield return new WaitForSeconds(delayBetweenShards);
-        }
-    }
-
     private void StartFireSpell()
     {
         if (!isChargingFire && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
@@ -802,9 +756,15 @@ public class Player : Entity
         }
     }
 
-    private void RefillMana()
+    #endregion
+    
+    #region WeaponManagement
+
+    private void UpdateWeaponReferences()
     {
-        stats.currentMana = stats.maxMana.GetValue();
+        // Tüm silah referanslarını güncelle (aktif veya inaktif)
+        boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
+        spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>(true);
     }
     
     public void HideWeapons()
@@ -909,16 +869,10 @@ public class Player : Entity
         lastActiveWeaponState = weaponState;
     }
 
-    public void AddGold(int amount)
-    {
-        if (amount <= 0) return;
-        
-        gold += amount;
-        Debug.Log($"Added {amount} gold. Total gold: {gold}");
-        
-        // Burada UI güncellemesi yapılabilir
-    }
-    
+    #endregion
+
+    #region Level Section
+
     public void AddExperience(int amount)
     {
         if (amount <= 0) return;
@@ -956,16 +910,9 @@ public class Player : Entity
         }
     }
 
-    /// <summary>
-    /// Yeni bir saldırı başlatırken çağrılır
-    /// </summary>
-    public void StartNewAttack()
-    {
-        // Vurulan entityleri sıfırla
-        ClearHitEntities();
-        hitDummyIDs.Clear();
-        isAttackActive = false; // Aktif edilene kadar pasif
-    }
+    #endregion
+
+    #region Parry Region
 
     private void CheckForParryInput()
     {
@@ -983,27 +930,7 @@ public class Player : Entity
             parryTimer = parryCooldown;
         }
     }
-
-    /// <summary>
-    /// Oyuncuya geçici invulnerability vermek için (flash efekti olmadan)
-    /// </summary>
-    public void SetTemporaryInvulnerability(float duration)
-    {
-        StartCoroutine(SimpleInvulnerabilityCoroutine(duration));
-    }
     
-    // Flash efekti olmadan sadece invulnerability veren metot
-    private IEnumerator SimpleInvulnerabilityCoroutine(float duration)
-    {
-        isInvulnerable = true;
-        yield return new WaitForSeconds(duration);
-        isInvulnerable = false;
-    }
-
-    /// <summary>
-    /// Sürekli olarak yakındaki düşmanların parry penceresi açık mı kontrol eder
-    /// PlayerParryState içinden çağrılır
-    /// </summary>
     public void CheckForParryableEnemies()
     {
         // Parry yarıçapında düşmanları kontrol et
@@ -1029,5 +956,129 @@ public class Player : Entity
             // Diğer Enemy tiplerinde de parry mekanizması olursa burada eklenebilir
         }
     }
+    
+    
+
+    #endregion
+
+    #region Invulnerability Section 
+
+    public void SetTemporaryInvulnerability(float duration)
+    {
+        StartCoroutine(SimpleInvulnerabilityCoroutine(duration));
+    }
+    
+    // Flash efekti olmadan sadece invulnerability veren metot
+    private IEnumerator SimpleInvulnerabilityCoroutine(float duration)
+    {
+        isInvulnerable = true;
+        yield return new WaitForSeconds(duration);
+        isInvulnerable = false;
+    }
+    
+    private IEnumerator InvulnerabilityCoroutine()
+    {
+        isInvulnerable = true;
+        // Flash efektini invulnerability süresi boyunca çalıştır
+        StartCoroutine(entityFX.FlashFX(invulnerabilityDuration));
+        yield return new WaitForSeconds(invulnerabilityDuration);
+        isInvulnerable = false;
+    }
+
+    #endregion
+    
+    public void AddGold(int amount)
+    {
+        if (amount <= 0) return;
+        
+        gold += amount;
+        Debug.Log($"Added {amount} gold. Total gold: {gold}");
+        
+        // Burada UI güncellemesi yapılabilir
+    }
+  
+    public void StartNewAttack()
+    {
+        // Vurulan entityleri sıfırla
+        ClearHitEntities();
+        hitDummyIDs.Clear();
+        isAttackActive = false; // Aktif edilene kadar pasif
+    }
+    
+    public void ResetPlayerFacing()
+    {
+        transform.rotation = Quaternion.identity;
+        facingdir = 1;
+        facingright = true;
+    }
+
+    public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();
+
+    public override void Die()
+    {
+        base.Die();
+        stateMachine.ChangeState(deadState);
+        
+        // Artık coroutine kullanılmayacak, respawn işlemi animasyon bitiminde PlayerDeadState içinde yapılacak
+    }
+    
+    public void StartStunnedKnockbackCoroutine()
+    {
+        StartCoroutine(HitKnockback(stunKnocback));
+    }
+    
+    public override bool IsGroundDetected()
+    {
+        Vector2 boxCenter = (Vector2)transform.position + 
+                          new Vector2(0, -capsuleCollider.size.y / 2);
+
+        // Ana merkez kontrolü
+        RaycastHit2D centerHit = Physics2D.BoxCast(
+            boxCenter,
+            new Vector2(groundCheckWidth * 0.8f, groundCheckHeight),
+            0f,
+            Vector2.down,
+            groundCheckExtraHeight,
+            whatIsGround
+        );
+
+        // Çoklu yan kontroller
+        Vector2 leftStart = boxCenter + new Vector2(-groundCheckWidth/2, 0);
+        Vector2 rightStart = boxCenter + new Vector2(groundCheckWidth/2, 0);
+
+        // Sol taraf kontrolleri
+        RaycastHit2D leftHit = Physics2D.Raycast(leftStart, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+        RaycastHit2D leftInnerHit = Physics2D.Raycast(leftStart + Vector2.right * sideRaySpacing, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+
+        // Sağ taraf kontrolleri
+        RaycastHit2D rightHit = Physics2D.Raycast(rightStart, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+        RaycastHit2D rightInnerHit = Physics2D.Raycast(rightStart + Vector2.left * sideRaySpacing, Vector2.down, groundCheckExtraHeight + groundCheckHeight, whatIsGround);
+
+        if (centerHit.collider != null)
+        {
+            float slopeAngle = Vector2.Angle(centerHit.normal, Vector2.up);
+            if (slopeAngle <= 45f)
+            {
+                // Eğim açısı uygunsa ve merkez vuruş varsa, karakteri yüzeye yapıştır
+                if (rb.linearVelocity.y < 0)
+                {
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+                }
+                return true;
+            }
+        }
+
+        // Herhangi bir yan kontrol yere değiyorsa
+        bool sideHit = (leftHit.collider != null || rightHit.collider != null || 
+                        leftInnerHit.collider != null || rightInnerHit.collider != null);
+
+        if (sideHit && rb.linearVelocity.y < 0)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
+        }
+
+        return sideHit;
+    }
+   
 }
 
