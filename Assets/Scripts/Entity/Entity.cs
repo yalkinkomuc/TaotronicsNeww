@@ -105,6 +105,9 @@ public class Entity : MonoBehaviour
         rb.linearVelocity = knockbackDirectionParam;
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
+        
+        // Knockback bittikten sonra hızı sıfırla
+        rb.linearVelocity = Vector2.zero;
     }
 
     #endregion
