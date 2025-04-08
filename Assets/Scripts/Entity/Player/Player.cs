@@ -93,7 +93,8 @@ public class Player : Entity
     public PlayerCrouchAttackState crouchAttackState {get;private set;}
     public PlayerDeadState deadState {get;private set;}
     public PlayerStunnedState stunnedState {get;private set;}
-   
+    
+    public PlayerParryState parryState {get;private set;}
     
     public PlayerSpell1State spell1State {get;private set;}
     public PlayerSpell2State spell2State {get;private set;}
@@ -314,7 +315,7 @@ public class Player : Entity
         crouchAttackState = new PlayerCrouchAttackState(this, stateMachine, "GroundAttack");
         deadState = new PlayerDeadState(this,stateMachine,"Death");
         stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
-        
+        parryState = new PlayerParryState(this,stateMachine,"Parry");
         throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
         catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
         spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
