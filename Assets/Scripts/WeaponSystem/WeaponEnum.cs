@@ -16,9 +16,9 @@ public enum WeaponState
     
     ThrowBoomerang,
     CatchBoomerang,
-    Parry,
     Spell1,
     Spell2,
+    Parry,
     SuccesfulParry,
 
 }

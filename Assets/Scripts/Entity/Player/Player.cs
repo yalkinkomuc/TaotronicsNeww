@@ -927,7 +927,11 @@ public class Player : Entity
                 // Başarılı parry durumuna geç
                 stateMachine.ChangeState(succesfulParryState);
             }
-           
+            else
+            {
+                // Parry penceresi açık değilse, sadece normal parry state'ine geç
+                stateMachine.ChangeState(parryState);
+            }
             
             // Parry için cooldown başlat
             parryTimer = parryCooldown;

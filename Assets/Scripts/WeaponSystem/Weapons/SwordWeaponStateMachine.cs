@@ -114,9 +114,6 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Attack);
         }
-        
-       
-        
         else if (player.stateMachine.currentState == player.moveState) 
         {
             ChangeState(WeaponState.Move);
@@ -125,7 +122,6 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Dash);
         }
-       
         else if (player.stateMachine.currentState == player.airState)
         {
             ChangeState(WeaponState.Jump);
@@ -158,13 +154,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.CatchBoomerang);
         }
-       
-
         else if (player.stateMachine.currentState == player.spell1State)
         {
             ChangeState(WeaponState.Spell1);
         }
-
         else if (player.stateMachine.currentState == player.spell2State)
         {
             ChangeState(WeaponState.Spell2);
@@ -172,6 +165,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.succesfulParryState)
         {
             ChangeState(WeaponState.SuccesfulParry);
+        }
+        else if (player.stateMachine.currentState == player.parryState)
+        {
+            ChangeState(WeaponState.Parry);
         }
         
         

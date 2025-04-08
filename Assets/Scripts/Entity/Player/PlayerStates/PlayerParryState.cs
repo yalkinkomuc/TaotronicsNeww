@@ -10,12 +10,14 @@ public class PlayerParryState : PlayerState
     {
         base.Enter();
 
-        stateTimer = .5f;
+        stateTimer = .25f;
     }
 
     public override void Update()
     {
         base.Update();
+        
+        player.SetZeroVelocity();
 
         if (stateTimer < 0f)
         {

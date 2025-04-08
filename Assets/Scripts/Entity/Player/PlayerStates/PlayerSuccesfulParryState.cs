@@ -7,7 +7,6 @@ public class PlayerSuccesfulParryState : PlayerState
     
     [SerializeField] private GameObject parryEffectPrefab; // Başarılı parry efekti
     private Transform parryEffectSpawnPoint; // Efektin spawn edileceği nokta
-    private bool isSuccessfulParry = false; // Parry'nin başarılı olup olmadığını tutan bayrak
     
     public PlayerSuccesfulParryState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -28,11 +27,8 @@ public class PlayerSuccesfulParryState : PlayerState
         // Yeni bir saldırı başladığını belirt (hit listesini temizler)
         player.StartNewAttack();
         
-        // Başarılı parry bayrağını sıfırla
-        isSuccessfulParry = false;
-        
-        // Parry işlemini başlat
-        ProcessParry();
+        // En yakın parry penceresi açık olan düşmanı bul ve parry yap
+        ProcessSuccessfulParry();
     }
 
     public override void Update()
@@ -58,55 +54,47 @@ public class PlayerSuccesfulParryState : PlayerState
         // Block durumundan çıkınca invincible durumunu kaldır
         player.stats.MakeInvincible(false);
         
-        // Sadece başarılı parry'de invulnerability ver
-        if (isSuccessfulParry)
-        {
-            player.SetTemporaryInvulnerability(parryInvulnerabilityDuration);
-            Debug.Log("Successful parry invulnerability applied");
-        }
+        // Başarılı parry sonrası invulnerability ver
+        player.SetTemporaryInvulnerability(parryInvulnerabilityDuration);
         
         Debug.Log("i exit scfparry");
     }
     
-    private void ProcessParry()
+    private void ProcessSuccessfulParry()
     {
         // Oyuncunun etrafındaki tüm düşmanları kontrol et (parry yarıçapı içinde)
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
+        
+        bool foundParryableEnemy = false;
         
         foreach (var col in colliders)
         {
             // Elite Skeleton kontrolü
             EliteSkeleton_Enemy eliteSkeleton = col.GetComponent<EliteSkeleton_Enemy>();
             
-            if (eliteSkeleton != null)
+            if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
             {
-                // Eğer parry penceresi açıksa, başarılı parry işlemlerini yap
-                if (eliteSkeleton.isParryWindowOpen)
-                {
-                    // Bu düşmanı vurulmuş olarak işaretle
-                    player.MarkEntityAsHit(eliteSkeleton);
-                    
-                    // Parry başarılı olduğunu logla
-                    Debug.Log("Parry successful!");
-                    
-                    // Düşmana parry bilgisini bildir
-                    eliteSkeleton.GetParried();
-                    
-                    // Başarılı parry efekti oluştur
-                    SpawnParryEffect(eliteSkeleton.transform.position);
-                    
-                    // Başarılı parry bayrağını ayarla
-                    isSuccessfulParry = true;
-                    break;
-                }
-                else
-                {
-                    // Parry penceresi açık değilse sadece animasyonu oynat
-                    Debug.Log("Parry timing missed but animation plays!");
-                    // Parry başarısız olduğu için düşmana GetParried çağrılmaz
-                }
+                // Bu düşmana zaten parry yaptık mı kontrol etmeye gerek yok
+                // Çünkü başarılı parry state'ine girdiysen zaten yapacaksın
+                
+                // Bu düşmanı vurulmuş olarak işaretle
+                player.MarkEntityAsHit(eliteSkeleton);
+                
+                // Parry başarılı olduğunu logla
+                Debug.Log("Parry successful!");
+                
+                // Düşmana parry bilgisini bildir
+                eliteSkeleton.GetParried();
+                
+                // Başarılı parry efekti oluştur
+                SpawnParryEffect(eliteSkeleton.transform.position);
+                
+                foundParryableEnemy = true;
+                break;
             }
         }
+        
+        // NOT: Düşman bulunamadıysa bile state devam edecek çünkü animasyon tam oynatılmalı
     }
     
     private void SpawnParryEffect(Vector3 enemyPosition)
