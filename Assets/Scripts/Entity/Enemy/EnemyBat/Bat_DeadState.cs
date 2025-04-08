@@ -13,7 +13,7 @@ public class Bat_DeadState : EnemyState
     {
         base.Enter();
         
-        enemy.boxCollider.enabled = false;
+        enemy.capsuleCollider.enabled = false;
         rb.gravityScale = 3f;
         rb.bodyType = RigidbodyType2D.Static;
     }

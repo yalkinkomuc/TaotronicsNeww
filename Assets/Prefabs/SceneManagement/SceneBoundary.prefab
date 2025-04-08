@@ -47,8 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftBoundary: -19
   rightBoundary: 19
-  topBoundary: 5
-  bottomBoundary: -10.47
+  topBoundary: 3.88
+  bottomBoundary: -9.57
   hasLeftExit: 1
   hasRightExit: 1
   hasTopExit: 0
@@ -107,8 +107,8 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 18.987995, y: 5.0357566}
-      - {x: -19.125347, y: 4.987121}
-      - {x: -19.14358, y: -10.525602}
-      - {x: 18.985971, y: -10.380588}
+    - - {x: 18.946718, y: 4.003848}
+      - {x: -19.084072, y: 3.9272466}
+      - {x: -18.937197, y: -9.411141}
+      - {x: 19.109802, y: -9.307403}
   m_UseDelaunayMesh: 0

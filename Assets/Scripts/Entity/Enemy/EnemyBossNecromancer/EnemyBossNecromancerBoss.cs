@@ -296,7 +296,7 @@ public class EnemyBossNecromancerBoss : Enemy
 
         transform.position = newPosition;
         transform.position = new Vector3(transform.position.x,
-            transform.position.y - GroundBelow().distance + (boxCollider.size.y / 2));
+            transform.position.y - GroundBelow().distance + (capsuleCollider.size.y / 2));
 
         if (!GroundBelow() || SomethingIsAround())
         {

@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerSuccesfulParryState : PlayerState
 {
     private float parryInvulnerabilityDuration = 0.8f; // Başarılı parry sonrası hasar alma koruması süresi
+    private float animationDuration = 0.27f; // Animasyon süresini tam olarak belirt (Player_SuccesfulParry.anim'in süresine göre)
     
     [SerializeField] private GameObject parryEffectPrefab; // Başarılı parry efekti
     private Transform parryEffectSpawnPoint; // Efektin spawn edileceği nokta
@@ -15,7 +16,8 @@ public class PlayerSuccesfulParryState : PlayerState
     {
         base.Enter();
         
-        stateTimer = 0.6f; // Başarılı parry animasyonu süresi
+        // Animasyon süresine göre state süresini ayarla
+        stateTimer = animationDuration;
         
         Debug.Log("i enter scfparry");
         
@@ -33,11 +35,13 @@ public class PlayerSuccesfulParryState : PlayerState
     {
         base.Update();
         
-        Debug.Log("im in scfparry");
+        Debug.Log("im in scfparry, timer: " + stateTimer);
 
-        if (stateTimer < 0f)
+        // Animasyon trigger'ı çağrıldıysa VEYA animasyon süresi bittiyse state'i değiştir
+        if (triggerCalled || stateTimer <= 0)
         {
             stateMachine.ChangeState(player.idleState);
+            return;
         }
         
         player.SetZeroVelocity();

@@ -195,13 +195,13 @@ GameObject:
   m_Component:
   - component: {fileID: 7877003868482642406}
   - component: {fileID: 1598100102844929044}
-  - component: {fileID: 8774139708973799772}
+  - component: {fileID: 2934262763553105676}
   - component: {fileID: 8315701176072154016}
   - component: {fileID: 1148455196740695831}
   - component: {fileID: 5748237198415359822}
   m_Layer: 7
   m_Name: Skeleton_Enemy_Archer
-  m_TagString: Enemy
+  m_TagString: QuestEnemies
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -253,8 +253,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &8774139708973799772
-BoxCollider2D:
+--- !u!70 &2934262763553105676
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -287,18 +287,9 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.4680302, y: 0.9895692}
-  m_EdgeRadius: 0
+  m_Offset: {x: -0.05329418, y: 0}
+  m_Size: {x: 0.39341164, y: 1}
+  m_Direction: 0
 --- !u!114 &8315701176072154016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,9 +333,12 @@ MonoBehaviour:
   wallCheckDistance: 0.32
   facingdir: 1
   knockbackDirection: {x: 2, y: 3}
-  secondComboKnockbackXMultiplier: 0
-  thirdComboKnockbackXMultiplier: 0
+  secondComboKnockbackXMultiplier: 2
+  thirdComboKnockbackXMultiplier: 3
   knockbackDuration: 0.2
+  isKnocked: 0
+  isAttackActive: 0
+  hitEntitiesInCurrentAttack: []
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 256
@@ -353,7 +347,10 @@ MonoBehaviour:
   chaseSpeed: 3
   tooCloseDistance: 2
   detectDistance: 13
+  patrolDistance: 5
+  patrolSpeed: 2
   fightBegun: 0
+  isDefeated: 0
   arrowSpawnPoint: {fileID: 771119517957317904}
   arrowPrefab: {fileID: 4551660470442196087, guid: bb43e13666e1e2448bcd249521cc6c56, type: 3}
   attackCooldown: 0.5
