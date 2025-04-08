@@ -102,7 +102,7 @@ public class Entity : MonoBehaviour
         isKnocked = true;
 
         // Knockback kuvvetini doğrudan uygula
-        rb.linearVelocity = knockbackDirectionParam;
+        rb.linearVelocity = knockbackDirectionParam* -facingdir;
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
         

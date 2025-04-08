@@ -6,6 +6,11 @@ public class Spider_BattleState : EnemyState
     
     private Transform player;
     private int moveDir;
+    
+    // Dead zone ve yön kontrolü için eklemeler
+    private float directionCheckCooldown = 0.2f; // Yön kontrolü için cooldown
+    private float lastDirectionCheckTime;
+    
     public Spider_BattleState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName,Spider_Enemy _enemy) : base(_enemyBase, _stateMachine, _animBoolName)
     {
         enemy = _enemy;
@@ -16,8 +21,10 @@ public class Spider_BattleState : EnemyState
         base.Enter();
         
         player = PlayerManager.instance.player.transform;
-
         stateTimer = enemy.battleTime;
+        
+        // İlk yön kontrolünü yap
+        UpdateFacingDirection();
     }
 
     public override void Exit()
@@ -35,10 +42,12 @@ public class Spider_BattleState : EnemyState
             return;
         }
         
-        if(player.position.x > enemy.transform.position.x)
-            moveDir = 1;
-        else if (player.position.x <enemy.transform.position.x)
-            moveDir = -1;
+        // Yön kontrolünü daha az sıklıkla yap
+        if (Time.time >= lastDirectionCheckTime + directionCheckCooldown)
+        {
+            UpdateFacingDirection();
+            lastDirectionCheckTime = Time.time;
+        }
         
         enemy.SetVelocity(enemy.chaseSpeed*moveDir,rb.linearVelocity.y);
 
@@ -50,4 +59,23 @@ public class Spider_BattleState : EnemyState
         }
     }
     
+    private void UpdateFacingDirection()
+    {
+        if (player != null)
+        {
+            float distanceToPlayer = player.position.x - enemy.transform.position.x;
+            
+            // Dead zone (ölü bölge) ekle - çok yakınken sürekli dönmeyi engelle
+            if (Mathf.Abs(distanceToPlayer) > 0.5f)
+            {
+                moveDir = distanceToPlayer > 0 ? 1 : -1;
+                
+                // Yön değişimi gerekiyorsa Flip() kullan
+                if ((moveDir > 0 && enemy.facingdir < 0) || (moveDir < 0 && enemy.facingdir > 0))
+                {
+                    enemy.Flip();
+                }
+            }
+        }
+    }
 }
