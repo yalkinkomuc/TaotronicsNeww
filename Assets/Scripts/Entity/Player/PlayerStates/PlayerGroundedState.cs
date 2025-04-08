@@ -40,10 +40,7 @@ public class PlayerGroundedState : PlayerState
             stateMachine.ChangeState(player.attackState);
         }
 
-        if (player.playerInput.parryInput)
-        {
-            stateMachine.ChangeState(player.parryState);
-        }
+       
 
         if ((player.playerInput.boomerangInput) && player.CanThrowBoomerang())
         {

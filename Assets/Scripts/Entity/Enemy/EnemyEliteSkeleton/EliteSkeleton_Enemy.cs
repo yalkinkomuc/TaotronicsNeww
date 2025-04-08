@@ -77,11 +77,7 @@ public class EliteSkeleton_Enemy : Enemy
     {
         // Eğer oyuncu succesfulParryState'de değilse (yani sadece block yapıyorsa), stun uygulama
         Player player = PlayerManager.instance.player;
-        if (player != null && player.stateMachine.currentState is PlayerParryState)
-        {
-            Debug.Log("Elite Skeleton blocked without stun!");
-            return;
-        }
+        
         
         // Parry yediğinde saldırı ve parry collider'larını devre dışı bırak
         isAttackActive = false;

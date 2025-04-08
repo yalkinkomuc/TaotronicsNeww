@@ -158,10 +158,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.CatchBoomerang);
         }
-        else if (player.stateMachine.currentState == player.parryState)
-        {
-            ChangeState(WeaponState.Parry);
-        }
+       
 
         else if (player.stateMachine.currentState == player.spell1State)
         {

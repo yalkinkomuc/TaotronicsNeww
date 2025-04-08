@@ -93,7 +93,7 @@ public class Player : Entity
     public PlayerCrouchAttackState crouchAttackState {get;private set;}
     public PlayerDeadState deadState {get;private set;}
     public PlayerStunnedState stunnedState {get;private set;}
-    public PlayerParryState parryState {get;private set;}
+   
     
     public PlayerSpell1State spell1State {get;private set;}
     public PlayerSpell2State spell2State {get;private set;}
@@ -263,7 +263,7 @@ public class Player : Entity
         CheckForSpellInput();
         
         // Block input kontrolü - sadece basılı tutma için
-        CheckForBlockInput();
+        
         
         // Interaction kontrolü
         if (playerInput.interactionInput && currentInteractable != null)
@@ -314,7 +314,7 @@ public class Player : Entity
         crouchAttackState = new PlayerCrouchAttackState(this, stateMachine, "GroundAttack");
         deadState = new PlayerDeadState(this,stateMachine,"Death");
         stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");
-        parryState = new PlayerParryState(this,stateMachine,"Block");
+        
         throwBoomerangState = new PlayerThrowBoomerangState(this, stateMachine, "ThrowBoomerang");
         catchBoomerangState = new PlayerCatchBoomerangState(this, stateMachine, "CatchBoomerang");
         spell1State = new PlayerSpell1State(this, stateMachine, "Spell1");
@@ -375,7 +375,7 @@ public class Player : Entity
         Gizmos.color = new Color(0, 0.5f, 1f, 0.3f); // Daha rahat görünür mavi renk
         Gizmos.DrawWireSphere(transform.position, parryRadius);
         
-        if (stateMachine != null && stateMachine.currentState is PlayerParryState)
+        if (stateMachine != null)
         {
             // Parry durumundayken daha belirgin göster
             Gizmos.color = new Color(0, 0.5f, 1f, 0.8f);
@@ -926,28 +926,14 @@ public class Player : Entity
                 // Başarılı parry durumuna geç
                 stateMachine.ChangeState(succesfulParryState);
             }
-            else
-            {
-                // Parry penceresi açık değilse, sadece block state'ine geç
-                stateMachine.ChangeState(parryState);
-            }
+           
             
             // Parry için cooldown başlat
             parryTimer = parryCooldown;
         }
     }
     
-    private void CheckForBlockInput()
-    {
-        // Block tuşu basılı tutuluyorsa (GetKey) ve şu anda block durumunda değilsek
-        // NOT: Burada parryInput ile çakışma kontrolü yapma, çünkü CheckForSuccessfulParry zaten önce çalıştı
-        if (playerInput.blockInput && !(stateMachine.currentState is PlayerParryState))
-        {
-            // Block için direkt block state'ine geç
-            stateMachine.ChangeState(parryState);
-            // Block için cooldown yok
-        }
-    }
+  
     
     private bool IsEnemyParryWindowOpen()
     {

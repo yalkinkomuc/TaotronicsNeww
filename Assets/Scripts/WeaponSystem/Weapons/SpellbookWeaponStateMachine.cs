@@ -158,10 +158,7 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Stunned);
         }
-        else if (player.stateMachine.currentState == player.parryState)
-        {
-            ChangeState(WeaponState.Parry);
-        }
+        
     }
 
 }

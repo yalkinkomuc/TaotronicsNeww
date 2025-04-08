@@ -246,11 +246,5 @@ public class PlayerAnimTriggers : MonoBehaviour
    }
 
    // Parry animasyonu bittiğinde çağrılacak
-   private void ParryAnimationFinished()
-   {
-      if (player != null && player.stateMachine.currentState is PlayerParryState)
-      {
-         player.AnimationFinishTrigger();
-      }
-   }
+   
 }
