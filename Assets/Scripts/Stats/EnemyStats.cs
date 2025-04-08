@@ -24,6 +24,11 @@ public class EnemyStats : CharacterStats
     {
         base.Die();
         enemy.Die();
+
+        if (myDropSystem == null)
+        {
+            return;
+        }
         
         myDropSystem.GenerateDrop();
     }

@@ -134,7 +134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6665926709327994058}
   - component: {fileID: 9150429137835630321}
-  - component: {fileID: 1320713593774571080}
+  - component: {fileID: 3281445006783630034}
   - component: {fileID: 487520248579487530}
   - component: {fileID: 8607898122441212196}
   - component: {fileID: 8941347060164491720}
@@ -192,8 +192,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &1320713593774571080
-BoxCollider2D:
+--- !u!70 &3281445006783630034
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -202,7 +202,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 6200000, guid: efdb71474d0a28940a8f1b5b93902caa, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -226,18 +226,9 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0067396164, y: -0.23585427}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 0.8229351, y: 0.490906}
-  m_EdgeRadius: 0
+  m_Offset: {x: -0.000000024005782, y: -0.20137513}
+  m_Size: {x: 1.0000004, y: 0.58328694}
+  m_Direction: 1
 --- !u!114 &487520248579487530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,6 +253,9 @@ MonoBehaviour:
   secondComboKnockbackXMultiplier: 2.5
   thirdComboKnockbackXMultiplier: 4.5
   knockbackDuration: 0.2
+  isKnocked: 0
+  isAttackActive: 0
+  hitEntitiesInCurrentAttack: []
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 256
@@ -270,7 +264,10 @@ MonoBehaviour:
   chaseSpeed: 4.5
   tooCloseDistance: 3
   detectDistance: 5
+  patrolDistance: 5
+  patrolSpeed: 2
   fightBegun: 0
+  isDefeated: 0
   detectionRange: 5
   attackDistance: 0.77
   attackCooldown: 2
@@ -321,7 +318,7 @@ MonoBehaviour:
     baseValue: 0
     modifiers: 
   maxHealth:
-    baseValue: 1
+    baseValue: 100
     modifiers: 
   maxMana:
     baseValue: 0

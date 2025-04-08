@@ -68,7 +68,7 @@ public class Enemy_ArcherSkeleton : Enemy
         if (attackCooldownTimer > 0)
             attackCooldownTimer -= Time.deltaTime;
         
-        Debug.Log(IsTooCloseToPlayer());
+        // Debug.Log(IsTooCloseToPlayer());
     }
 
     public override void Die()

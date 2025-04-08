@@ -14,6 +14,11 @@ public class ItemDrop : MonoBehaviour
 
     public void GenerateDrop()
     {
+        if (possibleDrop.Length == 0)
+        {
+            return;
+        }
+        
         for (int i = 0; i < possibleDrop.Length; i++)
         {
             if (Random.Range(0, 100) <= possibleDrop[i].dropChance)

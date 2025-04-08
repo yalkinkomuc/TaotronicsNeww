@@ -10,14 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 4264483201744366829}
   - component: {fileID: 5932670249136634678}
-  - component: {fileID: 8741654554139550659}
+  - component: {fileID: 446973822171859561}
   - component: {fileID: 731638857859551059}
   - component: {fileID: 5764120550791581918}
   - component: {fileID: 4615162018279291874}
   - component: {fileID: 2396971675977136577}
   m_Layer: 7
   m_Name: Bat_Enemy
-  m_TagString: Enemy
+  m_TagString: QuestEnemies
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -68,8 +68,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &8741654554139550659
-BoxCollider2D:
+--- !u!70 &446973822171859561
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -102,18 +102,9 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0025974512, y: 0.0007481575}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1.1223233, y: 0.42626858}
-  m_EdgeRadius: 0
+  m_Offset: {x: 0.0019052122, y: 0.076223075}
+  m_Size: {x: 1.2415721, y: 0.559383}
+  m_Direction: 1
 --- !u!114 &731638857859551059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,6 +129,9 @@ MonoBehaviour:
   secondComboKnockbackXMultiplier: 0
   thirdComboKnockbackXMultiplier: 0
   knockbackDuration: 0
+  isKnocked: 0
+  isAttackActive: 0
+  hitEntitiesInCurrentAttack: []
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 256
@@ -146,8 +140,10 @@ MonoBehaviour:
   chaseSpeed: 3
   tooCloseDistance: 1
   detectDistance: 1
+  patrolDistance: 5
+  patrolSpeed: 2
   fightBegun: 0
-  detectionRange: 1
+  isDefeated: 0
   flightSpeed: 3
 --- !u!114 &5764120550791581918
 MonoBehaviour:

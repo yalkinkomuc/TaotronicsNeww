@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerParryState : PlayerState
 {
-    private float blockDuration = 0.3f; // Block durumu süresi (basılı tutulmazsa)
+    
     
     public PlayerParryState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
