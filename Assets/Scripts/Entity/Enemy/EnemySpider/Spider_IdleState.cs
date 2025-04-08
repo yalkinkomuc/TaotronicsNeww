@@ -22,6 +22,8 @@ public class Spider_IdleState : Spider_GroundedState
     {
         base.Update();
         
+        enemy.SetZeroVelocity();
+        
         if (stateTimer < 0f)
         {
             stateMachine.ChangeState(enemy.moveState);

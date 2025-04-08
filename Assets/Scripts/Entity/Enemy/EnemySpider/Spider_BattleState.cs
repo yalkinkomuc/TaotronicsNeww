@@ -16,6 +16,8 @@ public class Spider_BattleState : EnemyState
         base.Enter();
         
         player = PlayerManager.instance.player.transform;
+
+        stateTimer = enemy.battleTime;
     }
 
     public override void Exit()
@@ -26,6 +28,12 @@ public class Spider_BattleState : EnemyState
     public override void Update()
     {
         base.Update();
+        
+        if (stateTimer < 0)
+        {
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
         
         if(player.position.x > enemy.transform.position.x)
             moveDir = 1;

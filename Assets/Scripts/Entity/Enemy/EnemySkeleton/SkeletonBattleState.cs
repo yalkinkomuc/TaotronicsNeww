@@ -17,6 +17,8 @@ public class SkeletonBattleState : EnemyState
         base.Enter();
 
         player = PlayerManager.instance.player.transform;
+        
+        stateTimer = enemy.battleTime;
     }
 
     public override void Exit()
@@ -27,6 +29,12 @@ public class SkeletonBattleState : EnemyState
     public override void Update()
     {
         base.Update();
+        
+        if (stateTimer < 0)
+        {
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
         
        // Debug.Log("im in battleState");
         

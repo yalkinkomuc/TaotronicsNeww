@@ -14,6 +14,8 @@ public class Spider_Enemy : Enemy
     
 
     #endregion
+
+    public float battleTime = 4f;
     
     protected override void Awake()
     {

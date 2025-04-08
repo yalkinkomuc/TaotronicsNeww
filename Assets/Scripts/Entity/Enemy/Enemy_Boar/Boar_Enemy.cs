@@ -37,6 +37,7 @@ public class Boar_Enemy : Enemy
     public Vector2 attackSize;
     
     
+    
     [HideInInspector] public float lastTimeAttacked;
     
     protected override void Awake()

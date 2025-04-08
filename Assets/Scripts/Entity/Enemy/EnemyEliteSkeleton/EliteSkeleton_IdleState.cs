@@ -26,6 +26,8 @@ public class EliteSkeleton_IdleState : EliteSkeleton_GroundedState
         base.Update();
         
        // Debug.Log("im in idle state");
+       
+       enemy.SetZeroVelocity();
         
         if (stateTimer < 0f)
         {

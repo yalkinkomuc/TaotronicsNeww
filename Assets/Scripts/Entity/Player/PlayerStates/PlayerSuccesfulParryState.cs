@@ -65,7 +65,7 @@ public class PlayerSuccesfulParryState : PlayerState
         // Oyuncunun etrafındaki tüm düşmanları kontrol et (parry yarıçapı içinde)
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
         
-        bool foundParryableEnemy = false;
+        //bool foundParryableEnemy = false;
         
         foreach (var col in colliders)
         {
@@ -89,7 +89,7 @@ public class PlayerSuccesfulParryState : PlayerState
                 // Başarılı parry efekti oluştur
                 SpawnParryEffect(eliteSkeleton.transform.position);
                 
-                foundParryableEnemy = true;
+                //foundParryableEnemy = true;
                 break;
             }
         }

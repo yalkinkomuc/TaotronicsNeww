@@ -15,6 +15,7 @@ public class Skeleton_Enemy : Enemy
 
     private bool isSummonedByNecromancer = false;
 
+    public float battleTime = 4f;
     protected override void Awake()
     {
         base.Awake();

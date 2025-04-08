@@ -26,6 +26,8 @@ public class Bat_IdleState : EnemyState
     {
         base.Update();
         
+        
+        
         if (stateTimer < 0f)
         {
             stateMachine.ChangeState(enemy.moveState);
