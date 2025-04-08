@@ -179,7 +179,7 @@ Transform:
   m_GameObject: {fileID: 4116208353091144686}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.551, y: -0.033, z: 0}
+  m_LocalPosition: {x: 0.551, y: -0.205, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -396,7 +396,7 @@ MonoBehaviour:
   attackCooldown: 0.2
   battleTime: 4
   attackCheck: {fileID: 1179314500733958781}
-  attackSize: {x: 0.88, y: 0.54}
+  attackSize: {x: 0.88, y: 0.36}
   isParryWindowOpen: 0
   parryWindowDuration: 0.3
   parryStunDuration: 1
