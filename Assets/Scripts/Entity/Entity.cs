@@ -100,9 +100,11 @@ public class Entity : MonoBehaviour
     public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
         isKnocked = true;
+        knockbackDirectionParam = knockbackDirection;
+        Vector2 calculatedKnockback = knockbackDirectionParam * -facingdir;
 
         // Knockback kuvvetini doğrudan uygula
-        rb.linearVelocity = knockbackDirectionParam* -facingdir;
+        rb.linearVelocity = calculatedKnockback;
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
         
