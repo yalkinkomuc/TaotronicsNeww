@@ -350,8 +350,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.07430816}
-  m_Size: {x: 0.5, y: 1.1486163}
+  m_Offset: {x: 0, y: -0.054906607}
+  m_Size: {x: 0.5, y: 1.1098132}
   m_Direction: 0
 --- !u!114 &4427830143727512847
 MonoBehaviour:
@@ -398,7 +398,6 @@ MonoBehaviour:
   attackCheck: {fileID: 1179314500733958781}
   attackSize: {x: 0.88, y: 0.36}
   isParryWindowOpen: 0
-  parryWindowDuration: 0.3
   parryStunDuration: 1
   lastTimeAttacked: 0
 --- !u!114 &7637031704639217373
