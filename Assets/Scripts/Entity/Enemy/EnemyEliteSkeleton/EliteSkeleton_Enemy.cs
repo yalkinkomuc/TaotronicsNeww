@@ -28,7 +28,7 @@ public class EliteSkeleton_Enemy : Enemy
     
     [Header("Parry System")]
     [HideInInspector] public bool isParryWindowOpen = false; // Parry penceresi aktif mi?
-    [HideInInspector] public float parryWindowDuration = 0.3f; // Parry penceresi süresi
+    
     [SerializeField] public float parryStunDuration = 1.5f; // Parry sonrası düşmanın sersemleme süresi
 
     
