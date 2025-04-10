@@ -7759,11 +7759,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a9773212f805cea4096e48a58512109b, type: 3}
---- !u!1 &880265583 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7954428502197625905, guid: 7df8c2eac67ad1c45a84b0f0048e24b0, type: 3}
-  m_PrefabInstance: {fileID: 48808712}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &890848558
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12261,10 +12256,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 826444583197638345, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
-      propertyPath: dropPrefab
-      value: 
-      objectReference: {fileID: 880265583}
     - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_Name
       value: Bandit_Enemy
