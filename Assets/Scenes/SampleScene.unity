@@ -8695,6 +8695,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1683066506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1307893413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1307893415}
+  - component: {fileID: 1307893414}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1307893414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307893413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73e131daf69a0604f8caec5cf4a1665a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  questToStart: {fileID: 11400000, guid: 18943ac193233224fb16f924e4c1959c, type: 2}
+--- !u!4 &1307893415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307893413}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.706057, y: -4.549754, z: -0.0024958625}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1336651365
 GameObject:
   m_ObjectHideFlags: 0
@@ -9500,17 +9545,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1459956770}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67892d64e7ae0244391cb295bcf43111, type: 3}
+  m_Script: {fileID: 11500000, guid: b28d182cb9646654e9a1f2d7542d5439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeQuests: []
-  completedQuests: []
-  rewardItems:
-  - {fileID: 11400000, guid: 9f844d67e35a65a498e37b09b67e4942, type: 2}
-  goldRewardAmount: 100
-  experienceRewardAmount: 50
-  availableQuests:
-  - {fileID: 11400000, guid: d39cd050c31bf434f96f2629a8d267c6, type: 2}
+  availableQuests: []
 --- !u!4 &1463584005 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7257855769375441334, guid: 592a7580fd39f854fbe82652596ed5e1, type: 3}
@@ -10386,6 +10424,7 @@ Transform:
   - {fileID: 600642743}
   - {fileID: 1973103368}
   - {fileID: 607704717}
+  - {fileID: 1802369654326870466}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1665313541
@@ -10497,6 +10536,7 @@ MonoBehaviour:
   dialogueManager: {fileID: 1305073516}
   vfxManager: {fileID: 581203127}
   cameraManager: {fileID: 1900855065}
+  questManager: {fileID: 0}
 --- !u!4 &1692624958 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6360608713705765470, guid: 5042e22f6cdd1c04785cdf5adf9116db, type: 3}
@@ -10809,6 +10849,8 @@ MonoBehaviour:
   notificationTitleText: {fileID: 1918899313}
   notificationRewardsText: {fileID: 0}
   notificationDuration: 3
+  objectiveItems: []
+  rewardItems: []
 --- !u!1 &1794730789
 GameObject:
   m_ObjectHideFlags: 0
@@ -12254,23 +12296,27 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1655988990}
     m_Modifications:
     - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_Name
       value: Bandit_Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.48
+      value: -4.81
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.69
+      value: -2.53
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.038921557
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12278,15 +12324,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -12305,6 +12351,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+--- !u!4 &1802369654326870466 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+  m_PrefabInstance: {fileID: 1802369654326870465}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1837229791828344895
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12955,6 +13006,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EliteSkeleton_Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -13496,7 +13551,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: NPC_ExampleQuestGiver
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6166083532033334351, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -13634,10 +13690,6 @@ PrefabInstance:
     - target: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_Name
       value: Skeleton_Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.x
@@ -13999,4 +14051,4 @@ SceneRoots:
   - {fileID: 48808712}
   - {fileID: 1172472374}
   - {fileID: 7374000436306647319}
-  - {fileID: 1802369654326870465}
+  - {fileID: 1307893415}

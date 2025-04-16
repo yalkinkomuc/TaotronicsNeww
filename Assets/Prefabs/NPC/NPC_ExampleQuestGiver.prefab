@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6093113223368070934}
   - component: {fileID: 1291723927930431512}
   - component: {fileID: 4339458701921813572}
-  - component: {fileID: 6166083532033334351}
   m_Layer: 0
   m_Name: NPC_ExampleQuestGiver
   m_TagString: Untagged
@@ -126,23 +125,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 1.41
---- !u!114 &6166083532033334351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7889029787042438312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1e43982538eb5f4184513776ee0a9a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionPrompt: {fileID: 5280447177336465156}
-  dialogueData: {fileID: 11400000, guid: 38e8007e84d40c6439668666c782e9e7, type: 2}
-  availableQuests:
-  - {fileID: 11400000, guid: d39cd050c31bf434f96f2629a8d267c6, type: 2}
-  questIndicator: {fileID: 5891112521936452748}
 --- !u!1001 &8609839177552525709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -203,21 +185,5 @@ PrefabInstance:
 --- !u!4 &1935016152633768897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7901220218958152268, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
-  m_PrefabInstance: {fileID: 8609839177552525709}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5280447177336465156 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4484355589976678025, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
-  m_PrefabInstance: {fileID: 8609839177552525709}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5891112521936452748}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 591ca94985564e749b2f2614408df744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &5891112521936452748 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2791427738855195905, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
   m_PrefabInstance: {fileID: 8609839177552525709}
   m_PrefabAsset: {fileID: 0}

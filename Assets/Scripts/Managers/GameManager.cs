@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public DialogueManager dialogueManager;
     public VFXManager vfxManager;
     public CameraManager cameraManager;
+    public QuestManager questManager;
     // Diğer manager referansları...
 
     private void Awake()

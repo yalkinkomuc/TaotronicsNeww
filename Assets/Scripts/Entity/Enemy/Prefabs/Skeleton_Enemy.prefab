@@ -132,6 +132,7 @@ MonoBehaviour:
   isKnocked: 0
   isAttackActive: 0
   hitEntitiesInCurrentAttack: []
+  enemyType: Skeleton
   whatIsPlayer:
     serializedVersion: 2
     m_Bits: 256
@@ -144,6 +145,7 @@ MonoBehaviour:
   patrolSpeed: 2
   fightBegun: 0
   isDefeated: 0
+  battleTime: 4
 --- !u!114 &7743403020825798319
 MonoBehaviour:
   m_ObjectHideFlags: 0

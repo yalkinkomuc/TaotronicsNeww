@@ -7,10 +7,7 @@ public static class GameEvents
     public static event Action OnAllEnemiesDefeated;
     
     // Quest ile ilgili olaylar
-    public static event Action<Quest> OnQuestStarted;
-    public static event Action<Quest> OnQuestUpdated;
-    public static event Action<Quest> OnQuestCompleted;
-    public static event Action<QuestReward> OnQuestRewardGranted;
+    
     
     // Oyun ilerlemesi olayları
     public static event Action<string> OnCheckpointReached;
@@ -27,26 +24,6 @@ public static class GameEvents
     public static void AllEnemiesDefeated()
     {
         OnAllEnemiesDefeated?.Invoke();
-    }
-    
-    public static void QuestStarted(Quest quest)
-    {
-        OnQuestStarted?.Invoke(quest);
-    }
-    
-    public static void QuestUpdated(Quest quest)
-    {
-        OnQuestUpdated?.Invoke(quest);
-    }
-    
-    public static void QuestCompleted(Quest quest)
-    {
-        OnQuestCompleted?.Invoke(quest);
-    }
-    
-    public static void QuestRewardGranted(QuestReward reward)
-    {
-        OnQuestRewardGranted?.Invoke(reward);
     }
     
     public static void CheckpointReached(string checkpointId)

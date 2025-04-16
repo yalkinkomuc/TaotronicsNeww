@@ -7,6 +7,9 @@ public class Enemy : Entity
    
    // public Animator animator { get;private set; }
    // public Rigidbody2D rb { get;private set; }
+
+
+   [SerializeField] private string enemyType; // Inspector'dan değiştirilebilir
    
    public CapsuleCollider2D capsuleCollider { get; private set; }
    
@@ -64,6 +67,11 @@ public class Enemy : Entity
        if (!isDefeated)
        {
            isDefeated = true;
+           
+           Debug.Log($"{enemyType} öldü");
+
+           // Görev sistemi ile iletişim:
+           QuestManager.instance?.RaiseEvent("EnemyKilled", enemyType);
            
            // Düşman öldüğünde event'i tetikle
            GameEvents.EnemyDefeated(this);
