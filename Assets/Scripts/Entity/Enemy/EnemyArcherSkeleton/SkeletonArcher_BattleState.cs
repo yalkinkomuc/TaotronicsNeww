@@ -23,6 +23,13 @@ public class SkeletonArcher_BattleState : EnemyState
     public override void Update()
     {
         base.Update();
+        if (enemy.IsPlayerBelow())
+        {
+            // Debug.Log("Oyuncu çok aşağıda, savaş bırakılıyor!");
+            enemy.fightBegun = false;
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
 
         if (!enemy.CanSeePlayer())
         {

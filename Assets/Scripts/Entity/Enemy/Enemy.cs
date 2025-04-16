@@ -138,17 +138,21 @@ public class Enemy : Entity
        return false;
    }
 
+   /// <summary>
+   /// Düşmanın yön değiştirmesi gerekip gerekmediğini kontrol eder.
+   /// Duvar, uçurum veya maksimum patrol mesafesine ulaşılırsa true döner.
+   /// </summary>
    public virtual bool ShouldFlipPatrol()
    {
-       // Duvara çarpma kontrolü
+       // Duvar kontrolü
        if (IsWallDetected())
            return true;
            
-       // Uçurum kontrolü
+       // Zemin kontrolü (uçurum)
        if (!IsGroundDetected())
            return true;
            
-       // Mesafe kontrolü
+       // Basit mesafe kontrolü
        float distanceFromStart = transform.position.x - startPosition.x;
        if ((distanceFromStart >= patrolDistance && patrolDirection == 1) || 
            (distanceFromStart <= -patrolDistance && patrolDirection == -1))
@@ -157,6 +161,10 @@ public class Enemy : Entity
        return false;
    }
    
+   /// <summary>
+   /// Düşmanın devriye davranışını günceller.
+   /// Gerekirse yön değiştirir ve ilgili hızda hareket eder.
+   /// </summary>
    public virtual void UpdatePatrol()
    {
        if (ShouldFlipPatrol())
@@ -185,5 +193,22 @@ public class Enemy : Entity
       
        Debug.Log(gameObject.name + " was damaged ");
        stats.TakeDamage(stats.baseDamage.GetValue());
+   }
+
+   /// <summary>
+   /// Oyuncunun düşmandan belirli bir mesafe aşağıda olup olmadığını kontrol eder.
+   /// </summary>
+   /// <param name="minHeightDifference">Minimum yükseklik farkı (varsayılan: 1.5f)</param>
+   /// <returns>Oyuncu düşmandan yeterince aşağıdaysa true, değilse false</returns>
+   public virtual bool IsPlayerBelow(float minHeightDifference = 1.5f)
+   {
+       if (player == null)
+           return false;
+           
+       // Düşman ve oyuncu arasındaki dikey mesafe farkını hesapla
+       float heightDifference = transform.position.y - player.transform.position.y;
+       
+       // Eğer oyuncu düşmandan belirli bir mesafe daha aşağıdaysa true döndür
+       return heightDifference >= minHeightDifference;
    }
 }

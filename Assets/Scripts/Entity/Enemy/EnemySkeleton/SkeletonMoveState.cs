@@ -9,6 +9,7 @@ public class SkeletonMoveState : SkeletonGroundedState
     public override void Enter()
     {
         base.Enter();
+        // Patrol için başlangıç pozisyonunu kaydet
         enemy.startPosition = enemy.transform.position;
     }
 
@@ -21,8 +22,17 @@ public class SkeletonMoveState : SkeletonGroundedState
     {
         base.Update();
         
+        // Eğer düşman savaşta ise patrol etme, battle state'e geç
+        if (enemy.fightBegun)
+        {
+            stateMachine.ChangeState(enemy.battleState);
+            return;
+        }
+        
+        // Patrol davranışını güncelle
         enemy.UpdatePatrol();
         
+        // Savaş durumuna geçiş kontrolü
         if (enemy.CheckForBattleTransition())
         {
             stateMachine.ChangeState(enemy.idleState);

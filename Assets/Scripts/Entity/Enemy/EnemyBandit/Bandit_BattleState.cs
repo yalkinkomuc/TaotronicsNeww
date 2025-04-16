@@ -38,6 +38,14 @@ public class Bandit_BattleState : EnemyState
     {
         base.Update();
         
+        if (enemy.IsPlayerBelow())
+        {
+            // Debug.Log("Oyuncu çok aşağıda, savaş bırakılıyor!");
+            enemy.fightBegun = false;
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
+        
         // Yön kontrolünü daha az sıklıkla yap
         if (Time.time >= lastDirectionCheckTime + directionCheckCooldown)
         {

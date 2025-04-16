@@ -34,14 +34,24 @@ public class EliteSkeleton_GroundedState : EnemyState
         
        // Debug.Log("im in grounded state");
         
-        if (enemy.fightBegun)
+        if (enemy.fightBegun )
         {
+            if (enemy.IsPlayerBelow())
+            {
+                return;
+            }
+            
             stateMachine.ChangeState(enemy.battleState);
             return;
         }
         
         if (enemy.IsPlayerDetected() || enemy.IsTooCloseToPlayer())
         {
+
+            if (enemy.IsPlayerBelow())
+            {
+                return;
+            }
             stateMachine.ChangeState(enemy.battleState);
         }
     }

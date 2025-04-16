@@ -35,7 +35,7 @@ public class PlayerSuccesfulParryState : PlayerState
     {
         base.Update();
         
-        Debug.Log("im in scfparry, timer: " + stateTimer);
+//        Debug.Log("im in scfparry, timer: " + stateTimer);
 
         // Animasyon trigger'ı çağrıldıysa VEYA animasyon süresi bittiyse state'i değiştir
         if (triggerCalled || stateTimer <= 0)

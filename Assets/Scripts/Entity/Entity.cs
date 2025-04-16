@@ -162,20 +162,17 @@ public class Entity : MonoBehaviour
     
     public virtual void Flip()
     {
-        facingdir = facingdir * -1;
+        // Basit flip işlemi - sadece yön değişimi ve sprite döndürme
+        facingdir *= -1;
         facingright = !facingright;
         transform.Rotate(0, 180, 0);
-
     }
     
-    public virtual void SetupDefaultFacingDir (int _direction)
+    public virtual void SetupDefaultFacingDir(int _direction)
     {
         facingdir = _direction;
-
-        if (facingdir == -1)
-            facingright = false;
+        facingright = (facingdir == 1);
     }
-
 
     #endregion
   

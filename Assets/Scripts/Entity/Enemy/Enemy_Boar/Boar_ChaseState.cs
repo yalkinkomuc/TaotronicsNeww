@@ -36,6 +36,14 @@ public class Boar_ChaseState : EnemyState
     {
         base.Update();
         
+        if (enemy.IsPlayerBelow())
+        {
+            // Debug.Log("Oyuncu çok aşağıda, savaş bırakılıyor!");
+            enemy.fightBegun = false;
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
+        
         if (stateTimer < 0)
         {
             stateMachine.ChangeState(enemy.idleState);

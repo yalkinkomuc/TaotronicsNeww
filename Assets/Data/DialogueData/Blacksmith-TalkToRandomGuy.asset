@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2d71cf45ae6b6c4a8cfd2bed810323b, type: 3}
-  m_Name: TalkToRandomGuy
+  m_Script: {fileID: 11500000, guid: 2e832727ab57fbb48bad9d9fbff04e7e, type: 3}
+  m_Name: Blacksmith-TalkToRandomGuy
   m_EditorClassIdentifier: 
-  description: 
-  npcID: Random Guy
+  characterName: Blacksmith
+  dialogueLines:
+  - "Adamla konu\u015F."
+  characterPortrait: {fileID: -8626763743991069669, guid: ae72133dacba6ec4eb33ecde48f50e56, type: 3}

@@ -36,6 +36,15 @@ public class EliteSkeleton_BattleState : EnemyState
     public override void Update()
     {
         base.Update();
+        
+        // Oyuncu aşağıdaysa savaşı bırak
+        if (enemy.IsPlayerBelow())
+        {
+            // Debug.Log("Oyuncu çok aşağıda, savaş bırakılıyor!");
+            enemy.fightBegun = false;
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
 
         // Yön kontrolünü daha az sıklıkla yap
         if (Time.time >= lastDirectionCheckTime + directionCheckCooldown)
@@ -52,6 +61,10 @@ public class EliteSkeleton_BattleState : EnemyState
             enemy.SetZeroVelocity();
             stateMachine.ChangeState(enemy.idleState);
         }
+        
+        // Debug.Log(enemy.IsPlayerBelow());
+
+       
 
         // Eğer oyuncuyu görüyorsa battle time sayacını sıfırla
         if (enemy.IsPlayerDetected() || enemy.IsTooCloseToPlayer())

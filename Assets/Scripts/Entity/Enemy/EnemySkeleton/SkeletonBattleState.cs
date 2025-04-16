@@ -38,6 +38,14 @@ public class SkeletonBattleState : EnemyState
     {
         base.Update();
         
+        // Oyuncu aşağıdaysa savaşı bırak
+        if (enemy.IsPlayerBelow())
+        {
+            enemy.fightBegun = false;
+            stateMachine.ChangeState(enemy.idleState);
+            return;
+        }
+        
         if (stateTimer < 0)
         {
             stateMachine.ChangeState(enemy.idleState);

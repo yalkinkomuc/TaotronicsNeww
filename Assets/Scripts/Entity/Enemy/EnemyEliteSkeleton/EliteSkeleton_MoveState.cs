@@ -28,19 +28,19 @@ public class EliteSkeleton_MoveState : EliteSkeleton_GroundedState
     {
         base.Update();
         
-        // Eğer düşman savaşta ise patrol etme, battle state'e geç
-        if (enemy.fightBegun)
-        {
-            stateMachine.ChangeState(enemy.battleState);
-            return;
-        }
+        // // Eğer düşman savaşta ise patrol etme, battle state'e geç
+        // if (enemy.fightBegun)
+        // {
+        //     stateMachine.ChangeState(enemy.battleState);
+        //     return;
+        // }
         
         enemy.UpdatePatrol();
         
-        // Normal savaş geçişi kontrolü
-        if (enemy.CheckForBattleTransition())
-        {
-            stateMachine.ChangeState(enemy.battleState);
-        }
+        // // Normal savaş geçişi kontrolü
+        // if (enemy.CheckForBattleTransition())
+        // {
+        //     stateMachine.ChangeState(enemy.battleState);
+        // }
     }
 }
