@@ -1,34 +1,57 @@
+using System.Collections;
 using UnityEngine;
 
+[System.Serializable]
 public class QuestInstance
 {
-    public QuestData data;
-    public bool IsCompleted => System.Array.TrueForAll(objectives, o => o.isCompleted);
+    public QuestData Data;
+    public int currentObjectiveIndex = 0;
 
-    private QuestObjective[] objectives;
+    public bool isCompleted => currentObjectiveIndex >= Data.objectives.Length;
+    
+    public QuestObjective CurrentObjective => IsCompleted ? null : Data.objectives[currentObjectiveIndex];
 
-    public QuestInstance(QuestData questData)
-    {
-        data = questData;
-        objectives = new QuestObjective[questData.objectives.Length];
 
-        for (int i = 0; i < objectives.Length; i++)
-        {
-            objectives[i] = Object.Instantiate(questData.objectives[i]); // Runtime instance
-            objectives[i].Initialize();
-        }
-    }
+    public bool IsCompleted => Data != null && Data.objectives != null && currentObjectiveIndex >= Data.objectives.Length;
+
 
     public void HandleEvent(string eventName, object data)
     {
-        foreach (var obj in objectives)
-        {
-            if (!obj.isCompleted)
-            {
-             obj.HandleEvent(eventName, data);
-             Debug.Log($"handled event: {eventName}");
-            }
+        if (IsCompleted || Data == null || Data.objectives == null) return;
 
+        var current = CurrentObjective;
+
+        // Eğer geçerli objective tamamlandıysa, sıradaki objective'e geç
+        if (current != null && !current.isCompleted)
+        {
+            // İlk kez çalıştırıldığında Initialize et
+            if (!current.isInitialized)
+            {
+                current.Initialize();
+            }
+            
+            current.HandleEvent(eventName, data);
+
+            // Eğer bu objective tamamlandıysa sıradaki objective'e geç
+            if (current.isCompleted)
+            {
+                currentObjectiveIndex++;
+                Debug.Log($"Objective tamamlandı, sıradaki: {currentObjectiveIndex}");
+
+                // Eğer tüm objective'ler tamamlandıysa quest tamamlandı
+                if (IsCompleted)
+                {
+                    Debug.Log($"🎉 Quest tamamlandı: {Data.title}");
+                }
+                else
+                {
+                    // Bir sonraki objective için log ekleyelim
+                    Debug.Log($"Yeni objective başlatıldı: {CurrentObjective.GetType().Name}");
+                }
+            }
         }
     }
+
+
+
 }

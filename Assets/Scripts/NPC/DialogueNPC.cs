@@ -5,7 +5,7 @@ public class DialogueNPC : MonoBehaviour, IInteractable
     
     public string npcID;
     [SerializeField] private InteractionPrompt interactionPrompt;
-   // [SerializeField] private DialogueData dialogueData;
+    [SerializeField] private DialogueData dialogueData;
     private bool playerInRange;
 
     public virtual void Interact()
@@ -18,12 +18,12 @@ public class DialogueNPC : MonoBehaviour, IInteractable
         }
         
         Debug.Log("Interact");
-        QuestManager.instance.RaiseEvent("TalkedToNpc", npcID);
+        QuestManager.instance.RaiseEvent("TalkedToNPC", npcID);
 
-        // if (playerInRange)
-        // {
-        //     DialogueManager.Instance.StartDialogue(dialogueData);
-        // }
+         if (playerInRange)
+         {
+             DialogueManager.Instance.StartDialogue(dialogueData);
+         }
     }
 
     public void ShowInteractionPrompt()
@@ -55,7 +55,7 @@ public class DialogueNPC : MonoBehaviour, IInteractable
             if (DialogueManager.Instance.IsDialogueActive)
                 return;
             
-            //DialogueManager.Instance.StartDialogue(dialogueData);
+            DialogueManager.Instance.StartDialogue(dialogueData);
         }
     }
 } 

@@ -5724,6 +5724,26 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5908198555575281863, guid: e4687d416e8d4294ca6c13bcfccefb2e, type: 3}
   m_PrefabInstance: {fileID: 7021107716126698435}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &219417675 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7889029787042438312, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
+  m_PrefabInstance: {fileID: 7374000436306647319}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &219417679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219417675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cbac6eece3ede341b174d61e433ad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcID: Random Guy
+  interactionPrompt: {fileID: 658123200}
+  dialogueData: {fileID: 11400000, guid: 4fdb90a3baaca5d4caa92e64ad9cf740, type: 2}
 --- !u!4 &219590441 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6963040965108200878, guid: 0086d03691286ab4c9cccbfbf11dc4d6, type: 3}
@@ -5887,7 +5907,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &308310712
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6693,6 +6713,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c80c8de8481b93d4288fb701d84a3340, type: 3}
+--- !u!114 &658123200 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5280447177336465156, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
+  m_PrefabInstance: {fileID: 7374000436306647319}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 591ca94985564e749b2f2614408df744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &712100198
 GameObject:
   m_ObjectHideFlags: 0
@@ -8391,7 +8422,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4513608936065118298, guid: a10d26aa9027231439e3f04b7916ea2f, type: 3}
       propertyPath: m_Name
-      value: NPC_Example (1)
+      value: NPC_Blacksmith
       objectReference: {fileID: 0}
     - target: {fileID: 7383552489859959087, guid: a10d26aa9027231439e3f04b7916ea2f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8724,7 +8755,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73e131daf69a0604f8caec5cf4a1665a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  questToStart: {fileID: 11400000, guid: 18943ac193233224fb16f924e4c1959c, type: 2}
+  questToStart: {fileID: 11400000, guid: b988d04ed85a7c04aaeb98ed20abca7e, type: 2}
+  startOnAwake: 1
 --- !u!4 &1307893415
 Transform:
   m_ObjectHideFlags: 0
@@ -9548,7 +9580,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b28d182cb9646654e9a1f2d7542d5439, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  availableQuests: []
+  availableQuests:
+  - {fileID: 11400000, guid: b988d04ed85a7c04aaeb98ed20abca7e, type: 2}
 --- !u!4 &1463584005 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7257855769375441334, guid: 592a7580fd39f854fbe82652596ed5e1, type: 3}
@@ -10730,7 +10763,6 @@ GameObject:
   - component: {fileID: 1782834618}
   - component: {fileID: 1782834617}
   - component: {fileID: 1782834616}
-  - component: {fileID: 1782834620}
   m_Layer: 5
   m_Name: '***Canvas***'
   m_TagString: InventoryUI
@@ -10825,32 +10857,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1782834620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1782834615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7eec8f88cba48048960b6f27d3b5fc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  questPanel: {fileID: 308310711}
-  questTitleText: {fileID: 1084888868}
-  questDescriptionText: {fileID: 840679012}
-  objectivesContainer: {fileID: 1508870001}
-  objectivePrefab: {fileID: 4369634978855996981, guid: 9f454fdf0eeeb2b4fb0f37de2e48122a, type: 3}
-  rewardsContainer: {fileID: 0}
-  rewardItemPrefab: {fileID: 0}
-  rewardsHeaderText: {fileID: 0}
-  questCompletionNotification: {fileID: 1828183541}
-  notificationTitleText: {fileID: 1918899313}
-  notificationRewardsText: {fileID: 0}
-  notificationDuration: 3
-  objectiveItems: []
-  rewardItems: []
 --- !u!1 &1794730789
 GameObject:
   m_ObjectHideFlags: 0
@@ -13555,7 +13561,10 @@ PrefabInstance:
     - {fileID: 6166083532033334351, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7889029787042438312, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 219417679}
   m_SourcePrefab: {fileID: 100100000, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
 --- !u!1001 &7383817582645450501
 PrefabInstance:
@@ -13693,11 +13702,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.79
+      value: -10.31
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.5070002
+      value: 2.78
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13730,6 +13739,10 @@ PrefabInstance:
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6821090607185294136, guid: 504a2022e8007534aa22658e01218e40, type: 3}
+      propertyPath: maxHealth.baseValue
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

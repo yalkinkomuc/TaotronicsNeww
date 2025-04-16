@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ab431f899d0efb48bd691722fcc427e, type: 3}
-  m_Name: TestQuest
+  m_Name: BlacksmithQuest
   m_EditorClassIdentifier: 
-  questID: 1
-  title: TestQuest
-  description: KillSkeleton
+  questID: BlacksmithQuest
+  title: BS
+  description: BS
   objectives:
-  - {fileID: 11400000, guid: 2dd9a1ecbe0bf37478c2bb582fe5f528, type: 2}
+  - {fileID: 11400000, guid: 01e07e75fd0fc654b83d81de8c345f29, type: 2}
+  - {fileID: 11400000, guid: f92fd82bd02dfe1448f1261bbc9487f6, type: 2}
+  - {fileID: 11400000, guid: cad67aaa561904f46905640cf02b13a0, type: 2}

@@ -25,9 +25,10 @@ public class QuestManager : MonoBehaviour
 
     public void StartQuest(QuestData questData)
     {
-        if (questData != null && activeQuests.All(q => q.data != questData))
+        if (questData != null && activeQuests.All(q => q.Data != questData))
         {
-            var quest = new QuestInstance(questData);
+            var quest = new QuestInstance();
+            quest.Data = questData;
             activeQuests.Add(quest);
             Debug.Log($"Started quest: {questData.title}");
         }
@@ -36,10 +37,13 @@ public class QuestManager : MonoBehaviour
 
     public void RaiseEvent(string eventName, object data)
     {
+        Debug.Log($"Event Raised: {eventName}");  // Event'in doğru şekilde tetiklendiğini görmek için debug ekleyelim
+
         foreach (var quest in activeQuests)
         {
             quest.HandleEvent(eventName, data);
-            Debug.Log($"Raised event: {eventName}");
         }
     }
+
+
 }
