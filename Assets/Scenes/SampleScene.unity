@@ -5724,26 +5724,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5908198555575281863, guid: e4687d416e8d4294ca6c13bcfccefb2e, type: 3}
   m_PrefabInstance: {fileID: 7021107716126698435}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &219417675 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7889029787042438312, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
-  m_PrefabInstance: {fileID: 7374000436306647319}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &219417679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 219417675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cbac6eece3ede341b174d61e433ad76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  npcID: Random Guy
-  interactionPrompt: {fileID: 658123200}
-  dialogueData: {fileID: 11400000, guid: 4fdb90a3baaca5d4caa92e64ad9cf740, type: 2}
 --- !u!4 &219590441 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6963040965108200878, guid: 0086d03691286ab4c9cccbfbf11dc4d6, type: 3}
@@ -6713,17 +6693,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c80c8de8481b93d4288fb701d84a3340, type: 3}
---- !u!114 &658123200 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5280447177336465156, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
-  m_PrefabInstance: {fileID: 7374000436306647319}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 591ca94985564e749b2f2614408df744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &712100198
 GameObject:
   m_ObjectHideFlags: 0
@@ -8420,10 +8389,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 192208996706053291, guid: a10d26aa9027231439e3f04b7916ea2f, type: 3}
-      propertyPath: questDialogue
-      value: 
-      objectReference: {fileID: 11400000, guid: 6cea6bc803d24074193196ec4fd3829b, type: 2}
     - target: {fileID: 4513608936065118298, guid: a10d26aa9027231439e3f04b7916ea2f, type: 3}
       propertyPath: m_Name
       value: NPC_Blacksmith
@@ -11916,11 +11881,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6665926709327994058, guid: 5976b990c65777649a38a5722c6d5257, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 13.94
+      value: -9.73
       objectReference: {fileID: 0}
     - target: {fileID: 6665926709327994058, guid: 5976b990c65777649a38a5722c6d5257, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.43
+      value: 2.45
       objectReference: {fileID: 0}
     - target: {fileID: 6665926709327994058, guid: 5976b990c65777649a38a5722c6d5257, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12257,11 +12222,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.81
+      value: -9.8
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.53
+      value: 2.38
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12380,11 +12345,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6353669383580540762, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.96
+      value: -9.84
       objectReference: {fileID: 0}
     - target: {fileID: 6353669383580540762, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.78
+      value: 2.45
       objectReference: {fileID: 0}
     - target: {fileID: 6353669383580540762, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12839,7 +12804,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13374,22 +13339,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6166083532033334351, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
-      propertyPath: dialogueData
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 7889029787042438312, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
       propertyPath: m_Name
       value: NPC_ExampleQuestGiver
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6166083532033334351, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7889029787042438312, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 219417679}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
 --- !u!1001 &7383817582645450501
 PrefabInstance:
@@ -13527,7 +13484,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 475982547778069492, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
       propertyPath: m_LocalPosition.x

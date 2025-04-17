@@ -22,20 +22,20 @@ public class SkeletonMoveState : SkeletonGroundedState
     {
         base.Update();
         
-        // Eğer düşman savaşta ise patrol etme, battle state'e geç
-        if (enemy.fightBegun)
-        {
-            stateMachine.ChangeState(enemy.battleState);
-            return;
-        }
+        // // Eğer düşman savaşta ise patrol etme, battle state'e geç
+        // if (enemy.fightBegun)
+        // {
+        //     stateMachine.ChangeState(enemy.battleState);
+        //     return;
+        // }
         
         // Patrol davranışını güncelle
         enemy.UpdatePatrol();
         
-        // Savaş durumuna geçiş kontrolü
-        if (enemy.CheckForBattleTransition())
-        {
-            stateMachine.ChangeState(enemy.idleState);
-        }
+        // // Savaş durumuna geçiş kontrolü
+        // if (enemy.CheckForBattleTransition())
+        // {
+        //     stateMachine.ChangeState(enemy.idleState);
+        // }
     }
 }

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7383552489859959087}
   - component: {fileID: 646200370813014260}
   - component: {fileID: 2272933519628661393}
-  - component: {fileID: 192208996706053291}
   m_Layer: 0
   m_Name: NPC_Example
   m_TagString: Untagged
@@ -126,23 +125,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 1.41
---- !u!114 &192208996706053291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4513608936065118298}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 670a87a20845b9744851d51fc565bcdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  npcID: Blacksmith
-  interactionPrompt: {fileID: 2388620175149280006}
-  dialogueData: {fileID: 0}
-  questToGive: {fileID: 11400000, guid: bb40d8d0eecee6c4fbe9a936a2067c7e, type: 2}
-  questDialogue: {fileID: 11400000, guid: f79c85d2490758743bf90d70deb35e2c, type: 2}
 --- !u!1001 &2242146937769981327
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -200,17 +182,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
---- !u!114 &2388620175149280006 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4484355589976678025, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
-  m_PrefabInstance: {fileID: 2242146937769981327}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 591ca94985564e749b2f2614408df744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &8267325989980272579 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7901220218958152268, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}

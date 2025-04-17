@@ -45,5 +45,34 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-
+    // Aktif questleri döndürür (sadece okunabilir)
+    public List<QuestInstance> GetActiveQuests()
+    {
+        return new List<QuestInstance>(activeQuests);
+    }
+    
+    // Tüm questleri ve objective'leri sıfırlar
+    public void ResetAllQuests()
+    {
+        // Aktif questleri temizle
+        activeQuests.Clear();
+        
+        // Tüm mevcut questlerin objective'lerini sıfırla
+        foreach (var quest in availableQuests)
+        {
+            if (quest != null && quest.objectives != null)
+            {
+                foreach (var objective in quest.objectives)
+                {
+                    if (objective != null)
+                    {
+                        objective.isCompleted = false;
+                        objective.isInitialized = false;
+                    }
+                }
+            }
+        }
+        
+        Debug.Log("Tüm questler ve objective'ler sıfırlandı.");
+    }
 }

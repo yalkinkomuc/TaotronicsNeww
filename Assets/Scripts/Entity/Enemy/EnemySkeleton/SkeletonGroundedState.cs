@@ -22,17 +22,24 @@ public class SkeletonGroundedState : EnemyState
     {
         base.Update();
         
-        //Debug.Log("im in groundedState");
-
-        // Eğer oyuncu aşağıdaysa savaşa girme
-        if (enemy.IsPlayerBelow())
+        if (enemy.fightBegun )
         {
+            if (enemy.IsPlayerBelow())
+            {
+                return;
+            }
+            
+            stateMachine.ChangeState(enemy.battleState);
             return;
         }
-
-        // Oyuncuyu algıladıysa ve oyuncu düşmanın altında değilse savaşa gir
+        
         if (enemy.IsPlayerDetected() || enemy.IsTooCloseToPlayer())
         {
+
+            if (enemy.IsPlayerBelow())
+            {
+                return;
+            }
             stateMachine.ChangeState(enemy.battleState);
         }
     }

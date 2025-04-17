@@ -37,38 +37,32 @@ public class SkeletonBattleState : EnemyState
     public override void Update()
     {
         base.Update();
-        
-        // Oyuncu aşağıdaysa savaşı bırak
+
         if (enemy.IsPlayerBelow())
         {
+            // Debug.Log("Oyuncu çok aşağıda, savaş bırakılıyor!");
             enemy.fightBegun = false;
             stateMachine.ChangeState(enemy.idleState);
             return;
         }
-        
-        if (stateTimer < 0)
-        {
-            stateMachine.ChangeState(enemy.idleState);
-            return;
-        }
-        
+
         // Yön kontrolünü daha az sıklıkla yap
         if (Time.time >= lastDirectionCheckTime + directionCheckCooldown)
         {
             UpdateFacingDirection();
             lastDirectionCheckTime = Time.time;
         }
-        
-        enemy.SetVelocity(enemy.chaseSpeed*moveDir, rb.linearVelocity.y);
+
+        // Hareket ettir
+        enemy.SetVelocity(enemy.chaseSpeed * moveDir, rb.linearVelocity.y);
 
         if (!enemy.IsGroundDetected() || enemy.IsWallDetected())
         {
-            enemy.SetZeroVelocity(); // simdilik calisiyor ama sonradan değiştirelbilir.
-            enemy.Flip();
+            enemy.SetZeroVelocity();
             stateMachine.ChangeState(enemy.idleState);
         }
     }
-    
+
     private void UpdateFacingDirection()
     {
         if (player != null)

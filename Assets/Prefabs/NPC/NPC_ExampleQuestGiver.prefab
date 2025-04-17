@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6093113223368070934}
   - component: {fileID: 1291723927930431512}
   - component: {fileID: 4339458701921813572}
+  - component: {fileID: 8480545861860401030}
   m_Layer: 0
   m_Name: NPC_ExampleQuestGiver
   m_TagString: Untagged
@@ -125,6 +126,25 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 1.41
+--- !u!114 &8480545861860401030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7889029787042438312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 670a87a20845b9744851d51fc565bcdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcID: Random Guy
+  interactionPrompt: {fileID: 5280447177336465156}
+  dialogueData: {fileID: 0}
+  questToGive: {fileID: 11400000, guid: bb40d8d0eecee6c4fbe9a936a2067c7e, type: 2}
+  questDialogue: {fileID: 11400000, guid: 4fdb90a3baaca5d4caa92e64ad9cf740, type: 2}
+  questInProgressDialogue: {fileID: 11400000, guid: a89537effcd9565479df72cfdcd4eadd, type: 2}
+  questCompletedDialogue: {fileID: 11400000, guid: c03b4b53724dace46ab8a6f13e5440b4, type: 2}
 --- !u!1001 &8609839177552525709
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137,9 +157,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: InteractionIndicator
       objectReference: {fileID: 0}
+    - target: {fileID: 3623681056463876444, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+    - target: {fileID: 3623681056463876444, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
+      propertyPath: m_Color.g
+      value: 0.8612033
+      objectReference: {fileID: 0}
     - target: {fileID: 7901220218958152268, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.22
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7901220218958152268, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -187,3 +215,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7901220218958152268, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
   m_PrefabInstance: {fileID: 8609839177552525709}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5280447177336465156 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4484355589976678025, guid: d5c6f600e5796e44eafcfc9268b5d32b, type: 3}
+  m_PrefabInstance: {fileID: 8609839177552525709}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 591ca94985564e749b2f2614408df744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
