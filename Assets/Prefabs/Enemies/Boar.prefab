@@ -311,21 +311,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseDamage:
     baseValue: 20
-    modifiers: 
   secondComboDamageMultiplier:
     baseValue: 0
-    modifiers: 
   thirdComboDamageMultiplier:
     baseValue: 0
-    modifiers: 
   maxHealth:
     baseValue: 100
-    modifiers: 
   maxMana:
     baseValue: 0
-    modifiers: 
   currentHealth: 0
   currentMana: 0
+  level: 1
+  levelHealthMultiplier: 0.1
+  levelDamageMultiplier: 0.05
+  baseExperienceReward: 10
+  experienceLevelMultiplier: 0.5
+  scaleWithPlayerLevel: 0
+  levelOffset: 0
 --- !u!1 &8832297894682762036
 GameObject:
   m_ObjectHideFlags: 0

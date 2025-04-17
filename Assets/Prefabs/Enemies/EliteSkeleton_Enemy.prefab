@@ -210,7 +210,7 @@ Transform:
   m_GameObject: {fileID: 5842355392186153926}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.004, y: -0.504, z: 0}
+  m_LocalPosition: {x: 0.524, y: -0.504, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -437,21 +437,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseDamage:
     baseValue: 40
-    modifiers: 
   secondComboDamageMultiplier:
     baseValue: 0
-    modifiers: 
   thirdComboDamageMultiplier:
     baseValue: 0
-    modifiers: 
   maxHealth:
     baseValue: 1000
-    modifiers: 
   maxMana:
     baseValue: 0
-    modifiers: 
   currentHealth: 0
   currentMana: 0
+  level: 1
+  levelHealthMultiplier: 0.1
+  levelDamageMultiplier: 0.05
+  baseExperienceReward: 10
+  experienceLevelMultiplier: 0.5
+  scaleWithPlayerLevel: 0
+  levelOffset: 0
 --- !u!114 &8091781740480588764
 MonoBehaviour:
   m_ObjectHideFlags: 0

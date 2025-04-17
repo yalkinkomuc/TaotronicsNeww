@@ -27,8 +27,12 @@ public class SkeletonDeadState : EnemyState
         base.Update();
         
        // Debug.Log("im in battleState");
-        
+
+       if (triggerCalled)
+       {
+           
         enemy.entityFX.StartFadeOutAndDestroy();
+       }
         
         
         

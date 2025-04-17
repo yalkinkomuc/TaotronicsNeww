@@ -46,7 +46,11 @@ public class NecromancerDeadState : EnemyState
         base.Update();
         
         
-        enemy.entityFX.StartFadeOutAndDestroy();
+        if (triggerCalled)
+        {
+           
+            enemy.entityFX.StartFadeOutAndDestroy();
+        }
         
         
     }

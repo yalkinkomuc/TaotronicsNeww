@@ -10,7 +10,7 @@ public class BossHealthBar : MonoBehaviour
     [SerializeField] private Gradient healthGradient;
     
     private CharacterStats bossStats;
-    private int maxHealth;
+    private float maxHealth;
     
     public void SetupBossHealth(CharacterStats stats, string bossName)
     {

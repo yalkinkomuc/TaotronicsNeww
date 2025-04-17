@@ -26,6 +26,10 @@ public class EliteSkeleton_DeadState : EnemyState
     {
         base.Update();
         
-        enemy.entityFX.StartFadeOutAndDestroy();
+        if (triggerCalled)
+        {
+           
+            enemy.entityFX.StartFadeOutAndDestroy();
+        }
     }
 }

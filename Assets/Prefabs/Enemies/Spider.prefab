@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 5706153683147243321}
   - component: {fileID: 8937304864752664545}
   - component: {fileID: 9055165935127150346}
+  - component: {fileID: 8089980621219957819}
   m_Layer: 7
   m_Name: Body
   m_TagString: Untagged
@@ -141,6 +142,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8089980621219957819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2734128139025758186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b2419357f5be5c4a86187fde6ac253f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2993063296207533847
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,21 +365,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseDamage:
     baseValue: 10
-    modifiers: 
   secondComboDamageMultiplier:
     baseValue: 0
-    modifiers: 
   thirdComboDamageMultiplier:
     baseValue: 0
-    modifiers: 
   maxHealth:
     baseValue: 100
-    modifiers: 
   maxMana:
     baseValue: 0
-    modifiers: 
   currentHealth: 0
   currentMana: 0
+  level: 1
+  levelHealthMultiplier: 0.1
+  levelDamageMultiplier: 0.05
+  baseExperienceReward: 10
+  experienceLevelMultiplier: 0.5
+  scaleWithPlayerLevel: 0
+  levelOffset: 0
 --- !u!1 &6768564313349086404
 GameObject:
   m_ObjectHideFlags: 0
