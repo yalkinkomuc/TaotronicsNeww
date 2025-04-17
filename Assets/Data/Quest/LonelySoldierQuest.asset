@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ab431f899d0efb48bd691722fcc427e, type: 3}
-  m_Name: BlacksmithQuest
+  m_Name: LonelySoldierQuest
   m_EditorClassIdentifier: 
-  questID: BlacksmithQuest
-  title: BS
-  description: BS
+  questID: Lonely Soldier
+  title: Saving Lonely Soldier
+  description: Saving Lonely Soldier
   objectives:
-  - {fileID: 11400000, guid: f92fd82bd02dfe1448f1261bbc9487f6, type: 2}
-  - {fileID: 11400000, guid: cad67aaa561904f46905640cf02b13a0, type: 2}
+  - {fileID: 11400000, guid: 9351db3654d3b284fb1787b4b2d93e44, type: 2}
+  - {fileID: 11400000, guid: 94dd98634f950ec47ba6d33655994e45, type: 2}

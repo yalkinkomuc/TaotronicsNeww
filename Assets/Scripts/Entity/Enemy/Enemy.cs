@@ -9,7 +9,7 @@ public class Enemy : Entity
    // public Rigidbody2D rb { get;private set; }
 
 
-   [SerializeField] private string enemyType; // Inspector'dan değiştirilebilir
+   [SerializeField] public string enemyType; // Inspector'dan değiştirilebilir
    
    public CapsuleCollider2D capsuleCollider { get; private set; }
    

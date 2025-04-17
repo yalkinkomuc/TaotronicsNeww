@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0c5b60c5dcf1d044a7b710e5d096a17, type: 3}
-  m_Name: KillSkeleton
+  m_Script: {fileID: 11500000, guid: a2d71cf45ae6b6c4a8cfd2bed810323b, type: 3}
+  m_Name: LonelySoldierDialogue
   m_EditorClassIdentifier: 
-  description: XXX
+  description: 
   isCompleted: 0
   isInitialized: 0
-  enemyType: Skeleton
-  requiredAmount: 1
+  npcID: Random Guy
