@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour
     [SerializeField] public Transform groundCheck;
     [SerializeField] protected float groundCheckDistance;
     [SerializeField] protected LayerMask whatIsGround;
+    [SerializeField] protected LayerMask whatIsStair;
     
     [Header("Wall Check")]
     [SerializeField] protected Transform wallCheck;
@@ -116,7 +117,12 @@ public class Entity : MonoBehaviour
 
     #region Collider Checks
 
-    public virtual bool IsGroundDetected() => Physics2D.Raycast(groundCheck.position,Vector2.down,groundCheckDistance,whatIsGround);
+    public virtual bool IsGroundDetected()
+    {
+       
+        
+       return Physics2D.Raycast(groundCheck.position,Vector2.down,groundCheckDistance,whatIsGround);
+    }
     public virtual bool IsWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingdir, wallCheckDistance, whatIsGround);
 
     #endregion

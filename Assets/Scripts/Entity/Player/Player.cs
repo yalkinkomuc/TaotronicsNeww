@@ -720,7 +720,7 @@ public class Player : Entity
     private void CheckForSpellInput()
     {
         // Eğer spellbook aktif değilse büyü kullanamaz
-        if (!CanCastSpells() && IsGroundDetected() == false)
+        if (!CanCastSpells() || IsGroundDetected() == false)
             return;
 
         // Spell1 kontrolü

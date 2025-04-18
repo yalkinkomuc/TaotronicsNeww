@@ -60,6 +60,22 @@ public class Enemy : Entity
       
    }
 
+   public bool IsStairDetected() =>
+       Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsStair);
+   
+
+   public override bool IsGroundDetected()
+   {
+
+       if (IsStairDetected())
+       {
+           return true;
+       }
+      
+       
+       return base.IsGroundDetected();
+   }
+
    public override void Die()
    {
        base.Die();
