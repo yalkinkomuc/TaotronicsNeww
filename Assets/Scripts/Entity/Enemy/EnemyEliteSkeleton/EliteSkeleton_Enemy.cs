@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections;
 
-public class EliteSkeleton_Enemy : Enemy
+public class EliteSkeleton_Enemy : Enemy, IParryable
 {
     #region States
 
@@ -31,6 +31,13 @@ public class EliteSkeleton_Enemy : Enemy
     
     [SerializeField] public float parryStunDuration = 1.5f; // Parry sonrası düşmanın sersemleme süresi
 
+    // IParryable implementasyonu
+    public bool IsParryWindowOpen => isParryWindowOpen;
+
+    public Transform GetTransform()
+    {
+        return this.transform;
+    }
     
     [HideInInspector] public float lastTimeAttacked;
     
@@ -65,20 +72,8 @@ public class EliteSkeleton_Enemy : Enemy
        
     }
     
-    public override void Die()
-    {
-        base.Die();
-        
-        stateMachine.ChangeState(deadState);
-    }
-
-    // Parry olduğunda çağrılacak metod
     public void GetParried()
     {
-        // Eğer oyuncu succesfulParryState'de değilse (yani sadece block yapıyorsa), stun uygulama
-        Player player = PlayerManager.instance.player;
-        
-        
         // Parry yediğinde saldırı ve parry collider'larını devre dışı bırak
         isAttackActive = false;
         isParryWindowOpen = false;
@@ -95,7 +90,6 @@ public class EliteSkeleton_Enemy : Enemy
         Debug.Log("Elite Skeleton was parried!");
         
         // Parry knockback'i uygula - düşmanın her zaman arkaya (baktığı yönün tersine) doğru savrulması için
-        // Knockback'i karakterin baktığı yönün tersine uygula (facing direction)
         Vector2 parryKnockbackForce = new Vector2(knockbackDirection.x * -facingdir * 1.5f, knockbackDirection.y * 0.8f);
         
         // Knockback uygula
@@ -104,7 +98,14 @@ public class EliteSkeleton_Enemy : Enemy
         // Sersemleme durumuna geç
         stateMachine.ChangeState(stunnedState);
     }
-
+    
+    public override void Die()
+    {
+        base.Die();
+        
+        stateMachine.ChangeState(deadState);
+    }
+    
     protected override void OnDrawGizmos()
     {
         base.OnDrawGizmos();
@@ -123,5 +124,13 @@ public class EliteSkeleton_Enemy : Enemy
         }
         
         Gizmos.DrawWireCube(attackCheck.position,attackSize);
+        
+        // Görüş mesafesi gösterimi
+        Gizmos.color = new Color(0.2f, 0.9f, 0.3f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, detectDistance);
+        
+        // Yakın mesafe gösterimi
+        Gizmos.color = new Color(0.9f, 0.2f, 0.2f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, tooCloseDistance);
     }
 }

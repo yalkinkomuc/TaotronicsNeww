@@ -19,6 +19,12 @@ public class PlayerParryState : PlayerState
         
         player.SetZeroVelocity();
 
+        if (IsEnemyParryWindowOpen())
+        {
+            stateMachine.ChangeState(player.succesfulParryState);
+            return;
+        }
+
         if (stateTimer < 0f)
         {
             stateMachine.ChangeState(player.idleState);
@@ -28,5 +34,27 @@ public class PlayerParryState : PlayerState
     public override void Exit()
     {
         base.Exit();
+    }
+    
+    private bool IsEnemyParryWindowOpen()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
+        
+        foreach (var hit in colliders)
+        {
+            EliteSkeleton_Enemy eliteSkeleton = hit.GetComponent<EliteSkeleton_Enemy>();
+            if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
+            {
+                return true;
+            }
+            
+            Bandit_Enemy bandit = hit.GetComponent<Bandit_Enemy>();
+            if (bandit != null && bandit.isParryWindowOpen)
+            {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

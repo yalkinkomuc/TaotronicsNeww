@@ -720,7 +720,7 @@ public class Player : Entity
     private void CheckForSpellInput()
     {
         // Eğer spellbook aktif değilse büyü kullanamaz
-        if (!CanCastSpells())
+        if (!CanCastSpells() && IsGroundDetected() == false)
             return;
 
         // Spell1 kontrolü
@@ -938,7 +938,28 @@ public class Player : Entity
         }
     }
     
-  
+    // Genel düşman parry kontrolü - Generic versiyon
+    public bool CheckAndParryEnemy<T>(T enemy) where T : Enemy
+    {
+        // IParryable interface'ini implemente ediyorsa parry işlemi yap
+        if (enemy is IParryable parryableEnemy)
+        {
+            if (parryableEnemy.IsParryWindowOpen)
+            {
+                // Bu düşmanı vurulmuş olarak işaretle
+                MarkEntityAsHit(enemy);
+                
+                // Parry başarılı olduğunu logla
+                Debug.Log($"Parry successful on {enemy.gameObject.name}!");
+                
+                // Parry bilgisini düşmana ilet
+                parryableEnemy.GetParried();
+                return true;
+            }
+        }
+        
+        return false;
+    }
     
     private bool IsEnemyParryWindowOpen()
     {
@@ -947,14 +968,11 @@ public class Player : Entity
         
         foreach (var hit in colliders)
         {
-            // Elite Skeleton varsa ve parry penceresi açıksa
-            EliteSkeleton_Enemy eliteSkeleton = hit.GetComponent<EliteSkeleton_Enemy>();
-            if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
+            IParryable parryableEnemy = hit.GetComponent<IParryable>();
+            if (parryableEnemy != null && parryableEnemy.IsParryWindowOpen)
             {
                 return true;
             }
-            
-            // Diğer düşman tipleri için de kontrol eklenebilir
         }
         
         return false;

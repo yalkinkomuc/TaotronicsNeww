@@ -21,7 +21,7 @@ public class Enemy : Entity
    public float idleTime;
    public float moveSpeed;
    public float chaseSpeed;
-   [SerializeField] private float tooCloseDistance = 3f; // Çok yakın mesafe
+   [SerializeField] protected float tooCloseDistance = 3f; // Çok yakın mesafe
    
    public float detectDistance;
    [SerializeField] protected float patrolDistance = 5f; // Patrol mesafesi

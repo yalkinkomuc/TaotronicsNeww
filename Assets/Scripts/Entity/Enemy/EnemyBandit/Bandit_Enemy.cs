@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Bandit_Enemy : Enemy
+public class Bandit_Enemy : Enemy, IParryable
 {
 
     #region States
@@ -10,6 +10,7 @@ public class Bandit_Enemy : Enemy
     public Bandit_BattleState battleState {get; private set;}
     public Bandit_AttackState attackState {get; private set;}
     public Bandit_DeadState deadState {get; private set;}
+    public Bandit_StunnedState stunnedState {get; private set;}
     
     
 
@@ -30,8 +31,48 @@ public class Bandit_Enemy : Enemy
     
     [Header("Parry System")]
     [HideInInspector] public bool isParryWindowOpen = false; // Parry penceresi aktif mi?
-    [HideInInspector] public float parryWindowDuration = 0.3f; // Parry penceresi süresi
+    
     [SerializeField] public float parryStunDuration = 1.5f; // Parry sonrası düşmanın sersemleme süresi
+
+    // IParryable implementasyonu
+    public bool IsParryWindowOpen => isParryWindowOpen;
+
+    public void GetParried()
+    {
+        // Eğer oyuncu succesfulParryState'de değilse (yani sadece block yapıyorsa), stun uygulama
+        
+        
+        
+        // Parry yediğinde saldırı ve parry collider'larını devre dışı bırak
+        isAttackActive = false;
+        isParryWindowOpen = false;
+        
+        // Düşmanın hızını hemen sıfırla
+        SetZeroVelocity();
+        
+        // Sersemlemiş efekti
+        if (entityFX != null)
+        {
+            entityFX.StartCoroutine("HitFX");
+        }
+        
+        Debug.Log("bandit was parried!");
+        
+        // Parry knockback'i uygula - düşmanın her zaman arkaya (baktığı yönün tersine) doğru savrulması için
+        // Knockback'i karakterin baktığı yönün tersine uygula (facing direction)
+        Vector2 parryKnockbackForce = new Vector2(knockbackDirection.x * -facingdir * 1.5f, knockbackDirection.y * 0.8f);
+        
+        // Knockback uygula
+        StartCoroutine(HitKnockback(parryKnockbackForce));
+        
+        // Sersemleme durumuna geç
+        stateMachine.ChangeState(stunnedState);
+    }
+
+    public Transform GetTransform()
+    {
+        return this.transform;
+    }
 
     protected override void Awake()
     {
@@ -44,6 +85,7 @@ public class Bandit_Enemy : Enemy
         battleState = new Bandit_BattleState(this,stateMachine,"Chase",this);
         attackState = new Bandit_AttackState(this,stateMachine,"Attack",this);
         deadState = new Bandit_DeadState(this,stateMachine,"Death",this);
+        stunnedState = new Bandit_StunnedState(this,stateMachine,"Stunned",this);
         
     }
 

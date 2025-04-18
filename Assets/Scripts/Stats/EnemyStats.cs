@@ -30,7 +30,7 @@ public class EnemyStats : CharacterStats
     private void ScaleWithPlayerLevel()
     {
         // Find player and get their level
-        Player player = FindObjectOfType<Player>();
+        Player player = PlayerManager.instance.player;
         if (player != null)
         {
             PlayerStats playerStats = player.GetComponent<PlayerStats>();
@@ -70,7 +70,7 @@ public class EnemyStats : CharacterStats
         base.Die();
         
         // Reward player with experience
-        Player player = FindObjectOfType<Player>();
+        Player player = PlayerManager.instance.player;
         if (player != null)
         {
             PlayerStats playerStats = player.GetComponent<PlayerStats>();

@@ -22,7 +22,7 @@ public class LevelUI : MonoBehaviour
         if (playerStats == null)
         {
             // Try to find the player automatically
-            Player player = FindObjectOfType<Player>();
+            Player player = PlayerManager.instance.player;
             if (player != null)
             {
                 playerStats = player.GetComponent<PlayerStats>();

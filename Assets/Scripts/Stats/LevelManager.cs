@@ -78,7 +78,7 @@ public class LevelManager : MonoBehaviour
             return areaLevel;
             
         // Find player
-        Player player = FindObjectOfType<Player>();
+        Player player = PlayerManager.instance.player;
         if (player == null)
             return areaLevel;
             

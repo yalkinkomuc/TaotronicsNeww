@@ -65,36 +65,22 @@ public class PlayerSuccesfulParryState : PlayerState
         // Oyuncunun etrafındaki tüm düşmanları kontrol et (parry yarıçapı içinde)
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, player.parryRadius, player.passableEnemiesLayerMask);
         
-        //bool foundParryableEnemy = false;
-        
         foreach (var col in colliders)
         {
-            // Elite Skeleton kontrolü
-            EliteSkeleton_Enemy eliteSkeleton = col.GetComponent<EliteSkeleton_Enemy>();
+            // IParryable interface'ini implemente eden düşmanları bul
+            IParryable parryableEnemy = col.GetComponent<IParryable>();
+            Enemy enemy = col.GetComponent<Enemy>();
             
-            if (eliteSkeleton != null && eliteSkeleton.isParryWindowOpen)
+            // Eğer hem Enemy hem de IParryable ise parry işlemini yap
+            if (parryableEnemy != null && enemy != null)
             {
-                // Bu düşmana zaten parry yaptık mı kontrol etmeye gerek yok
-                // Çünkü başarılı parry state'ine girdiysen zaten yapacaksın
-                
-                // Bu düşmanı vurulmuş olarak işaretle
-                player.MarkEntityAsHit(eliteSkeleton);
-                
-                // Parry başarılı olduğunu logla
-                Debug.Log("Parry successful!");
-                
-                // Düşmana parry bilgisini bildir
-                eliteSkeleton.GetParried();
-                
-                // Başarılı parry efekti oluştur
-                SpawnParryEffect(eliteSkeleton.transform.position);
-                
-                //foundParryableEnemy = true;
-                break;
+                if (player.CheckAndParryEnemy(enemy))
+                {
+                    // Başarılı parry efekti oluştur
+                    SpawnParryEffect(parryableEnemy.GetTransform().position);
+                }
             }
         }
-        
-        // NOT: Düşman bulunamadıysa bile state devam edecek çünkü animasyon tam oynatılmalı
     }
     
     private void SpawnParryEffect(Vector3 enemyPosition)
