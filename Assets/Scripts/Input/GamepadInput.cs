@@ -2,13 +2,11 @@ using UnityEngine;
 
 public class GamepadInput : IPlayerInput
 {
-    // Tüm input sistemini devre dışı bırakır (UI dahil)
+    // Input states
     private bool inputEnabled = true;
-    
-    // SADECE oyun içi inputlarını devre dışı bırakır (UI hariç)
     private bool gameplayInputEnabled = true;
 
-    // Hareket ve aksiyon inputları - bunlar gameplayInputEnabled'dan etkilenir
+    // Movement and action inputs - affected by gameplayInputEnabled
     public float xInput => inputEnabled && gameplayInputEnabled ? Input.GetAxisRaw("Horizontal") : 0f;
     public float yInput => inputEnabled && gameplayInputEnabled ? Input.GetAxisRaw("Vertical") : 0f;
     public bool jumpInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton0);
@@ -22,24 +20,24 @@ public class GamepadInput : IPlayerInput
     public bool spell2Input => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton8);
     public bool boomerangInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton9);
     
-    // Tüm inputları devre dışı bırakır (UI inputları da dahil)
+    // Disables all input (including UI)
     public void DisableAllInput()
     {
         inputEnabled = false;
         gameplayInputEnabled = false;
     }
     
-    // Tüm inputları etkinleştirir
+    // Enables all input
     public void EnableAllInput()
     {
         inputEnabled = true;
         gameplayInputEnabled = true;
     }
     
-    // SADECE oyun inputlarını devre dışı bırakır (UI inputları etkin kalır)
+    // Disables ONLY gameplay input (UI input remains active)
     public void DisableGameplayInput()
     {
         gameplayInputEnabled = false;
-        inputEnabled = true; // Input sisteminin kendisi açık kalmalı, sadece oyun girdileri kapanmalı
+        inputEnabled = true; // Input system itself stays active, only gameplay inputs disabled
     }
 }

@@ -43,7 +43,6 @@ public class PlayerStats : CharacterStats
         if (amount <= 0) return;
         
         experience += amount;
-        Debug.Log($"Added {amount} XP. Total XP: {experience}");
         
         // Check for level up
         CheckLevelUp();
@@ -63,9 +62,7 @@ public class PlayerStats : CharacterStats
             // Increase XP needed for next level
             experienceToNextLevel = (int)(experienceToNextLevel * experienceLevelMultiplier);
             
-            Debug.Log($"Level up! New level: {level}");
-            
-            // Her level atlamada skill point kazandır
+            // Add skill point on level up
             availableSkillPoints++;
             
             // Heal on level up
@@ -91,7 +88,7 @@ public class PlayerStats : CharacterStats
         {
             levelText.text = "Lvl " + level.ToString();
             
-            // Eğer skill point varsa göster
+            // Show skill points if available
             if (availableSkillPoints > 0)
             {
                 levelText.text += " (SP: " + availableSkillPoints + ")";
@@ -106,27 +103,25 @@ public class PlayerStats : CharacterStats
         }
     }
     
-    // Stat artırma metodları
+    // Stat upgrade methods
     public void IncreaseMaxHealth()
     {
         if (availableSkillPoints <= 0) return;
         
-        // Mevcut değerin %10'u kadar artış
+        // Increase by 10% of current value
         float increaseAmount = maxHealth.GetValue() * 0.10f;
         maxHealth.AddModifier(increaseAmount, StatModifierType.LevelBonus);
         
-        // Can değerini de güncelle
+        // Update current health
         currentHealth = maxHealth.GetValue();
         
-        // Bir skill point harca
+        // Use a skill point
         availableSkillPoints--;
         
-        Debug.Log($"Max Health increased to {maxHealth.GetValue()}");
-        
-        // UI güncellemesi
+        // Update UI
         UpdateLevelUI();
         
-        // Health bar güncelleme
+        // Update health bar
         if (player != null && player.healthBar != null)
         {
             player.healthBar.UpdateHealthBar(currentHealth, maxHealth.GetValue());
@@ -137,19 +132,17 @@ public class PlayerStats : CharacterStats
     {
         if (availableSkillPoints <= 0) return;
         
-        // Mevcut değerin %15'i kadar artış
+        // Increase by 15% of current value
         float increaseAmount = maxMana.GetValue() * 0.15f;
         maxMana.AddModifier(increaseAmount, StatModifierType.LevelBonus);
         
-        // Mana değerini de güncelle
+        // Update current mana
         currentMana = maxMana.GetValue();
         
-        // Bir skill point harca
+        // Use a skill point
         availableSkillPoints--;
         
-        Debug.Log($"Max Mana increased to {maxMana.GetValue()}");
-        
-        // UI güncellemesi
+        // Update UI
         UpdateLevelUI();
     }
     
@@ -157,20 +150,18 @@ public class PlayerStats : CharacterStats
     {
         if (availableSkillPoints <= 0) return;
         
-        // Mevcut değerin %8'i kadar artış
+        // Increase by 8% of current value
         float increaseAmount = baseDamage.GetValue() * 0.08f;
         baseDamage.AddModifier(increaseAmount, StatModifierType.LevelBonus);
         
-        // Bir skill point harca
+        // Use a skill point
         availableSkillPoints--;
         
-        Debug.Log($"Damage increased to {baseDamage.GetValue()}");
-        
-        // UI güncellemesi
+        // Update UI
         UpdateLevelUI();
     }
     
-    // Dışarıdan skill point azaltmak için
+    // Method to reduce skill points externally
     public void ReduceSkillPoint()
     {
         if (availableSkillPoints > 0)

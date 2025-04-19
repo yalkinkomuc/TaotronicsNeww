@@ -34,8 +34,6 @@ public class CharacterStats : MonoBehaviour
         
         currentHealth = maxHealth.GetValue();
         currentMana = maxMana.GetValue();
-        
-        //damage.AddModifier(2);
     }
     
     public virtual void ApplyLevelMultipliers()
@@ -96,10 +94,10 @@ public class CharacterStats : MonoBehaviour
         return false;
     }
     
-    public void MakeInvincible (bool _isInvincible) => isInvincible = _isInvincible;
+    public void MakeInvincible(bool _isInvincible) => isInvincible = _isInvincible;
 
     public virtual void Die()
     {
-        // Debug.Log(gameObject.name+ " Died "); - Kaldırıldı
+        // Override in derived classes
     }
 }

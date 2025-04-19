@@ -41,7 +41,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
             // Bulamazsak global olarak ara
             if (upgradePanel == null)
             {
-                upgradePanel = FindObjectOfType<UpgradePanel>(true);
+                upgradePanel = FindFirstObjectByType<UpgradePanel>();
             }
             
             // Hala bulamazsak uyarı ver
@@ -60,7 +60,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
             // Bulamazsak global olarak ara
             if (selectionScreen == null)
             {
-                selectionScreen = FindObjectOfType<CheckpointSelectionScreen>(true);
+                selectionScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
             }
             
             // Hala bulamazsak uyarı ver

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    
     public Rigidbody2D rb { get;private set; }
     public Animator anim {get;private set;}
     
@@ -22,7 +21,6 @@ public class Entity : MonoBehaviour
     [SerializeField] protected float wallCheckDistance = 0;
     
     [Header("Flip Controller")]
-    
     [HideInInspector]
     public int facingdir  = 1;
     protected bool facingright = true;
@@ -41,20 +39,14 @@ public class Entity : MonoBehaviour
     [HideInInspector] public bool isAttackActive = false;
     [HideInInspector] public List<Entity> hitEntitiesInCurrentAttack = new List<Entity>();
 
-    protected virtual void Awake()
-    {
-        
-    }
+    protected virtual void Awake() { }
 
     protected virtual void Start()
     {
         SetupComponents();
     }
     
-    protected virtual void Update()
-    {
-        
-    }
+    protected virtual void Update() { }
 
     private void SetupComponents()
     {
@@ -63,7 +55,6 @@ public class Entity : MonoBehaviour
         entityFX = GetComponent<EntityFX>();
         stats = GetComponent<CharacterStats>();
     }
-
     
     public virtual void Damage()
     {
@@ -74,15 +65,10 @@ public class Entity : MonoBehaviour
         
         entityFX.StartCoroutine("HitFX");
         StartCoroutine("HitKnockback",knockbackDirection);
-       
-        Debug.Log(gameObject.name + " was damaged ");
         stats.TakeDamage(stats.baseDamage.GetValue());
     }
     
-    public virtual void Die()
-    {
-
-    }
+    public virtual void Die() { }
 
     #region Knockback
 
@@ -93,10 +79,8 @@ public class Entity : MonoBehaviour
             return;
         }
         entityFX.StartCoroutine("HitFX");
-        Debug.Log(gameObject.name + " was damaged without knockback ");
         stats.TakeDamage(1);
     }
-    
     
     public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
@@ -104,12 +88,12 @@ public class Entity : MonoBehaviour
         knockbackDirectionParam = knockbackDirection;
         Vector2 calculatedKnockback = knockbackDirectionParam * -facingdir;
 
-        // Knockback kuvvetini doğrudan uygula
+        // Apply knockback force directly
         rb.linearVelocity = calculatedKnockback;
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
         
-        // Knockback bittikten sonra hızı sıfırla
+        // Reset velocity after knockback
         rb.linearVelocity = Vector2.zero;
     }
 
@@ -119,32 +103,27 @@ public class Entity : MonoBehaviour
 
     public virtual bool IsGroundDetected()
     {
-       
-        
        return Physics2D.Raycast(groundCheck.position,Vector2.down,groundCheckDistance,whatIsGround);
     }
+    
     public virtual bool IsWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingdir, wallCheckDistance, whatIsGround);
 
     #endregion
     
     #region Velocity
     
-    
     public void SetVelocity(float xVelocity, float yVelocity)
     {
-
         if (isKnocked)
         {
             return;
         }
         
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
-        
         FlipController(xVelocity);
     }
    
-
-    public void SetZeroVelocity ()
+    public void SetZeroVelocity()
     {
         if (isKnocked)
         {
@@ -152,7 +131,6 @@ public class Entity : MonoBehaviour
         }
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
-    
     
     #endregion
    
@@ -168,7 +146,7 @@ public class Entity : MonoBehaviour
     
     public virtual void Flip()
     {
-        // Basit flip işlemi - sadece yön değişimi ve sprite döndürme
+        // Simple flip - just change direction and rotate sprite
         facingdir *= -1;
         facingright = !facingright;
         transform.Rotate(0, 180, 0);
@@ -210,17 +188,15 @@ public class Entity : MonoBehaviour
     #region HitList
 
     /// <summary>
-    /// Mevcut saldırıda vurulan entityleri temizler
+    /// Clears the list of entities hit in the current attack
     /// </summary>
-    ///
-    ///
     public void ClearHitEntities()
     {
         hitEntitiesInCurrentAttack.Clear();
     }
     
     /// <summary>
-    /// Bu entity'nin verilen entity'ye bu saldırı sırasında zaten vurmuş olup olmadığını kontrol eder
+    /// Checks if this entity has already hit the given entity during this attack
     /// </summary>
     public bool HasHitEntity(Entity entity)
     {
@@ -228,7 +204,7 @@ public class Entity : MonoBehaviour
     }
     
     /// <summary>
-    /// Entity'yi mevcut saldırıda vurulmuş olarak işaretler
+    /// Marks the entity as hit in the current attack
     /// </summary>
     public void MarkEntityAsHit(Entity entity)
     {
@@ -239,8 +215,6 @@ public class Entity : MonoBehaviour
     }
 
     #endregion
-
-    
     
     protected virtual void OnDrawGizmos()
     {
@@ -249,5 +223,4 @@ public class Entity : MonoBehaviour
         
         Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance*facingdir, wallCheck.position.y));
     }
-
 }

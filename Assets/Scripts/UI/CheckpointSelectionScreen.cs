@@ -4,17 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class CheckpointSelectionScreen : MonoBehaviour
 {
-    [Header("Butonlar")]
+    [Header("Buttons")]
     [SerializeField] private Button restButton;
     [SerializeField] private Button upgradeButton;
     [SerializeField] private Button closeButton;
     
-    [Header("Referanslar")]
+    [Header("References")]
     public UpgradePanel upgradePanel;
     
     private void Start()
     {
-        // Buton listenerlarını ekle
+        // Add button listeners
         if (restButton != null)
         {
             restButton.onClick.AddListener(OnRestButtonClicked);
@@ -31,41 +31,41 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
     }
     
-    // Rest butonuna tıklandığında çağrılır
+    // Called when Rest button is clicked
     private void OnRestButtonClicked()
     {
-        // Seçim ekranını kapat
+        // Close selection screen
         gameObject.SetActive(false);
         
-        // UI Input Blocker'dan bu paneli çıkar
+        // Remove this panel from UIInputBlocker
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
         }
         
-        // Oyuncuyu iyileştir
+        // Heal player
         HealPlayer();
         
-        // Sahne geçiş efektini başlat ve sahneyi yeniden yükle
+        // Start scene transition effect and reload scene
         StartCoroutine(ReloadSceneWithTransition());
     }
     
-    // Upgrade butonuna tıklandığında çağrılır
+    // Called when Upgrade button is clicked
     private void OnUpgradeButtonClicked()
     {
-        // Seçim ekranını kapat
+        // Close selection screen
         gameObject.SetActive(false);
         
-        // UI Input Blocker'dan bu paneli çıkar
+        // Remove this panel from UIInputBlocker
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
         }
         
-        // Upgrade panelini göster
+        // Show upgrade panel
         if (upgradePanel != null)
         {
-            Player player = FindObjectOfType<Player>();
+            Player player = PlayerManager.instance.player;
             if (player != null)
             {
                 PlayerStats playerStats = player.GetComponent<PlayerStats>();
@@ -77,43 +77,42 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
     }
     
-    // Paneli göster
+    // Show panel
     public void ShowPanel()
     {
         gameObject.SetActive(true);
         
-        // UI Input Blocker'a ekle
+        // Add to UIInputBlocker
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
         }
     }
     
-    // Paneli kapat
+    // Close panel
     public void ClosePanel()
     {
         gameObject.SetActive(false);
         
-        // UI Input Blocker'dan çıkar ve input'u geri etkinleştir
+        // Remove from UIInputBlocker and re-enable input
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
             UIInputBlocker.instance.EnableGameplayInput(true);
-            Debug.Log("CheckpointSelectionScreen kapandı: Oyun girdileri etkinleştirildi");
         }
     }
     
-    // Oyuncuyu iyileştir (can ve mana doldur)
+    // Heal player (fill health and mana)
     private void HealPlayer()
     {
-        Player player = FindObjectOfType<Player>();
+        Player player = PlayerManager.instance.player;
         if (player != null)
         {
-            // Can ve mana doldur
+            // Fill health and mana
             player.stats.currentHealth = player.stats.maxHealth.GetValue();
             player.stats.currentMana = player.stats.maxMana.GetValue();
             
-            // Health bar'ı güncelle
+            // Update health bar
             if (player.healthBar != null)
             {
                 player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
@@ -121,10 +120,10 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
     }
     
-    // Sahne geçiş efekti ile sahneyi yeniden yükle
+    // Reload scene with transition effect
     private System.Collections.IEnumerator ReloadSceneWithTransition()
     {
-        // Geçiş efekti oluştur
+        // Create transition effect
         GameObject transitionEffectPrefab = Resources.Load<GameObject>("SceneTransitionEffect");
         if (transitionEffectPrefab != null)
         {
@@ -132,30 +131,29 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
         else
         {
-            // Manuel olarak geçiş efekti oluştur
+            // Manually create transition effect
             GameObject transitionObject = new GameObject("SceneTransitionEffect");
             transitionObject.AddComponent<SceneTransitionEffect>();
         }
         
-        // Geçiş animasyonu için bekle
+        // Wait for transition animation
         yield return new WaitForSeconds(0.5f);
         
-        // Mevcut sahneyi yeniden yükle
+        // Reload current scene
         Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
         UnityEngine.SceneManagement.SceneManager.LoadScene(currentScene.name);
     }
 
     private void OnDisable()
     {
-        // Panel deaktif olduğunda input'u geri etkinleştir
+        // Re-enable input when panel is deactivated
         if (UIInputBlocker.instance != null)
         {
-            // Paneli Input Blocker'dan çıkar
+            // Remove panel from InputBlocker
             UIInputBlocker.instance.RemovePanel(gameObject);
             
-            // Input'u zorla etkinleştir
+            // Force enable input
             UIInputBlocker.instance.EnableGameplayInput(true);
-            Debug.Log("CheckpointSelectionScreen deaktif edildi: Oyun girdileri etkinleştirildi");
         }
     }
 } 

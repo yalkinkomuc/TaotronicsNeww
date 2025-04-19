@@ -5,14 +5,14 @@ public class UIInputBlocker : MonoBehaviour
 {
     public static UIInputBlocker instance;
 
-    [Header("UI Paneller")]
-    [Tooltip("İnput'u devre dışı bırakması gereken UI paneller")]
+    [Header("UI Panels")]
+    [Tooltip("UI panels that should disable gameplay input")]
     [SerializeField] private List<GameObject> uiPanels = new List<GameObject>();
     
     [Header("UIBlocker")]
     [SerializeField] private GameObject uiBlockerPanel;
     
-    // Aktif UI panel sayısı
+    // Active UI panel count
     private int activePanelCount = 0;
     
     private void Awake()
@@ -21,7 +21,7 @@ public class UIInputBlocker : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -31,7 +31,7 @@ public class UIInputBlocker : MonoBehaviour
     
     private void Start()
     {
-        // Her panel için tracker ekle
+        // Add tracker to each panel
         foreach (GameObject panel in uiPanels)
         {
             if (panel != null && panel.GetComponent<UIObjectTracker>() == null)
@@ -40,20 +40,20 @@ public class UIInputBlocker : MonoBehaviour
             }
         }
         
-        // Input durumunu sıfırla
+        // Reset input state
         activePanelCount = 0;
         EnableGameplayInput(true);
         
-        // Başlangıç durumunu kontrol et
+        // Check initial state
         CheckActivePanels();
     }
     
-    // UI panelleri kontrol et
+    // Check UI panels
     private void CheckActivePanels()
     {
         activePanelCount = 0;
         
-        // Her panel için aktif/pasif durumunu kontrol et
+        // Check active/inactive state for each panel
         foreach (GameObject panel in uiPanels)
         {
             if (panel != null && panel.activeInHierarchy)
@@ -62,7 +62,7 @@ public class UIInputBlocker : MonoBehaviour
             }
         }
         
-        // Panel varsa input'u devre dışı bırak
+        // If there are panels, disable input
         if (activePanelCount > 0)
         {
             DisableGameplayInput();
@@ -73,13 +73,13 @@ public class UIInputBlocker : MonoBehaviour
         }
     }
     
-    // Bir panel'in görünürlüğü değiştiğinde çağrılır
+    // Called when a panel's visibility changes
     public void OnPanelVisibilityChanged(GameObject panel, bool isVisible)
     {
         if (isVisible)
         {
             activePanelCount++;
-            if (activePanelCount == 1) // İlk panel aktifleştiğinde
+            if (activePanelCount == 1) // When first panel activates
             {
                 DisableGameplayInput();
             }
@@ -89,17 +89,16 @@ public class UIInputBlocker : MonoBehaviour
             if (activePanelCount > 0)
                 activePanelCount--;
             
-            if (activePanelCount == 0) // Tüm paneller kapandığında
+            if (activePanelCount == 0) // When all panels are closed
             {
-                EnableGameplayInput(true); // Zorla etkinleştir
+                EnableGameplayInput(true); // Force enable
             }
         }
         
-        // Debug bilgisi
-        Debug.Log($"Panel görünürlüğü değişti: {(isVisible ? "Gösterildi" : "Gizlendi")}. Aktif panel sayısı: {activePanelCount}");
+        Debug.Log($"Panel visibility changed: {(isVisible ? "Shown" : "Hidden")}. Active panel count: {activePanelCount}");
     }
     
-    // Panel listesine panel ekle
+    // Add panel to the list
     public void AddPanel(GameObject panel)
     {
         if (!uiPanels.Contains(panel))
@@ -111,7 +110,7 @@ public class UIInputBlocker : MonoBehaviour
                 panel.AddComponent<UIObjectTracker>();
             }
             
-            // Eğer panel aktifse input'u devre dışı bırak
+            // If panel is active, disable input
             if (panel.activeInHierarchy)
             {
                 OnPanelVisibilityChanged(panel, true);
@@ -119,31 +118,30 @@ public class UIInputBlocker : MonoBehaviour
         }
     }
     
-    // Panel listesinden panel çıkar
+    // Remove panel from the list
     public void RemovePanel(GameObject panel)
     {
         if (uiPanels.Contains(panel))
         {
-            // Eğer aktifse sayaçtan düş
+            // If active, decrease counter
             if (panel.activeInHierarchy)
             {
                 OnPanelVisibilityChanged(panel, false);
             }
             else
             {
-                // Panel aktif değilse de sayaçtan düş (güvenlik için)
+                // If not active, still decrease counter (for safety)
                 if (activePanelCount > 0)
                     activePanelCount--;
             }
             
             uiPanels.Remove(panel);
             
-            // Debug bilgisi
-            Debug.Log($"Panel kaldırıldı. Kalan aktif panel sayısı: {activePanelCount}");
+            Debug.Log($"Panel removed. Remaining active panel count: {activePanelCount}");
         }
     }
     
-    // UI blocker'ı göster/gizle
+    // Show/hide UI blocker
     private void SetUIBlockerVisibility(bool isVisible)
     {
         if (uiBlockerPanel != null)
@@ -152,73 +150,69 @@ public class UIInputBlocker : MonoBehaviour
         }
     }
     
-    // SADECE OYUN GİRDİLERİNİ devre dışı bırak, UI girdilerini ETKİLEME
+    // ONLY disable GAMEPLAY INPUTS, do NOT affect UI inputs
     public void DisableGameplayInput()
     {
-        Debug.Log("UI aktif: Oyun girdileri devre dışı bırakıldı");
-        
-        // Player girdilerini devre dışı bırak
-        Player player = FindObjectOfType<Player>();
+        // Disable player inputs
+        Player player = PlayerManager.instance.player;
         if (player != null)
         {
             IPlayerInput playerInput = player.playerInput;
             if (playerInput != null)
             {
-                // Sadece oyun input'larını devre dışı bırak
+                // Only disable gameplay inputs
                 playerInput.DisableGameplayInput();
             }
         }
         
-        // UI Blocker'ı göster
+        // Show UI Blocker
         SetUIBlockerVisibility(true);
     }
     
-    // SADECE OYUN GİRDİLERİNİ etkinleştir
+    // ONLY enable GAMEPLAY INPUTS
     public void EnableGameplayInput(bool forceEnable = false)
     {
-        // Eğer zorla etkinleştirme isteniyorsa veya aktif panel yoksa
+        // If force enable is requested or there are no active panels
         if (forceEnable || activePanelCount <= 0)
         {
-            Debug.Log("UI kapatıldı: Oyun girdileri etkinleştirildi");
-            
-            // Player girdilerini etkinleştir
-            Player player = FindObjectOfType<Player>();
+            // Enable player inputs
+            Player player = PlayerManager.instance.player;
             if (player != null)
             {
                 IPlayerInput playerInput = player.playerInput;
                 if (playerInput != null)
                 {
-                    // Tüm input'ları etkinleştir
+                    // Enable all inputs
                     playerInput.EnableAllInput();
                 }
             }
             
-            // UI Blocker'ı gizle
+            // Hide UI Blocker
             SetUIBlockerVisibility(false);
         }
         else
         {
-            Debug.Log($"Hala {activePanelCount} adet aktif panel var, input etkinleştirilmedi");
+            Debug.Log($"Still {activePanelCount} active panels, input remains disabled");
         }
     }
     
-    // Panel aktif et
+    // Activate panel
     public void ShowPanel(GameObject panel)
     {
         if (panel != null)
         {
-            // Listede yoksa ekle
+            // Add to list if not present
             if (!uiPanels.Contains(panel))
             {
                 AddPanel(panel);
             }
             
-            // Paneli aktif et
+            // Activate panel
             panel.SetActive(true);
         }
     }
     
-    // Panel pasif et
+    // Deactivate panel
     public void HidePanel(GameObject panel)
     {
         if (panel != null)

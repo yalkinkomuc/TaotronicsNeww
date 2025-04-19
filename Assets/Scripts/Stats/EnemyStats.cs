@@ -60,11 +60,6 @@ public class EnemyStats : CharacterStats
         return experienceReward;
     }
 
-    public override void TakeDamage(float _damage)
-    {
-        base.TakeDamage(_damage);
-    }
-
     public override void Die()
     {
         base.Die();
