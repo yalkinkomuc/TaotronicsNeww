@@ -125,6 +125,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckDistance: 1
 --- !u!61 &5076417125776628207
 BoxCollider2D:
   m_ObjectHideFlags: 0

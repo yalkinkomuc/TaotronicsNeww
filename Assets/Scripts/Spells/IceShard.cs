@@ -3,9 +3,26 @@ using UnityEngine;
 public class IceShard : MonoBehaviour
 {
     [SerializeField] private int damage = 10;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float groundCheckDistance = 10f;
     
     private BoxCollider2D iceCollider;
     private bool canDealDamage = false;
+    private bool isGroundBelow = false;
+
+    // Method to set the ground layer from outside
+    public void SetGroundLayer(LayerMask layer)
+    {
+        groundLayer = layer;
+        // Check ground again with the new layer
+        CheckGroundBelow();
+        
+        // Destroy if no ground below
+        if (!isGroundBelow)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Awake()
     {
@@ -27,6 +44,26 @@ public class IceShard : MonoBehaviour
         {
             iceCollider.enabled = false;
             canDealDamage = false;
+        }
+        
+        // Check if ground is below
+        CheckGroundBelow();
+        
+        // If no ground below, destroy this ice shard
+        if (!isGroundBelow)
+        {
+            Destroy(gameObject);
+        }
+    }
+    
+    private void CheckGroundBelow()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
+        isGroundBelow = (hit.collider != null);
+        
+        if (!isGroundBelow)
+        {
+            Debug.Log("No ground below ice shard, destroying it");
         }
     }
 

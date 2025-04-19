@@ -1,20 +1,21 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerSpell1State : PlayerState
 {
-    private Vector3[] spawnPositions;
-    //private bool positionsCalculated;
+    private List<Vector3> validSpawnPositions = new List<Vector3>();
+    private Vector3[] calculatedPositions;
 
     public PlayerSpell1State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
-        spawnPositions = new Vector3[3];
+        calculatedPositions = new Vector3[3];
     }
 
     public override void Enter()
     {
         base.Enter();
         CalculateSpawnPositions();
-       // positionsCalculated = true;
+        CheckValidSpawnPositions();
     }
 
     private void CalculateSpawnPositions()
@@ -25,7 +26,7 @@ public class PlayerSpell1State : PlayerState
 
         for (int i = 0; i < 3; i++)
         {
-            spawnPositions[i] = new Vector3(
+            calculatedPositions[i] = new Vector3(
                 startX + (player.spellSpacing * i * player.facingdir),
                 spawnY,
                 player.transform.position.z
@@ -33,10 +34,31 @@ public class PlayerSpell1State : PlayerState
         }
     }
 
+    private void CheckValidSpawnPositions()
+    {
+        validSpawnPositions.Clear();
+        
+        foreach (Vector3 position in calculatedPositions)
+        {
+            // Check if there's ground below this position
+            bool hasGround = Physics2D.Raycast(
+                position, 
+                Vector2.down, 
+                10f, 
+                player.whatIsGround
+            ).collider != null;
+            
+            // Only add positions that have ground beneath them
+            if (hasGround)
+            {
+                validSpawnPositions.Add(position);
+            }
+        }
+    }
+
     public override void Exit()
     {
         base.Exit();
-        //positionsCalculated = false;
     }
 
     public override void Update()
@@ -53,6 +75,6 @@ public class PlayerSpell1State : PlayerState
 
     public Vector3[] GetSpawnPositions()
     {
-        return spawnPositions;
+        return validSpawnPositions.ToArray();
     }
 }

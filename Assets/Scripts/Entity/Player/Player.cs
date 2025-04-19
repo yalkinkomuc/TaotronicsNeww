@@ -124,7 +124,7 @@ public class Player : Entity
     [SerializeField] private GameObject iceShardPrefab;
     [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
-    [SerializeField] private int shardCount = 3;
+    //[SerializeField] private int shardCount = 3;
     
     [Header("Mana Costs")]
     [SerializeField] private float spell1ManaCost = 20f;
@@ -709,10 +709,20 @@ public class Player : Entity
     private IEnumerator CastIceShards()
     {
         Vector3[] spawnPositions = spell1State.GetSpawnPositions();
+        int shardsToSpawn = spawnPositions.Length;
 
-        for (int i = 0; i < shardCount; i++)
+        // Only spawn ice shards at valid positions
+        for (int i = 0; i < shardsToSpawn; i++)
         {
-            Instantiate(iceShardPrefab, spawnPositions[i], Quaternion.identity);
+            GameObject iceShardObj = Instantiate(iceShardPrefab, spawnPositions[i], Quaternion.identity);
+            
+            // Set the ground layer for the ice shard
+            IceShard iceShard = iceShardObj.GetComponent<IceShard>();
+            if (iceShard != null)
+            {
+                iceShard.SetGroundLayer(whatIsGround);
+            }
+            
             yield return new WaitForSeconds(delayBetweenShards);
         }
     }

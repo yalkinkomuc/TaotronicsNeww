@@ -13,7 +13,7 @@ public class Entity : MonoBehaviour
     [Header("Ground Check")]
     [SerializeField] public Transform groundCheck;
     [SerializeField] protected float groundCheckDistance;
-    [SerializeField] protected LayerMask whatIsGround;
+    [SerializeField] public LayerMask whatIsGround;
     [SerializeField] protected LayerMask whatIsStair;
     
     [Header("Wall Check")]
