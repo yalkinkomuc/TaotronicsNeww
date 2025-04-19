@@ -18,4 +18,6 @@ public interface IPlayerInput
      
      void DisableAllInput();
      void EnableAllInput();
+     
+     void DisableGameplayInput();
 }

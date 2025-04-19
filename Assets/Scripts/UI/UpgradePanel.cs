@@ -187,6 +187,13 @@ public class UpgradePanel : MonoBehaviour
     public void Show(PlayerStats stats)
     {
         Initialize(stats);
+        
+        // Objeyi aktifleştirmeden önce UIInputBlocker'a paneli ekle
+        if (UIInputBlocker.instance != null)
+        {
+            UIInputBlocker.instance.AddPanel(gameObject);
+        }
+        
         gameObject.SetActive(true);
     }
     
