@@ -34,20 +34,10 @@ public class CheckpointSelectionScreen : MonoBehaviour
     // Called when Rest button is clicked
     private void OnRestButtonClicked()
     {
-        // Close selection screen
-        gameObject.SetActive(false);
-        
-        // Remove this panel from UIInputBlocker
-        if (UIInputBlocker.instance != null)
-        {
-            UIInputBlocker.instance.RemovePanel(gameObject);
-        }
-        
-        // Heal player
-        HealPlayer();
-        
-        // Start scene transition effect and reload scene
+        // Önce coroutine'i başlat, sonra paneli kapat
         StartCoroutine(ReloadSceneWithTransition());
+        
+        // Coroutine içinde paneli kapatacağız, burada yapmıyoruz
     }
     
     // Called when Upgrade button is clicked
@@ -102,20 +92,119 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
     }
     
-    // Heal player (fill health and mana)
+    // Oyuncunun konumunu ve stat değerlerini checkpoint olarak kaydet
+    private void SavePlayerPosition()
+    {
+        Player player = PlayerManager.instance.player;
+        if (player != null)
+        {
+            // 1. Checkpoint aktif et
+            PlayerPrefs.SetInt("CheckpointActivated", 1);
+            
+            // 2. Konumu kaydet
+            PlayerPrefs.SetFloat("CheckpointX", player.transform.position.x);
+            PlayerPrefs.SetFloat("CheckpointY", player.transform.position.y);
+            
+            // 3. Oyuncu stat değerlerini kaydet
+            PlayerStats playerStats = player.GetComponent<PlayerStats>();
+            if (playerStats != null)
+            {
+                // Seviye ve stat değerlerini kaydet
+                PlayerPrefs.SetInt("PlayerLevel", playerStats.GetLevel());
+                PlayerPrefs.SetFloat("PlayerMaxHealth", playerStats.maxHealth.GetValue());
+                PlayerPrefs.SetFloat("PlayerMaxMana", playerStats.maxMana.GetValue());
+                PlayerPrefs.SetFloat("PlayerBaseDamage", playerStats.baseDamage.GetValue());
+                PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
+                
+                Debug.Log($"Oyuncu değerleri kaydedildi: Seviye={playerStats.GetLevel()}, MaxHP={playerStats.maxHealth.GetValue()}, MaxMana={playerStats.maxMana.GetValue()}");
+            }
+            
+            // 4. Değişiklikleri kaydet
+            PlayerPrefs.Save();
+            Debug.Log("Checkpoint kaydedildi: " + player.transform.position);
+        }
+    }
+    
+    // Oyuncunun canını ve manasını doldur, ve değerlerini yükle
     private void HealPlayer()
     {
         Player player = PlayerManager.instance.player;
         if (player != null)
         {
-            // Fill health and mana
-            player.stats.currentHealth = player.stats.maxHealth.GetValue();
-            player.stats.currentMana = player.stats.maxMana.GetValue();
-            
-            // Update health bar
-            if (player.healthBar != null)
+            PlayerStats playerStats = player.GetComponent<PlayerStats>();
+            if (playerStats != null)
             {
-                player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
+                // 1. Kaydedilmiş stat değerlerini yükle (eğer varsa)
+                if (PlayerPrefs.HasKey("PlayerMaxHealth") && PlayerPrefs.HasKey("PlayerMaxMana"))
+                {
+                    // Stat değerlerini yükle - Eğer bir upgrade yapıldıysa bu değerler farklı olacak
+                    float savedMaxHealth = PlayerPrefs.GetFloat("PlayerMaxHealth");
+                    float savedMaxMana = PlayerPrefs.GetFloat("PlayerMaxMana");
+                    float savedBaseDamage = PlayerPrefs.GetFloat("PlayerBaseDamage");
+                    int savedLevel = PlayerPrefs.GetInt("PlayerLevel", 1);
+                    
+                    // MaxHealth, MaxMana ve Damage değerlerini yükle
+                    // Bu değerler level system veya upgrade panel tarafından değiştirilmiş olabilir
+                    // Burada mevcut değerler yerine kaydedilmiş değerleri kullanıyoruz
+                    
+                    // Önce seviyeyi ayarla
+                    if (savedLevel > 1)
+                    {
+                        playerStats.SetLevel(savedLevel);
+                    }
+                    
+                    // Burada direkt modifierlara erişemediğimiz için farkları hesaplayıp ekliyoruz
+                    float currentMaxHealth = playerStats.maxHealth.GetValue();
+                    float currentMaxMana = playerStats.maxMana.GetValue();
+                    float currentBaseDamage = playerStats.baseDamage.GetValue();
+                    
+                    // Eğer kaydedilen değerler mevcut değerlerden farklıysa, farkı ekle
+                    if (savedMaxHealth > currentMaxHealth)
+                    {
+                        float healthDiff = savedMaxHealth - currentMaxHealth;
+                        playerStats.maxHealth.AddModifier(healthDiff, StatModifierType.Equipment);
+                        Debug.Log($"Max Health değeri güncellendi: {currentMaxHealth} -> {savedMaxHealth}");
+                    }
+                    
+                    if (savedMaxMana > currentMaxMana)
+                    {
+                        float manaDiff = savedMaxMana - currentMaxMana;
+                        playerStats.maxMana.AddModifier(manaDiff, StatModifierType.Equipment);
+                        Debug.Log($"Max Mana değeri güncellendi: {currentMaxMana} -> {savedMaxMana}");
+                    }
+                    
+                    if (savedBaseDamage > currentBaseDamage)
+                    {
+                        float damageDiff = savedBaseDamage - currentBaseDamage;
+                        playerStats.baseDamage.AddModifier(damageDiff, StatModifierType.Equipment);
+                        Debug.Log($"Base Damage değeri güncellendi: {currentBaseDamage} -> {savedBaseDamage}");
+                    }
+                }
+                
+                // 2. Can ve manayı doldur - Artık güncellenmiş max değerleri kullanacak
+                playerStats.currentHealth = playerStats.maxHealth.GetValue();
+                playerStats.currentMana = playerStats.maxMana.GetValue();
+                
+                // 3. Health Bar'ı güncelle
+                if (player.healthBar != null)
+                {
+                    player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+                }
+                
+                Debug.Log($"Oyuncunun canı ve manası dolduruldu: HP={playerStats.currentHealth}/{playerStats.maxHealth.GetValue()}, Mana={playerStats.currentMana}/{playerStats.maxMana.GetValue()}");
+            }
+            else
+            {
+                // PlayerStats bulunamazsa basit iyileştirme yap
+                player.stats.currentHealth = player.stats.maxHealth.GetValue();
+                player.stats.currentMana = player.stats.maxMana.GetValue();
+                
+                if (player.healthBar != null)
+                {
+                    player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
+                }
+                
+                Debug.Log("Oyuncunun canı ve manası dolduruldu (basit mod)");
             }
         }
     }
@@ -123,6 +212,18 @@ public class CheckpointSelectionScreen : MonoBehaviour
     // Reload scene with transition effect
     private System.Collections.IEnumerator ReloadSceneWithTransition()
     {
+        // Önce heal işlemini yap
+        HealPlayer();
+        
+        // Şimdi paneli kapat - Coroutine başlatıldıktan sonra güvenli
+        gameObject.SetActive(false);
+        
+        // Remove this panel from UIInputBlocker
+        if (UIInputBlocker.instance != null)
+        {
+            UIInputBlocker.instance.RemovePanel(gameObject);
+        }
+        
         // Create transition effect
         GameObject transitionEffectPrefab = Resources.Load<GameObject>("SceneTransitionEffect");
         if (transitionEffectPrefab != null)
