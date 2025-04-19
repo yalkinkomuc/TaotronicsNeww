@@ -40,6 +40,10 @@ public class UIInputBlocker : MonoBehaviour
             }
         }
         
+        // Input durumunu sıfırla
+        activePanelCount = 0;
+        EnableGameplayInput(true);
+        
         // Başlangıç durumunu kontrol et
         CheckActivePanels();
     }
@@ -65,7 +69,7 @@ public class UIInputBlocker : MonoBehaviour
         }
         else
         {
-            EnableGameplayInput();
+            EnableGameplayInput(true);
         }
     }
     
@@ -87,9 +91,12 @@ public class UIInputBlocker : MonoBehaviour
             
             if (activePanelCount == 0) // Tüm paneller kapandığında
             {
-                EnableGameplayInput();
+                EnableGameplayInput(true); // Zorla etkinleştir
             }
         }
+        
+        // Debug bilgisi
+        Debug.Log($"Panel görünürlüğü değişti: {(isVisible ? "Gösterildi" : "Gizlendi")}. Aktif panel sayısı: {activePanelCount}");
     }
     
     // Panel listesine panel ekle
@@ -122,8 +129,17 @@ public class UIInputBlocker : MonoBehaviour
             {
                 OnPanelVisibilityChanged(panel, false);
             }
+            else
+            {
+                // Panel aktif değilse de sayaçtan düş (güvenlik için)
+                if (activePanelCount > 0)
+                    activePanelCount--;
+            }
             
             uiPanels.Remove(panel);
+            
+            // Debug bilgisi
+            Debug.Log($"Panel kaldırıldı. Kalan aktif panel sayısı: {activePanelCount}");
         }
     }
     
@@ -158,24 +174,32 @@ public class UIInputBlocker : MonoBehaviour
     }
     
     // SADECE OYUN GİRDİLERİNİ etkinleştir
-    public void EnableGameplayInput()
+    public void EnableGameplayInput(bool forceEnable = false)
     {
-        Debug.Log("UI kapatıldı: Oyun girdileri etkinleştirildi");
-        
-        // Player girdilerini etkinleştir
-        Player player = FindObjectOfType<Player>();
-        if (player != null)
+        // Eğer zorla etkinleştirme isteniyorsa veya aktif panel yoksa
+        if (forceEnable || activePanelCount <= 0)
         {
-            IPlayerInput playerInput = player.playerInput;
-            if (playerInput != null)
+            Debug.Log("UI kapatıldı: Oyun girdileri etkinleştirildi");
+            
+            // Player girdilerini etkinleştir
+            Player player = FindObjectOfType<Player>();
+            if (player != null)
             {
-                // Tüm input'ları etkinleştir
-                playerInput.EnableAllInput();
+                IPlayerInput playerInput = player.playerInput;
+                if (playerInput != null)
+                {
+                    // Tüm input'ları etkinleştir
+                    playerInput.EnableAllInput();
+                }
             }
+            
+            // UI Blocker'ı gizle
+            SetUIBlockerVisibility(false);
         }
-        
-        // UI Blocker'ı gizle
-        SetUIBlockerVisibility(false);
+        else
+        {
+            Debug.Log($"Hala {activePanelCount} adet aktif panel var, input etkinleştirilmedi");
+        }
     }
     
     // Panel aktif et

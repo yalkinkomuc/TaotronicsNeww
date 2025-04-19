@@ -17,6 +17,9 @@ public class Checkpoint : MonoBehaviour, IInteractable
     [Header("Upgrade Panel")]
     [SerializeField] private UpgradePanel upgradePanel;
     
+    [Header("Selection Screen")]
+    [SerializeField] private CheckpointSelectionScreen selectionScreen;
+    
     private void Start()
     {
         if (interactionPrompt != null)
@@ -47,6 +50,35 @@ public class Checkpoint : MonoBehaviour, IInteractable
                 Debug.LogWarning("UpgradePanel referansı bulunamadı! Lütfen inspector'da atayın.");
             }
         }
+        
+        // Selection Screen'in referansını kontrol et
+        if (selectionScreen == null)
+        {
+            // Önce hiyerarşide ara
+            selectionScreen = GetComponentInChildren<CheckpointSelectionScreen>(true);
+            
+            // Bulamazsak global olarak ara
+            if (selectionScreen == null)
+            {
+                selectionScreen = FindObjectOfType<CheckpointSelectionScreen>(true);
+            }
+            
+            // Hala bulamazsak uyarı ver
+            if (selectionScreen == null)
+            {
+                Debug.LogWarning("CheckpointSelectionScreen referansı bulunamadı! Lütfen inspector'da atayın.");
+            }
+        }
+        
+        // Eğer selection screen'imiz varsa, upgrade panel referansını ona ata
+        if (selectionScreen != null && upgradePanel != null)
+        {
+            // Selection screen'e upgrade panel referansını ata
+            if (selectionScreen.upgradePanel == null)
+            {
+                selectionScreen.upgradePanel = upgradePanel;
+            }
+        }
     }
 
     public void Interact()
@@ -58,11 +90,21 @@ public class Checkpoint : MonoBehaviour, IInteractable
             SaveCheckpoint();
         }
         
-        // Önce oyuncuyu iyileştir
-        HealPlayer();
-        
-        // Sonra upgrade panelini göster
-        ShowUpgradePanel();
+        // Selection Screen'i göster
+        if (selectionScreen != null)
+        {
+            selectionScreen.ShowPanel();
+            
+            // Etkileşim promptunu gizle
+            if (interactionPrompt != null)
+                interactionPrompt.SetActive(false);
+        }
+        else
+        {
+            // Eğer selection screen yoksa, doğrudan iyileştir ve upgrade panelini göster (eski davranış)
+            HealPlayer();
+            ShowUpgradePanel();
+        }
     }
     
     private void ShowUpgradePanel()
@@ -99,8 +141,9 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     public void ShowInteractionPrompt()
     {
-        // Eğer upgrade paneli açıksa, etkileşim isteğini gösterme
-        if (upgradePanel != null && upgradePanel.gameObject.activeSelf)
+        // Eğer upgrade paneli veya selection screen açıksa, etkileşim isteğini gösterme
+        if ((upgradePanel != null && upgradePanel.gameObject.activeSelf) ||
+            (selectionScreen != null && selectionScreen.gameObject.activeSelf))
             return;
             
         if (interactionPrompt != null)
