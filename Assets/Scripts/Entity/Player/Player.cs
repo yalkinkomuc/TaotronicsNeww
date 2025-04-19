@@ -669,7 +669,7 @@ public class Player : Entity
 
     
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerStay2D(Collider2D other)
     {
         IInteractable interactable = other.GetComponent<IInteractable>();
         if (interactable != null)
