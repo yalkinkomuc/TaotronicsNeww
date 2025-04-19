@@ -14,6 +14,9 @@ public class Checkpoint : MonoBehaviour, IInteractable
     [SerializeField] private Color activeColor = new Color(1f, 1f, 0f, 0.5f);
     [SerializeField] private Color inactiveColor = new Color(0.5f, 0.5f, 0.5f, 0.2f);
     
+    [Header("Upgrade Panel")]
+    [SerializeField] private UpgradePanel upgradePanel;
+    
     private void Start()
     {
         if (interactionPrompt != null)
@@ -24,6 +27,25 @@ public class Checkpoint : MonoBehaviour, IInteractable
         {
             isActivated = true;
             UpdateLightEffect();
+        }
+        
+        // Upgrade panelinin referansını kontrol et
+        if (upgradePanel == null)
+        {
+            // Önce hiyerarşide ara
+            upgradePanel = GetComponentInChildren<UpgradePanel>(true);
+            
+            // Bulamazsak global olarak ara
+            if (upgradePanel == null)
+            {
+                upgradePanel = FindObjectOfType<UpgradePanel>(true);
+            }
+            
+            // Hala bulamazsak uyarı ver
+            if (upgradePanel == null)
+            {
+                Debug.LogWarning("UpgradePanel referansı bulunamadı! Lütfen inspector'da atayın.");
+            }
         }
     }
 
@@ -36,7 +58,35 @@ public class Checkpoint : MonoBehaviour, IInteractable
             SaveCheckpoint();
         }
         
+        // Önce oyuncuyu iyileştir
         HealPlayer();
+        
+        // Sonra upgrade panelini göster
+        ShowUpgradePanel();
+    }
+    
+    private void ShowUpgradePanel()
+    {
+        // Eğer panel veya oyuncu yoksa işlem yapma
+        if (upgradePanel == null)
+            return;
+        
+        // Oyuncuyu bul
+        Player player = PlayerManager.instance.player;
+        if (player == null)
+            return;
+            
+        // PlayerStats'i al 
+        PlayerStats playerStats = player.GetComponent<PlayerStats>();
+        if (playerStats == null)
+            return;
+            
+        // Paneli göster
+        upgradePanel.Show(playerStats);
+        
+        // Etkileşim promtunu gizle
+        if (interactionPrompt != null)
+            interactionPrompt.SetActive(false);
     }
 
     private void UpdateLightEffect()
@@ -49,6 +99,10 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     public void ShowInteractionPrompt()
     {
+        // Eğer upgrade paneli açıksa, etkileşim isteğini gösterme
+        if (upgradePanel != null && upgradePanel.gameObject.activeSelf)
+            return;
+            
         if (interactionPrompt != null)
         {
             interactionPrompt.SetActive(true);
@@ -65,7 +119,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     private void HealPlayer()
     {
-        Player player = FindFirstObjectByType<Player>();
+        Player player = PlayerManager.instance.player;
         if (player != null)
         {
             player.stats.currentHealth = player.stats.maxHealth.GetValue();
@@ -92,7 +146,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
     private void SaveItemStates()
     {
         // Bumerang durumunu kaydet
-        Player player = FindFirstObjectByType<Player>();
+        Player player = PlayerManager.instance.player;
         if (player != null)
         {
             // Bumerang durumu
