@@ -181,6 +181,35 @@ public class Checkpoint : MonoBehaviour, IInteractable
         PlayerPrefs.SetFloat("CheckpointX", transform.position.x);
         PlayerPrefs.SetFloat("CheckpointY", transform.position.y);
 
+        // Oyuncu stat değerlerini kaydet
+        Player player = PlayerManager.instance.player;
+        if (player != null)
+        {
+            PlayerStats playerStats = player.GetComponent<PlayerStats>();
+            if (playerStats != null)
+            {
+                // Seviye ve stat değerlerini kaydet
+                PlayerPrefs.SetInt("PlayerLevel", playerStats.GetLevel());
+                PlayerPrefs.SetFloat("PlayerMaxHealth", playerStats.maxHealth.GetValue());
+                PlayerPrefs.SetFloat("PlayerMaxMana", playerStats.maxMana.GetValue());
+                PlayerPrefs.SetFloat("PlayerBaseDamage", playerStats.baseDamage.GetValue());
+                PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
+                
+                // Experience değerlerini kaydet
+                // Reflection ile private field'lara erişiyoruz
+                System.Type type = playerStats.GetType();
+                int experience = (int)type.GetField("experience", System.Reflection.BindingFlags.Instance | 
+                                                 System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
+                int experienceToNextLevel = (int)type.GetField("experienceToNextLevel", System.Reflection.BindingFlags.Instance | 
+                                                            System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
+                
+                PlayerPrefs.SetInt("PlayerExperience", experience);
+                PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
+                
+                Debug.Log($"Oyuncu değerleri kaydedildi: Seviye={playerStats.GetLevel()}, MaxHP={playerStats.maxHealth.GetValue()}, MaxMana={playerStats.maxMana.GetValue()}, XP={experience}/{experienceToNextLevel}");
+            }
+        }
+
         // Item durumlarını kaydet
         SaveItemStates();
         

@@ -440,8 +440,12 @@ public class Player : Entity
             float x = PlayerPrefs.GetFloat("CheckpointX");
             float y = PlayerPrefs.GetFloat("CheckpointY");
             lastCheckpointPosition = new Vector2(x, y);
+            
+            // İtem durumlarını yükle
+            Checkpoint.LoadItemStates(this);
         }
 
+        // Oyuncunun konumunu ayarla
         transform.position = lastCheckpointPosition;
     }
 

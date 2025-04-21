@@ -171,7 +171,18 @@ public class CheckpointSelectionScreen : MonoBehaviour
                 PlayerPrefs.SetFloat("PlayerBaseDamage", playerStats.baseDamage.GetValue());
                 PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
                 
-                Debug.Log($"Oyuncu değerleri kaydedildi: Seviye={playerStats.GetLevel()}, MaxHP={playerStats.maxHealth.GetValue()}, MaxMana={playerStats.maxMana.GetValue()}");
+                // Deneyim puanlarını ve bir sonraki seviye için gerekli deneyimi kaydet
+                // PlayerStats içindeki private field'lara reflection kullanarak erişiyoruz
+                System.Type type = playerStats.GetType();
+                int experience = (int)type.GetField("experience", System.Reflection.BindingFlags.Instance | 
+                                                 System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
+                int experienceToNextLevel = (int)type.GetField("experienceToNextLevel", System.Reflection.BindingFlags.Instance | 
+                                                            System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
+                
+                PlayerPrefs.SetInt("PlayerExperience", experience);
+                PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
+                
+                Debug.Log($"Oyuncu değerleri kaydedildi: Seviye={playerStats.GetLevel()}, MaxHP={playerStats.maxHealth.GetValue()}, MaxMana={playerStats.maxMana.GetValue()}, XP={experience}/{experienceToNextLevel}");
             }
             
             // 4. Değişiklikleri kaydet
@@ -197,6 +208,9 @@ public class CheckpointSelectionScreen : MonoBehaviour
                     float savedMaxMana = PlayerPrefs.GetFloat("PlayerMaxMana");
                     float savedBaseDamage = PlayerPrefs.GetFloat("PlayerBaseDamage");
                     int savedLevel = PlayerPrefs.GetInt("PlayerLevel", 1);
+                    int savedExperience = PlayerPrefs.GetInt("PlayerExperience", 0);
+                    int savedExperienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
+                    int savedSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
                     
                     // MaxHealth, MaxMana ve Damage değerlerini yükle
                     // Bu değerler level system veya upgrade panel tarafından değiştirilmiş olabilir
@@ -207,6 +221,17 @@ public class CheckpointSelectionScreen : MonoBehaviour
                     {
                         playerStats.SetLevel(savedLevel);
                     }
+                    
+                    // Deneyim puanlarını ve bir sonraki seviye için gerekli deneyimi ayarla
+                    System.Type type = playerStats.GetType();
+                    type.GetField("experience", System.Reflection.BindingFlags.Instance | 
+                                System.Reflection.BindingFlags.NonPublic).SetValue(playerStats, savedExperience);
+                    type.GetField("experienceToNextLevel", System.Reflection.BindingFlags.Instance | 
+                                System.Reflection.BindingFlags.NonPublic).SetValue(playerStats, savedExperienceToNextLevel);
+                    
+                    // Skill points değerini ayarla
+                    type.GetField("availableSkillPoints", System.Reflection.BindingFlags.Instance | 
+                                System.Reflection.BindingFlags.NonPublic).SetValue(playerStats, savedSkillPoints);
                     
                     // Burada direkt modifierlara erişemediğimiz için farkları hesaplayıp ekliyoruz
                     float currentMaxHealth = playerStats.maxHealth.GetValue();
@@ -246,7 +271,19 @@ public class CheckpointSelectionScreen : MonoBehaviour
                     player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
                 }
                 
+                // 4. UI güncellemesi için UpdateLevelUI metodunu çağır
+                System.Type playerStatsType = playerStats.GetType();
+                var updateLevelUIMethod = playerStatsType.GetMethod("UpdateLevelUI", System.Reflection.BindingFlags.Instance | 
+                                                      System.Reflection.BindingFlags.NonPublic);
+                if (updateLevelUIMethod != null)
+                {
+                    updateLevelUIMethod.Invoke(playerStats, null);
+                }
+                
                 Debug.Log($"Oyuncunun canı ve manası dolduruldu: HP={playerStats.currentHealth}/{playerStats.maxHealth.GetValue()}, Mana={playerStats.currentMana}/{playerStats.maxMana.GetValue()}");
+                
+                // 5. Değişiklikleri kaydet - iyileştirme sonrası en güncel değerleri kaydet
+                SavePlayerPosition();
             }
             else
             {

@@ -23,15 +23,19 @@ public class CharacterStats : MonoBehaviour
     
     public bool isInvincible { get; private set; }
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         // Store base values before applying level multipliers
         baseMaxHealth = maxHealth.GetValue();
         baseMaxDamage = baseDamage.GetValue();
-        
+    }
+
+    protected virtual void Start()
+    {
         // Apply level multipliers
         ApplyLevelMultipliers();
         
+        // Initialize health and mana to max values
         currentHealth = maxHealth.GetValue();
         currentMana = maxMana.GetValue();
     }

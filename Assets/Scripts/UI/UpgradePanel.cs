@@ -190,10 +190,36 @@ public class UpgradePanel : MonoBehaviour
         // UI'ı güncelle
         UpdateUI();
         
+        // Upgrade sonrası playerPrefs ile kaydet
+        SavePlayerData();
+        
         // Eğer tüm skill point'ler kullanıldıysa paneli kapat
         if (playerStats.AvailableSkillPoints <= 0)
         {
             gameObject.SetActive(false);
+        }
+    }
+    
+    // Oyuncu verilerini kaydetmek için CheckpointSelectionScreen'i kullan
+    private void SavePlayerData()
+    {
+        CheckpointSelectionScreen selectionScreen = Checkpoint.persistentSelectionScreen;
+        if (selectionScreen != null)
+        {
+            // Reflection ile private metoda erişerek çağır
+            System.Type type = selectionScreen.GetType();
+            var savePlayerPositionMethod = type.GetMethod("SavePlayerPosition", 
+                                                       System.Reflection.BindingFlags.Instance | 
+                                                       System.Reflection.BindingFlags.NonPublic);
+            if (savePlayerPositionMethod != null)
+            {
+                savePlayerPositionMethod.Invoke(selectionScreen, null);
+                Debug.Log("Upgrade sonrası oyuncu verileri kaydedildi.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("CheckpointSelectionScreen bulunamadı, oyuncu verileri kaydedilemedi!");
         }
     }
     

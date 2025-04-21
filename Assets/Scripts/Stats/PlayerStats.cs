@@ -19,13 +19,30 @@ public class PlayerStats : CharacterStats
     [SerializeField] private Image experienceBar;
     [SerializeField] private TextMeshProUGUI levelText;
 
+    private float baseMaxHealth;
+    private float baseMaxDamage;
+
+    protected override void Awake()
+    {
+        // Önce baz sınıfın Awake metodunu çağır
+        base.Awake();
+    }
+
     protected override void Start()
     {
+        // Baz değerleri sakla
+        baseMaxHealth = maxHealth.GetValue();
+        baseMaxDamage = baseDamage.GetValue();
+        
+        // Önce kaydedilmiş verileri yükle
+        LoadPlayerData();
+        
+        // Sonra CharacterStats'dan gelen işlemleri devam ettir
         base.Start();
         
         player = GetComponent<Player>();
         
-        // Initialize UI if available
+        // UI'ı güncelle
         UpdateLevelUI();
     }
     
@@ -49,6 +66,9 @@ public class PlayerStats : CharacterStats
         
         // Update UI
         UpdateLevelUI();
+        
+        // Save experience data after gaining XP
+        SaveExperienceData();
     }
     
     private void CheckLevelUp()
@@ -71,6 +91,9 @@ public class PlayerStats : CharacterStats
             
             // Update UI
             UpdateLevelUI();
+            
+            // Save experience and level data after leveling up
+            SaveExperienceData();
             
             // Could trigger level up effects here
             if (player != null && player.entityFX != null)
@@ -103,6 +126,63 @@ public class PlayerStats : CharacterStats
         }
     }
     
+    // Save player experience and level data to PlayerPrefs
+    private void SaveExperienceData()
+    {
+        // Save level and experience values to PlayerPrefs
+        PlayerPrefs.SetInt("PlayerLevel", level);
+        PlayerPrefs.SetInt("PlayerExperience", experience);
+        PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
+        PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
+        PlayerPrefs.Save();
+        
+        Debug.Log($"Player progress saved: Level={level}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
+    }
+    
+    // Kaydedilmiş oyuncu verilerini PlayerPrefs'den yükle
+    private void LoadPlayerData()
+    {
+        // Eğer kaydedilmiş veriler varsa yükle
+        if (PlayerPrefs.HasKey("PlayerLevel"))
+        {
+            // Seviye, deneyim ve skill point verilerini yükle
+            level = PlayerPrefs.GetInt("PlayerLevel", 1);
+            experience = PlayerPrefs.GetInt("PlayerExperience", 0);
+            experienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
+            availableSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
+            
+            // Stat değerlerini yükle
+            float savedMaxHealth = PlayerPrefs.GetFloat("PlayerMaxHealth", maxHealth.GetValue());
+            float savedMaxMana = PlayerPrefs.GetFloat("PlayerMaxMana", maxMana.GetValue());
+            float savedBaseDamage = PlayerPrefs.GetFloat("PlayerBaseDamage", baseDamage.GetValue());
+            
+            // Farkları hesapla ve modifierları ekle
+            float healthDiff = savedMaxHealth - maxHealth.GetValue();
+            if (healthDiff > 0)
+            {
+                maxHealth.AddModifier(healthDiff, StatModifierType.Equipment);
+            }
+            
+            float manaDiff = savedMaxMana - maxMana.GetValue();
+            if (manaDiff > 0)
+            {
+                maxMana.AddModifier(manaDiff, StatModifierType.Equipment);
+            }
+            
+            float damageDiff = savedBaseDamage - baseDamage.GetValue();
+            if (damageDiff > 0)
+            {
+                baseDamage.AddModifier(damageDiff, StatModifierType.Equipment);
+            }
+            
+            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, MaxHP={savedMaxHealth}, MaxMana={savedMaxMana}, BaseDamage={savedBaseDamage}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
+        }
+        
+        // Can ve manayı doldur
+        currentHealth = maxHealth.GetValue();
+        currentMana = maxMana.GetValue();
+    }
+    
     // Stat upgrade methods
     public void IncreaseMaxHealth()
     {
@@ -120,6 +200,9 @@ public class PlayerStats : CharacterStats
         
         // Update UI
         UpdateLevelUI();
+        
+        // Save changes after upgrade
+        SaveStatsData();
         
         // Update health bar
         if (player != null && player.healthBar != null)
@@ -144,6 +227,9 @@ public class PlayerStats : CharacterStats
         
         // Update UI
         UpdateLevelUI();
+        
+        // Save changes after upgrade
+        SaveStatsData();
     }
     
     public void IncreaseDamage()
@@ -159,6 +245,9 @@ public class PlayerStats : CharacterStats
         
         // Update UI
         UpdateLevelUI();
+        
+        // Save changes after upgrade
+        SaveStatsData();
     }
     
     // Method to reduce skill points externally
@@ -181,5 +270,18 @@ public class PlayerStats : CharacterStats
         base.Die();
         
         player.Die();
+    }
+
+    // Save stat values to PlayerPrefs
+    private void SaveStatsData()
+    {
+        // Save stat values
+        PlayerPrefs.SetFloat("PlayerMaxHealth", maxHealth.GetValue());
+        PlayerPrefs.SetFloat("PlayerMaxMana", maxMana.GetValue());
+        PlayerPrefs.SetFloat("PlayerBaseDamage", baseDamage.GetValue());
+        PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
+        PlayerPrefs.Save();
+        
+        Debug.Log($"Player stats saved: Health={maxHealth.GetValue()}, Mana={maxMana.GetValue()}, Damage={baseDamage.GetValue()}, SP={availableSkillPoints}");
     }
 }
