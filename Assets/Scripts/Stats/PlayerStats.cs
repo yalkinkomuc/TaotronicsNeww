@@ -19,8 +19,8 @@ public class PlayerStats : CharacterStats
     [SerializeField] private Image experienceBar;
     [SerializeField] private TextMeshProUGUI levelText;
 
-    private float baseMaxHealth;
-    private float baseMaxDamage;
+    private float playerBaseMaxHealth;
+    private float playerBaseMaxDamage;
 
     protected override void Awake()
     {
@@ -31,8 +31,8 @@ public class PlayerStats : CharacterStats
     protected override void Start()
     {
         // Baz değerleri sakla
-        baseMaxHealth = maxHealth.GetValue();
-        baseMaxDamage = baseDamage.GetValue();
+        playerBaseMaxHealth = maxHealth.GetValue();
+        playerBaseMaxDamage = baseDamage.GetValue();
         
         // Önce kaydedilmiş verileri yükle
         LoadPlayerData();
@@ -181,6 +181,36 @@ public class PlayerStats : CharacterStats
         // Can ve manayı doldur
         currentHealth = maxHealth.GetValue();
         currentMana = maxMana.GetValue();
+        
+        // Player ve healthBar referanslarının güncellendiğinden emin olalım
+        RefreshReferences();
+        
+        // Health bar'ı güncelle
+        UpdateHealthBarUI();
+    }
+    
+    // Gerekli referansları güncelle
+    private void RefreshReferences()
+    {
+        if (player == null)
+        {
+            player = GetComponent<Player>();
+        }
+        
+        if (player != null && player.healthBar == null)
+        {
+            player.healthBar = GetComponent<HealthBar>();
+        }
+    }
+    
+    // Health Bar UI güncellemesi
+    private void UpdateHealthBarUI()
+    {
+        if (player != null && player.healthBar != null)
+        {
+            player.healthBar.UpdateHealthBar(currentHealth, maxHealth.GetValue());
+            Debug.Log($"Health Bar UI güncellendi: {currentHealth}/{maxHealth.GetValue()}");
+        }
     }
     
     // Stat upgrade methods
@@ -262,7 +292,11 @@ public class PlayerStats : CharacterStats
 
     public override void TakeDamage(float _damage)
     {
+        // Base sınıfta hasar işlemi uygulanır
         base.TakeDamage(_damage);
+        
+        // Health bar'ı güncelle
+        UpdateHealthBarUI();
     }
 
     public override void Die()

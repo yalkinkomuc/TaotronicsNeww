@@ -166,11 +166,32 @@ public class Checkpoint : MonoBehaviour, IInteractable
         Player player = PlayerManager.instance.player;
         if (player != null)
         {
-            player.stats.currentHealth = player.stats.maxHealth.GetValue();
-            player.stats.currentMana = player.stats.maxMana.GetValue();
-            
-            if (player.healthBar != null)
-                player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
+            PlayerStats playerStats = player.GetComponent<PlayerStats>();
+            if (playerStats != null)
+            {
+                // Sağlık ve manayı doğrudan SetHealth metodu ile ayarlayalım
+                playerStats.SetHealth(playerStats.maxHealth.GetValue());
+                playerStats.currentMana = playerStats.maxMana.GetValue();
+                
+                // Health bar'ı güncelle - player sınıfı kendisi güncelleme yapabilir
+                if (player.healthBar != null)
+                {
+                    player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+                    Debug.Log($"Checkpoint: Health Bar güncellendi: {playerStats.currentHealth}/{playerStats.maxHealth.GetValue()}");
+                }
+            }
+            else
+            {
+                // PlayerStats bulunamazsa basit iyileştirme yap
+                player.stats.currentHealth = player.stats.maxHealth.GetValue();
+                player.stats.currentMana = player.stats.maxMana.GetValue();
+                
+                if (player.healthBar != null)
+                {
+                    player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
+                    Debug.Log("Checkpoint: Health Bar güncellendi (basit mod)");
+                }
+            }
         }
     }
 

@@ -104,4 +104,19 @@ public class CharacterStats : MonoBehaviour
     {
         // Override in derived classes
     }
+
+    // Oyuncunun can değerini doğrudan ayarla
+    public virtual void SetHealth(float value)
+    {
+        currentHealth = Mathf.Clamp(value, 0, maxHealth.GetValue());
+        
+        if (currentHealth <= 0)
+            Die();
+    }
+
+    // Oyuncunun canını belirtilen miktarda artır (veya azalt)
+    public virtual void AddHealth(float amount)
+    {
+        SetHealth(currentHealth + amount);
+    }
 }
