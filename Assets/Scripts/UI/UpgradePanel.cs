@@ -26,10 +26,42 @@ public class UpgradePanel : MonoBehaviour
     private int tempDamageUpgrades = 0;
     private int usedSkillPoints = 0;
     
+    private void Awake()
+    {
+        // DontDestroyOnLoad ile korunmasını sağlayalım, ama parent'ı değiştirmeyelim
+        if (Checkpoint.persistentUpgradePanel == null)
+        {
+            Checkpoint.persistentUpgradePanel = this;
+            DontDestroyOnLoad(gameObject);
+            
+            // Canvas ayarlarını düzenle
+            Canvas canvas = GetComponent<Canvas>();
+            if (canvas != null)
+            {
+                // Canvas'ı Screen Space - Overlay moduna ayarla
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                
+                // Sorting order değiştirmeyelim
+                // canvas.sortingOrder = 110; // Bu satırı kaldırdık
+            }
+        }
+        else if (Checkpoint.persistentUpgradePanel != this)
+        {
+            // Eğer zaten bir instance varsa ve bu o değilse, bu instance'ı yok et
+            Destroy(gameObject);
+        }
+        
+        // Başlangıçta gizli olsun
+        if (gameObject.activeSelf)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+    
     private void Start()
     {
-        // Başlangıçta gizli olsun
-        gameObject.SetActive(false);
+        // Eğer bu nesne Awake'de yok edilmediyse devam et
+        if (this == null) return;
         
         // Buton olaylarını ayarla
         if (hpButton != null)
@@ -51,7 +83,7 @@ public class UpgradePanel : MonoBehaviour
             closeButton.onClick.AddListener(OnCloseButtonClicked);
     }
     
-    public void Initialize(PlayerStats stats)
+   private void Initialize(PlayerStats stats)
     {
         playerStats = stats;
         ResetTemporaryChanges();
@@ -188,13 +220,43 @@ public class UpgradePanel : MonoBehaviour
     {
         Initialize(stats);
         
+        // Canvas'ı aktif olduğundan emin ol
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas != null)
+        {
+            // Canvas'ı Screen Space - Overlay moduna getir
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            
+            // En üstte görünmesi için yüksek sorting order ver
+            canvas.sortingOrder = 110; // Selection Screen'den daha yüksek
+        }
+        
+        // Eğer bu Canvasta GraphicRaycaster yoksa ekle
+        GraphicRaycaster raycaster = GetComponent<GraphicRaycaster>();
+        if (raycaster == null)
+        {
+            raycaster = gameObject.AddComponent<GraphicRaycaster>();
+        }
+        
         // Objeyi aktifleştirmeden önce UIInputBlocker'a paneli ekle
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
         }
         
+        // UI scale'inin doğru olduğunu kontrol et
+        transform.localScale = Vector3.one;
+        
+        // Paneli göster
         gameObject.SetActive(true);
+        
+        // Butonların erişilebilir olduğunu kontrol et
+        if (hpButton != null) hpButton.interactable = true;
+        if (manaButton != null) manaButton.interactable = true;
+        if (damageButton != null) damageButton.interactable = true;
+        if (applyButton != null) applyButton.interactable = (usedSkillPoints > 0);
+        if (resetButton != null) resetButton.interactable = (usedSkillPoints > 0);
+        if (closeButton != null) closeButton.interactable = true;
     }
     
     public void Hide()

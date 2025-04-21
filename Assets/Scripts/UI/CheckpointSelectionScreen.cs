@@ -11,9 +11,44 @@ public class CheckpointSelectionScreen : MonoBehaviour
     
     [Header("References")]
     public UpgradePanel upgradePanel;
+
+    private void Awake()
+    {
+        // DontDestroyOnLoad ile korunmasını sağlayalım, ama parent'ı değiştirmeyelim
+        if (Checkpoint.persistentSelectionScreen == null)
+        {
+            Checkpoint.persistentSelectionScreen = this;
+            DontDestroyOnLoad(gameObject);
+            
+            // Canvas ayarlarını düzenle
+            Canvas canvas = GetComponent<Canvas>();
+            if (canvas != null)
+            {
+                // Canvas'ı Screen Space - Overlay moduna ayarla
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                
+                // Canvas'ın görünürlüğünü sağlayalım ama sorting order değiştirmeyelim
+                // canvas.sortingOrder = 100; // Bu satırı kaldırdık
+            }
+        }
+        else if (Checkpoint.persistentSelectionScreen != this)
+        {
+            // Eğer zaten bir instance varsa ve bu o değilse, bu instance'ı yok et
+            Destroy(gameObject);
+        }
+        
+        // Başlangıçta paneli gizleyelim
+        if (gameObject.activeSelf)
+        {
+            gameObject.SetActive(false);
+        }
+    }
     
     private void Start()
     {
+        // Eğer bu nesne Awake'de yok edilmediyse devam et
+        if (this == null) return;
+        
         // Add button listeners
         if (restButton != null)
         {
@@ -70,13 +105,33 @@ public class CheckpointSelectionScreen : MonoBehaviour
     // Show panel
     public void ShowPanel()
     {
-        gameObject.SetActive(true);
+        // Canvas'ı aktif olduğundan emin ol
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas != null)
+        {
+            // Canvas'ı Screen Space - Overlay moduna getir
+            //canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            
+            // En üstte görünmesi için yüksek sorting order ver
+            canvas.sortingOrder = 100;
+        }
         
-        // Add to UIInputBlocker
+        // Oyuncunun etkileşimini engelle
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
         }
+        
+        // Paneli aktifleştir
+        gameObject.SetActive(true);
+        
+        // Butonların erişilebilir olduğundan emin ol
+        if (restButton != null) restButton.interactable = true;
+        if (upgradeButton != null) upgradeButton.interactable = true;
+        if (closeButton != null) closeButton.interactable = true;
+        
+        // UI scale'inin doğru olduğunu kontrol et
+        //transform.localScale = Vector3.one;
     }
     
     // Close panel

@@ -20,6 +20,10 @@ public class Checkpoint : MonoBehaviour, IInteractable
     [Header("Selection Screen")]
     [SerializeField] private CheckpointSelectionScreen selectionScreen;
     
+    // Statik referanslar ekleyelim ki sahneler arasında kaybolmasın
+    public static UpgradePanel persistentUpgradePanel;
+    public static CheckpointSelectionScreen persistentSelectionScreen;
+    
     private void Start()
     {
         if (interactionPrompt != null)
@@ -32,52 +36,49 @@ public class Checkpoint : MonoBehaviour, IInteractable
             UpdateLightEffect();
         }
         
-        // Upgrade panelinin referansını kontrol et
+        // Kalıcı panelleri bul veya oluştur
+        FindOrCreateUIElements();
+    }
+    
+    private void FindOrCreateUIElements()
+    {
+        // Önce statik referanslara bak
+        if (persistentUpgradePanel != null)
+        {
+            upgradePanel = persistentUpgradePanel;
+        }
+        
+        if (persistentSelectionScreen != null)
+        {
+            selectionScreen = persistentSelectionScreen;
+        }
+        
+        // Upgrade Panel bulma veya yaratma
         if (upgradePanel == null)
         {
-            // Önce hiyerarşide ara
-            upgradePanel = GetComponentInChildren<UpgradePanel>(true);
+            upgradePanel = FindFirstObjectByType<UpgradePanel>();
             
-            // Bulamazsak global olarak ara
             if (upgradePanel == null)
             {
-                upgradePanel = FindFirstObjectByType<UpgradePanel>();
-            }
-            
-            // Hala bulamazsak uyarı ver
-            if (upgradePanel == null)
-            {
-                Debug.LogWarning("UpgradePanel referansı bulunamadı! Lütfen inspector'da atayın.");
+                Debug.LogWarning("UpgradePanel bulunamadı! Lütfen sahneye UpgradePanel ekleyin.");
             }
         }
         
-        // Selection Screen'in referansını kontrol et
+        // Selection Screen bulma veya yaratma
         if (selectionScreen == null)
         {
-            // Önce hiyerarşide ara
-            selectionScreen = GetComponentInChildren<CheckpointSelectionScreen>(true);
+            selectionScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
             
-            // Bulamazsak global olarak ara
             if (selectionScreen == null)
             {
-                selectionScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
-            }
-            
-            // Hala bulamazsak uyarı ver
-            if (selectionScreen == null)
-            {
-                Debug.LogWarning("CheckpointSelectionScreen referansı bulunamadı! Lütfen inspector'da atayın.");
+                Debug.LogWarning("CheckpointSelectionScreen bulunamadı! Lütfen sahneye CheckpointSelectionScreen ekleyin.");
             }
         }
         
-        // Eğer selection screen'imiz varsa, upgrade panel referansını ona ata
+        // Eğer selection screen ve upgrade panel varsa, aralarındaki bağlantıyı kur
         if (selectionScreen != null && upgradePanel != null)
         {
-            // Selection screen'e upgrade panel referansını ata
-            if (selectionScreen.upgradePanel == null)
-            {
-                selectionScreen.upgradePanel = upgradePanel;
-            }
+            selectionScreen.upgradePanel = upgradePanel;
         }
     }
 
