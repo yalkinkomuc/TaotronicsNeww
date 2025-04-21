@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private Image healthBarFill;
     [SerializeField] private float smoothSpeed = 10f;
+    [SerializeField] private TextMeshProUGUI healthText; // Health değerini göstermek için metin alanı
 
     private CharacterStats stats;
     private float targetFillAmount;
@@ -47,9 +49,15 @@ public class HealthBar : MonoBehaviour
         // Health bar'ı güncel değerlere göre ayarla
         if (stats != null)
         {
-            targetFillAmount = stats.currentHealth / stats.maxHealth.GetValue();
+            float roundedCurrentHealth = Mathf.Round(stats.currentHealth);
+            float roundedMaxHealth = Mathf.Round(stats.maxHealth.GetValue());
+            
+            targetFillAmount = roundedCurrentHealth / roundedMaxHealth;
             currentFillAmount = targetFillAmount;
             healthBarFill.fillAmount = currentFillAmount;
+            
+            // Metin alanını güncelle
+            UpdateHealthText(roundedCurrentHealth, roundedMaxHealth);
         }
         else
         {
@@ -64,21 +72,45 @@ public class HealthBar : MonoBehaviour
     {
         if (stats == null || healthBarFill == null) return;
 
+        // Tam sayılara yuvarla
+        float roundedCurrentHealth = Mathf.Round(stats.currentHealth);
+        float roundedMaxHealth = Mathf.Round(stats.maxHealth.GetValue());
+        
         // LateUpdate kullanarak diğer health değişikliklerinden sonra güncelleyelim
-        targetFillAmount = stats.currentHealth / stats.maxHealth.GetValue();
+        targetFillAmount = roundedCurrentHealth / roundedMaxHealth;
         currentFillAmount = Mathf.Lerp(currentFillAmount, targetFillAmount, Time.deltaTime * smoothSpeed);
         healthBarFill.fillAmount = currentFillAmount;
+        
+        // Metin alanını güncelle
+        UpdateHealthText(roundedCurrentHealth, roundedMaxHealth);
     }
 
     public void UpdateHealthBar(float currentHealth, float maxHealth)
     {
         if (healthBarFill == null) return;
         
-        targetFillAmount = currentHealth / maxHealth;
+        // Tam sayılara yuvarla
+        float roundedCurrentHealth = Mathf.Round(currentHealth);
+        float roundedMaxHealth = Mathf.Round(maxHealth);
+        
+        targetFillAmount = roundedCurrentHealth / roundedMaxHealth;
         // Hızlı değişimler için currentFillAmount'ı da hemen güncelle
         currentFillAmount = targetFillAmount;
         healthBarFill.fillAmount = currentFillAmount;
         
-        Debug.Log($"Health Bar güncellendi: {currentHealth}/{maxHealth} = {targetFillAmount}");
+        // Metin alanını güncelle
+        UpdateHealthText(roundedCurrentHealth, roundedMaxHealth);
+        
+        Debug.Log($"Health Bar güncellendi: {roundedCurrentHealth}/{roundedMaxHealth} = {targetFillAmount}");
+    }
+    
+    // Health metin alanını güncelle
+    private void UpdateHealthText(float currentHealth, float maxHealth)
+    {
+        if (healthText != null)
+        {
+            // Tam sayıya çevirerek göster
+            healthText.text = $"{(int)currentHealth}/{(int)maxHealth}";
+        }
     }
 } 

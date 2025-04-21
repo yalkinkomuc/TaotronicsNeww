@@ -479,9 +479,12 @@ public class Player : Entity
                 }
             }
             
-            // Can ve mana değerlerini yenile
-            stats.currentHealth = stats.maxHealth.GetValue();
-            stats.currentMana = stats.maxMana.GetValue();
+            // Can ve mana değerlerini yenile - tam sayı değerler kullan
+            float roundedMaxHealth = Mathf.Round(stats.maxHealth.GetValue());
+            float roundedMaxMana = Mathf.Round(stats.maxMana.GetValue());
+            
+            stats.currentHealth = roundedMaxHealth;
+            stats.currentMana = roundedMaxMana;
             
             // UI'ı güncelle
             if (healthBar != null)

@@ -169,27 +169,35 @@ public class Checkpoint : MonoBehaviour, IInteractable
             PlayerStats playerStats = player.GetComponent<PlayerStats>();
             if (playerStats != null)
             {
+                // Tam sayı değerlere yuvarla
+                float roundedMaxHealth = Mathf.Round(playerStats.maxHealth.GetValue());
+                float roundedMaxMana = Mathf.Round(playerStats.maxMana.GetValue());
+                
                 // Sağlık ve manayı doğrudan SetHealth metodu ile ayarlayalım
-                playerStats.SetHealth(playerStats.maxHealth.GetValue());
-                playerStats.currentMana = playerStats.maxMana.GetValue();
+                playerStats.SetHealth(roundedMaxHealth);
+                playerStats.currentMana = roundedMaxMana;
                 
                 // Health bar'ı güncelle - player sınıfı kendisi güncelleme yapabilir
                 if (player.healthBar != null)
                 {
                     player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
-                    Debug.Log($"Checkpoint: Health Bar güncellendi: {playerStats.currentHealth}/{playerStats.maxHealth.GetValue()}");
+                    Debug.Log($"Checkpoint: Health Bar güncellendi: {Mathf.Round(playerStats.currentHealth)}/{Mathf.Round(playerStats.maxHealth.GetValue())}");
                 }
             }
             else
             {
+                // Tam sayı değerlere yuvarla
+                float roundedMaxHealth = Mathf.Round(player.stats.maxHealth.GetValue());
+                float roundedMaxMana = Mathf.Round(player.stats.maxMana.GetValue());
+                
                 // PlayerStats bulunamazsa basit iyileştirme yap
-                player.stats.currentHealth = player.stats.maxHealth.GetValue();
-                player.stats.currentMana = player.stats.maxMana.GetValue();
+                player.stats.currentHealth = roundedMaxHealth;
+                player.stats.currentMana = roundedMaxMana;
                 
                 if (player.healthBar != null)
                 {
                     player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
-                    Debug.Log("Checkpoint: Health Bar güncellendi (basit mod)");
+                    Debug.Log($"Checkpoint: Health Bar güncellendi (basit mod): {Mathf.Round(player.stats.currentHealth)}/{Mathf.Round(player.stats.maxHealth.GetValue())}");
                 }
             }
         }

@@ -82,7 +82,9 @@ public class CharacterStats : MonoBehaviour
         if (isInvincible)
             return;
             
-        currentHealth -= _damage;
+        // Hasarı tam sayıya yuvarla
+        float roundedDamage = Mathf.Round(_damage);
+        currentHealth -= roundedDamage;
 
         if (currentHealth <= 0)
             Die();
@@ -108,7 +110,11 @@ public class CharacterStats : MonoBehaviour
     // Oyuncunun can değerini doğrudan ayarla
     public virtual void SetHealth(float value)
     {
-        currentHealth = Mathf.Clamp(value, 0, maxHealth.GetValue());
+        // Değerleri tam sayıya yuvarla
+        float roundedValue = Mathf.Round(value);
+        float roundedMaxHealth = Mathf.Round(maxHealth.GetValue());
+        
+        currentHealth = Mathf.Clamp(roundedValue, 0, roundedMaxHealth);
         
         if (currentHealth <= 0)
             Die();
@@ -117,6 +123,8 @@ public class CharacterStats : MonoBehaviour
     // Oyuncunun canını belirtilen miktarda artır (veya azalt)
     public virtual void AddHealth(float amount)
     {
-        SetHealth(currentHealth + amount);
+        // Miktarı tam sayıya yuvarla
+        float roundedAmount = Mathf.Round(amount);
+        SetHealth(currentHealth + roundedAmount);
     }
 }
