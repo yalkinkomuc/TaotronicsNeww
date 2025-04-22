@@ -142,7 +142,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
     }
     
     // Oyuncunun can ve mana değerlerini doldur
-    private void HealPlayer()
+    private void RestPlayer()
     {
         Player player = PlayerManager.instance?.player;
         if (player == null) return;
@@ -226,7 +226,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
     // Sahneyi yeniden yükle
     private System.Collections.IEnumerator ReloadSceneWithTransition()
     {
-        HealPlayer();
+        RestPlayer();
         gameObject.SetActive(false);
         
         if (UIInputBlocker.instance != null)

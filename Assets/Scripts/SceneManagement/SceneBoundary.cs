@@ -229,14 +229,5 @@ public class SceneBoundary : MonoBehaviour
             Gizmos.DrawWireCube(bottomExitCenter, bottomExitSize);
         }
     }
-
-    private void OnValidate()
-    {
-        // Sınırları otomatik olarak güncelle
-        if (CameraManager.instance != null)
-        {
-            // Artık SetCameraBoundaries'e gerek yok çünkü CameraManager
-            // otomatik olarak sınırları SceneBoundary'den alıyor
-        }
-    }
+    
 } 
