@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class Player : Entity
 {
@@ -459,6 +460,18 @@ public class Player : Entity
             // Eğer aktif bir checkpoint varsa oraya, yoksa spawn noktasına ışınla
             if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
             {
+                // Şu anki sahne indeksini kontrol et
+                int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+                int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
+                
+                // Eğer checkpoint farklı bir sahnedeyse, o sahneyi yükle
+                if (currentSceneIndex != checkpointSceneIndex)
+                {
+                    Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
+                    return; // Sahne değiştiği için geri dön
+                }
+                
                 // Checkpoint'ten devam et
                 transform.position = lastCheckpointPosition;
                 

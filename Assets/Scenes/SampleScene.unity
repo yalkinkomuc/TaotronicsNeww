@@ -6239,12 +6239,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340359355}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1683066506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &403455985 stripped
 Transform:
@@ -10078,6 +10078,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthBarFill: {fileID: 1407804821}
   smoothSpeed: 10
+  healthText: {fileID: 0}
 --- !u!114 &1377457619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11554,6 +11555,7 @@ Transform:
   - {fileID: 1156135643}
   - {fileID: 1459956771}
   - {fileID: 2097177016}
+  - {fileID: 340359358}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1683066507
@@ -11888,7 +11890,6 @@ GameObject:
   - component: {fileID: 1782834618}
   - component: {fileID: 1782834617}
   - component: {fileID: 1782834616}
-  - component: {fileID: 1782834620}
   m_Layer: 5
   m_Name: '***InGameCanvas***'
   m_TagString: InventoryUI
@@ -11986,20 +11987,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1782834620
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1782834615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfedd9dc88688e84791e3b9b0cd8a697, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  upgradePanel: {fileID: 1047144775405100756}
-  checkpointSelectionScreen: {fileID: 4554053187726139990, guid: bb68cbaa6ad61d247b916bd17633d671, type: 3}
 --- !u!1 &1794730789
 GameObject:
   m_ObjectHideFlags: 0
@@ -17274,7 +17261,6 @@ SceneRoots:
   - {fileID: 2022707242}
   - {fileID: 1377457613}
   - {fileID: 1435924115}
-  - {fileID: 340359358}
   - {fileID: 1837229791828344895}
   - {fileID: 1795173820}
   - {fileID: 1203443348}

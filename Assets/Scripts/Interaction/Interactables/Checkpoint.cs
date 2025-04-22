@@ -209,6 +209,12 @@ public class Checkpoint : MonoBehaviour, IInteractable
         PlayerPrefs.SetInt("CheckpointActivated", 1);
         PlayerPrefs.SetFloat("CheckpointX", transform.position.x);
         PlayerPrefs.SetFloat("CheckpointY", transform.position.y);
+        
+        // Şu anki sahne indeksini kaydet
+        int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        PlayerPrefs.SetInt("CheckpointSceneIndex", currentSceneIndex);
+        
+        Debug.Log($"Checkpoint saved at Scene: {currentSceneIndex}, Position: ({transform.position.x}, {transform.position.y})");
 
         // Oyuncu stat değerlerini kaydet
         Player player = PlayerManager.instance.player;
@@ -234,8 +240,6 @@ public class Checkpoint : MonoBehaviour, IInteractable
                 
                 PlayerPrefs.SetInt("PlayerExperience", experience);
                 PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
-                
-                Debug.Log($"Oyuncu değerleri kaydedildi: Seviye={playerStats.GetLevel()}, MaxHP={playerStats.maxHealth.GetValue()}, MaxMana={playerStats.maxMana.GetValue()}, XP={experience}/{experienceToNextLevel}");
             }
         }
 
@@ -300,5 +304,11 @@ public class Checkpoint : MonoBehaviour, IInteractable
     public bool IsActivated()
     {
         return isActivated;
+    }
+
+    // Kaydedilmiş checkpoint sahne indeksini döndürür
+    public static int GetSavedSceneIndex()
+    {
+        return PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
     }
 } 

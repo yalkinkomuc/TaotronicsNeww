@@ -160,6 +160,11 @@ public class CheckpointSelectionScreen : MonoBehaviour
             PlayerPrefs.SetFloat("CheckpointX", player.transform.position.x);
             PlayerPrefs.SetFloat("CheckpointY", player.transform.position.y);
             
+            // Şu anki sahne indeksini kaydet
+            int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+            PlayerPrefs.SetInt("CheckpointSceneIndex", currentSceneIndex);
+            Debug.Log($"Checkpoint saved at Scene: {currentSceneIndex}, Position: ({player.transform.position.x}, {player.transform.position.y})");
+            
             // 3. Oyuncu stat değerlerini kaydet
             PlayerStats playerStats = player.GetComponent<PlayerStats>();
             if (playerStats != null)
@@ -187,7 +192,6 @@ public class CheckpointSelectionScreen : MonoBehaviour
             
             // 4. Değişiklikleri kaydet
             PlayerPrefs.Save();
-            Debug.Log("Checkpoint kaydedildi: " + player.transform.position);
         }
     }
     

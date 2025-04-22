@@ -10,13 +10,30 @@ public class SceneManager : MonoBehaviour
     //[SerializeField] private float fadeTime = 0.5f;
     [SerializeField] private Color fadeColor = Color.black;
     [SerializeField] private GameObject transitionEffectPrefab;
+    
+    // İlk sahne yüklendiğinde kontrol için
+    private bool isFirstSceneLoad = true;
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            //DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
+            
+            // Aktif checkpoint varsa, checkpoint sahnesini yükle
+            if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+            {
+                int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
+                int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+                
+                // Farklı sahnedeyse, checkpoint sahnesini yükle
+                if (checkpointSceneIndex != currentSceneIndex)
+                {
+                    Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
+                }
+            }
         }
         else
         {
@@ -26,7 +43,21 @@ public class SceneManager : MonoBehaviour
 
     private void Start()
     {
-        
+        // Start'ta yeniden kontrol - çoğu Unity örneğinin Awake'ten sonra başlatıldığından emin olmak için
+        if (isFirstSceneLoad && PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+        {
+            int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
+            int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+            string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            
+            Debug.Log($"[SCENE MANAGER START] Current Scene: {currentSceneName} (Index: {currentSceneIndex}), Checkpoint Scene: {checkpointSceneIndex}");
+            
+            if (checkpointSceneIndex != currentSceneIndex)
+            {
+                Debug.Log($"[SCENE MANAGER START] Loading checkpoint scene: {checkpointSceneIndex}");
+                LoadBossArena(checkpointSceneIndex);
+            }
+        }
     }
 
     public void CallLoadActiveScene(float delay)
@@ -42,6 +73,16 @@ public class SceneManager : MonoBehaviour
     public void LoadBossArena(int sceneIndex)
     {
         StartCoroutine(LoadSceneWithTransition(sceneIndex));
+    }
+    
+    public void LoadCheckpointScene()
+    {
+        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+        {
+            int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
+            Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
+        }
     }
     
     private IEnumerator LoadSceneWithTransition(int sceneIndex)
@@ -85,10 +126,50 @@ public class SceneManager : MonoBehaviour
 
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
+        string sceneName = scene.name;
+        int sceneIndex = scene.buildIndex;
+        Debug.Log($"[SCENE LOADED] Scene: {sceneName} (Index: {sceneIndex})");
+        
         Player player = PlayerManager.instance?.player;
         if (player != null)
         {
-            // PlayerSpawnPoint'i bul
+            // Checkpoint kontrol et
+            if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+            {
+                int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
+                int currentSceneIndex = scene.buildIndex;
+                
+                Debug.Log($"[SCENE LOADED] Checkpoint Scene: {checkpointSceneIndex}, Current Scene: {currentSceneIndex}");
+                
+                // Eğer yüklenen sahne checkpoint'in olduğu sahne ise
+                if (currentSceneIndex == checkpointSceneIndex)
+                {
+                    float x = PlayerPrefs.GetFloat("CheckpointX");
+                    float y = PlayerPrefs.GetFloat("CheckpointY");
+                    Vector2 checkpointPosition = new Vector2(x, y);
+                    
+                    // Oyuncuyu checkpoint konumuna ışınla
+                    player.gameObject.SetActive(true);
+                    player.transform.position = checkpointPosition;
+                    player.ResetPlayerFacing();
+                    
+                    // Silahları göster
+                    player.ShowWeapons();
+                    
+                    Debug.Log($"[SCENE LOADED] Player respawned at checkpoint position: ({x}, {y}) in scene {currentSceneIndex}");
+                    return;
+                }
+                else
+                {
+                    Debug.LogWarning($"[SCENE LOADED] Current scene {currentSceneIndex} does not match checkpoint scene {checkpointSceneIndex}");
+                }
+            }
+            else
+            {
+                Debug.Log("[SCENE LOADED] No active checkpoint found. Using spawn point.");
+            }
+            
+            // Checkpoint yoksa veya farklı sahneyi yüklediyse, normal spawn noktasını kullan
             GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
             
             if (spawnPoint != null)
@@ -97,14 +178,19 @@ public class SceneManager : MonoBehaviour
                 // Oyuncuyu spawn noktasına ışınla
                 player.transform.position = spawnPoint.transform.position;
                 player.ResetPlayerFacing();
+                Debug.Log($"[SCENE LOADED] Player spawned at spawn point: ({spawnPoint.transform.position.x}, {spawnPoint.transform.position.y})");
             }
             else
             {
-                Debug.LogWarning("PlayerSpawnPoint bulunamadı! Lütfen sahnede 'PlayerSpawnPoint' tag'li bir obje olduğundan emin olun.");
+                Debug.LogWarning("[SCENE LOADED] PlayerSpawnPoint bulunamadı! Lütfen sahnede 'PlayerSpawnPoint' tag'li bir obje olduğundan emin olun.");
             }
             
             // Silahları göster
             player.ShowWeapons();
+        }
+        else
+        {
+            Debug.LogWarning("[SCENE LOADED] PlayerManager.instance.player reference is null!");
         }
     }
     
