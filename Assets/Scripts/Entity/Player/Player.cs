@@ -435,7 +435,7 @@ public class Player : Entity
         GameObject spawnPoint = GameObject.FindGameObjectWithTag("PlayerSpawnPoint");
         lastCheckpointPosition = spawnPoint != null ? spawnPoint.transform.position : transform.position;
 
-        // Eğer aktif bir checkpoint varsa, onun konumunu kullan
+        // Aktif checkpoint varsa, onun konumunu kullan
         if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
         {
             float x = PlayerPrefs.GetFloat("CheckpointX");
@@ -457,25 +457,24 @@ public class Player : Entity
             // Gerekli değişkenleri sıfırla
             rb.linearVelocity = Vector2.zero;
             
-            // Eğer aktif bir checkpoint varsa oraya, yoksa spawn noktasına ışınla
+            // Checkpoint kontrolü
             if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
             {
-                // Şu anki sahne indeksini kontrol et
+                // Sahne kontrolü
                 int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
                 int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
                 
-                // Eğer checkpoint farklı bir sahnedeyse, o sahneyi yükle
+                // Farklı sahnedeyse, o sahneyi yükle
                 if (currentSceneIndex != checkpointSceneIndex)
                 {
-                    Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
                     UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
-                    return; // Sahne değiştiği için geri dön
+                    return;
                 }
                 
                 // Checkpoint'ten devam et
                 transform.position = lastCheckpointPosition;
                 
-                // Item ve envanter durumlarını yükle
+                // İtem durumlarını yükle
                 Checkpoint.LoadItemStates(this);
                 if (Inventory.instance != null)
                 {
@@ -492,7 +491,7 @@ public class Player : Entity
                 }
             }
             
-            // Can ve mana değerlerini yenile - tam sayı değerler kullan
+            // Can ve mana değerlerini sıfırla
             float roundedMaxHealth = Mathf.Round(stats.maxHealth.GetValue());
             float roundedMaxMana = Mathf.Round(stats.maxMana.GetValue());
             

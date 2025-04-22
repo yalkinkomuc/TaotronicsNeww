@@ -11,11 +11,9 @@ public class GameManager : MonoBehaviour
     public VFXManager vfxManager;
     public CameraManager cameraManager;
     public QuestManager questManager;
-    // Diğer manager referansları...
 
     private void Awake()
     {
-        // Singleton pattern
         if (Instance == null)
         {
             Instance = this;
@@ -30,7 +28,6 @@ public class GameManager : MonoBehaviour
                 
                 if (checkpointSceneIndex != currentSceneIndex)
                 {
-                    Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
                     UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
                 }
             }
@@ -43,13 +40,12 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // Debug key to test checkpoint loading (can be removed in final build)
+        // Debug key to test checkpoint loading
         if (Input.GetKeyDown(KeyCode.F9))
         {
             if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
             {
                 int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
-                Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
                 UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
             }
         }
@@ -57,7 +53,6 @@ public class GameManager : MonoBehaviour
 
     private void InitializeManagers()
     {
-        // Manager'ların hepsinin doğru şekilde oluştuğundan emin ol
         foreach (Transform child in transform)
         {
             var managerComponent = child.GetComponent<IManager>();
@@ -69,7 +64,7 @@ public class GameManager : MonoBehaviour
     }
 }
 
-// Tüm Manager'lar için ortak interface
+// Interface for manager components
 public interface IManager
 {
     void Initialize();

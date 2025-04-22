@@ -14,132 +14,86 @@ public class CheckpointSelectionScreen : MonoBehaviour
 
     private void Awake()
     {
-        // DontDestroyOnLoad ile korunmasını sağlayalım, ama parent'ı değiştirmeyelim
         if (Checkpoint.persistentSelectionScreen == null)
         {
             Checkpoint.persistentSelectionScreen = this;
             DontDestroyOnLoad(gameObject);
             
-            // Canvas ayarlarını düzenle
+            // Canvas ayarını yap
             Canvas canvas = GetComponent<Canvas>();
             if (canvas != null)
-            {
-                // Canvas'ı Screen Space - Overlay moduna ayarla
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                
-                // Canvas'ın görünürlüğünü sağlayalım ama sorting order değiştirmeyelim
-                // canvas.sortingOrder = 100; // Bu satırı kaldırdık
-            }
         }
         else if (Checkpoint.persistentSelectionScreen != this)
         {
-            // Eğer zaten bir instance varsa ve bu o değilse, bu instance'ı yok et
             Destroy(gameObject);
         }
         
-        // Başlangıçta paneli gizleyelim
+        // Başlangıçta gizle
         if (gameObject.activeSelf)
-        {
             gameObject.SetActive(false);
-        }
     }
     
     private void Start()
     {
-        // Eğer bu nesne Awake'de yok edilmediyse devam et
         if (this == null) return;
         
         // Add button listeners
         if (restButton != null)
-        {
             restButton.onClick.AddListener(OnRestButtonClicked);
-        }
         
         if (upgradeButton != null)
-        {
             upgradeButton.onClick.AddListener(OnUpgradeButtonClicked);
-        }
         
         if (closeButton != null)
-        {
             closeButton.onClick.AddListener(ClosePanel);
-        }
     }
     
-    // Called when Rest button is clicked
     private void OnRestButtonClicked()
     {
-        // Önce coroutine'i başlat, sonra paneli kapat
         StartCoroutine(ReloadSceneWithTransition());
-        
-        // Coroutine içinde paneli kapatacağız, burada yapmıyoruz
     }
     
-    // Called when Upgrade button is clicked
     private void OnUpgradeButtonClicked()
     {
-        // Close selection screen
         gameObject.SetActive(false);
         
-        // Remove this panel from UIInputBlocker
         if (UIInputBlocker.instance != null)
-        {
             UIInputBlocker.instance.RemovePanel(gameObject);
-        }
         
-        // Show upgrade panel
         if (upgradePanel != null)
         {
-            Player player = PlayerManager.instance.player;
+            Player player = PlayerManager.instance?.player;
             if (player != null)
             {
                 PlayerStats playerStats = player.GetComponent<PlayerStats>();
                 if (playerStats != null)
-                {
                     upgradePanel.Show(playerStats);
-                }
             }
         }
     }
     
-    // Show panel
     public void ShowPanel()
     {
-        // Canvas'ı aktif olduğundan emin ol
         Canvas canvas = GetComponent<Canvas>();
         if (canvas != null)
-        {
-            // Canvas'ı Screen Space - Overlay moduna getir
-            //canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            
-            // En üstte görünmesi için yüksek sorting order ver
             canvas.sortingOrder = 100;
-        }
         
-        // Oyuncunun etkileşimini engelle
         if (UIInputBlocker.instance != null)
-        {
             UIInputBlocker.instance.AddPanel(gameObject);
-        }
         
-        // Paneli aktifleştir
         gameObject.SetActive(true);
         
-        // Butonların erişilebilir olduğundan emin ol
+        // Butonların erişilebilirliğini kontrol et
         if (restButton != null) restButton.interactable = true;
         if (upgradeButton != null) upgradeButton.interactable = true;
         if (closeButton != null) closeButton.interactable = true;
-        
-        // UI scale'inin doğru olduğunu kontrol et
-        //transform.localScale = Vector3.one;
     }
     
-    // Close panel
     public void ClosePanel()
     {
         gameObject.SetActive(false);
         
-        // Remove from UIInputBlocker and re-enable input
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
@@ -150,177 +104,135 @@ public class CheckpointSelectionScreen : MonoBehaviour
     // Oyuncunun konumunu ve stat değerlerini checkpoint olarak kaydet
     private void SavePlayerPosition()
     {
-        Player player = PlayerManager.instance.player;
-        if (player != null)
+        Player player = PlayerManager.instance?.player;
+        if (player == null) return;
+        
+        // Checkpoint bilgilerini kaydet
+        PlayerPrefs.SetInt("CheckpointActivated", 1);
+        PlayerPrefs.SetFloat("CheckpointX", player.transform.position.x);
+        PlayerPrefs.SetFloat("CheckpointY", player.transform.position.y);
+        
+        // Sahne indeksini kaydet
+        int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        PlayerPrefs.SetInt("CheckpointSceneIndex", currentSceneIndex);
+        
+        // Oyuncu stat değerlerini kaydet
+        PlayerStats playerStats = player.GetComponent<PlayerStats>();
+        if (playerStats != null)
         {
-            // 1. Checkpoint aktif et
-            PlayerPrefs.SetInt("CheckpointActivated", 1);
+            // Temel değerleri kaydet
+            PlayerPrefs.SetInt("PlayerLevel", playerStats.GetLevel());
+            PlayerPrefs.SetFloat("PlayerMaxHealth", playerStats.maxHealth.GetValue());
+            PlayerPrefs.SetFloat("PlayerMaxMana", playerStats.maxMana.GetValue());
+            PlayerPrefs.SetFloat("PlayerBaseDamage", playerStats.baseDamage.GetValue());
+            PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
             
-            // 2. Konumu kaydet
-            PlayerPrefs.SetFloat("CheckpointX", player.transform.position.x);
-            PlayerPrefs.SetFloat("CheckpointY", player.transform.position.y);
+            // Deneyim değerlerini kaydet
+            System.Type type = playerStats.GetType();
+            int experience = (int)type.GetField("experience", System.Reflection.BindingFlags.Instance | 
+                                             System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
+            int experienceToNextLevel = (int)type.GetField("experienceToNextLevel", System.Reflection.BindingFlags.Instance | 
+                                                        System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
             
-            // Şu anki sahne indeksini kaydet
-            int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            PlayerPrefs.SetInt("CheckpointSceneIndex", currentSceneIndex);
-            Debug.Log($"Checkpoint saved at Scene: {currentSceneIndex}, Position: ({player.transform.position.x}, {player.transform.position.y})");
-            
-            // 3. Oyuncu stat değerlerini kaydet
-            PlayerStats playerStats = player.GetComponent<PlayerStats>();
-            if (playerStats != null)
-            {
-                // Seviye ve stat değerlerini kaydet
-                PlayerPrefs.SetInt("PlayerLevel", playerStats.GetLevel());
-                PlayerPrefs.SetFloat("PlayerMaxHealth", playerStats.maxHealth.GetValue());
-                PlayerPrefs.SetFloat("PlayerMaxMana", playerStats.maxMana.GetValue());
-                PlayerPrefs.SetFloat("PlayerBaseDamage", playerStats.baseDamage.GetValue());
-                PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
-                
-                // Deneyim puanlarını ve bir sonraki seviye için gerekli deneyimi kaydet
-                // PlayerStats içindeki private field'lara reflection kullanarak erişiyoruz
-                System.Type type = playerStats.GetType();
-                int experience = (int)type.GetField("experience", System.Reflection.BindingFlags.Instance | 
-                                                 System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
-                int experienceToNextLevel = (int)type.GetField("experienceToNextLevel", System.Reflection.BindingFlags.Instance | 
-                                                            System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
-                
-                PlayerPrefs.SetInt("PlayerExperience", experience);
-                PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
-                
-                Debug.Log($"Oyuncu değerleri kaydedildi: Seviye={playerStats.GetLevel()}, MaxHP={playerStats.maxHealth.GetValue()}, MaxMana={playerStats.maxMana.GetValue()}, XP={experience}/{experienceToNextLevel}");
-            }
-            
-            // 4. Değişiklikleri kaydet
-            PlayerPrefs.Save();
+            PlayerPrefs.SetInt("PlayerExperience", experience);
+            PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
         }
+        
+        PlayerPrefs.Save();
     }
     
-    // Oyuncunun canını ve manasını doldur, ve değerlerini yükle
+    // Oyuncunun can ve mana değerlerini doldur
     private void HealPlayer()
     {
-        Player player = PlayerManager.instance.player;
-        if (player != null)
+        Player player = PlayerManager.instance?.player;
+        if (player == null) return;
+        
+        PlayerStats playerStats = player.GetComponent<PlayerStats>();
+        if (playerStats != null)
         {
-            PlayerStats playerStats = player.GetComponent<PlayerStats>();
-            if (playerStats != null)
+            // Kaydedilmiş stat değerlerini yükle
+            if (PlayerPrefs.HasKey("PlayerMaxHealth") && PlayerPrefs.HasKey("PlayerMaxMana"))
             {
-                // 1. Kaydedilmiş stat değerlerini yükle (eğer varsa)
-                if (PlayerPrefs.HasKey("PlayerMaxHealth") && PlayerPrefs.HasKey("PlayerMaxMana"))
-                {
-                    // Stat değerlerini yükle - Eğer bir upgrade yapıldıysa bu değerler farklı olacak
-                    float savedMaxHealth = PlayerPrefs.GetFloat("PlayerMaxHealth");
-                    float savedMaxMana = PlayerPrefs.GetFloat("PlayerMaxMana");
-                    float savedBaseDamage = PlayerPrefs.GetFloat("PlayerBaseDamage");
-                    int savedLevel = PlayerPrefs.GetInt("PlayerLevel", 1);
-                    int savedExperience = PlayerPrefs.GetInt("PlayerExperience", 0);
-                    int savedExperienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
-                    int savedSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
-                    
-                    // MaxHealth, MaxMana ve Damage değerlerini yükle
-                    // Bu değerler level system veya upgrade panel tarafından değiştirilmiş olabilir
-                    // Burada mevcut değerler yerine kaydedilmiş değerleri kullanıyoruz
-                    
-                    // Önce seviyeyi ayarla
-                    if (savedLevel > 1)
-                    {
-                        playerStats.SetLevel(savedLevel);
-                    }
-                    
-                    // Deneyim puanlarını ve bir sonraki seviye için gerekli deneyimi ayarla
-                    System.Type type = playerStats.GetType();
-                    type.GetField("experience", System.Reflection.BindingFlags.Instance | 
-                                System.Reflection.BindingFlags.NonPublic).SetValue(playerStats, savedExperience);
-                    type.GetField("experienceToNextLevel", System.Reflection.BindingFlags.Instance | 
-                                System.Reflection.BindingFlags.NonPublic).SetValue(playerStats, savedExperienceToNextLevel);
-                    
-                    // Skill points değerini ayarla
-                    type.GetField("availableSkillPoints", System.Reflection.BindingFlags.Instance | 
-                                System.Reflection.BindingFlags.NonPublic).SetValue(playerStats, savedSkillPoints);
-                    
-                    // Burada direkt modifierlara erişemediğimiz için farkları hesaplayıp ekliyoruz
-                    float currentMaxHealth = playerStats.maxHealth.GetValue();
-                    float currentMaxMana = playerStats.maxMana.GetValue();
-                    float currentBaseDamage = playerStats.baseDamage.GetValue();
-                    
-                    // Eğer kaydedilen değerler mevcut değerlerden farklıysa, farkı ekle
-                    if (savedMaxHealth > currentMaxHealth)
-                    {
-                        float healthDiff = savedMaxHealth - currentMaxHealth;
-                        playerStats.maxHealth.AddModifier(healthDiff, StatModifierType.Equipment);
-                        Debug.Log($"Max Health değeri güncellendi: {currentMaxHealth} -> {savedMaxHealth}");
-                    }
-                    
-                    if (savedMaxMana > currentMaxMana)
-                    {
-                        float manaDiff = savedMaxMana - currentMaxMana;
-                        playerStats.maxMana.AddModifier(manaDiff, StatModifierType.Equipment);
-                        Debug.Log($"Max Mana değeri güncellendi: {currentMaxMana} -> {savedMaxMana}");
-                    }
-                    
-                    if (savedBaseDamage > currentBaseDamage)
-                    {
-                        float damageDiff = savedBaseDamage - currentBaseDamage;
-                        playerStats.baseDamage.AddModifier(damageDiff, StatModifierType.Equipment);
-                        Debug.Log($"Base Damage değeri güncellendi: {currentBaseDamage} -> {savedBaseDamage}");
-                    }
-                }
+                // Stat değerlerini al
+                float savedMaxHealth = PlayerPrefs.GetFloat("PlayerMaxHealth");
+                float savedMaxMana = PlayerPrefs.GetFloat("PlayerMaxMana");
+                float savedBaseDamage = PlayerPrefs.GetFloat("PlayerBaseDamage");
+                int savedLevel = PlayerPrefs.GetInt("PlayerLevel", 1);
+                int savedExperience = PlayerPrefs.GetInt("PlayerExperience", 0);
+                int savedExperienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
+                int savedSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
                 
-                // 2. Can ve manayı doldur - Artık güncellenmiş max değerleri kullanacak
-                playerStats.currentHealth = playerStats.maxHealth.GetValue();
-                playerStats.currentMana = playerStats.maxMana.GetValue();
+                // Seviyeyi ayarla
+                if (savedLevel > 1)
+                    playerStats.SetLevel(savedLevel);
                 
-                // 3. Health Bar'ı güncelle
-                if (player.healthBar != null)
-                {
-                    player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
-                }
+                // Deneyim ve skill point değerlerini ayarla
+                System.Type type = playerStats.GetType();
+                type.GetField("experience", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .SetValue(playerStats, savedExperience);
+                    
+                type.GetField("experienceToNextLevel", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .SetValue(playerStats, savedExperienceToNextLevel);
+                    
+                type.GetField("availableSkillPoints", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .SetValue(playerStats, savedSkillPoints);
                 
-                // 4. UI güncellemesi için UpdateLevelUI metodunu çağır
-                System.Type playerStatsType = playerStats.GetType();
-                var updateLevelUIMethod = playerStatsType.GetMethod("UpdateLevelUI", System.Reflection.BindingFlags.Instance | 
-                                                      System.Reflection.BindingFlags.NonPublic);
-                if (updateLevelUIMethod != null)
-                {
-                    updateLevelUIMethod.Invoke(playerStats, null);
-                }
-                
-                Debug.Log($"Oyuncunun canı ve manası dolduruldu: HP={playerStats.currentHealth}/{playerStats.maxHealth.GetValue()}, Mana={playerStats.currentMana}/{playerStats.maxMana.GetValue()}");
-                
-                // 5. Değişiklikleri kaydet - iyileştirme sonrası en güncel değerleri kaydet
-                SavePlayerPosition();
+                // Değerleri karşılaştırıp farklıysa güncelle
+                ApplyStatDifference(playerStats.maxHealth, savedMaxHealth);
+                ApplyStatDifference(playerStats.maxMana, savedMaxMana);
+                ApplyStatDifference(playerStats.baseDamage, savedBaseDamage);
             }
-            else
-            {
-                // PlayerStats bulunamazsa basit iyileştirme yap
-                player.stats.currentHealth = player.stats.maxHealth.GetValue();
-                player.stats.currentMana = player.stats.maxMana.GetValue();
-                
-                if (player.healthBar != null)
-                {
-                    player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
-                }
-                
-                Debug.Log("Oyuncunun canı ve manası dolduruldu (basit mod)");
-            }
+            
+            // Can ve manayı doldur
+            playerStats.currentHealth = playerStats.maxHealth.GetValue();
+            playerStats.currentMana = playerStats.maxMana.GetValue();
+            
+            // Health Bar'ı güncelle
+            if (player.healthBar != null)
+                player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+            
+            // UI'ı güncelle
+            System.Type playerStatsType = playerStats.GetType();
+            var updateLevelUIMethod = playerStatsType.GetMethod("UpdateLevelUI", System.Reflection.BindingFlags.Instance | 
+                                                  System.Reflection.BindingFlags.NonPublic);
+            if (updateLevelUIMethod != null)
+                updateLevelUIMethod.Invoke(playerStats, null);
+            
+            // Değişiklikleri kaydet
+            SavePlayerPosition();
+        }
+        else if (player.stats != null)
+        {
+            // Basit iyileştirme
+            player.stats.currentHealth = player.stats.maxHealth.GetValue();
+            player.stats.currentMana = player.stats.maxMana.GetValue();
+            
+            if (player.healthBar != null)
+                player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
         }
     }
     
-    // Reload scene with transition effect
+    // Stat değerlerini karşılaştırıp fark varsa uygula
+    private void ApplyStatDifference(Stat stat, float savedValue)
+    {
+        float currentValue = stat.GetValue();
+        if (savedValue > currentValue)
+        {
+            float diff = savedValue - currentValue;
+            stat.AddModifier(diff, StatModifierType.Equipment);
+        }
+    }
+    
+    // Sahneyi yeniden yükle
     private System.Collections.IEnumerator ReloadSceneWithTransition()
     {
-        // Önce heal işlemini yap
         HealPlayer();
-        
-        // Şimdi paneli kapat - Coroutine başlatıldıktan sonra güvenli
         gameObject.SetActive(false);
         
-        // Remove this panel from UIInputBlocker
         if (UIInputBlocker.instance != null)
-        {
             UIInputBlocker.instance.RemovePanel(gameObject);
-        }
         
-        // Create transition effect
+        // Geçiş efekti oluştur
         GameObject transitionEffectPrefab = Resources.Load<GameObject>("SceneTransitionEffect");
         if (transitionEffectPrefab != null)
         {
@@ -328,28 +240,21 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
         else
         {
-            // Manually create transition effect
             GameObject transitionObject = new GameObject("SceneTransitionEffect");
             transitionObject.AddComponent<SceneTransitionEffect>();
         }
         
-        // Wait for transition animation
         yield return new WaitForSeconds(0.5f);
         
-        // Reload current scene
         Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
         UnityEngine.SceneManagement.SceneManager.LoadScene(currentScene.name);
     }
 
     private void OnDisable()
     {
-        // Re-enable input when panel is deactivated
         if (UIInputBlocker.instance != null)
         {
-            // Remove panel from InputBlocker
             UIInputBlocker.instance.RemovePanel(gameObject);
-            
-            // Force enable input
             UIInputBlocker.instance.EnableGameplayInput(true);
         }
     }

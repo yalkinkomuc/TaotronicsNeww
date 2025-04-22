@@ -14,13 +14,11 @@ public class Checkpoint : MonoBehaviour, IInteractable
     [SerializeField] private Color activeColor = new Color(1f, 1f, 0f, 0.5f);
     [SerializeField] private Color inactiveColor = new Color(0.5f, 0.5f, 0.5f, 0.2f);
     
-    [Header("Upgrade Panel")]
+    [Header("References")]
     [SerializeField] private UpgradePanel upgradePanel;
-    
-    [Header("Selection Screen")]
     [SerializeField] private CheckpointSelectionScreen selectionScreen;
     
-    // Statik referanslar ekleyelim ki sahneler arasında kaybolmasın
+    // Statik referanslar
     public static UpgradePanel persistentUpgradePanel;
     public static CheckpointSelectionScreen persistentSelectionScreen;
     
@@ -36,7 +34,6 @@ public class Checkpoint : MonoBehaviour, IInteractable
             UpdateLightEffect();
         }
         
-        // Kalıcı panelleri bul veya oluştur
         FindOrCreateUIElements();
     }
     
@@ -44,42 +41,30 @@ public class Checkpoint : MonoBehaviour, IInteractable
     {
         // Önce statik referanslara bak
         if (persistentUpgradePanel != null)
-        {
             upgradePanel = persistentUpgradePanel;
-        }
         
         if (persistentSelectionScreen != null)
-        {
             selectionScreen = persistentSelectionScreen;
-        }
         
-        // Upgrade Panel bulma veya yaratma
+        // Upgrade Panel bulma
         if (upgradePanel == null)
         {
             upgradePanel = FindFirstObjectByType<UpgradePanel>();
-            
             if (upgradePanel == null)
-            {
-                Debug.LogWarning("UpgradePanel bulunamadı! Lütfen sahneye UpgradePanel ekleyin.");
-            }
+                Debug.LogWarning("UpgradePanel bulunamadı!");
         }
         
-        // Selection Screen bulma veya yaratma
+        // Selection Screen bulma
         if (selectionScreen == null)
         {
             selectionScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
-            
             if (selectionScreen == null)
-            {
-                Debug.LogWarning("CheckpointSelectionScreen bulunamadı! Lütfen sahneye CheckpointSelectionScreen ekleyin.");
-            }
+                Debug.LogWarning("CheckpointSelectionScreen bulunamadı!");
         }
         
-        // Eğer selection screen ve upgrade panel varsa, aralarındaki bağlantıyı kur
+        // Bağlantıyı kur
         if (selectionScreen != null && upgradePanel != null)
-        {
             selectionScreen.upgradePanel = upgradePanel;
-        }
     }
 
     public void Interact()
@@ -95,14 +80,12 @@ public class Checkpoint : MonoBehaviour, IInteractable
         if (selectionScreen != null)
         {
             selectionScreen.ShowPanel();
-            
-            // Etkileşim promptunu gizle
             if (interactionPrompt != null)
                 interactionPrompt.SetActive(false);
         }
         else
         {
-            // Eğer selection screen yoksa, doğrudan iyileştir ve upgrade panelini göster (eski davranış)
+            // Eğer selection screen yoksa, doğrudan iyileştir ve upgrade panelini göster
             HealPlayer();
             ShowUpgradePanel();
         }
@@ -110,24 +93,19 @@ public class Checkpoint : MonoBehaviour, IInteractable
     
     private void ShowUpgradePanel()
     {
-        // Eğer panel veya oyuncu yoksa işlem yapma
         if (upgradePanel == null)
             return;
         
-        // Oyuncuyu bul
-        Player player = PlayerManager.instance.player;
+        Player player = PlayerManager.instance?.player;
         if (player == null)
             return;
             
-        // PlayerStats'i al 
         PlayerStats playerStats = player.GetComponent<PlayerStats>();
         if (playerStats == null)
             return;
             
-        // Paneli göster
         upgradePanel.Show(playerStats);
         
-        // Etkileşim promtunu gizle
         if (interactionPrompt != null)
             interactionPrompt.SetActive(false);
     }
@@ -135,9 +113,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
     private void UpdateLightEffect()
     {
         if (checkpointLight != null)
-        {
             checkpointLight.color = isActivated ? activeColor : inactiveColor;
-        }
     }
 
     public void ShowInteractionPrompt()
@@ -163,43 +139,34 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     private void HealPlayer()
     {
-        Player player = PlayerManager.instance.player;
-        if (player != null)
+        Player player = PlayerManager.instance?.player;
+        if (player == null) return;
+        
+        PlayerStats playerStats = player.GetComponent<PlayerStats>();
+        if (playerStats != null)
         {
-            PlayerStats playerStats = player.GetComponent<PlayerStats>();
-            if (playerStats != null)
-            {
-                // Tam sayı değerlere yuvarla
-                float roundedMaxHealth = Mathf.Round(playerStats.maxHealth.GetValue());
-                float roundedMaxMana = Mathf.Round(playerStats.maxMana.GetValue());
-                
-                // Sağlık ve manayı doğrudan SetHealth metodu ile ayarlayalım
-                playerStats.SetHealth(roundedMaxHealth);
-                playerStats.currentMana = roundedMaxMana;
-                
-                // Health bar'ı güncelle - player sınıfı kendisi güncelleme yapabilir
-                if (player.healthBar != null)
-                {
-                    player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
-                    Debug.Log($"Checkpoint: Health Bar güncellendi: {Mathf.Round(playerStats.currentHealth)}/{Mathf.Round(playerStats.maxHealth.GetValue())}");
-                }
-            }
-            else
-            {
-                // Tam sayı değerlere yuvarla
-                float roundedMaxHealth = Mathf.Round(player.stats.maxHealth.GetValue());
-                float roundedMaxMana = Mathf.Round(player.stats.maxMana.GetValue());
-                
-                // PlayerStats bulunamazsa basit iyileştirme yap
-                player.stats.currentHealth = roundedMaxHealth;
-                player.stats.currentMana = roundedMaxMana;
-                
-                if (player.healthBar != null)
-                {
-                    player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
-                    Debug.Log($"Checkpoint: Health Bar güncellendi (basit mod): {Mathf.Round(player.stats.currentHealth)}/{Mathf.Round(player.stats.maxHealth.GetValue())}");
-                }
-            }
+            // Tam sayı değerlere yuvarla
+            float roundedMaxHealth = Mathf.Round(playerStats.maxHealth.GetValue());
+            float roundedMaxMana = Mathf.Round(playerStats.maxMana.GetValue());
+            
+            playerStats.SetHealth(roundedMaxHealth);
+            playerStats.currentMana = roundedMaxMana;
+            
+            // Health bar'ı güncelle
+            if (player.healthBar != null)
+                player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+        }
+        else if (player.stats != null)
+        {
+            // Basit iyileştirme
+            float roundedMaxHealth = Mathf.Round(player.stats.maxHealth.GetValue());
+            float roundedMaxMana = Mathf.Round(player.stats.maxMana.GetValue());
+            
+            player.stats.currentHealth = roundedMaxHealth;
+            player.stats.currentMana = roundedMaxMana;
+            
+            if (player.healthBar != null)
+                player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
         }
     }
 
@@ -214,16 +181,14 @@ public class Checkpoint : MonoBehaviour, IInteractable
         int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
         PlayerPrefs.SetInt("CheckpointSceneIndex", currentSceneIndex);
         
-        Debug.Log($"Checkpoint saved at Scene: {currentSceneIndex}, Position: ({transform.position.x}, {transform.position.y})");
-
         // Oyuncu stat değerlerini kaydet
-        Player player = PlayerManager.instance.player;
+        Player player = PlayerManager.instance?.player;
         if (player != null)
         {
             PlayerStats playerStats = player.GetComponent<PlayerStats>();
             if (playerStats != null)
             {
-                // Seviye ve stat değerlerini kaydet
+                // Temel değerleri kaydet
                 PlayerPrefs.SetInt("PlayerLevel", playerStats.GetLevel());
                 PlayerPrefs.SetFloat("PlayerMaxHealth", playerStats.maxHealth.GetValue());
                 PlayerPrefs.SetFloat("PlayerMaxMana", playerStats.maxMana.GetValue());
@@ -231,7 +196,6 @@ public class Checkpoint : MonoBehaviour, IInteractable
                 PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
                 
                 // Experience değerlerini kaydet
-                // Reflection ile private field'lara erişiyoruz
                 System.Type type = playerStats.GetType();
                 int experience = (int)type.GetField("experience", System.Reflection.BindingFlags.Instance | 
                                                  System.Reflection.BindingFlags.NonPublic).GetValue(playerStats);
@@ -251,28 +215,18 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     private void SaveItemStates()
     {
-        // Bumerang durumunu kaydet
-        Player player = PlayerManager.instance.player;
-        if (player != null)
-        {
-            // Bumerang durumu
-            if (player.boomerangWeapon != null)
-            {
-                PlayerPrefs.SetInt("HasBoomerang", player.boomerangWeapon.gameObject.activeInHierarchy ? 1 : 0);
-            }
+        Player player = PlayerManager.instance?.player;
+        if (player == null) return;
+        
+        // Silah durumlarını kaydet
+        if (player.boomerangWeapon != null)
+            PlayerPrefs.SetInt("HasBoomerang", player.boomerangWeapon.gameObject.activeInHierarchy ? 1 : 0);
 
-            // Spellbook durumu
-            if (player.spellbookWeapon != null)
-            {
-                PlayerPrefs.SetInt("HasSpellbook", player.spellbookWeapon.gameObject.activeInHierarchy ? 1 : 0);
-            }
+        if (player.spellbookWeapon != null)
+            PlayerPrefs.SetInt("HasSpellbook", player.spellbookWeapon.gameObject.activeInHierarchy ? 1 : 0);
 
-            // Kılıç durumu
-            if (player.swordWeapon != null)
-            {
-                PlayerPrefs.SetInt("HasSword", player.swordWeapon.gameObject.activeInHierarchy ? 1 : 0);
-            }
-        }
+        if (player.swordWeapon != null)
+            PlayerPrefs.SetInt("HasSword", player.swordWeapon.gameObject.activeInHierarchy ? 1 : 0);
     }
 
     public static void LoadItemStates(Player player)
@@ -305,7 +259,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
     {
         return isActivated;
     }
-
+    
     // Kaydedilmiş checkpoint sahne indeksini döndürür
     public static int GetSavedSceneIndex()
     {
