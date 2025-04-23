@@ -56,7 +56,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
 
     private void OnRestButtonClicked()
     {
-        StartCoroutine(ReloadSceneWithTransition());
+        StartSceneTransition();
     }
     
     private void OnUpgradeButtonClicked()
@@ -228,31 +228,54 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
     }
     
-    // Sahneyi yeniden yükle
-    private System.Collections.IEnumerator ReloadSceneWithTransition()
+    // Bu kod SceneTransitionTrigger sınıfından direkt kopyalandı ve uyarlandı
+    private void StartSceneTransition()
     {
+        // Önce oyuncuyu iyileştir
         RestPlayer();
-        gameObject.SetActive(false);
         
+        // UI paneli kapat
+        gameObject.SetActive(false);
         if (UIInputBlocker.instance != null)
             UIInputBlocker.instance.RemovePanel(gameObject);
+    
+        // Oyuncu silahlarını geçici olarak gizle
+        Player player = PlayerManager.instance?.player;
+        if (player != null)
+        {
+            player.HideWeapons();
+            
+            // Hareketi durdur, kilitlenme olmaması için
+            Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+        }
         
-        // Geçiş efekti oluştur
+        // Geçiş efekti
         GameObject transitionEffectPrefab = Resources.Load<GameObject>("SceneTransitionEffect");
         if (transitionEffectPrefab != null)
         {
             Instantiate(transitionEffectPrefab);
         }
+        
+        // Şu anki sahne index'ini al
+        int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        
+        // Gecikme ile sahne geçişi
+        // İsim karmaşasından kaçınmak için SceneManager'ı doğrudan arayalım
+        SceneManager customSceneManager = FindFirstObjectByType<SceneManager>();
+            
+        if (customSceneManager != null)
+        {
+            customSceneManager.LoadBossArena(currentSceneIndex);
+        }
         else
         {
-            GameObject transitionObject = new GameObject("SceneTransitionEffect");
-            transitionObject.AddComponent<SceneTransitionEffect>();
+            // Unity'nin SceneManager'ını kullan
+            UnityEngine.SceneManagement.SceneManager.LoadScene(currentSceneIndex);
         }
-        
-        yield return new WaitForSeconds(0.5f);
-        
-        Scene currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(currentScene.name);
     }
 
     private void OnDisable()

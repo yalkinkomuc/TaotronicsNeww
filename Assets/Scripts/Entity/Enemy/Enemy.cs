@@ -27,6 +27,9 @@ public class Enemy : Entity
    [HideInInspector] public bool fightBegun = false;
    
    [SerializeField] protected bool isDefeated = false;
+   
+   [Header("Quest Related")]
+   [SerializeField] public bool isQuestEnemy = false; // Kalıcı olarak öldürülecek düşman
 
    protected override void Awake()
    {
@@ -40,6 +43,13 @@ public class Enemy : Entity
    {
       base.Start();
       player = PlayerManager.instance.player;
+      
+      // Eğer bu düşman bir quest düşmanıysa ve daha önce öldürülmüşse, sahne yüklenir yüklenmez yok et
+      if (isQuestEnemy && IsQuestEnemyDefeated())
+      {
+          // Düşman daha önce öldürülmüş, tamamen yok et
+          Destroy(gameObject);
+      }
    }
 
    protected override void Update()
@@ -60,6 +70,33 @@ public class Enemy : Entity
        return base.IsGroundDetected();
    }
 
+   // Düşmanın göreve bağlı olarak daha önce ölüp ölmediğini kontrol et
+   private bool IsQuestEnemyDefeated()
+   {
+       if (string.IsNullOrEmpty(enemyType)) 
+           return false;
+           
+       // Düşmanın kimliğini oluştur
+       string enemyKey = "QuestEnemy_" + enemyType + "_" + transform.position.x.ToString("F2") + "_" + transform.position.y.ToString("F2");
+       
+       // PlayerPrefs'de bu düşmanın öldürülüp öldürülmediğini kontrol et
+       return PlayerPrefs.GetInt(enemyKey, 0) == 1;
+   }
+   
+   // Quest düşmanı olarak işaretle
+   private void MarkQuestEnemyAsDefeated()
+   {
+       if (string.IsNullOrEmpty(enemyType))
+           return;
+           
+       // Düşmanın kimliğini oluştur
+       string enemyKey = "QuestEnemy_" + enemyType + "_" + transform.position.x.ToString("F2") + "_" + transform.position.y.ToString("F2");
+       
+       // Düşmanı yenildi olarak işaretle
+       PlayerPrefs.SetInt(enemyKey, 1);
+       PlayerPrefs.Save();
+   }
+
    public override void Die()
    {
        base.Die();
@@ -74,8 +111,18 @@ public class Enemy : Entity
            // Trigger enemy defeated event
            GameEvents.EnemyDefeated(this);
            
-           // Play animations and destroy after delay
-           //StartCoroutine(DestroyAfterDelay(2f));
+           // Eğer quest düşmanıysa kalıcı olarak işaretle
+           if (isQuestEnemy)
+           {
+               MarkQuestEnemyAsDefeated();
+               // Ve tamamen yok et
+               StartCoroutine(DestroyAfterDelay(2f));
+           }
+           else
+           {
+               // Normal düşmanlar ölünce geçici olarak deaktive olur, sahne yeniden yüklenince tekrar aktifleşir
+               //StartCoroutine(DeactivateAfterDelay(2f));
+           }
        }
    }
    
@@ -83,6 +130,12 @@ public class Enemy : Entity
    {
        yield return new WaitForSeconds(delay);
        Destroy(gameObject);
+   }
+   
+   private IEnumerator DeactivateAfterDelay(float delay)
+   {
+       yield return new WaitForSeconds(delay);
+       gameObject.SetActive(false);
    }
 
    public void AnimationFinishTrigger() => stateMachine.currentState.AnimationFinishTrigger();

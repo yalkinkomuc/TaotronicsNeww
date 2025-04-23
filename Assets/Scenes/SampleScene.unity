@@ -14021,21 +14021,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1655988990}
     m_Modifications:
-    - target: {fileID: 6250526251896533480, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
-      propertyPath: enemyType
-      value: Bandit
-      objectReference: {fileID: 0}
-    - target: {fileID: 6250526251896533480, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
-      propertyPath: isQuestEnemy
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_Name
       value: Bandit_Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -16562,14 +16550,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1655988990}
     m_Modifications:
-    - target: {fileID: 4942335792332284823, guid: 022ad8fbce315534b88ece6ba1781db4, type: 3}
-      propertyPath: enemyType
-      value: Bandit
-      objectReference: {fileID: 0}
-    - target: {fileID: 4942335792332284823, guid: 022ad8fbce315534b88ece6ba1781db4, type: 3}
-      propertyPath: isQuestEnemy
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6590515752889126357, guid: 022ad8fbce315534b88ece6ba1781db4, type: 3}
       propertyPath: m_Name
       value: Bandit_Enemy2

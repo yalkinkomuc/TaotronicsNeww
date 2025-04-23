@@ -14436,6 +14436,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: isQuestEnemy
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: m_Name
       value: Quest_Bandit_Enemy
@@ -29453,6 +29457,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: isQuestEnemy
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: m_Name
       value: Quest_Bandit_Enemy (1)
