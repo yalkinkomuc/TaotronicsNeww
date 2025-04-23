@@ -17,7 +17,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
         if (Checkpoint.persistentSelectionScreen == null)
         {
             Checkpoint.persistentSelectionScreen = this;
-            DontDestroyOnLoad(gameObject);
+           // DontDestroyOnLoad(gameObject);
             
             // Canvas ayarını yap
             Canvas canvas = GetComponent<Canvas>();
@@ -39,6 +39,11 @@ public class CheckpointSelectionScreen : MonoBehaviour
         if (this == null) return;
         
         // Add button listeners
+        SetupButtons();
+    }
+
+    private void SetupButtons()
+    {
         if (restButton != null)
             restButton.onClick.AddListener(OnRestButtonClicked);
         
@@ -48,7 +53,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
         if (closeButton != null)
             closeButton.onClick.AddListener(ClosePanel);
     }
-    
+
     private void OnRestButtonClicked()
     {
         StartCoroutine(ReloadSceneWithTransition());

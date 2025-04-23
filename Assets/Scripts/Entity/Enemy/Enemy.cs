@@ -75,7 +75,7 @@ public class Enemy : Entity
            GameEvents.EnemyDefeated(this);
            
            // Play animations and destroy after delay
-           StartCoroutine(DestroyAfterDelay(2f));
+           //StartCoroutine(DestroyAfterDelay(2f));
        }
    }
    

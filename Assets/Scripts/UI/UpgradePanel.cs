@@ -32,7 +32,7 @@ public class UpgradePanel : MonoBehaviour
         if (Checkpoint.persistentUpgradePanel == null)
         {
             Checkpoint.persistentUpgradePanel = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             
             // Canvas ayarlarını düzenle
             Canvas canvas = GetComponent<Canvas>();
