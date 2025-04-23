@@ -14440,6 +14440,10 @@ PrefabInstance:
       propertyPath: isQuestEnemy
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: uniqueEnemyId
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: m_Name
       value: Quest_Bandit_Enemy
@@ -29459,6 +29463,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: isQuestEnemy
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: uniqueEnemyId
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}

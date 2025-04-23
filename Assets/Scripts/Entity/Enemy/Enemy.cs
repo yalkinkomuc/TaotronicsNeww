@@ -30,6 +30,7 @@ public class Enemy : Entity
    
    [Header("Quest Related")]
    [SerializeField] public bool isQuestEnemy = false; // Kalıcı olarak öldürülecek düşman
+   [SerializeField] private string uniqueEnemyId = ""; // Benzersiz düşman kimliği (elle girilecek)
 
    protected override void Awake()
    {
@@ -37,6 +38,16 @@ public class Enemy : Entity
       capsuleCollider = GetComponent<CapsuleCollider2D>();
       spriteRenderer = GetComponentInChildren<SpriteRenderer>();
       stateMachine = new EnemyStateMachine();
+      
+      // Eğer uniqueEnemyId atanmamışsa, rastgele benzersiz bir ID oluştur
+      if (string.IsNullOrEmpty(uniqueEnemyId) && isQuestEnemy)
+      {
+          // GUID kullan
+          uniqueEnemyId = Guid.NewGuid().ToString();
+          
+          // Debug için mesaj
+          Debug.LogWarning($"Quest düşmanı için ID atanmamış. Otomatik ID oluşturuldu: {uniqueEnemyId}");
+      }
    }
 
    protected override void Start()
@@ -44,10 +55,11 @@ public class Enemy : Entity
       base.Start();
       player = PlayerManager.instance.player;
       
-      // Eğer bu düşman bir quest düşmanıysa ve daha önce öldürülmüşse, sahne yüklenir yüklenmez yok et
+      // Eğer quest düşmanıysa ve öldürülmüşse, tamamen yok et
       if (isQuestEnemy && IsQuestEnemyDefeated())
       {
-          // Düşman daha önce öldürülmüş, tamamen yok et
+          // Quest düşmanı daha önce öldürülmüş, oyun başladığında yok edilecek
+          Debug.Log($"Quest düşmanı önceden öldürülmüş: {uniqueEnemyId}, yok ediliyor.");
           Destroy(gameObject);
       }
    }
@@ -70,31 +82,31 @@ public class Enemy : Entity
        return base.IsGroundDetected();
    }
 
-   // Düşmanın göreve bağlı olarak daha önce ölüp ölmediğini kontrol et
+   // Düşmanın quest düşmanı olarak daha önce öldürülüp öldürülmediğini kontrol et
    private bool IsQuestEnemyDefeated()
    {
-       if (string.IsNullOrEmpty(enemyType)) 
+       // Quest düşmanı değilse veya ID atanmamışsa, öldürülmemiş kabul et
+       if (!isQuestEnemy || string.IsNullOrEmpty(uniqueEnemyId))
            return false;
            
-       // Düşmanın kimliğini oluştur
-       string enemyKey = "QuestEnemy_" + enemyType + "_" + transform.position.x.ToString("F2") + "_" + transform.position.y.ToString("F2");
-       
-       // PlayerPrefs'de bu düşmanın öldürülüp öldürülmediğini kontrol et
+       // Düşmanın durumunu kontrol et
+       string enemyKey = "QuestEnemy_Defeated_" + uniqueEnemyId;
        return PlayerPrefs.GetInt(enemyKey, 0) == 1;
    }
    
-   // Quest düşmanı olarak işaretle
+   // Quest düşmanını öldürüldü olarak işaretle
    private void MarkQuestEnemyAsDefeated()
    {
-       if (string.IsNullOrEmpty(enemyType))
+       // Quest düşmanı değilse veya ID atanmamışsa, işlem yapma
+       if (!isQuestEnemy || string.IsNullOrEmpty(uniqueEnemyId))
            return;
            
-       // Düşmanın kimliğini oluştur
-       string enemyKey = "QuestEnemy_" + enemyType + "_" + transform.position.x.ToString("F2") + "_" + transform.position.y.ToString("F2");
-       
-       // Düşmanı yenildi olarak işaretle
+       // Düşmanı kalıcı olarak öldürüldü şeklinde işaretle
+       string enemyKey = "QuestEnemy_Defeated_" + uniqueEnemyId;
        PlayerPrefs.SetInt(enemyKey, 1);
        PlayerPrefs.Save();
+       
+       Debug.Log($"Quest düşmanı kalıcı olarak öldürüldü: {uniqueEnemyId}");
    }
 
    public override void Die()
