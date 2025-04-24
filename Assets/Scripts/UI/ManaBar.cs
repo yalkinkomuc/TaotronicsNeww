@@ -10,8 +10,28 @@ public class ManaBar : MonoBehaviour
     private float targetFillAmount;
     private float currentFillAmount;
 
+    private void Awake()
+    {
+        InitializeComponents();
+    }
+
     private void Start()
     {
+        InitializeComponents();
+        
+        if (stats != null && manaBarFill != null)
+        {
+            currentFillAmount = stats.currentMana / stats.maxMana.GetValue();
+            targetFillAmount = currentFillAmount;
+            manaBarFill.fillAmount = currentFillAmount;
+            manaBarFill.color = Color.blue;
+        }
+    }
+    
+    private void InitializeComponents()
+    {
+        if (stats != null) return;
+        
         stats = GetComponent<CharacterStats>();
         if (stats == null)
         {
@@ -21,31 +41,30 @@ public class ManaBar : MonoBehaviour
         if (stats == null)
         {
             Debug.LogError("ManaBar: CharacterStats component'i bulunamadı!");
-            return;
         }
 
         if (manaBarFill == null)
         {
             Debug.LogError("ManaBar: Mana Bar Fill referansı atanmamış!");
-            return;
         }
-
-        currentFillAmount = 1f;
-        targetFillAmount = 1f;
-        manaBarFill.color = Color.blue;
     }
 
     private void Update()
     {
         if (stats == null || manaBarFill == null) return;
 
-        targetFillAmount = stats.currentMana / stats.maxMana.GetValue();
+        targetFillAmount = Mathf.Clamp01(stats.currentMana / stats.maxMana.GetValue());
         currentFillAmount = Mathf.Lerp(currentFillAmount, targetFillAmount, Time.deltaTime * smoothSpeed);
         manaBarFill.fillAmount = currentFillAmount;
     }
 
     public void UpdateManaBar(float currentMana, float maxMana)
     {
-        targetFillAmount = currentMana / maxMana;
+        if (manaBarFill == null) return;
+        
+        targetFillAmount = Mathf.Clamp01(currentMana / maxMana);
+        manaBarFill.fillAmount = Mathf.Lerp(manaBarFill.fillAmount, targetFillAmount, Time.deltaTime * smoothSpeed * 3f);
+        
+        Debug.Log($"ManaBar updated: {currentMana}/{maxMana} = {targetFillAmount}");
     }
 } 

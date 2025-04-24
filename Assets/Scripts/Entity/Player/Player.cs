@@ -128,7 +128,7 @@ public class Player : Entity
     //[SerializeField] private int shardCount = 3;
     
     [Header("Mana Costs")]
-    [SerializeField] private float spell1ManaCost = 20f;
+    [SerializeField] public float spell1ManaCost = 20f;
     [SerializeField] public float spell2ManaDrainPerSecond = 5f; // Saniyede tüketilecek mana
     [SerializeField] public float voidSkillManaCost = 40f;
 
@@ -400,17 +400,50 @@ public class Player : Entity
 
     public bool HasEnoughMana(float manaCost)
     {
+        // Mana negatif veya sıfır olamaz
+        if (manaCost <= 0) return true;
+        
+        // Yeterli mana var mı?
         return stats.currentMana >= manaCost;
     }
 
     public bool UseMana(float manaCost)
     {
-        return stats.UseMana(manaCost);
+        // Negatif veya sıfır mana harcayamaz
+        if (manaCost <= 0) return true;
+        
+        // Önce yeterli mana var mı kontrol et
+        if (stats.currentMana < manaCost) {
+            Debug.LogWarning($"Tried to use mana but not enough! Required: {manaCost}, Current: {stats.currentMana}");
+            return false;
+        }
+        
+        // Manayı doğrudan ayarla (stats.UseMana yerine)
+        stats.currentMana -= manaCost;
+        Debug.Log($"Mana used: {manaCost}. Current mana: {stats.currentMana}/{stats.maxMana.GetValue()}");
+        
+        // UI güncellemesi yapıyoruz
+        ManaBar manaBar = GetComponent<ManaBar>();
+        if (manaBar != null) {
+            manaBar.UpdateManaBar(stats.currentMana, stats.maxMana.GetValue());
+        }
+        
+        return true;
     }
     
     private void RefillMana()
     {
-        stats.currentMana = stats.maxMana.GetValue();
+        // Mana yenileme hızı
+        float manaRegenRate = stats.maxMana.GetValue() * 0.035f; // Max mananın %1'i her frame
+        
+        // Mana değerini arttır ama max değeri geçme
+        stats.currentMana = Mathf.Min(stats.currentMana + manaRegenRate * Time.deltaTime, stats.maxMana.GetValue());
+        
+        // UI güncellemesi
+        ManaBar manaBar = GetComponent<ManaBar>();
+        if (manaBar != null) {
+            manaBar.UpdateManaBar(stats.currentMana, stats.maxMana.GetValue());
+        }
     }
 
     #endregion
@@ -740,10 +773,11 @@ public class Player : Entity
         if (!CanCastSpells() || IsGroundDetected() == false)
             return;
 
-        // Spell1 kontrolü
+        // Spell1 kontrolü - sadece state değiştir, mana kullanma
         if (playerInput.spell1Input && HasEnoughMana(spell1ManaCost))
         {
-            UseMana(spell1ManaCost);
+            // Artık mana burada kullanılmıyor, sadece state değişiyor
+            // UseMana(spell1ManaCost); - Çift harcama yapıldığı için kaldırıldı
             stateMachine.ChangeState(spell1State);
         }
         // Spell2 kontrolü

@@ -14,6 +14,18 @@ public class PlayerSpell1State : PlayerState
     public override void Enter()
     {
         base.Enter();
+        
+        // Mana kullanımı kontrolü
+        if (!player.HasEnoughMana(player.spell1ManaCost))
+        {
+            Debug.Log($"Not enough mana for Spell1! Required: {player.spell1ManaCost}, Current: {player.stats.currentMana}");
+            stateMachine.ChangeState(player.idleState);
+            return;
+        }
+        
+        // Mana kullan - buradaki ikinci kontrol gereksiz, çünkü HasEnoughMana zaten kontrol etti
+        player.UseMana(player.spell1ManaCost);
+        
         CalculateSpawnPositions();
         CheckValidSpawnPositions();
     }

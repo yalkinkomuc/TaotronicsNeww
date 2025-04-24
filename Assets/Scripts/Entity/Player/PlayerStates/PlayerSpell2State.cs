@@ -42,15 +42,20 @@ public class PlayerSpell2State : PlayerState
         }
         
         // Minimum şarj süresinden sonra mana tüketmeye başla
-        if (currentChargeTime >= MIN_CHARGE_TIME)
+        if (currentChargeTime >= MIN_CHARGE_TIME && isSpellActive)
         {
+            float manaCost = player.spell2ManaDrainPerSecond * Time.deltaTime;
             // Mana kontrolü
-            if (!player.HasEnoughMana(player.spell2ManaDrainPerSecond * Time.deltaTime))
+            if (!player.HasEnoughMana(manaCost))
             {
+                Debug.Log($"Not enough mana to sustain fire spell! Required: {manaCost}, Current: {player.stats.currentMana}");
                 CleanupSpell();
                 stateMachine.ChangeState(player.idleState);
                 return;
             }
+            
+            // Mana yeterliyse kullan
+            player.UseMana(manaCost);
         }
         
         // T tuşu bırakıldığında veya max süre dolduğunda

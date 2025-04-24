@@ -37,6 +37,7 @@ public class PlayerVoidState : PlayerState
             // Düşman bulundu, mana kontrolü yap
             if (!player.HasEnoughMana(player.voidSkillManaCost))
             {
+                Debug.Log($"Not enough mana for Void Skill! Required: {player.voidSkillManaCost}, Current: {player.stats.currentMana}");
                 stateMachine.ChangeState(player.idleState);
                 return;
             }
