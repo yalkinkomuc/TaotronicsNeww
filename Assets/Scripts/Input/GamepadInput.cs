@@ -19,6 +19,7 @@ public class GamepadInput : IPlayerInput
     public bool spell1Input => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton7);
     public bool spell2Input => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton8);
     public bool boomerangInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton9);
+    public bool voidSkillInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton5); // Void becerisi için JoystickButton5
     
     // Disables all input (including UI)
     public void DisableAllInput()

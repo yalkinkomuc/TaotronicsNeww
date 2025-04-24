@@ -83,7 +83,21 @@ public class ItemObject : MonoBehaviour
 
     public void PickupItem()
     {
+        // Inventory'e ekle
         Inventory.instance.AddItem(itemData);
+        
+        // Eğer bu bir Skill Shard ise, SkillManager'a ekle
+        if (itemData is SkillShard)
+        {
+            SkillShard shard = itemData as SkillShard;
+            if (SkillManager.Instance != null)
+            {
+                SkillManager.Instance.AddShards(shard.GetShardValue());
+                Debug.Log("Collected skill shard: +" + shard.GetShardValue() + " shards");
+            }
+        }
+        
+        // Item'ı toplanan olarak işaretle
         ItemCollectionManager.Instance.MarkItemAsCollected(uniqueID);
         Destroy(gameObject);
     }

@@ -15,6 +15,7 @@ public interface IPlayerInput
      bool spell1Input { get; }
      bool spell2Input { get; }
      bool boomerangInput { get; }
+     bool voidSkillInput { get; }
      
      void DisableAllInput();
      void EnableAllInput();

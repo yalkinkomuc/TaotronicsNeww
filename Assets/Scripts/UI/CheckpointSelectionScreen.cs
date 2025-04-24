@@ -8,9 +8,12 @@ public class CheckpointSelectionScreen : MonoBehaviour
     [SerializeField] private Button restButton;
     [SerializeField] private Button upgradeButton;
     [SerializeField] private Button closeButton;
+    [SerializeField] private Button upgradeSkillsButton;
     
     [Header("References")]
     public UpgradePanel upgradePanel;
+    [SerializeField] private SkillTreePanel skillTreePanel;
+    
 
     private void Awake()
     {
@@ -52,6 +55,9 @@ public class CheckpointSelectionScreen : MonoBehaviour
         
         if (closeButton != null)
             closeButton.onClick.AddListener(ClosePanel);
+            
+        if (upgradeSkillsButton != null)
+            upgradeSkillsButton.onClick.AddListener(OnUpgradeSkillsButtonClicked);
     }
 
     private void OnRestButtonClicked()
@@ -78,6 +84,32 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
     }
     
+    private void OnUpgradeSkillsButtonClicked()
+    {
+        gameObject.SetActive(false);
+        
+        if (UIInputBlocker.instance != null)
+            UIInputBlocker.instance.RemovePanel(gameObject);
+        
+        if (skillTreePanel != null)
+        {
+            skillTreePanel.OpenPanel();
+        }
+        else
+        {
+            SkillTreePanel foundPanel = FindFirstObjectByType<SkillTreePanel>();
+            if (foundPanel != null)
+            {
+                skillTreePanel = foundPanel;
+                skillTreePanel.OpenPanel();
+            }
+            else
+            {
+                Debug.LogWarning("Skill Tree Panel bulunamadı! Lütfen inspector'da referansı atayın.");
+            }
+        }
+    }
+    
     public void ShowPanel()
     {
         Canvas canvas = GetComponent<Canvas>();
@@ -93,6 +125,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
         if (restButton != null) restButton.interactable = true;
         if (upgradeButton != null) upgradeButton.interactable = true;
         if (closeButton != null) closeButton.interactable = true;
+        if (upgradeSkillsButton != null) upgradeSkillsButton.interactable = true;
     }
     
     public void ClosePanel()

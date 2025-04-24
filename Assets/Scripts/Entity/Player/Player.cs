@@ -202,82 +202,70 @@ public class Player : Entity
     protected override void Update()
     {
         base.Update();
-
-        // Hızlı düşüş kontrolü
-        if (rb.linearVelocity.y < -10f) // Eşik değerini düşürdüm
+        
+        // Yetenek girişleri
+        CheckForDashInput();
+        CheckForGroundDashInput();
+        
+        // Stun durumunu kontrol et
+        bool isStunned = stateMachine.currentState == stunnedState;
+        
+        if (!isStunned)
         {
-            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            // Parry başarısını kontrol et
+            CheckForSuccessfulParry();
             
-            if (IsGroundDetected())
+            // Spelleri kontrol et
+            CheckForSpellInput();
+            
+            // Void becerisi kontrolü
+            CheckForVoidSkillInput();
+            
+            // Etkileşim kontrolü
+            if (playerInput.interactionInput && currentInteractable != null)
             {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
-                rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
+                // DialogueManager kontrolü
+                if (currentInteractable is DialogueNPC && DialogueManager.Instance == null)
+                {
+                    Debug.LogWarning("DialogueManager bulunamadı!");
+                    return;
+                }
+                
+                currentInteractable.Interact();
             }
         }
-
-        // Parry timer'ı güncelle
-        if (parryTimer > 0)
-        {
-            parryTimer -= Time.deltaTime;
-        }
         
-        // Başarılı parry kontrolü - Her şeyden önce yapılır
-        CheckForSuccessfulParry();
-        
-        // Diğer temel input kontrolleri
+        // State machine güncellemesi
         stateMachine.currentState.Update();
         
-        // Her frame'de referansları güncelle
-        UpdateWeaponReferences();
-
+        // Silah referanslarını güncelle
+        if (weaponsHidden == false)
+        {
+            UpdateWeaponReferences();
+        }
+        
         // Bumerang cooldown'unu güncelle
         if (boomerangCooldownTimer > 0)
         {
             boomerangCooldownTimer -= Time.deltaTime;
         }
-
-        // Spell2 için sürekli mana tüketimi
-        if (isChargingFire && stateMachine.currentState is PlayerSpell2State spell2State)
+        
+        // Parry cooldown'unu güncelle
+        if (parryTimer > 0)
         {
-            // Sadece minimum şarj süresinden sonra mana tüket
-            if (spell2State.GetCurrentChargeTime() >= PlayerSpell2State.MIN_CHARGE_TIME)
-            {
-                float manaDrainThisFrame = spell2ManaDrainPerSecond * Time.deltaTime;
-                if (HasEnoughMana(manaDrainThisFrame))
-                {
-                    UseMana(manaDrainThisFrame);
-                }
-                else
-                {
-                    StopFireSpell();
-                }
-            }
+            parryTimer -= Time.deltaTime;
         }
-
-        // C tuşuna basıldığında manayı doldur
-        if (Input.GetKeyDown(KeyCode.C))
+        
+        // Düşük can ve mana durumlarını kontrol et
+        if (stats.currentHealth <= 0)
+        {
+            Die();
+        }
+        
+        // Otomatik mana yenileme
+        if (stats.currentMana < stats.maxMana.GetValue())
         {
             RefillMana();
-        }
-
-        CheckForDashInput();
-        CheckForGroundDashInput();
-        CheckForSpellInput();
-        
-        // Block input kontrolü - sadece basılı tutma için
-        
-        
-        // Interaction kontrolü
-        if (playerInput.interactionInput && currentInteractable != null)
-        {
-            // DialogueManager kontrolü
-            if (currentInteractable is DialogueNPC && DialogueManager.Instance == null)
-            {
-                Debug.LogWarning("DialogueManager bulunamadı!");
-                return;
-            }
-            
-            currentInteractable.Interact();
         }
     }
 
@@ -1151,6 +1139,59 @@ public class Player : Entity
             
             // Sahneyi yükle
             UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
+        }
+    }
+
+    // Void becerisi için özel kontrol (beceri açık değilse kullanılamaz)
+    public bool CanUseVoidSkill()
+    {
+        // Void becerisi açık mı, mana yeterli mi kontrol et
+        return SkillManager.Instance != null && 
+               SkillManager.Instance.IsSkillUnlocked("void_skill") && 
+               HasEnoughMana(voidSkillManaCost);
+    }
+    
+    // XXX becerisi için özel kontrol (beceri açık değilse kullanılamaz)
+    public bool CanUseXXXSkill()
+    {
+        // XXX becerisi açık mı, mana yeterli mi kontrol et
+        return SkillManager.Instance != null && 
+               SkillManager.Instance.IsSkillUnlocked("xxx_skill") && 
+               HasEnoughMana(40f); // XXX becerisi için mana maliyeti
+    }
+    
+    // Diğer beceriler için genel kontrol metodu
+    public bool CanUseSkill(string skillID)
+    {
+        return SkillManager.Instance != null && 
+               SkillManager.Instance.IsSkillUnlocked(skillID);
+    }
+    
+    // Void Skill'i kullanma metodu
+    public void UseVoidSkill()
+    {
+        // Void Skill açılmış mı ve mana yeterli mi kontrol et
+        if (CanUseVoidSkill())
+        {
+            // Void Skill'i kullan
+            UseMana(voidSkillManaCost);
+            
+            // Void Slash prefabını oluştur
+            if (voidSlashPrefab != null)
+            {
+                Instantiate(voidSlashPrefab, transform.position, Quaternion.identity);
+            }
+        }
+    }
+
+    // Void becerisi için giriş kontrolü
+    private void CheckForVoidSkillInput()
+    {
+        // X tuşuna basıldığında ve beceri açıksa kullan
+        if (playerInput.voidSkillInput && stateMachine.currentState != voidState && CanUseVoidSkill())
+        {
+            // Yeterli mana ve beceri açıksa state'e geçiş yap
+            stateMachine.ChangeState(voidState);
         }
     }
 }

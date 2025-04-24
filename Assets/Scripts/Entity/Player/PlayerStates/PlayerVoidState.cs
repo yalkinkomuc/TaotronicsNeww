@@ -19,6 +19,13 @@ public class PlayerVoidState : PlayerState
     {
         base.Enter();
         
+        // Void skill açık değilse, hemen çık
+        if (!player.CanUseVoidSkill())
+        {
+            stateMachine.ChangeState(player.idleState);
+            return;
+        }
+        
         // Hide weapons when entering void state
         player.HideWeapons();
         
