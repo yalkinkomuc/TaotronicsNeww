@@ -203,6 +203,8 @@ public class Player : Entity
     {
         base.Update();
         
+        //Debug.Log(CanCreateIceShards());
+        
         // Yetenek girişleri
         CheckForDashInput();
         CheckForGroundDashInput();
@@ -741,6 +743,38 @@ public class Player : Entity
         return spellbookWeapon != null && spellbookWeapon.gameObject.activeInHierarchy;
     }
 
+    // Bu metod buz parçalarının oluşturulabileceği geçerli pozisyonların olup olmadığını kontrol eder
+    private bool CanCreateIceShards()
+    {
+        float xOffset = 1f * facingdir;
+        float startX = transform.position.x + xOffset;
+        float spawnY = transform.position.y + 0.3f;
+        
+        for (int i = 0; i < 3; i++)
+        {
+            Vector3 position = new Vector3(
+                startX + (spellSpacing * i * facingdir),
+                spawnY,
+                transform.position.z
+            );
+            
+            // Herhangi bir pozisyonun altında zemin varsa, skillini kullanabiliriz
+            bool hasGround = Physics2D.Raycast(
+                position, 
+                Vector2.down, 
+                10f, 
+                whatIsGround
+            ).collider != null;
+            
+            if (hasGround)
+            {
+                return true; // Bir tane bile uygun pozisyon bulunduğunda true döner
+            }
+        }
+        
+        return false; // Hiçbir uygun pozisyon bulunamadı
+    }
+
     public void SpellOneTrigger()
     {
         StartCoroutine(CastIceShards());
@@ -773,11 +807,14 @@ public class Player : Entity
         if (!CanCastSpells() || IsGroundDetected() == false)
             return;
 
-        // Spell1 kontrolü - sadece state değiştir, mana kullanma
+        // Spell1 kontrolü
         if (playerInput.spell1Input && HasEnoughMana(spell1ManaCost))
         {
-            // Artık mana burada kullanılmıyor, sadece state değişiyor
-            // UseMana(spell1ManaCost); - Çift harcama yapıldığı için kaldırıldı
+            // Geçerli buz parçası pozisyonu var mı kontrol et
+            if (!CanCreateIceShards())
+                return; // Pozisyon yoksa direkt çık
+                
+            // Pozisyon varsa state'e geç
             stateMachine.ChangeState(spell1State);
         }
         // Spell2 kontrolü

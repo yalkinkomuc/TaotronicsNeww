@@ -65,6 +65,6 @@ public class ManaBar : MonoBehaviour
         targetFillAmount = Mathf.Clamp01(currentMana / maxMana);
         manaBarFill.fillAmount = Mathf.Lerp(manaBarFill.fillAmount, targetFillAmount, Time.deltaTime * smoothSpeed * 3f);
         
-        Debug.Log($"ManaBar updated: {currentMana}/{maxMana} = {targetFillAmount}");
+        //Debug.Log($"ManaBar updated: {currentMana}/{maxMana} = {targetFillAmount}");
     }
 } 

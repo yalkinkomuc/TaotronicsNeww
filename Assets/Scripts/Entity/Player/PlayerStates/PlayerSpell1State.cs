@@ -23,11 +23,20 @@ public class PlayerSpell1State : PlayerState
             return;
         }
         
-        // Mana kullan - buradaki ikinci kontrol gereksiz, çünkü HasEnoughMana zaten kontrol etti
-        player.UseMana(player.spell1ManaCost);
-        
+        // Önce pozisyonları hesapla
         CalculateSpawnPositions();
         CheckValidSpawnPositions();
+        
+        // Eğer hiçbir geçerli buz parçası oluşturma pozisyonu yoksa, state'e girme
+        if (validSpawnPositions.Count == 0)
+        {
+            Debug.Log("No valid positions for ice shards! Cancelling spell.");
+            stateMachine.ChangeState(player.idleState);
+            return;
+        }
+        
+        // Geçerli pozisyon varsa, mana kullan
+        player.UseMana(player.spell1ManaCost);
     }
 
     private void CalculateSpawnPositions()
