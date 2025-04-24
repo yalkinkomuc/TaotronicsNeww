@@ -260,6 +260,10 @@ public class CheckpointSelectionScreen : MonoBehaviour
             Instantiate(transitionEffectPrefab);
         }
         
+        // Rest butonundan dönüş olduğunu belirt - checkpoint pozisyonuna yerleşmesi için
+        PlayerPrefs.SetInt("UseCheckpointRespawn", 1);
+        PlayerPrefs.Save();
+        
         // Şu anki sahne index'ini al
         int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
         

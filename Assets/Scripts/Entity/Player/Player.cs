@@ -1065,9 +1065,20 @@ public class Player : Entity
     public override void Die()
     {
         base.Die();
-        stateMachine.ChangeState(deadState);
         
-        // Artık coroutine kullanılmayacak, respawn işlemi animasyon bitiminde PlayerDeadState içinde yapılacak
+        // Ölüm işlemi
+        stateMachine.ChangeState(deadState);
+
+        // Öldüğünde checkpoint'e dönmesi için bayrağı ayarla
+        PlayerPrefs.SetInt("PlayerDied", 1);
+        PlayerPrefs.Save();
+        
+        // Checkpoint varsa, bir süre sonra oyuncuyu checkpoint'e ışınla
+        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+        {
+            // Ölüm animasyonu için biraz bekle, sonra sahneyi yeniden yükle
+            StartCoroutine(RespawnAfterDelay(3f));
+        }
     }
     
     public void StartStunnedKnockbackCoroutine()
@@ -1128,5 +1139,19 @@ public class Player : Entity
         return sideHit;
     }
    
+    // Ölüm sonrası yeniden canlanma
+    private IEnumerator RespawnAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        // Checkpoint sahnesi var mı kontrol et
+        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
+        {
+            int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
+            
+            // Sahneyi yükle
+            UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
+        }
+    }
 }
 

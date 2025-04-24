@@ -8,8 +8,67 @@ public class SceneTransitionTrigger : MonoBehaviour
     [SerializeField] private bool usePlayerPosition = true;
     [SerializeField] private Vector2 playerPositionOffset = Vector2.zero;
     
+    [Header("Spawn Settings")]
+    [SerializeField] private bool useSpawnPoint = true;
+    [SerializeField] private string spawnPointName = ""; // Hedef sahnedeki spawn noktasının adı
+    
     // Yeni sahneye geçiş süreci çalışıyor mu?
     private bool isTransitioning = false;
+    
+    private void Awake()
+    {
+        // Trigger adına göre otomatik olarak spawn point adını belirle
+        if (useSpawnPoint && string.IsNullOrEmpty(spawnPointName))
+        {
+            AssignSpawnPointNameBasedOnTriggerName();
+        }
+    }
+    
+    // Trigger adına göre spawn point adını otomatik atama
+    private void AssignSpawnPointNameBasedOnTriggerName()
+    {
+        string triggerName = gameObject.name.ToLower();
+        
+        // Left, Right, Top, Bottom adlarını kontrol et
+        if (triggerName.Contains("left") || transform.parent?.name.ToLower().Contains("left") == true)
+        {
+            spawnPointName = "LeftSpawn";
+        }
+        else if (triggerName.Contains("right") || transform.parent?.name.ToLower().Contains("right") == true)
+        {
+            spawnPointName = "RightSpawn";
+        }
+        else if (triggerName.Contains("top") || transform.parent?.name.ToLower().Contains("top") == true) 
+        {
+            spawnPointName = "TopSpawn";
+        }
+        else if (triggerName.Contains("bottom") || transform.parent?.name.ToLower().Contains("bottom") == true)
+        {
+            spawnPointName = "BottomSpawn";
+        }
+        else
+        {
+            // Eğer duvar adı yoksa, pozisyona göre tahmin et
+            if (transform.position.x < 0)
+            {
+                spawnPointName = "LeftSpawn";
+            }
+            else if (transform.position.x > 0)
+            {
+                spawnPointName = "RightSpawn";
+            }
+            else if (transform.position.y > 0)
+            {
+                spawnPointName = "TopSpawn";
+            }
+            else if (transform.position.y < 0)
+            {
+                spawnPointName = "BottomSpawn";
+            }
+        }
+        
+        Debug.Log($"Trigger '{gameObject.name}' için otomatik spawn point atandı: {spawnPointName}");
+    }
     
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -17,8 +76,19 @@ public class SceneTransitionTrigger : MonoBehaviour
         {
             isTransitioning = true;
             
-            // Oyuncu pozisyonunu kaydet
-            if (usePlayerPosition)
+            // Spawn noktası bilgisini kaydet
+            if (useSpawnPoint)
+            {
+                // Eğer spawnPointName boşsa, son bir kontrol yap
+                if (string.IsNullOrEmpty(spawnPointName))
+                {
+                    AssignSpawnPointNameBasedOnTriggerName();
+                }
+                
+                SaveSpawnPointName();
+            }
+            // Veya oyuncu pozisyonunu kaydet
+            else if (usePlayerPosition)
             {
                 SavePlayerPosition();
             }
@@ -26,6 +96,16 @@ public class SceneTransitionTrigger : MonoBehaviour
             // Sahne geçişini başlat
             StartSceneTransition();
         }
+    }
+    
+    private void SaveSpawnPointName()
+    {
+        // Hedef sahneye spawn noktası adını aktar
+        PlayerPrefs.SetString("TargetSpawnPointName", spawnPointName);
+        PlayerPrefs.SetInt("UseNamedSpawnPoint", 1);
+        PlayerPrefs.Save();
+        
+        Debug.Log($"Kaydedilen spawn noktası adı: {spawnPointName}");
     }
     
     private void SavePlayerPosition()
@@ -84,6 +164,9 @@ public class SceneTransitionTrigger : MonoBehaviour
         PlayerPrefs.SetFloat("PlayerSpawnX", playerOffset.x);
         PlayerPrefs.SetFloat("PlayerSpawnY", playerOffset.y);
         PlayerPrefs.SetInt("UseCustomSpawn", 1);
+        
+        // Named spawn point kullanılmayacak
+        PlayerPrefs.SetInt("UseNamedSpawnPoint", 0);
         PlayerPrefs.Save();
     }
     
