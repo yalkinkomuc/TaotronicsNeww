@@ -125,13 +125,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 583d4b63f78949a4aa9fad80dfa70c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chestItems:
-  - {fileID: 11400000, guid: b459d9d11b042294f99141094f69c445, type: 2}
-  - {fileID: 11400000, guid: 9f844d67e35a65a498e37b09b67e4942, type: 2}
-  - {fileID: 11400000, guid: ff36dbd30ad2d74489535cd063f126c2, type: 2}
+  itemsInChest:
+  - {fileID: 7954428502197625905, guid: 7df8c2eac67ad1c45a84b0f0048e24b0, type: 3}
+  - {fileID: 8114004023421623542, guid: 27317437ff9bddd42a7e300f54c11a96, type: 3}
   animator: {fileID: 3895610877325888590}
   prompt: {fileID: 5168637284969887187}
-  chestInventoryUI: {fileID: 8582955807987132753, guid: e15a560d0fdebb8409aeb4f0bb04b5f8, type: 3}
 --- !u!61 &1754488856404922738
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -18,10 +18,23 @@ public class ItemObject : MonoBehaviour
     
     
     private BoxCollider2D boxCollider;
+    private SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        
+        // ItemData'yı doğrula
+        if (itemData == null)
+        {
+            Debug.LogError("ItemData atanmamış: " + gameObject.name);
+        }
+        else
+        {
+            Debug.Log("ItemObject: " + itemData.itemName + " oluşturuldu");
+            SetupVisuals();
+        }
     }
 
     private void Start()
@@ -39,24 +52,41 @@ public class ItemObject : MonoBehaviour
 
     private void OnValidate()
     {
-       // SetupVisuals();
-
         if (string.IsNullOrEmpty(uniqueID))
         {
             // Editörde benzersiz ID oluştur
             uniqueID = System.Guid.NewGuid().ToString();
         }
+        
+        // Editor'da ItemData değiştirildiğinde görselleri güncelle
+        SetupVisuals();
     }
 
     private void SetupVisuals()
     {
         if (itemData == null)
-         return;
+        {
+            Debug.LogWarning("SetupVisuals: itemData null!");
+            return;
+        }
         
-        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+            
+        if (spriteRenderer != null && itemData.icon != null)
         {
             spriteRenderer.sprite = itemData.icon;
+            Debug.Log("Sprite ayarlandı: " + itemData.itemName);
+        }
+        else if (spriteRenderer != null)
+        {
+            Debug.LogWarning("ItemData.icon null: " + itemData.name);
+        }
+        else
+        {
+            Debug.LogWarning("SpriteRenderer bulunamadı");
         }
         
         gameObject.name = "Item Object - " + itemData.itemName;
@@ -66,12 +96,45 @@ public class ItemObject : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            rb.linearVelocity = velocity;
+            if (rb != null)
+            {
+                rb.linearVelocity = velocity;
+            }
         }
     }
 
-    public void SetupItem(ItemData _itemData , Vector2 _velocity)
+    // ItemData'yı ayarla
+    public void SetItemData(ItemData data)
     {
+        if (data == null)
+        {
+            Debug.LogError("SetItemData: null data verildi!");
+            return;
+        }
+        
+        itemData = data;
+        Debug.Log("ItemData ayarlandı: " + data.itemName);
+        SetupVisuals();
+    }
+
+    // ItemData'yı döndür
+    public ItemData GetItemData()
+    {
+        if (itemData == null)
+        {
+            Debug.LogError("GetItemData: itemData null! " + gameObject.name);
+        }
+        return itemData;
+    }
+
+    public void SetupItem(ItemData _itemData, Vector2 _velocity)
+    {
+        if (_itemData == null)
+        {
+            Debug.LogError("SetupItem: null itemData verildi!");
+            return;
+        }
+        
         itemData = _itemData;
         
         if (rb != null)
@@ -79,20 +142,8 @@ public class ItemObject : MonoBehaviour
             rb.linearVelocity = _velocity;
         }
         
+        Debug.Log("Item setup edildi: " + _itemData.itemName);
         SetupVisuals();
-    }
-
-    // ItemData'yı ayarla
-    public void SetItemData(ItemData data)
-    {
-        itemData = data;
-        SetupVisuals();
-    }
-
-    // ItemData'yı döndür
-    public ItemData GetItemData()
-    {
-        return itemData;
     }
 
     public void PickupItem()
@@ -121,6 +172,10 @@ public class ItemObject : MonoBehaviour
             
             Destroy(gameObject);
         }
+        else
+        {
+            Debug.LogError("PickupItem: Inventory.instance veya itemData null!");
+        }
     }
 
     public void ShowInteractionPrompt()
@@ -137,8 +192,11 @@ public class ItemObject : MonoBehaviour
 
     protected virtual void OnDrawGizmos()
     {
-        Gizmos.DrawLine(groundCheck.position,
-            new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
+        if (groundCheck != null)
+        {
+            Gizmos.DrawLine(groundCheck.position,
+                new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
+        }
     }
 
     private void OnTriggerStay2D(Collider2D other)
