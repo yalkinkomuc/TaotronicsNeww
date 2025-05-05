@@ -322,6 +322,21 @@ public class Chest : MonoBehaviour, IInteractable
             Debug.Log("Envantere ekleniyor: " + itemData.itemName);
             Inventory.instance.AddItem(itemData);
             
+            // Eğer bu bir Skill Shard ise, SkillManager'a ekle
+            if (itemData is SkillShard)
+            {
+                SkillShard shard = itemData as SkillShard;
+                if (SkillManager.Instance != null)
+                {
+                    SkillManager.Instance.AddShards(shard.GetShardValue());
+                    Debug.Log("Sandıktan Skill Shard toplandı: +" + shard.GetShardValue() + " shards");
+                }
+                else
+                {
+                    Debug.LogError("SkillManager.Instance null! Skill shard eklenemedi.");
+                }
+            }
+            
             // Item'ı toplanan olarak işaretle
             string itemID = item.GetUniqueID();
             if (!string.IsNullOrEmpty(itemID))
@@ -382,6 +397,21 @@ public class Chest : MonoBehaviour, IInteractable
         Debug.Log("Envantere tek item ekleniyor: " + itemData.itemName);
         Inventory.instance.AddItem(itemData);
         
+        // Eğer bu bir Skill Shard ise, SkillManager'a ekle
+        if (itemData is SkillShard)
+        {
+            SkillShard shard = itemData as SkillShard;
+            if (SkillManager.Instance != null)
+            {
+                SkillManager.Instance.AddShards(shard.GetShardValue());
+                Debug.Log("Sandıktan Skill Shard toplandı: +" + shard.GetShardValue() + " shards");
+            }
+            else
+            {
+                Debug.LogError("SkillManager.Instance null! Skill shard eklenemedi.");
+            }
+        }
+        
         // Item'ı toplanan olarak işaretle
         string itemID = itemObj.GetUniqueID();
         if (!string.IsNullOrEmpty(itemID))
@@ -393,7 +423,7 @@ public class Chest : MonoBehaviour, IInteractable
         itemsInChest.Remove(item);
         removedItems.Add(item);
         
-        // GameObject'i gizle
+        // GameObject'i görünmez yap
         item.SetActive(false);
         
         Debug.Log("Item alındı, kalan item sayısı: " + itemsInChest.Count);
