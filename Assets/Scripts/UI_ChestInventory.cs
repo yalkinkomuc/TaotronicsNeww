@@ -11,6 +11,7 @@ public class UI_ChestInventory : MonoBehaviour
     [SerializeField] private Transform itemSlotsContainer;
     [SerializeField] private GameObject itemSlotPrefab;
     [SerializeField] private Button closeButton;
+    [SerializeField] private Button takeAllButton; // Take All buton referansı
     
     private Chest currentChest;
     private List<UI_ItemSlot> itemSlots = new List<UI_ItemSlot>();
@@ -25,6 +26,10 @@ public class UI_ChestInventory : MonoBehaviour
             // Butonları ayarla
             if (closeButton != null)
                 closeButton.onClick.AddListener(CloseChest);
+                
+            // Take All butonu için listener
+            if (takeAllButton != null)
+                takeAllButton.onClick.AddListener(TakeAllItems);
             
             // Başlangıçta UI'ı gizle
             gameObject.SetActive(false);
@@ -41,6 +46,12 @@ public class UI_ChestInventory : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && gameObject.activeInHierarchy)
         {
             CloseChest();
+        }
+        
+        // R tuşuna basıldığında tüm itemleri al
+        if (Input.GetKeyDown(KeyCode.R) && gameObject.activeInHierarchy)
+        {
+            TakeAllItems();
         }
     }
 
@@ -74,7 +85,10 @@ public class UI_ChestInventory : MonoBehaviour
         {
             foreach (GameObject item in currentChest.itemsInChest)
             {
-                CreateItemSlot(item);
+                if (item != null)
+                {
+                    CreateItemSlot(item);
+                }
             }
         }
     }
@@ -108,7 +122,7 @@ public class UI_ChestInventory : MonoBehaviour
         }
     }
     
-    // Itemı al
+    // Tekil itemı al
     private void TakeItem(GameObject item)
     {
         if (currentChest != null)
@@ -118,6 +132,25 @@ public class UI_ChestInventory : MonoBehaviour
             
             // Slotları güncelle
             RefreshItemSlots();
+        }
+    }
+    
+    // Tüm itemleri al
+    private void TakeAllItems()
+    {
+        if (currentChest != null)
+        {
+            // Tüm itemları sandıktan al
+            currentChest.TakeAllItems();
+            
+            // Slotları güncelle
+            RefreshItemSlots();
+            
+            // Eğer sandık boşsa UI'ı kapat
+            if (currentChest.itemsInChest.Count == 0)
+            {
+                CloseChest();
+            }
         }
     }
     

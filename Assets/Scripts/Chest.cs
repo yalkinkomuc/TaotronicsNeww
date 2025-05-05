@@ -60,8 +60,42 @@ public class Chest : MonoBehaviour, IInteractable
         if (prompt != null)
             prompt.HidePrompt();
     }
+    
+    // Tüm itemleri envantere aktarma
+    public void TakeAllItems()
+    {
+        if (itemsInChest.Count == 0) return;
+        
+        // Tüm itemleri bir kopya listede tut (foreach içinde listeyi değiştirdiğimiz için)
+        List<GameObject> itemsCopy = new List<GameObject>(itemsInChest);
+        
+        foreach (GameObject itemObj in itemsCopy)
+        {
+            ItemObject item = itemObj.GetComponent<ItemObject>();
+            if (item != null && item.GetItemData() != null)
+            {
+                // Envantere ekle
+                Inventory.instance.AddItem(item.GetItemData());
+            }
+        }
+        
+        // Sandıktaki tüm itemleri temizle
+        foreach (GameObject item in itemsCopy)
+        {
+            if (Application.isEditor && !Application.isPlaying)
+            {
+                DestroyImmediate(item, true);
+            }
+            else
+            {
+                Destroy(item);
+            }
+        }
+        
+        itemsInChest.Clear();
+    }
 
-    // Item alma fonksiyonu
+    // Tek bir item alma fonksiyonu
     public void RemoveItem(GameObject item)
     {
         if (itemsInChest.Contains(item))
@@ -74,7 +108,16 @@ public class Chest : MonoBehaviour, IInteractable
                 
                 // Sandıktan çıkar
                 itemsInChest.Remove(item);
-                Destroy(item);
+                
+                // Editor modunda prefab/asset'leri silme hatası için
+                if (Application.isEditor && !Application.isPlaying)
+                {
+                    DestroyImmediate(item, true);
+                }
+                else
+                {
+                    Destroy(item);
+                }
             }
         }
     }
