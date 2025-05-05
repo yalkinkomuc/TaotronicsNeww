@@ -130,6 +130,9 @@ MonoBehaviour:
   - {fileID: 8114004023421623542, guid: 27317437ff9bddd42a7e300f54c11a96, type: 3}
   animator: {fileID: 3895610877325888590}
   prompt: {fileID: 5168637284969887187}
+  chestUniqueID: MainSceneChest-1
+  closedChestSprite: {fileID: 8496140225057268130, guid: a78d1e31e03c3cf40aca5dcc42493fde, type: 3}
+  openChestSprite: {fileID: 686852227710559325, guid: a78d1e31e03c3cf40aca5dcc42493fde, type: 3}
 --- !u!61 &1754488856404922738
 BoxCollider2D:
   m_ObjectHideFlags: 0

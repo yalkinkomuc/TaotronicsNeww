@@ -5,20 +5,27 @@ public class Chest : MonoBehaviour, IInteractable
 {
     [Header("Chest Settings")]
     public List<GameObject> itemsInChest = new List<GameObject>();
-    [SerializeField] private Animator animator;
+    [SerializeField] private Animator animator; // Animatörü kullanmayacağız ama referansı tutalım
     [SerializeField] private InteractionPrompt prompt;
     [SerializeField] private string chestUniqueID; // Her sandık için benzersiz ID
+    
+    [Header("Sprites")]
+    [SerializeField] private Sprite closedChestSprite; // Kapalı sandık sprite'ı
+    [SerializeField] private Sprite openChestSprite;   // Açık sandık sprite'ı
+    
+    private SpriteRenderer spriteRenderer; // Sprite'ı değiştirmek için
     
     // Yardımcı liste - Geçici olarak alınmış itemların takibi için
     private List<GameObject> removedItems = new List<GameObject>();
     
     private bool isOpen = false;
+    private string prefsKey; // PlayerPrefs için anahtar
 
     private void Awake()
     {
-        if (animator == null)
-            animator = GetComponent<Animator>();
-            
+        // SpriteRenderer komponenti al
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        
         if (prompt == null)
             prompt = GetComponentInChildren<InteractionPrompt>();
         
@@ -29,11 +36,48 @@ public class Chest : MonoBehaviour, IInteractable
             Debug.Log("Yeni Chest ID oluşturuldu: " + chestUniqueID);
         }
         
+        // PlayerPrefs anahtarını ayarla
+        prefsKey = "chest_open_" + chestUniqueID;
+        
         // Sandık itemlerini kontrol et
         ValidateChestItems();
         
         // Daha önce alınan itemları kaldır (oyun yeniden başlatıldığında)
         RemoveCollectedItems();
+        
+        // Sandık durumunu yükle
+        LoadChestState();
+    }
+
+    // Sandık durumunu PlayerPrefs'ten yükle
+    private void LoadChestState()
+    {
+        // PlayerPrefs'ten sandığın açık olup olmadığını kontrol et
+        if (PlayerPrefs.HasKey(prefsKey) && PlayerPrefs.GetInt(prefsKey) == 1)
+        {
+            isOpen = true;
+            // Sprite'ı açık sandık olarak değiştir
+            if (spriteRenderer != null && openChestSprite != null)
+            {
+                spriteRenderer.sprite = openChestSprite;
+            }
+            
+            // Animatörü devre dışı bırak ki sprite değişmesin
+            if (animator != null)
+            {
+                animator.enabled = false;
+            }
+            
+            Debug.Log("Sandık daha önce açılmış, açık duruma getirildi: " + chestUniqueID);
+        }
+        else
+        {
+            // Sandık kapalı, sprite'ı ayarla
+            if (spriteRenderer != null && closedChestSprite != null)
+            {
+                spriteRenderer.sprite = closedChestSprite;
+            }
+        }
     }
     
     // Daha önce toplanan itemleri kaldır
@@ -144,7 +188,22 @@ public class Chest : MonoBehaviour, IInteractable
     private void OpenChest()
     {
         isOpen = true;
-        animator?.SetTrigger("Open");
+        
+        // Sprite'ı açık sandık olarak değiştir
+        if (spriteRenderer != null && openChestSprite != null)
+        {
+            spriteRenderer.sprite = openChestSprite;
+        }
+        
+        // PlayerPrefs'e durumu kaydet (1 = açık)
+        PlayerPrefs.SetInt(prefsKey, 1);
+        PlayerPrefs.Save();
+        
+        // Animatörü devre dışı bırak ki sprite değişmesin
+        if (animator != null)
+        {
+            animator.enabled = false;
+        }
         
         // İtem durumunu kontrol et
         Debug.Log("Sandık açılıyor, item sayısı: " + itemsInChest.Count);
@@ -155,10 +214,9 @@ public class Chest : MonoBehaviour, IInteractable
 
     public void CloseChest()
     {
-        isOpen = false;
-        // Kapanma animasyonu kaldırıldı (Close trigger yok)
+        // Sandığın kapanmasına izin vermeyelim, hep açık kalsın
         
-        // Sandık UI'ını kapat
+        // Sadece UI'ı kapat
         UI_ChestInventory.Instance.CloseChest();
     }
 
@@ -301,6 +359,24 @@ public class Chest : MonoBehaviour, IInteractable
         }
         
         removedItems.Clear();
+        
+        // PlayerPrefs'ten sandık durumunu sil
+        PlayerPrefs.DeleteKey(prefsKey);
+        
+        // Sandığı kapat
+        isOpen = false;
+        
+        // Sprite'ı kapalı sandık olarak değiştir
+        if (spriteRenderer != null && closedChestSprite != null)
+        {
+            spriteRenderer.sprite = closedChestSprite;
+        }
+        
+        // Animatörü tekrar etkinleştir
+        if (animator != null)
+        {
+            animator.enabled = true;
+        }
         
         // Kaydedilmiş itemları temizle
         ChestManager.Instance?.ClearCollectedItemsFromChest(chestUniqueID);
