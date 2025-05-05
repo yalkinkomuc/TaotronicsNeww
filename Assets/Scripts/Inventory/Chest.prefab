@@ -128,6 +128,7 @@ MonoBehaviour:
   itemsInChest:
   - {fileID: 7954428502197625905, guid: 7df8c2eac67ad1c45a84b0f0048e24b0, type: 3}
   - {fileID: 8114004023421623542, guid: 27317437ff9bddd42a7e300f54c11a96, type: 3}
+  - {fileID: 7954428502197625905, guid: 4cae396c9cfb4374bbdf7f39cf0941dc, type: 3}
   animator: {fileID: 3895610877325888590}
   prompt: {fileID: 5168637284969887187}
   chestUniqueID: MainSceneChest-1
@@ -177,7 +178,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 4.12, y: 2.25}
+  m_Size: {x: 1.41, y: 2.25}
   m_EdgeRadius: 0
 --- !u!1 &8974083269116829900
 GameObject:

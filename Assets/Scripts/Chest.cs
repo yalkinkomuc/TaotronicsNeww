@@ -5,7 +5,7 @@ public class Chest : MonoBehaviour, IInteractable
 {
     [Header("Chest Settings")]
     public List<GameObject> itemsInChest = new List<GameObject>();
-    [SerializeField] private Animator animator; // Animatörü kullanmayacağız ama referansı tutalım
+    [SerializeField] private Animator animator; // Animator artık kullanılacak
     [SerializeField] private InteractionPrompt prompt;
     [SerializeField] private string chestUniqueID; // Her sandık için benzersiz ID
     
@@ -20,6 +20,7 @@ public class Chest : MonoBehaviour, IInteractable
     
     private bool isOpen = false;
     private string prefsKey; // PlayerPrefs için anahtar
+    private bool isAnimationPlaying = false;
 
     private void Awake()
     {
@@ -60,12 +61,12 @@ public class Chest : MonoBehaviour, IInteractable
             if (spriteRenderer != null && openChestSprite != null)
             {
                 spriteRenderer.sprite = openChestSprite;
-            }
-            
-            // Animatörü devre dışı bırak ki sprite değişmesin
-            if (animator != null)
-            {
-                animator.enabled = false;
+                
+                // Animatörü devre dışı bırak çünkü sadece sprite'ı göstereceğiz
+                if (animator != null)
+                {
+                    animator.enabled = false;
+                }
             }
             
             Debug.Log("Sandık daha önce açılmış, açık duruma getirildi: " + chestUniqueID);
@@ -76,6 +77,12 @@ public class Chest : MonoBehaviour, IInteractable
             if (spriteRenderer != null && closedChestSprite != null)
             {
                 spriteRenderer.sprite = closedChestSprite;
+                
+                // Animatörü etkinleştir çünkü açılma animasyonu oynayabilir
+                if (animator != null)
+                {
+                    animator.enabled = true;
+                }
             }
         }
     }
@@ -175,15 +182,57 @@ public class Chest : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        // Eğer animasyon oynatılıyorsa hiçbir şey yapma
+        if (isAnimationPlaying)
+            return;
+        
         // Artık isOpen kontrolü yapmıyoruz, her zaman UI'ı açıyoruz
         // Görsel olarak zaten açık kalacak
         OpenChestUI();
     }
 
-    // Açılma metodu - Sandığı açık görsel duruma getirir ve UI'ı açar
+    // Açılma metodu - Animasyonu oynatır ve UI'ı açar
     private void OpenChest()
     {
+        // Eğer zaten açıksa, sadece UI'ı aç
+        if (isOpen)
+        {
+            OpenChestUI();
+            return;
+        }
+        
         isOpen = true;
+        isAnimationPlaying = true;
+        
+        // Animasyonu oynat - AnimEvent'i bekle
+        if (animator != null)
+        {
+            animator.enabled = true;
+            animator.SetTrigger("Open");
+            
+            // Eğer Animation Event yoksa, 0.5 saniye sonra sprite'ı değiştir
+            // (Animasyon Event'i varsa bu zaten çağrılmayacak)
+            Invoke("OnChestOpenAnimationComplete", 0.5f);
+        }
+        else
+        {
+            // Eğer animator yoksa, direkt sprite'ı değiştir
+            OnChestOpenAnimationComplete();
+        }
+        
+        // PlayerPrefs'e durumu kaydet (1 = açık)
+        PlayerPrefs.SetInt(prefsKey, 1);
+        PlayerPrefs.Save();
+        
+        // İtem durumunu kontrol et
+        Debug.Log("Sandık açılıyor, item sayısı: " + itemsInChest.Count);
+    }
+    
+    // Animation Event ile çağrılacak metod
+    // (Bu metodu AnimationEvent ayarlarından çağırmalısın!)
+    public void OnChestOpenAnimationComplete()
+    {
+        isAnimationPlaying = false;
         
         // Sprite'ı açık sandık olarak değiştir
         if (spriteRenderer != null && openChestSprite != null)
@@ -191,20 +240,13 @@ public class Chest : MonoBehaviour, IInteractable
             spriteRenderer.sprite = openChestSprite;
         }
         
-        // PlayerPrefs'e durumu kaydet (1 = açık)
-        PlayerPrefs.SetInt(prefsKey, 1);
-        PlayerPrefs.Save();
-        
         // Animatörü devre dışı bırak ki sprite değişmesin
         if (animator != null)
         {
             animator.enabled = false;
         }
         
-        // İtem durumunu kontrol et
-        Debug.Log("Sandık açılıyor, item sayısı: " + itemsInChest.Count);
-        
-        // Sandık UI'ını aç
+        // Açılma animasyonu bittikten sonra UI'ı aç
         OpenChestUI();
     }
 
@@ -377,6 +419,7 @@ public class Chest : MonoBehaviour, IInteractable
         
         // Sandığı kapat
         isOpen = false;
+        isAnimationPlaying = false;
         
         // Sprite'ı kapalı sandık olarak değiştir
         if (spriteRenderer != null && closedChestSprite != null)
