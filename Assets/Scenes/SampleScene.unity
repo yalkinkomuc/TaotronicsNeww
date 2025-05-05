@@ -11206,7 +11206,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7954428502197625905, guid: 4cae396c9cfb4374bbdf7f39cf0941dc, type: 3}
       propertyPath: m_Name
-      value: Item Object - Shard
+      value: Item Object - Small Shard
+      objectReference: {fileID: 0}
+    - target: {fileID: 7954428502197625905, guid: 4cae396c9cfb4374bbdf7f39cf0941dc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
