@@ -239,6 +239,12 @@ public class UpgradePanel : MonoBehaviour
         
         // Paneli kapat
         gameObject.SetActive(false);
+        
+        if (UIInputBlocker.instance != null)
+        {
+            UIInputBlocker.instance.RemovePanel(gameObject);
+            UIInputBlocker.instance.EnableGameplayInput(true);
+        }
     }
     
     // Panel görünürlüğünü ayarla

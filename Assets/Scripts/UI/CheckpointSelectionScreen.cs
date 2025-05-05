@@ -70,7 +70,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
         gameObject.SetActive(false);
         
         if (UIInputBlocker.instance != null)
-            UIInputBlocker.instance.RemovePanel(gameObject);
+            UIInputBlocker.instance.AddPanel(gameObject);
         
         if (upgradePanel != null)
         {
@@ -102,6 +102,8 @@ public class CheckpointSelectionScreen : MonoBehaviour
             {
                 skillTreePanel = foundPanel;
                 skillTreePanel.OpenPanel();
+                if (UIInputBlocker.instance != null)
+                    UIInputBlocker.instance.AddPanel(gameObject);
             }
             else
             {

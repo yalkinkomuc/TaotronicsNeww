@@ -30,6 +30,8 @@ public class UI_ChestInventory : MonoBehaviour
                 
             if (closeButton != null)
                 closeButton.onClick.AddListener(CloseInventory);
+            
+           
                 
             // Başlangıçta UI'ı gizle
             gameObject.SetActive(false);
@@ -38,6 +40,8 @@ public class UI_ChestInventory : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        
     }
 
     private void Update()
@@ -57,6 +61,16 @@ public class UI_ChestInventory : MonoBehaviour
 
     public void OpenChestInventory(Chest chest, List<ItemData> items)
     {
+        
+        // UI Input Blocker'a kaydet // ***
+        if (UIInputBlocker.instance != null)
+        {
+            UIInputBlocker.instance.AddPanel(gameObject);
+            if (itemSlotParent.gameObject != null)
+                UIInputBlocker.instance.AddPanel(itemSlotParent.gameObject);
+        }
+        
+        
         currentChest = chest;
         currentItems = items;
         CreateItemSlots();
@@ -130,8 +144,19 @@ public class UI_ChestInventory : MonoBehaviour
 
     public void CloseInventory()
     {
+        
+        
         gameObject.SetActive(false);
         currentChest = null;
         currentItems.Clear();
+
+
+        // UI Input Blocker'a kaydet // ***
+        if (UIInputBlocker.instance != null)
+        {
+            UIInputBlocker.instance.RemovePanel(gameObject);
+            if (itemSlotParent.gameObject != null)
+                UIInputBlocker.instance.RemovePanel(itemSlotParent.gameObject);
+        }
     }
 } 

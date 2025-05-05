@@ -24,10 +24,10 @@ public class SkillTreePanel : MonoBehaviour
     
     private void Awake()
     {
-        // Panel aktif değilse gizle
-        if (skillScreenPanel != null && skillScreenPanel.activeSelf)
+        // Başlangıçta gizli olsun
+        if (gameObject.activeSelf)
         {
-            skillScreenPanel.SetActive(false);
+            gameObject.SetActive(false);
         }
         
         // UI Input Blocker'a kaydet
@@ -70,7 +70,7 @@ public class SkillTreePanel : MonoBehaviour
         
         if (closeButton != null)
         {
-            closeButton.onClick.AddListener(CloseSkillPanel);
+            closeButton.onClick.AddListener(ClosePanel);
         }
         
         // Skill butonları
@@ -104,6 +104,7 @@ public class SkillTreePanel : MonoBehaviour
             // Input'u devre dışı bırak
             if (UIInputBlocker.instance != null)
             {
+                UIInputBlocker.instance.AddPanel(skillScreenPanel.gameObject);
                 UIInputBlocker.instance.DisableGameplayInput();
             }
         }
@@ -114,11 +115,12 @@ public class SkillTreePanel : MonoBehaviour
     {
         if (skillScreenPanel != null)
         {
-            skillScreenPanel.SetActive(false);
+            skillScreenPanel.gameObject.SetActive(false);
             
             // Input'u yeniden etkinleştir
             if (UIInputBlocker.instance != null)
             {
+                UIInputBlocker.instance.RemovePanel(skillScreenPanel.gameObject);
                 UIInputBlocker.instance.EnableGameplayInput(true);
             }
         }
