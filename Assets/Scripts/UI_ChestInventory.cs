@@ -5,17 +5,15 @@ using TMPro;
 
 public class UI_ChestInventory : MonoBehaviour
 {
-    public static UI_ChestInventory Instance { get; private set; }
+    public static UI_ChestInventory Instance;
 
     [Header("UI References")]
-    [SerializeField] private Transform itemSlotParent;
+    [SerializeField] private Transform itemSlotsContainer;
     [SerializeField] private GameObject itemSlotPrefab;
-    [SerializeField] private Button takeAllButton;
     [SerializeField] private Button closeButton;
     
-    private List<ItemData> currentItems = new List<ItemData>();
-    private List<UI_ItemSlot> itemSlots = new List<UI_ItemSlot>();
     private Chest currentChest;
+    private List<UI_ItemSlot> itemSlots = new List<UI_ItemSlot>();
 
     private void Awake()
     {
@@ -24,15 +22,10 @@ public class UI_ChestInventory : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             
-            // Buton eventlerini ayarla
-            if (takeAllButton != null)
-                takeAllButton.onClick.AddListener(TakeAllItems);
-                
+            // Butonları ayarla
             if (closeButton != null)
-                closeButton.onClick.AddListener(CloseInventory);
+                closeButton.onClick.AddListener(CloseChest);
             
-           
-                
             // Başlangıçta UI'ı gizle
             gameObject.SetActive(false);
         }
@@ -40,123 +33,129 @@ public class UI_ChestInventory : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
-        
     }
 
     private void Update()
     {
-        // R tuşuna basıldığında tüm itemleri al
-        if (Input.GetKeyDown(KeyCode.R))
+        // ESC tuşuna basıldığında sandığı kapat
+        if (Input.GetKeyDown(KeyCode.Escape) && gameObject.activeInHierarchy)
         {
-            TakeAllItems();
-        }
-        
-        // ESC tuşuna basıldığında envanteri kapat
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            CloseInventory();
+            CloseChest();
         }
     }
 
-    public void OpenChestInventory(Chest chest, List<ItemData> items)
+    // Sandığı aç
+    public void OpenChest(Chest chest)
     {
+        // UI'ı göster
+        gameObject.SetActive(true);
         
-        // UI Input Blocker'a kaydet // ***
+        // Sandık referansını kaydet
+        currentChest = chest;
+        
+        // Slotları oluştur
+        RefreshItemSlots();
+        
+        // Input Blocker'a kaydet
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
-            if (itemSlotParent.gameObject != null)
-                UIInputBlocker.instance.AddPanel(itemSlotParent.gameObject);
         }
-        
-        
-        currentChest = chest;
-        currentItems = items;
-        CreateItemSlots();
-        UpdateUI();
-        gameObject.SetActive(true);
     }
 
-    private void CreateItemSlots()
+    // Slotları güncelle/oluştur
+    private void RefreshItemSlots()
     {
         // Mevcut slotları temizle
-        foreach (var slot in itemSlots)
-        {
-            if (slot != null)
-                Destroy(slot.gameObject);
-        }
-        itemSlots.Clear();
-
+        ClearItemSlots();
+        
         // Yeni slotlar oluştur
-        for (int i = 0; i < currentItems.Count; i++)
+        if (currentChest != null)
         {
-            GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotParent);
+            foreach (GameObject item in currentChest.itemsInChest)
+            {
+                CreateItemSlot(item);
+            }
+        }
+    }
+    
+    // Slot oluştur
+    private void CreateItemSlot(GameObject itemObject)
+    {
+        ItemObject item = itemObject.GetComponent<ItemObject>();
+        if (item != null && item.GetItemData() != null)
+        {
+            // Slot prefabını oluştur
+            GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotsContainer);
             UI_ItemSlot slot = slotObj.GetComponent<UI_ItemSlot>();
             
             if (slot != null)
             {
-                slot.UpdateSlot(new InventoryItem(currentItems[i]));
+                // Slot'u güncelle
+                slot.UpdateSlot(new InventoryItem(item.GetItemData()));
                 itemSlots.Add(slot);
                 
                 // Slot'a tıklama eventi ekle
                 Button slotButton = slotObj.GetComponent<Button>();
                 if (slotButton != null)
                 {
-                    int index = i; // Capture the index
-                    slotButton.onClick.AddListener(() => TakeItem(currentItems[index]));
+                    // Tıklandığında item'ı al
+                    slotButton.onClick.AddListener(() => {
+                        TakeItem(itemObject);
+                    });
                 }
             }
         }
     }
-
-    public void UpdateUI()
-    {
-        // Slotları güncelle
-        for (int i = 0; i < itemSlots.Count; i++)
-        {
-            if (i < currentItems.Count)
-            {
-                itemSlots[i].UpdateSlot(new InventoryItem(currentItems[i]));
-            }
-            else
-            {
-                itemSlots[i].UpdateSlot(null);
-            }
-        }
-    }
-
-    private void TakeAllItems()
+    
+    // Itemı al
+    private void TakeItem(GameObject item)
     {
         if (currentChest != null)
         {
-            currentChest.TakeAllItems();
+            // Sandıktan itemı al
+            currentChest.RemoveItem(item);
+            
+            // Slotları güncelle
+            RefreshItemSlots();
         }
     }
-
-    private void TakeItem(ItemData item)
+    
+    // Tüm slotları temizle
+    private void ClearItemSlots()
     {
-        if (currentChest != null)
+        foreach (UI_ItemSlot slot in itemSlots)
         {
-            currentChest.TakeItem(item);
+            if (slot != null)
+            {
+                Destroy(slot.gameObject);
+            }
         }
+        
+        itemSlots.Clear();
     }
 
-    public void CloseInventory()
+    // Sandığı kapat
+    public void CloseChest()
     {
-        
-        
+        // UI'ı gizle
         gameObject.SetActive(false);
-        currentChest = null;
-        currentItems.Clear();
-
-
-        // UI Input Blocker'a kaydet // ***
+        
+        // Slotları temizle
+        ClearItemSlots();
+        
+        // Input Blocker'dan kaldır
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
-            if (itemSlotParent.gameObject != null)
-                UIInputBlocker.instance.RemovePanel(itemSlotParent.gameObject);
         }
+        
+        // Sandık kapatılma animasyonunu tetikle
+        if (currentChest != null)
+        {
+            currentChest.Interact();
+        }
+        
+        currentChest = null;
     }
 } 

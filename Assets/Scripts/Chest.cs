@@ -1,24 +1,20 @@
-using System;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Chest : MonoBehaviour, IInteractable
 {
     [Header("Chest Settings")]
-    [SerializeField] private List<ItemData> chestItems = new List<ItemData>();
+    public List<GameObject> itemsInChest = new List<GameObject>();
     [SerializeField] private Animator animator;
     [SerializeField] private InteractionPrompt prompt;
     
     private bool isOpen = false;
-    private bool isInteracting = false;
 
     private void Awake()
     {
-        // Animator'ı al
         if (animator == null)
             animator = GetComponent<Animator>();
             
-        // Interaction prompt'u al
         if (prompt == null)
             prompt = GetComponentInChildren<InteractionPrompt>();
     }
@@ -29,9 +25,9 @@ public class Chest : MonoBehaviour, IInteractable
         {
             OpenChest();
         }
-        else if (!isInteracting)
+        else
         {
-            ToggleChestInventory();
+            CloseChest();
         }
     }
 
@@ -40,92 +36,46 @@ public class Chest : MonoBehaviour, IInteractable
         isOpen = true;
         animator?.SetTrigger("Open");
         
-        // Sandık açıldığında inventory UI'ı göster
-        if (UI_ChestInventory.Instance != null)
-        {
-            UI_ChestInventory.Instance.OpenChestInventory(this, chestItems);
-            isInteracting = true;
-        }
+        // Sandık UI'ını aç
+        UI_ChestInventory.Instance.OpenChest(this);
     }
 
-    private void ToggleChestInventory()
+    private void CloseChest()
     {
-        if (UI_ChestInventory.Instance != null)
-        {
-            isInteracting = !isInteracting;
-            if (isInteracting)
-            {
-                UI_ChestInventory.Instance.OpenChestInventory(this, chestItems);
-            }
-            else
-            {
-                UI_ChestInventory.Instance.CloseInventory();
-            }
-        }
+        isOpen = false;
+        animator?.SetTrigger("Close");
+        
+        // Sandık UI'ını kapat
+        UI_ChestInventory.Instance.CloseChest();
     }
 
     public void ShowInteractionPrompt()
     {
-        // Sadece sandık kapalıysa prompt göster
-        if (!isOpen)
-        {
-            prompt?.ShowPrompt();
-        }
+        if (prompt != null)
+            prompt.ShowPrompt();
     }
 
     public void HideInteractionPrompt()
     {
-        prompt?.HidePrompt();
+        if (prompt != null)
+            prompt.HidePrompt();
     }
 
-    // Tüm itemleri envantere ekle
-    public void TakeAllItems()
+    // Item alma fonksiyonu
+    public void RemoveItem(GameObject item)
     {
-        if (chestItems.Count == 0) return;
-
-        foreach (var item in chestItems.ToArray())
+        if (itemsInChest.Contains(item))
         {
-            Inventory.instance.AddItem(item);
-            chestItems.Remove(item);
-        }
-
-        // Tüm itemler alındıysa UI'ı kapat
-        if (chestItems.Count == 0)
-        {
-            CloseInventory();
-        }
-        else
-        {
-            UI_ChestInventory.Instance?.UpdateUI();
-        }
-    }
-
-    // Tek bir itemi envantere ekle
-    public void TakeItem(ItemData item)
-    {
-        if (chestItems.Contains(item))
-        {
-            Inventory.instance.AddItem(item);
-            chestItems.Remove(item);
-
-            // Tüm itemler alındıysa UI'ı kapat
-            if (chestItems.Count == 0)
+            ItemObject itemObj = item.GetComponent<ItemObject>();
+            if (itemObj != null && Inventory.instance != null)
             {
-                CloseInventory();
+                // Envantere ekle
+                Inventory.instance.AddItem(itemObj.GetItemData());
+                
+                // Sandıktan çıkar
+                itemsInChest.Remove(item);
+                Destroy(item);
             }
-            else
-            {
-                UI_ChestInventory.Instance?.UpdateUI();
-            }
-        }
-    }
-
-    private void CloseInventory()
-    {
-        isInteracting = false;
-        if (UI_ChestInventory.Instance != null)
-        {
-            UI_ChestInventory.Instance.CloseInventory();
         }
     }
 }
