@@ -7,6 +7,7 @@ public class Chest : MonoBehaviour, IInteractable
     public List<GameObject> itemsInChest = new List<GameObject>();
     [SerializeField] private Animator animator;
     [SerializeField] private InteractionPrompt prompt;
+    [SerializeField] private string chestUniqueID; // Her sandık için benzersiz ID
     
     // Yardımcı liste - Geçici olarak alınmış itemların takibi için
     private List<GameObject> removedItems = new List<GameObject>();
@@ -21,8 +22,57 @@ public class Chest : MonoBehaviour, IInteractable
         if (prompt == null)
             prompt = GetComponentInChildren<InteractionPrompt>();
         
+        // Benzersiz ID oluştur (eğer yoksa)
+        if (string.IsNullOrEmpty(chestUniqueID))
+        {
+            chestUniqueID = "chest_" + System.Guid.NewGuid().ToString();
+            Debug.Log("Yeni Chest ID oluşturuldu: " + chestUniqueID);
+        }
+        
         // Sandık itemlerini kontrol et
         ValidateChestItems();
+        
+        // Daha önce alınan itemları kaldır (oyun yeniden başlatıldığında)
+        RemoveCollectedItems();
+    }
+    
+    // Daha önce toplanan itemleri kaldır
+    private void RemoveCollectedItems()
+    {
+        if (ChestManager.Instance == null)
+        {
+            Debug.LogWarning("ChestManager bulunamadı, toplanmış itemlar kontrol edilemedi!");
+            return;
+        }
+        
+        List<string> collectedItems = ChestManager.Instance.GetCollectedItemsFromChest(chestUniqueID);
+        
+        if (collectedItems == null || collectedItems.Count == 0)
+        {
+            Debug.Log("Bu sandıktan daha önce toplanmış item yok: " + chestUniqueID);
+            return;
+        }
+        
+        // Toplanmış itemları kaldır
+        for (int i = itemsInChest.Count - 1; i >= 0; i--)
+        {
+            GameObject item = itemsInChest[i];
+            if (item == null) continue;
+            
+            ItemObject itemObj = item.GetComponent<ItemObject>();
+            if (itemObj == null || string.IsNullOrEmpty(itemObj.GetUniqueID())) continue;
+            
+            // Eğer bu item daha önce toplanmışsa, listeden çıkar
+            if (collectedItems.Contains(itemObj.GetUniqueID()))
+            {
+                Debug.Log("Daha önce toplanmış item kaldırıldı: " + itemObj.GetUniqueID());
+                itemsInChest.RemoveAt(i);
+                removedItems.Add(item);
+                item.SetActive(false);
+            }
+        }
+        
+        Debug.Log("Toplam " + collectedItems.Count + " item daha önce toplanmış, kalan item sayısı: " + itemsInChest.Count);
     }
     
     // Sandık içeriğini kontrol et
@@ -59,6 +109,23 @@ public class Chest : MonoBehaviour, IInteractable
             {
                 Debug.Log("Geçerli item: " + item.GetItemData().itemName);
             }
+            
+            // Eğer ID yoksa otomatik ekle
+            if (string.IsNullOrEmpty(item.GetUniqueID()))
+            {
+                string uniqueID = "item_" + System.Guid.NewGuid().ToString();
+                item.SetUniqueID(uniqueID);
+                Debug.Log("Item için yeni ID oluşturuldu: " + uniqueID);
+            }
+        }
+    }
+    
+    private void OnValidate()
+    {
+        // Editor'da sandık ID'si yoksa oluştur
+        if (string.IsNullOrEmpty(chestUniqueID))
+        {
+            chestUniqueID = "chest_" + System.Guid.NewGuid().ToString();
         }
     }
 
@@ -143,6 +210,13 @@ public class Chest : MonoBehaviour, IInteractable
             Debug.Log("Envantere ekleniyor: " + itemData.itemName);
             Inventory.instance.AddItem(itemData);
             
+            // Item'ı toplanan olarak işaretle
+            string itemID = item.GetUniqueID();
+            if (!string.IsNullOrEmpty(itemID))
+            {
+                ChestManager.Instance?.MarkItemAsCollected(chestUniqueID, itemID);
+            }
+            
             // Listeyi güncelle - itemsInChest'ten çıkar, removedItems'a ekle
             itemsInChest.Remove(itemObj);
             removedItems.Add(itemObj);
@@ -196,6 +270,13 @@ public class Chest : MonoBehaviour, IInteractable
         Debug.Log("Envantere tek item ekleniyor: " + itemData.itemName);
         Inventory.instance.AddItem(itemData);
         
+        // Item'ı toplanan olarak işaretle
+        string itemID = itemObj.GetUniqueID();
+        if (!string.IsNullOrEmpty(itemID))
+        {
+            ChestManager.Instance?.MarkItemAsCollected(chestUniqueID, itemID);
+        }
+        
         // Sandıktan çıkar ve yedek listeye ekle
         itemsInChest.Remove(item);
         removedItems.Add(item);
@@ -220,6 +301,16 @@ public class Chest : MonoBehaviour, IInteractable
         }
         
         removedItems.Clear();
+        
+        // Kaydedilmiş itemları temizle
+        ChestManager.Instance?.ClearCollectedItemsFromChest(chestUniqueID);
+        
         Debug.Log("Sandık sıfırlandı, item sayısı: " + itemsInChest.Count);
+    }
+    
+    // Sandık ID'sini döndür
+    public string GetChestID()
+    {
+        return chestUniqueID;
     }
 }

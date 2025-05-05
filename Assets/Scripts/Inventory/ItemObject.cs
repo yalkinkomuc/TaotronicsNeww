@@ -35,6 +35,13 @@ public class ItemObject : MonoBehaviour
             Debug.Log("ItemObject: " + itemData.itemName + " oluşturuldu");
             SetupVisuals();
         }
+        
+        // Benzersiz ID kontrolü
+        if (string.IsNullOrEmpty(uniqueID))
+        {
+            uniqueID = "item_" + System.Guid.NewGuid().ToString();
+            Debug.Log("Yeni item ID oluşturuldu: " + uniqueID);
+        }
     }
 
     private void Start()
@@ -55,7 +62,7 @@ public class ItemObject : MonoBehaviour
         if (string.IsNullOrEmpty(uniqueID))
         {
             // Editörde benzersiz ID oluştur
-            uniqueID = System.Guid.NewGuid().ToString();
+            uniqueID = "item_" + System.Guid.NewGuid().ToString();
         }
         
         // Editor'da ItemData değiştirildiğinde görselleri güncelle
@@ -101,6 +108,24 @@ public class ItemObject : MonoBehaviour
                 rb.linearVelocity = velocity;
             }
         }
+    }
+
+    // UniqueID döndür
+    public string GetUniqueID()
+    {
+        return uniqueID;
+    }
+    
+    // UniqueID ayarla
+    public void SetUniqueID(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            Debug.LogError("SetUniqueID: Geçersiz ID!");
+            return;
+        }
+        
+        uniqueID = id;
     }
 
     // ItemData'yı ayarla
