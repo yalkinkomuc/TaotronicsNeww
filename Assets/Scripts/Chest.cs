@@ -175,16 +175,12 @@ public class Chest : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        if (!isOpen)
-        {
-            OpenChest();
-        }
-        else
-        {
-            CloseChest();
-        }
+        // Artık isOpen kontrolü yapmıyoruz, her zaman UI'ı açıyoruz
+        // Görsel olarak zaten açık kalacak
+        OpenChestUI();
     }
 
+    // Açılma metodu - Sandığı açık görsel duruma getirir ve UI'ı açar
     private void OpenChest()
     {
         isOpen = true;
@@ -209,12 +205,28 @@ public class Chest : MonoBehaviour, IInteractable
         Debug.Log("Sandık açılıyor, item sayısı: " + itemsInChest.Count);
         
         // Sandık UI'ını aç
+        OpenChestUI();
+    }
+
+    // Sadece UI'ı açmak için yeni metod
+    private void OpenChestUI()
+    {
+        // Eğer sandık görsel olarak kapalıysa önce aç
+        if (!isOpen)
+        {
+            OpenChest();
+            return; // OpenChest zaten UI'ı açacak
+        }
+        
+        // Sadece UI'ı aç
         UI_ChestInventory.Instance.OpenChest(this);
     }
 
+    // UI'ı kapatmak için metod (sandık görsel olarak açık kalır)
     public void CloseChest()
     {
-        // Sandığın kapanmasına izin vermeyelim, hep açık kalsın
+        // Sandık görselini değiştirmiyoruz, sadece UI'ı kapatıyoruz
+        // isOpen değişmiyor - hep true kalıyor
         
         // Sadece UI'ı kapat
         UI_ChestInventory.Instance.CloseChest();
