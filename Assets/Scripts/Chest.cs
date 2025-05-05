@@ -40,10 +40,10 @@ public class Chest : MonoBehaviour, IInteractable
         UI_ChestInventory.Instance.OpenChest(this);
     }
 
-    private void CloseChest()
+    public void CloseChest()
     {
         isOpen = false;
-        animator?.SetTrigger("Close");
+        // Kapanma animasyonu kaldırıldı (Close trigger yok)
         
         // Sandık UI'ını kapat
         UI_ChestInventory.Instance.CloseChest();
@@ -71,54 +71,42 @@ public class Chest : MonoBehaviour, IInteractable
         
         foreach (GameObject itemObj in itemsCopy)
         {
+            if (itemObj == null) continue;
+            
             ItemObject item = itemObj.GetComponent<ItemObject>();
             if (item != null && item.GetItemData() != null)
             {
                 // Envantere ekle
                 Inventory.instance.AddItem(item.GetItemData());
+                
+                // Listeyi güncelle
+                itemsInChest.Remove(itemObj);
+                
+                // GameObject'i pasif yap - DESTROY KULLANMA
+                itemObj.SetActive(false);
             }
         }
         
-        // Sandıktaki tüm itemleri temizle
-        foreach (GameObject item in itemsCopy)
-        {
-            if (Application.isEditor && !Application.isPlaying)
-            {
-                DestroyImmediate(item, true);
-            }
-            else
-            {
-                Destroy(item);
-            }
-        }
-        
+        // Listeyi temizle
         itemsInChest.Clear();
     }
 
     // Tek bir item alma fonksiyonu
     public void RemoveItem(GameObject item)
     {
-        if (itemsInChest.Contains(item))
+        if (item == null || !itemsInChest.Contains(item)) return;
+
+        ItemObject itemObj = item.GetComponent<ItemObject>();
+        if (itemObj != null && Inventory.instance != null)
         {
-            ItemObject itemObj = item.GetComponent<ItemObject>();
-            if (itemObj != null && Inventory.instance != null)
-            {
-                // Envantere ekle
-                Inventory.instance.AddItem(itemObj.GetItemData());
-                
-                // Sandıktan çıkar
-                itemsInChest.Remove(item);
-                
-                // Editor modunda prefab/asset'leri silme hatası için
-                if (Application.isEditor && !Application.isPlaying)
-                {
-                    DestroyImmediate(item, true);
-                }
-                else
-                {
-                    Destroy(item);
-                }
-            }
+            // Envantere ekle
+            Inventory.instance.AddItem(itemObj.GetItemData());
+            
+            // Sandıktan çıkar
+            itemsInChest.Remove(item);
+            
+            // GameObject'i pasif yap - DESTROY KULLANMA
+            item.SetActive(false);
         }
     }
 }

@@ -67,7 +67,7 @@ public class UI_ChestInventory : MonoBehaviour
         // Slotları oluştur
         RefreshItemSlots();
         
-        // Input Blocker'a kaydet
+        // UI Input Blocker'a ekle - Gameplay inputları devre dışı bırakmak için
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
@@ -177,18 +177,20 @@ public class UI_ChestInventory : MonoBehaviour
         // Slotları temizle
         ClearItemSlots();
         
-        // Input Blocker'dan kaldır
+        // Input Blocker'dan kaldır - Gameplay inputlarını tekrar etkinleştirmek için
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
         }
         
-        // Sandık kapatılma animasyonunu tetikle
-        if (currentChest != null)
-        {
-            currentChest.Interact();
-        }
-        
+        // Sandık referansını sakla ve sandığı kapat
+        Chest tempChest = currentChest;
         currentChest = null;
+        
+        // Sandık hala varsa, kapatma işlemini yap
+        if (tempChest != null)
+        {
+            tempChest.CloseChest();
+        }
     }
 } 
