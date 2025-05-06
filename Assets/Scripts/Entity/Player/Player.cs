@@ -730,6 +730,7 @@ public class Player : Entity
             {
                 currentInteractable = null;
             }
+            
             interactable.HideInteractionPrompt();
         }
     }

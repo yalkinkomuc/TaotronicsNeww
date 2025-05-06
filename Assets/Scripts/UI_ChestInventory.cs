@@ -73,27 +73,12 @@ public class UI_ChestInventory : MonoBehaviour
         
         if (currentChest != null)
         {
-            Debug.Log("Chest içerik sayısı: " + currentChest.itemsInChest.Count);
+            Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
+            Debug.Log("Chest unique item sayısı: " + stackedItems.Count);
             
-            for (int i = 0; i < currentChest.itemsInChest.Count; i++)
+            foreach (var pair in stackedItems)
             {
-                GameObject itemObj = currentChest.itemsInChest[i];
-                if (itemObj != null)
-                {
-                    ItemObject item = itemObj.GetComponent<ItemObject>();
-                    if (item != null && item.GetItemData() != null)
-                    {
-                        Debug.Log("Item #" + i + ": " + item.GetItemData().itemName + ", aktif: " + itemObj.activeInHierarchy);
-                    }
-                    else
-                    {
-                        Debug.Log("Item #" + i + ": ItemObject veya ItemData NULL");
-                    }
-                }
-                else
-                {
-                    Debug.Log("Item #" + i + ": NULL");
-                }
+                Debug.Log($"Item: {pair.Key}, Count: {pair.Value}");
             }
         }
         else
@@ -112,7 +97,8 @@ public class UI_ChestInventory : MonoBehaviour
         }
         
         // Debug.Log - Sandık açılırken
-        Debug.Log("Chest açılıyor... İtem sayısı: " + chest.itemsInChest.Count);
+        Dictionary<string, int> stackedItems = chest.GetStackedItems();
+        Debug.Log($"Chest açılıyor... Unique item sayısı: {stackedItems.Count}");
         
         // Sandık referansını kaydet
         currentChest = chest;
@@ -142,9 +128,17 @@ public class UI_ChestInventory : MonoBehaviour
         ClearItemSlots();
         
         // Sandığın içeriğini kontrol et
-        if (currentChest == null || currentChest.itemsInChest == null)
+        if (currentChest == null)
         {
-            Debug.LogWarning("Chest veya itemsInChest null!");
+            Debug.LogWarning("Chest null!");
+            return;
+        }
+        
+        // Stacked items bilgisini al
+        Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
+        if (stackedItems.Count == 0)
+        {
+            Debug.Log("Sandıkta hiç item kalmamış.");
             return;
         }
         
@@ -162,86 +156,87 @@ public class UI_ChestInventory : MonoBehaviour
             return;
         }
         
-        // Önce tüm itemları logla
-        if (debugMode)
+        // Her stack için tek bir slot oluştur
+        foreach (var pair in stackedItems)
         {
-            for (int i = 0; i < currentChest.itemsInChest.Count; i++)
+            string itemName = pair.Key;
+            int count = pair.Value;
+            
+            // Item referansını al
+            GameObject itemObj = currentChest.GetItemReference(itemName);
+            if (itemObj == null) continue;
+            
+            ItemObject itemComponent = itemObj.GetComponent<ItemObject>();
+            if (itemComponent == null || itemComponent.GetItemData() == null) continue;
+            
+            ItemData itemData = itemComponent.GetItemData();
+            
+            // Slot oluştur
+            GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotsContainer);
+            UI_ItemSlot slot = slotObj.GetComponent<UI_ItemSlot>();
+            
+            if (slot != null)
             {
-                GameObject obj = currentChest.itemsInChest[i];
-                string status = obj == null ? "NULL" : (obj.activeInHierarchy ? "Aktif" : "Pasif");
-                Debug.Log("Item #" + i + ": " + status);
-            }
-        }
-        
-        // Yeni slotlar oluştur
-        int validItemCount = 0;
-        foreach (GameObject itemObj in currentChest.itemsInChest)
-        {
-            if (itemObj != null)
-            {
-                bool wasInactive = !itemObj.activeInHierarchy;
-                if (wasInactive)
+                // InventoryItem oluştur ve stack sayısını ayarla
+                InventoryItem invItem = new InventoryItem(itemData);
+                // Stack sayısını manuel ayarla
+                for (int i = 1; i < count; i++)
                 {
-                    itemObj.SetActive(true);
+                    invItem.AddStack(); // Başlangıçta zaten 1, o yüzden 1'den başla
                 }
                 
-                ItemObject item = itemObj.GetComponent<ItemObject>();
-                if (item != null && item.GetItemData() != null)
+                slot.UpdateSlot(invItem);
+                itemSlots.Add(slot);
+                
+                // Slot'a tıklama eventi ekle
+                Button slotButton = slotObj.GetComponent<Button>();
+                if (slotButton != null)
                 {
-                    ItemData itemData = item.GetItemData();
-                    GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotsContainer);
-                    UI_ItemSlot slot = slotObj.GetComponent<UI_ItemSlot>();
-                    
-                    if (slot != null)
-                    {
-                        slot.UpdateSlot(new InventoryItem(itemData));
-                        itemSlots.Add(slot);
-                        
-                        // Slot'a tıklama eventi ekle
-                        Button slotButton = slotObj.GetComponent<Button>();
-                        if (slotButton != null)
-                        {
-                            // Bu tipteki değişkenleri Final olarak tanımla (lambdada düzgün çalışması için)
-                            GameObject finalItemObj = itemObj;
-                            slotButton.onClick.AddListener(() => TakeItem(finalItemObj));
-                            validItemCount++;
-                        }
-                        else
-                        {
-                            Debug.LogError("Slot'ta button bileşeni bulunamadı!");
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError("Slot objesinde UI_ItemSlot bileşeni bulunamadı!");
-                    }
+                    // Bu değişkeni Final olarak tanımla
+                    GameObject finalItemObj = itemObj;
+                    slotButton.onClick.AddListener(() => TakeItem(finalItemObj));
                 }
                 else
                 {
-                    Debug.LogWarning("ItemObject veya ItemData null! Item: " + itemObj.name);
+                    Debug.LogError("Slot'ta button bileşeni bulunamadı!");
                 }
-                
-                if (wasInactive)
-                {
-                    itemObj.SetActive(false);
-                }
+            }
+            else
+            {
+                Debug.LogError("Slot objesinde UI_ItemSlot bileşeni bulunamadı!");
             }
         }
         
-        Debug.Log("Toplam " + currentChest.itemsInChest.Count + " item var, " + validItemCount + " tanesi gösteriliyor.");
+        Debug.Log($"Toplam {stackedItems.Count} farklı item türü gösteriliyor.");
     }
     
-    // Tekil itemı al
+    // Tekil item stack'ını al
     private void TakeItem(GameObject item)
     {
         if (currentChest != null && item != null)
         {
-            Debug.Log("TakeItem çağrıldı: " + item.name);
+            ItemObject itemObj = item.GetComponent<ItemObject>();
+            if (itemObj != null && itemObj.GetItemData() != null)
+            {
+                Debug.Log($"TakeItem çağrıldı: {itemObj.GetItemData().itemName}");
+            }
+            else
+            {
+                Debug.Log("TakeItem çağrıldı: " + item.name);
+            }
+            
             // Sandıktan itemı al
             currentChest.RemoveItem(item);
             
             // Slotları güncelle
             RefreshItemSlots();
+            
+            // Eğer sandıktaki tüm itemlar bittiyse UI'ı kapat
+            Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
+            if (stackedItems.Count == 0)
+            {
+                CloseChest();
+            }
         }
     }
     
@@ -250,7 +245,8 @@ public class UI_ChestInventory : MonoBehaviour
     {
         if (currentChest != null)
         {
-            Debug.Log("Take All çağrıldı, item sayısı: " + currentChest.itemsInChest.Count);
+            Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
+            Debug.Log($"Take All çağrıldı, unique item sayısı: {stackedItems.Count}");
             
             // Tüm itemları sandıktan al
             currentChest.TakeAllItems();
@@ -259,7 +255,7 @@ public class UI_ChestInventory : MonoBehaviour
             RefreshItemSlots();
             
             // Eğer sandık boşsa UI'ı kapat
-            if (currentChest.itemsInChest.Count == 0)
+            if (currentChest.GetStackedItems().Count == 0)
             {
                 CloseChest();
             }
