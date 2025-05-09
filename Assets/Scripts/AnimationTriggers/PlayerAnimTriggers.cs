@@ -104,7 +104,7 @@ public class PlayerAnimTriggers : MonoBehaviour
                 // TakeDamage doğrudan çağır, enemy.Damage() çağırma
                 enemy.stats.TakeDamage(currentDamage);
                 
-                // Görsel efektler için HitFX çağır
+                // // Görsel efektler için HitFX çağır
                 if (enemy.entityFX != null)
                 {
                     enemy.entityFX.StartCoroutine("HitFX");

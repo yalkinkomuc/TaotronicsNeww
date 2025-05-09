@@ -20,8 +20,12 @@ public class EntityFX : MonoBehaviour
    [Header("BurnFX")] 
    [SerializeField] public Material burnMat; // Unity'de turuncu flash materyali atanacak
 
-   [Header("Death VFX")]
-   [SerializeField] private string[] deathVFXIds;
+   [Header("Death Effect")]
+   [SerializeField] private Transform deathEffectSpawnPoint;
+   [SerializeField] private GameObject explosionEffectPrefab; // Patlama efekti prefab'ı
+   [SerializeField] private int explosionCount = 5; // Kaç tane patlama efekti spawnlanacak
+   
+   private bool isFadingOut = false; // Fade işlemi başladı mı kontrolü
 
    private void Start()
    {
@@ -46,40 +50,41 @@ public class EntityFX : MonoBehaviour
    }
    
    // Yeni ölüm efekti metodu
-   public void PlayDeathEffect()
-   {
-      // Ölüm VFX oynat (eğer varsa)
-      if (deathVFXIds != null && deathVFXIds.Length > 0 && vfxSpawnPoint != null)
-      {
-         string randomDeathVFXId = deathVFXIds[UnityEngine.Random.Range(0, deathVFXIds.Length)];
-         VFXManager.Instance.PlayVFX(randomDeathVFXId, vfxSpawnPoint.position, transform);
-      }
-      
-      // Ölüm fade efektini hemen başlatma - animasyon bitince AnimationFinishTrigger tarafından tetiklenecek
-      // Bu şekilde animasyon tamamlanmadan karakter kaybolmaz
-   }
+   
    
    public void StartFadeOutAndDestroy()
    {
-      if (sr != null)
+      if (sr != null && !isFadingOut)
       {
-         float currentAnimationLength = 0f;
-         if (animator != null)
-         {
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            currentAnimationLength = stateInfo.length;
-            //Debug.Log($"Animation Length: {currentAnimationLength}");
-         }
-
-         StartCoroutine(FadeOutAndDestroyCoroutine(currentAnimationLength));
+         isFadingOut = true;
+         StartCoroutine(FadeOutAndDestroyCoroutine());
       }
    }
 
-   private IEnumerator FadeOutAndDestroyCoroutine(float animationLength)
+   private IEnumerator FadeOutAndDestroyCoroutine()
    {
-      yield return new WaitForSeconds(animationLength);
-      
-      float fadeTime = 1f;
+      // Birden fazla patlama efekti oluştur
+      if (explosionEffectPrefab != null)
+      {
+         // 4-5 adet patlama efekti oluştur (explosionCount kadar)
+         for (int i = 0; i < explosionCount; i++)
+         {
+            // Her patlama için farklı bir offset ile rastgele konumlandır
+            Vector3 explosionPosition = deathEffectSpawnPoint.position;
+            explosionPosition.x += UnityEngine.Random.Range(-0.5f, 0.5f);
+            explosionPosition.y += UnityEngine.Random.Range(-0.1f, 0.1f);
+            
+            Instantiate(explosionEffectPrefab, explosionPosition, Quaternion.identity);
+            
+            // Her efekt arasında çok kısa bir gecikme ekleyebiliriz
+            if (i < explosionCount - 1) {
+               yield return new WaitForSeconds(0.1f);
+            }
+         }
+      }
+
+      // Yavaşça transparan ol
+      float fadeTime = .25f;
       float elapsedTime = 0f;
       Color startColor = sr.color;
 
@@ -90,7 +95,9 @@ public class EntityFX : MonoBehaviour
          sr.color = new Color(startColor.r, startColor.g, startColor.b, newAlpha);
          yield return null;
       }
-
+      
+      // İşlem bitti, nesneyi yok et
+      isFadingOut = false; // Bayrak sıfırla (aslında gerek yok çünkü nesne yok edilecek)
       Destroy(gameObject);
    }
 

@@ -27,7 +27,6 @@ public class Bandit_DeadState : EnemyState
         
         if (triggerCalled)
         {
-           
             enemy.entityFX.StartFadeOutAndDestroy();
         }
     }

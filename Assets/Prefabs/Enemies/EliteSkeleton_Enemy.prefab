@@ -185,6 +185,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3429875137707942753}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5759358669345531702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 960792307035410129}
+  m_Layer: 7
+  m_Name: VFX_DeathPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &960792307035410129
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5759358669345531702}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3429875137707942753}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5842355392186153926
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,6 +318,7 @@ Transform:
   - {fileID: 3543634340846307245}
   - {fileID: 1893527124932000873}
   - {fileID: 1179314500733958781}
+  - {fileID: 960792307035410129}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &8711021213350326901
@@ -370,6 +402,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
+  whatIsStair:
+    serializedVersion: 2
+    m_Bits: 0
   wallCheck: {fileID: 3543634340846307245}
   wallCheckDistance: 0.84
   facingdir: 1
@@ -393,6 +428,8 @@ MonoBehaviour:
   patrolSpeed: 2
   fightBegun: 0
   isDefeated: 0
+  isQuestEnemy: 0
+  uniqueEnemyId: 
   attackDistance: 0.7
   attackCooldown: 0.2
   battleTime: 4
@@ -422,7 +459,9 @@ MonoBehaviour:
   - Skeleton_Hurt3
   vfxSpawnPoint: {fileID: 1893527124932000873}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
-  deathVFXIds: []
+  deathEffectSpawnPoint: {fileID: 960792307035410129}
+  explosionEffectPrefab: {fileID: 3757604410375930725, guid: 32a758ed4273e5648947b2b9fb0b7d90, type: 3}
+  explosionCount: 5
 --- !u!114 &5671088416529142098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,7 +481,7 @@ MonoBehaviour:
   thirdComboDamageMultiplier:
     baseValue: 0
   maxHealth:
-    baseValue: 1000
+    baseValue: 100
   maxMana:
     baseValue: 0
   currentHealth: 0
@@ -466,7 +505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fa997a9b7dfab64babfe8fd5dfe89d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  possibleItemDrop: 1
+  possibleItemDrop: 0
   possibleDrop:
   - {fileID: 11400000, guid: ff36dbd30ad2d74489535cd063f126c2, type: 2}
   - {fileID: 11400000, guid: 9f844d67e35a65a498e37b09b67e4942, type: 2}

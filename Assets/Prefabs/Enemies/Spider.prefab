@@ -223,6 +223,7 @@ Transform:
   - {fileID: 1989424080863651180}
   - {fileID: 8432171091623823911}
   - {fileID: 1846774773768892862}
+  - {fileID: 6122488551850159231}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &6975576741001824529
@@ -306,6 +307,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
+  whatIsStair:
+    serializedVersion: 2
+    m_Bits: 2048
   wallCheck: {fileID: 8432171091623823911}
   wallCheckDistance: 0.69
   facingdir: 1
@@ -329,6 +333,8 @@ MonoBehaviour:
   patrolSpeed: 2
   fightBegun: 0
   isDefeated: 0
+  isQuestEnemy: 0
+  uniqueEnemyId: 
   battleTime: 4
 --- !u!114 &8727858786155169172
 MonoBehaviour:
@@ -350,7 +356,9 @@ MonoBehaviour:
   - BloodVFX2
   vfxSpawnPoint: {fileID: 1846774773768892862}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
-  deathVFXIds: []
+  deathEffectSpawnPoint: {fileID: 6122488551850159231}
+  explosionEffectPrefab: {fileID: 3757604410375930725, guid: 32a758ed4273e5648947b2b9fb0b7d90, type: 3}
+  explosionCount: 2
 --- !u!114 &1447844343380681819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,7 +378,7 @@ MonoBehaviour:
   thirdComboDamageMultiplier:
     baseValue: 0
   maxHealth:
-    baseValue: 100
+    baseValue: 10
   maxMana:
     baseValue: 0
   currentHealth: 0
@@ -382,6 +390,37 @@ MonoBehaviour:
   experienceLevelMultiplier: 0.5
   scaleWithPlayerLevel: 0
   levelOffset: 0
+--- !u!1 &6190917970576867781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6122488551850159231}
+  m_Layer: 7
+  m_Name: VFX_DeathPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6122488551850159231
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6190917970576867781}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.189, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6353669383580540762}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6768564313349086404
 GameObject:
   m_ObjectHideFlags: 0

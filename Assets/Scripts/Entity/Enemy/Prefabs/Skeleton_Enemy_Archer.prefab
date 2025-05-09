@@ -224,6 +224,7 @@ Transform:
   - {fileID: 4093255035803299004}
   - {fileID: 2718240864497172013}
   - {fileID: 771119517957317904}
+  - {fileID: 2956230077297750248}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1598100102844929044
@@ -311,7 +312,9 @@ MonoBehaviour:
   - Skeleton_Hurt3
   vfxSpawnPoint: {fileID: 2718240864497172013}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
-  deathVFXIds: []
+  deathEffectSpawnPoint: {fileID: 2956230077297750248}
+  explosionEffectPrefab: {fileID: 3757604410375930725, guid: 32a758ed4273e5648947b2b9fb0b7d90, type: 3}
+  explosionCount: 5
 --- !u!114 &1148455196740695831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +332,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
+  whatIsStair:
+    serializedVersion: 2
+    m_Bits: 0
   wallCheck: {fileID: 4093255035803299004}
   wallCheckDistance: 0.32
   facingdir: 1
@@ -352,6 +358,8 @@ MonoBehaviour:
   patrolSpeed: 2
   fightBegun: 0
   isDefeated: 0
+  isQuestEnemy: 0
+  uniqueEnemyId: 
   arrowSpawnPoint: {fileID: 771119517957317904}
   arrowPrefab: {fileID: 4551660470442196087, guid: bb43e13666e1e2448bcd249521cc6c56, type: 3}
   attackCooldown: 0.5
@@ -374,7 +382,7 @@ MonoBehaviour:
   thirdComboDamageMultiplier:
     baseValue: 0
   maxHealth:
-    baseValue: 1
+    baseValue: 10
   maxMana:
     baseValue: 0
   currentHealth: 0
@@ -386,6 +394,37 @@ MonoBehaviour:
   experienceLevelMultiplier: 0.5
   scaleWithPlayerLevel: 0
   levelOffset: 0
+--- !u!1 &2145776901375274963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2956230077297750248}
+  m_Layer: 7
+  m_Name: VFX_DeathPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2956230077297750248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145776901375274963}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.07, y: -0.185, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7877003868482642406}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5907525810770720233
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,6 +36,36 @@ public class Bandit_Enemy : Enemy, IParryable
 
     // IParryable implementasyonu
     public bool IsParryWindowOpen => isParryWindowOpen;
+    
+    
+    protected override void Awake()
+    {
+        base.Awake();
+        
+        SetupDefaultFacingDir(1);
+        
+        idleState = new Bandit_IdleState(this,stateMachine,"Idle",this);
+        moveState = new Bandit_MoveState(this,stateMachine,"Move",this);
+        battleState = new Bandit_BattleState(this,stateMachine,"Chase",this);
+        attackState = new Bandit_AttackState(this,stateMachine,"Attack",this);
+        deadState = new Bandit_DeadState(this,stateMachine,"Death",this);
+        stunnedState = new Bandit_StunnedState(this,stateMachine,"Stunned",this);
+        
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+        
+        stateMachine.Initialize(idleState);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        
+        
+    }
 
     public void GetParried()
     {
@@ -74,34 +104,7 @@ public class Bandit_Enemy : Enemy, IParryable
         return this.transform;
     }
 
-    protected override void Awake()
-    {
-        base.Awake();
-        
-        SetupDefaultFacingDir(1);
-        
-        idleState = new Bandit_IdleState(this,stateMachine,"Idle",this);
-        moveState = new Bandit_MoveState(this,stateMachine,"Move",this);
-        battleState = new Bandit_BattleState(this,stateMachine,"Chase",this);
-        attackState = new Bandit_AttackState(this,stateMachine,"Attack",this);
-        deadState = new Bandit_DeadState(this,stateMachine,"Death",this);
-        stunnedState = new Bandit_StunnedState(this,stateMachine,"Stunned",this);
-        
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-        
-        stateMachine.Initialize(idleState);
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-        
-        
-    }
+    
 
     public override void Die()
     {

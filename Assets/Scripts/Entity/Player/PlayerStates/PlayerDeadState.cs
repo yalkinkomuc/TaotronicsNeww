@@ -22,7 +22,7 @@ public class PlayerDeadState : PlayerState
         
         hasTriggeredRespawn = false;
         
-        player.entityFX.PlayDeathEffect();
+       // player.entityFX.PlayDeathEffect();
     }
 
     public override void Update()
