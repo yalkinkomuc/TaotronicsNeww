@@ -9770,7 +9770,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1871628353
   m_SortingLayer: 1
-  m_SortingOrder: 8
+  m_SortingOrder: 7
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -24175,6 +24175,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8561645615824468655, guid: 637d9081a08d78e469b708782dfe0689, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9017365076322973702, guid: 637d9081a08d78e469b708782dfe0689, type: 3}
       propertyPath: m_SortingOrder
       value: 0
@@ -24310,6 +24314,10 @@ PrefabInstance:
     - target: {fileID: 7108079569176505181, guid: 789b04aa0e9e41645a33c71c71e2a1bf, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7269415220445701235, guid: 789b04aa0e9e41645a33c71c71e2a1bf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9077689633502162189, guid: 789b04aa0e9e41645a33c71c71e2a1bf, type: 3}
       propertyPath: m_Name
@@ -28354,11 +28362,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6093113223368070934, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 111.5079
+      value: 111.537
       objectReference: {fileID: 0}
     - target: {fileID: 6093113223368070934, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.3196752
+      value: -3.608
       objectReference: {fileID: 0}
     - target: {fileID: 6093113223368070934, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
       propertyPath: m_LocalPosition.z
@@ -29651,7 +29659,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 578106660111293629, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7005369960958320381, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
       propertyPath: m_LocalPosition.x
