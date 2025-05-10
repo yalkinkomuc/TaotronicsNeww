@@ -35,6 +35,14 @@ public class SkillManager : MonoBehaviour
         SaveSkillData();
     }
     
+    // Oyun kapatıldığında çağrılır
+    private void OnApplicationQuit()
+    {
+        // Oyun kapatılırken skill verilerini kesin olarak kaydet
+        SaveSkillData();
+        Debug.Log("Oyun kapatılıyor, skill verileri kaydedildi!");
+    }
+    
     // Shard sayısını al
     public int GetShardCount()
     {

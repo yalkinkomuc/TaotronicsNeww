@@ -35,6 +35,7 @@ public class Inventory : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            DontDestroyOnLoad(gameObject); // Oyun kapatıldığında envanterin kalmasını sağlar
             
             inventoryItems = new List<InventoryItem>();
             inventoryDictionary = new Dictionary<ItemData, InventoryItem>();
@@ -224,16 +225,32 @@ public class Inventory : MonoBehaviour
     // Resources klasöründen ItemData'yı yükle
     private ItemData LoadItemFromResources(string itemName)
     {
-        // Resources/Items klasörünü tarar
+        // Resources/Items klasöründe doğrudan ara
+        Debug.Log($"Resources'tan yükleniyor: '{itemName}'");
+        
+        // Önce doğrudan Resources/Items/itemName yolunu dene
+        ItemData directItem = Resources.Load<ItemData>($"Items/{itemName}");
+        if (directItem != null)
+        {
+            Debug.Log($"Resources'tan doğrudan yüklendi: Items/{itemName}");
+            return directItem;
+        }
+        
+        // Tüm ItemData'ları tara
         ItemData[] allItems = Resources.LoadAll<ItemData>("Items");
+        Debug.Log($"Resources/Items klasöründe {allItems.Length} ItemData bulundu.");
+        
         foreach (var item in allItems)
         {
+            Debug.Log($"Bulunan item: {item.itemName}");
             if (item.itemName == itemName)
             {
+                Debug.Log($"Resources'tan item yüklendi: {itemName}");
                 return item;
             }
         }
         
+        Debug.LogWarning($"Resources/Items klasöründe {itemName} adlı item bulunamadı!");
         return null;
     }
 
@@ -258,5 +275,13 @@ public class Inventory : MonoBehaviour
     {
         LoadInventory();
         UpdateSlotUI();
+    }
+
+    // Oyun kapatıldığında çağrılır
+    private void OnApplicationQuit()
+    {
+        // Oyun kapatılırken envanteri kesin olarak kaydet
+        SaveInventory();
+        Debug.Log("Oyun kapatılıyor, envanter kaydedildi!");
     }
 }

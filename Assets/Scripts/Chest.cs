@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class Chest : MonoBehaviour, IInteractable
 {
@@ -46,7 +47,11 @@ public class Chest : MonoBehaviour, IInteractable
         
         // Sandık itemlerini kontrol et ve stack'le
         ProcessChestItems();
-        
+    }
+
+    // Start'a taşıdık - ChestManager yüklendikten sonra çalışması için
+    private void Start()
+    {
         // Daha önce alınan itemları kaldır (oyun yeniden başlatıldığında)
         RemoveCollectedItems();
         
@@ -143,7 +148,9 @@ public class Chest : MonoBehaviour, IInteractable
     {
         if (ChestManager.Instance == null)
         {
-            Debug.LogWarning("ChestManager bulunamadı, toplanmış itemlar kontrol edilemedi!");
+            Debug.LogWarning("ChestManager bulunamadı, sonraki frame'de tekrar denenecek.");
+            // ChestManager oluşana kadar bekle ve tekrar dene
+            StartCoroutine(WaitForChestManager());
             return;
         }
         
@@ -190,6 +197,30 @@ public class Chest : MonoBehaviour, IInteractable
         Debug.Log("Toplam " + collectedItems.Count + " item daha önce toplanmış, kalan item sayısı: " + itemsInChest.Count);
     }
     
+    // ChestManager'ı bekleme coroutine'i
+    private System.Collections.IEnumerator WaitForChestManager()
+    {
+        int attemptCount = 0;
+        int maxAttempts = 10; // Maximum bekleme sayısı
+        
+        while (ChestManager.Instance == null && attemptCount < maxAttempts)
+        {
+            yield return new WaitForSeconds(0.1f);
+            attemptCount++;
+        }
+        
+        if (ChestManager.Instance != null)
+        {
+            // ChestManager bulunduğunda işleme devam et
+            RemoveCollectedItems();
+            LoadChestState();
+        }
+        else
+        {
+            Debug.LogError("ChestManager " + maxAttempts + " denemeden sonra bulunamadı!");
+        }
+    }
+
     private void OnValidate()
     {
         // Editor'da sandık ID'si yoksa oluştur
@@ -308,95 +339,6 @@ public class Chest : MonoBehaviour, IInteractable
             prompt.HidePrompt();
     }
     
-    // Tüm itemleri envantere aktarma
-    public void TakeAllItems()
-    {
-        Debug.Log("TakeAllItems çağrıldı, item sayısı: " + itemsInChest.Count);
-        
-        if (itemsInChest.Count == 0) return;
-        
-        // Stack'lenmiş item bilgisini kullanalım
-        Dictionary<string, int> itemsToAdd = new Dictionary<string, int>(stackedItems);
-        
-        foreach (var pair in itemsToAdd)
-        {
-            string itemName = pair.Key;
-            int count = pair.Value;
-            
-            if (!itemReferences.ContainsKey(itemName)) continue;
-            
-            GameObject itemObj = itemReferences[itemName];
-            if (itemObj == null) continue;
-            
-            ItemObject item = itemObj.GetComponent<ItemObject>();
-            if (item == null) continue;
-            
-            ItemData itemData = item.GetItemData();
-            if (itemData == null) continue;
-            
-            // İtem referansını envantere ekle (ilgili sayıda)
-            for (int i = 0; i < count; i++)
-            {
-                Debug.Log("Envantere ekleniyor: " + itemData.itemName);
-                Inventory.instance.AddItem(itemData);
-                
-                // Eğer bu bir Skill Shard ise, SkillManager'a ekle
-                if (itemData is SkillShard)
-                {
-                    SkillShard shard = itemData as SkillShard;
-                    if (SkillManager.Instance != null)
-                    {
-                        SkillManager.Instance.AddShards(shard.GetShardValue());
-                        Debug.Log("Sandıktan Skill Shard toplandı: +" + shard.GetShardValue() + " shards");
-                    }
-                }
-            }
-            
-            // ItemObject referanslarını bul ve işaretle
-            List<GameObject> itemsToMark = new List<GameObject>();
-            foreach (GameObject obj in itemsInChest)
-            {
-                if (obj == null) continue;
-                
-                ItemObject objItem = obj.GetComponent<ItemObject>();
-                if (objItem == null || objItem.GetItemData() == null) continue;
-                
-                if (objItem.GetItemData().itemName == itemName)
-                {
-                    itemsToMark.Add(obj);
-                }
-            }
-            
-            // Her bir item referansını işaretle ve kaldır
-            foreach (GameObject obj in itemsToMark)
-            {
-                // Item'ı toplanan olarak işaretle
-                ItemObject objItem = obj.GetComponent<ItemObject>();
-                string itemID = objItem.GetUniqueID();
-                if (!string.IsNullOrEmpty(itemID))
-                {
-                    ChestManager.Instance?.MarkItemAsCollected(chestUniqueID, itemID);
-                }
-                
-                // Listeyi güncelle
-                itemsInChest.Remove(obj);
-                removedItems.Add(obj);
-                
-                // GameObject'i görünmez yap
-                obj.SetActive(false);
-            }
-        }
-        
-        // Dictionary'leri temizle
-        stackedItems.Clear();
-        itemReferences.Clear();
-        
-        // Listeyi temizle
-        int previousCount = itemsInChest.Count;
-        itemsInChest.Clear();
-        Debug.Log("Sandık temizlendi, önceki sayı: " + previousCount + ", şimdiki sayı: " + itemsInChest.Count);
-    }
-
     // Tek bir item stack'ını alma fonksiyonu
     public void RemoveItem(GameObject item)
     {
@@ -413,7 +355,6 @@ public class Chest : MonoBehaviour, IInteractable
             return;
         }
         
-        // Stack bilgisine ulaş
         string itemName = itemObj.GetItemData().itemName;
         if (!stackedItems.ContainsKey(itemName))
         {
@@ -421,17 +362,25 @@ public class Chest : MonoBehaviour, IInteractable
             return;
         }
         
-        // Stack sayısını al
         int count = stackedItems[itemName];
         ItemData itemData = itemObj.GetItemData();
         
-        // Envantere ekle (ilgili sayıda)
+        // Inventory instance kontrol
+        if (Inventory.instance == null)
+        {
+            Debug.LogError("Inventory.instance null! Inventory GameObject'inin DontDestroyOnLoad olduğundan emin olun!");
+            return;
+        }
+        
+        Debug.Log("--- ITEM ALINIYOR ---");
+        Debug.Log($"Item: {itemName}, Sayı: {count}, SkillShard mi: {(itemData is SkillShard ? "EVET" : "HAYIR")}");
+        
+        // Envantere ekle
         for (int i = 0; i < count; i++)
         {
-            Debug.Log("Envantere ekleniyor: " + itemData.itemName);
+            Debug.Log($"Envantere ekleniyor ({i+1}/{count}): " + itemData.itemName);
             Inventory.instance.AddItem(itemData);
             
-            // Eğer bu bir Skill Shard ise, SkillManager'a ekle
             if (itemData is SkillShard)
             {
                 SkillShard shard = itemData as SkillShard;
@@ -440,11 +389,15 @@ public class Chest : MonoBehaviour, IInteractable
                     SkillManager.Instance.AddShards(shard.GetShardValue());
                     Debug.Log("Sandıktan Skill Shard toplandı: +" + shard.GetShardValue() + " shards");
                 }
+                else
+                {
+                    Debug.LogError("SkillManager.Instance bulunamadı! SkillShard eklenemiyor.");
+                }
             }
         }
         
-        // ItemObject referanslarını bul ve işaretle
-        List<GameObject> itemsToMark = new List<GameObject>();
+        // İtemleri bul ve listeden çıkar
+        List<GameObject> itemsToRemove = new List<GameObject>();
         foreach (GameObject obj in itemsInChest)
         {
             if (obj == null) continue;
@@ -454,24 +407,29 @@ public class Chest : MonoBehaviour, IInteractable
             
             if (objItem.GetItemData().itemName == itemName)
             {
-                itemsToMark.Add(obj);
-                // Item'ı toplanan olarak işaretle
+                itemsToRemove.Add(obj);
                 string itemID = objItem.GetUniqueID();
                 if (!string.IsNullOrEmpty(itemID))
                 {
-                    ChestManager.Instance?.MarkItemAsCollected(chestUniqueID, itemID);
+                    if (ChestManager.Instance != null)
+                    {
+                        ChestManager.Instance.MarkItemAsCollected(chestUniqueID, itemID);
+                    }
+                    else
+                    {
+                        Debug.LogError("ChestManager.Instance bulunamadı! Item toplanmış olarak işaretlenemiyor.");
+                    }
                 }
             }
         }
         
-        // Her bir item referansını kaldır
-        foreach (GameObject obj in itemsToMark)
+        Debug.Log($"Toplam {itemsToRemove.Count} adet {itemName} kaldırılacak");
+        
+        // Görünmez yap ve listeden çıkar
+        foreach (GameObject obj in itemsToRemove)
         {
-            // Listeyi güncelle
             itemsInChest.Remove(obj);
             removedItems.Add(obj);
-            
-            // GameObject'i görünmez yap
             obj.SetActive(false);
         }
         
@@ -479,7 +437,129 @@ public class Chest : MonoBehaviour, IInteractable
         stackedItems.Remove(itemName);
         itemReferences.Remove(itemName);
         
-        Debug.Log($"Item stack alındı ({count}x {itemName}), kalan unique item sayısı: {stackedItems.Count}");
+        Debug.Log($"TAMAMLANDI: Item stack alındı ({count}x {itemName}), kalan unique item sayısı: {stackedItems.Count}");
+    }
+    
+    // Tüm itemleri envantere aktarma
+    public void TakeAllItems()
+    {
+        Debug.Log("TakeAllItems çağrıldı, item sayısı: " + itemsInChest.Count);
+        
+        if (itemsInChest.Count == 0) return;
+        
+        // Inventory instance kontrol
+        if (Inventory.instance == null)
+        {
+            Debug.LogError("TakeAllItems: Inventory.instance null! Inventory GameObject'inin DontDestroyOnLoad olduğundan emin olun!");
+            return;
+        }
+        
+        Dictionary<string, int> itemsToAdd = new Dictionary<string, int>(stackedItems);
+        Debug.Log($"Toplam {itemsToAdd.Count} farklı item türü alınacak. Stack sayıları:");
+        
+        foreach (var pair in itemsToAdd)
+        {
+            Debug.Log($"  - {pair.Key}: {pair.Value} adet");
+        }
+        
+        foreach (var pair in itemsToAdd)
+        {
+            string itemName = pair.Key;
+            int count = pair.Value;
+            
+            if (!itemReferences.ContainsKey(itemName))
+            {
+                Debug.LogWarning($"{itemName} için referans bulunamadı, geçiliyor...");
+                continue;
+            }
+            
+            GameObject itemObj = itemReferences[itemName];
+            if (itemObj == null)
+            {
+                Debug.LogWarning($"{itemName} için GameObject null, geçiliyor...");
+                continue;
+            }
+            
+            ItemObject item = itemObj.GetComponent<ItemObject>();
+            if (item == null)
+            {
+                Debug.LogWarning($"{itemName} için ItemObject bileşeni bulunamadı, geçiliyor...");
+                continue;
+            }
+            
+            ItemData itemData = item.GetItemData();
+            if (itemData == null)
+            {
+                Debug.LogWarning($"{itemName} için ItemData null, geçiliyor...");
+                continue;
+            }
+            
+            Debug.Log($"--- {itemName} ENVANTERİNE EKLENİYOR (x{count}) ---");
+            
+            // Envantere ekle
+            for (int i = 0; i < count; i++)
+            {
+                Debug.Log($"Envantere ekleniyor ({i+1}/{count}): " + itemData.itemName);
+                Inventory.instance.AddItem(itemData);
+                
+                if (itemData is SkillShard)
+                {
+                    SkillShard shard = itemData as SkillShard;
+                    if (SkillManager.Instance != null)
+                    {
+                        SkillManager.Instance.AddShards(shard.GetShardValue());
+                        Debug.Log("Sandıktan Skill Shard toplandı: +" + shard.GetShardValue() + " shards");
+                    }
+                    else
+                    {
+                        Debug.LogError("SkillManager.Instance bulunamadı! SkillShard eklenemiyor.");
+                    }
+                }
+            }
+            
+            // İtemleri bul ve işaretle
+            List<GameObject> itemsToRemove = new List<GameObject>();
+            foreach (GameObject obj in itemsInChest)
+            {
+                if (obj == null) continue;
+                
+                ItemObject objItem = obj.GetComponent<ItemObject>();
+                if (objItem == null || objItem.GetItemData() == null) continue;
+                
+                if (objItem.GetItemData().itemName == itemName)
+                {
+                    itemsToRemove.Add(obj);
+                    string itemID = objItem.GetUniqueID();
+                    if (!string.IsNullOrEmpty(itemID))
+                    {
+                        if (ChestManager.Instance != null)
+                        {
+                            ChestManager.Instance.MarkItemAsCollected(chestUniqueID, itemID);
+                        }
+                        else
+                        {
+                            Debug.LogError("ChestManager.Instance bulunamadı! Item toplanmış olarak işaretlenemiyor.");
+                        }
+                    }
+                }
+            }
+            
+            Debug.Log($"Toplam {itemsToRemove.Count} adet {itemName} nesnesi kaldırılacak");
+            
+            // Görünmez yap ve listeden çıkar
+            foreach (GameObject obj in itemsToRemove)
+            {
+                itemsInChest.Remove(obj);
+                removedItems.Add(obj);
+                obj.SetActive(false);
+            }
+        }
+        
+        // Tüm listeleri temizle
+        stackedItems.Clear();
+        itemReferences.Clear();
+        
+        Debug.Log("Sandık tamamen boşaltıldı. Tüm itemler envantere eklendi.");
     }
     
     // UI için stack bilgisini döndür

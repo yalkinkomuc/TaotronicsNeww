@@ -31,6 +31,14 @@ public class ItemCollectionManager : MonoBehaviour
         SaveCollectedItems();
     }
 
+    // Oyun kapatıldığında çağrılır
+    private void OnApplicationQuit()
+    {
+        // Oyun kapatılırken toplanan eşyaları kesin olarak kaydet
+        SaveCollectedItems();
+        Debug.Log("Oyun kapatılıyor, toplanan eşyalar kaydedildi!");
+    }
+
     public void MarkItemAsCollected(string itemID)
     {
         collectedItems.Add(itemID);

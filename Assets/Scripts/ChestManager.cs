@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+// ChestManager'ı diğer scriptlerden önce çalıştır
+[DefaultExecutionOrder(-100)]
 /// <summary>
 /// Sandıklardan alınan itemları takip eden yönetici sınıf.
 /// Singleton tasarım desenini kullanır.
@@ -41,7 +43,7 @@ public class ChestManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
             
             // Verileri yükle
             LoadChestData();
