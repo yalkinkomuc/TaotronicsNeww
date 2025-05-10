@@ -131,6 +131,6 @@ public class EliteSkeleton_Enemy : Enemy, IParryable
         
         // Yakın mesafe gösterimi
         Gizmos.color = new Color(0.9f, 0.2f, 0.2f, 0.5f);
-        Gizmos.DrawWireSphere(transform.position, tooCloseDistance);
+        Gizmos.DrawWireSphere(transform.position,tooCloseRadius);
     }
 }

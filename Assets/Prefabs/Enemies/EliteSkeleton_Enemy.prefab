@@ -404,7 +404,7 @@ MonoBehaviour:
     m_Bits: 64
   whatIsStair:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
   wallCheck: {fileID: 3543634340846307245}
   wallCheckDistance: 0.84
   facingdir: 1
@@ -422,9 +422,9 @@ MonoBehaviour:
   idleTime: 2
   moveSpeed: 2.7
   chaseSpeed: 3.5
-  tooCloseDistance: 3
-  detectDistance: 15
-  patrolDistance: 5
+  tooCloseRadius: 2.2
+  detectDistance: 10
+  patrolDistance: 3
   patrolSpeed: 2
   fightBegun: 0
   isDefeated: 0
@@ -432,7 +432,7 @@ MonoBehaviour:
   uniqueEnemyId: 
   attackDistance: 0.7
   attackCooldown: 0.2
-  battleTime: 4
+  battleTime: 2.5
   attackCheck: {fileID: 1179314500733958781}
   attackSize: {x: 0.88, y: 0.36}
   isParryWindowOpen: 0

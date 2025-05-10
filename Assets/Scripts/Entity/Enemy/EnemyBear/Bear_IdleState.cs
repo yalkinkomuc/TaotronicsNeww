@@ -36,9 +36,9 @@ public class Bear_IdleState : EnemyState
             stateMachine.ChangeState(enemy.moveState);
         }
         
-        if (enemy.IsPlayerDetected())
-        {
-            stateMachine.ChangeState(enemy.chaseState);
-        }
+        // if (enemy.IsPlayerDetected())
+        // {
+        //     stateMachine.ChangeState(enemy.chaseState);
+        // }
     }
 }

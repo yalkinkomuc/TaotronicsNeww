@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Serialization;
 
 public class Enemy : Entity
 {
@@ -16,7 +17,7 @@ public class Enemy : Entity
    public float idleTime;
    public float moveSpeed;
    public float chaseSpeed;
-   [SerializeField] protected float tooCloseDistance = 3f; // Minimum distance before enemy retreats
+   [FormerlySerializedAs("tooCloseDistance")] [SerializeField] protected float tooCloseRadius = 3f; // Minimum distance before enemy retreats
    
    public float detectDistance;
    [SerializeField] protected float patrolDistance = 5f; // Patrol distance
@@ -177,7 +178,7 @@ public class Enemy : Entity
    {
        if (player != null)
        {
-           if (Vector2.Distance(transform.position, player.transform.position) <= tooCloseDistance)
+           if (Vector2.Distance(transform.position, player.transform.position) <= tooCloseRadius)
            {
                return true;
            }
