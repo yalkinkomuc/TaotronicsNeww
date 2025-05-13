@@ -3,18 +3,70 @@ using UnityEngine;
 public class BlacksmithHandler : MonoBehaviour
 {
     [SerializeField] private BlacksmithUI blacksmithUI;
+    [SerializeField] private string blacksmithUIPrefabPath = "UI/BlacksmithUI"; // Resources klasöründeki prefab yolu
+    [SerializeField] private bool useResourcesForUI = true; // Prefabı Resources'dan yükleme seçeneği
    // [SerializeField] private AudioClip greetingSound;
     
     private AudioSource audioSource;
     
     private void Awake()
     {
-       
+        // BlacksmithUI referansını hemen bul veya yükle
+        EnsureBlacksmithUIExists();
+    }
+    
+    // BlacksmithUI'ın varlığını kontrol et ve gerekirse oluştur
+    private void EnsureBlacksmithUIExists()
+    {
+        // Önce singleton instance'ı kontrol et
+        if (BlacksmithUI.Instance != null)
+        {
+            blacksmithUI = BlacksmithUI.Instance;
+            return;
+        }
         
-        // Find BlacksmithUI if not assigned
+        // Referans yoksa, sahnede bulmayı dene
         if (blacksmithUI == null)
         {
             blacksmithUI = FindObjectOfType<BlacksmithUI>();
+            
+            // Hala bulunamadıysa ve Resources kullanma seçeneği açıksa, prefab'dan yükle
+            if (blacksmithUI == null && useResourcesForUI)
+            {
+                LoadBlacksmithUIFromResources();
+            }
+        }
+    }
+    
+    // BlacksmithUI prefabını Resources klasöründen yükle
+    private void LoadBlacksmithUIFromResources()
+    {
+        try
+        {
+            // Prefabı Resources'dan yükle
+            GameObject prefab = Resources.Load<GameObject>(blacksmithUIPrefabPath);
+            
+            if (prefab != null)
+            {
+                // Prefabı instantiate et
+                GameObject uiObj = Instantiate(prefab);
+                
+                // DontDestroyOnLoad ile sahne geçişlerinde korunmasını sağla
+                DontDestroyOnLoad(uiObj);
+                
+                // BlacksmithUI bileşenini al
+                blacksmithUI = uiObj.GetComponent<BlacksmithUI>();
+                
+                Debug.Log("BlacksmithUI prefabı başarıyla yüklendi");
+            }
+            else
+            {
+                Debug.LogError($"BlacksmithUI prefabı bulunamadı: {blacksmithUIPrefabPath}");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"BlacksmithUI prefabı yüklenirken hata: {e.Message}");
         }
     }
     
@@ -23,6 +75,19 @@ public class BlacksmithHandler : MonoBehaviour
         if (player == null)
         {
             Debug.LogError("BlacksmithHandler: Player is null!");
+            return;
+        }
+        
+        // UI referansının varlığını kontrol et
+        EnsureBlacksmithUIExists();
+        
+        // Singleton instance varsa onu kullan, yoksa local referansı kullan
+        BlacksmithUI ui = BlacksmithUI.Instance != null ? BlacksmithUI.Instance : blacksmithUI;
+        
+        // BlacksmithUI hala yoksa, bu noktada işlemi durdur
+        if (ui == null)
+        {
+            Debug.LogError("BlacksmithHandler: BlacksmithUI referansı bulunamadı!");
             return;
         }
         
@@ -55,10 +120,10 @@ public class BlacksmithHandler : MonoBehaviour
         }
         
         // Open blacksmith UI
-        if (blacksmithUI != null)
+        if (ui != null)
         {
             Debug.Log("BlacksmithHandler: Opening BlacksmithUI");
-            blacksmithUI.OpenBlacksmith(playerStats);
+            ui.OpenBlacksmith(playerStats);
         }
         else
         {

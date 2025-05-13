@@ -5,6 +5,9 @@ using TMPro;
 
 public class BlacksmithUI : MonoBehaviour
 {
+    // Singleton instance
+    public static BlacksmithUI Instance;
+    
     [Header("UI References")]
     [SerializeField] private GameObject blacksmithPanel;
     [SerializeField] private TextMeshProUGUI titleText;
@@ -39,14 +42,29 @@ public class BlacksmithUI : MonoBehaviour
     
     private void Awake()
     {
+        // Singleton pattern uygula
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            Debug.Log("BlacksmithUI singleton oluşturuldu ve sahne geçişlerinde korunacak");
+        }
+        else if (Instance != this)
+        {
+            // Eğer zaten bir instance varsa ve bu o değilse, bu objeyi yok et
+            Debug.Log("Fazladan BlacksmithUI bulundu, kaldırılıyor");
+            Destroy(gameObject);
+            return;
+        }
+        
         // AudioSource kontrolü
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
-
-         // Kapatma butonu için olay ekle
+        
+        // Kapatma butonu için olay ekle
         if (closeButton != null)
         {
             closeButton.onClick.RemoveAllListeners();

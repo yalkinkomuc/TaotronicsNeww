@@ -313,8 +313,46 @@ public class Chest : MonoBehaviour, IInteractable
         // Stacked item bilgisini tazele
         ProcessChestItems();
         
+        // UI_ChestInventory.Instance kontrolü
+        if (UI_ChestInventory.Instance == null)
+        {
+            Debug.LogError("UI_ChestInventory.Instance null! Prefabı yüklemeye çalışılıyor...");
+            
+            // Prefabı Resources'dan yüklemeyi deneyelim
+            GameObject chestUIPrefab = Resources.Load<GameObject>("UI/UI_ChestInventory");
+            if (chestUIPrefab != null)
+            {
+                GameObject chestUIObj = Instantiate(chestUIPrefab);
+                DontDestroyOnLoad(chestUIObj);
+                Debug.Log("UI_ChestInventory prefabı başarıyla yüklendi ve instantiate edildi.");
+                
+                // Bir süre bekleyip tekrar deneyelim
+                Invoke("TryOpenChestUIAgain", 0.1f);
+                return;
+            }
+            else
+            {
+                Debug.LogError("UI_ChestInventory prefabı bulunamadı! Sandık UI'ı açılamıyor.");
+                return;
+            }
+        }
+        
         // Sadece UI'ı aç
         UI_ChestInventory.Instance.OpenChest(this);
+    }
+    
+    // UI açma işlemini tekrar deneyen metod
+    private void TryOpenChestUIAgain()
+    {
+        if (UI_ChestInventory.Instance != null)
+        {
+            Debug.Log("UI_ChestInventory.Instance başarıyla bulundu, sandık açılıyor...");
+            UI_ChestInventory.Instance.OpenChest(this);
+        }
+        else
+        {
+            Debug.LogError("UI_ChestInventory.Instance hala null! Sandık açılamıyor.");
+        }
     }
 
     // UI'ı kapatmak için metod (sandık görsel olarak açık kalır)

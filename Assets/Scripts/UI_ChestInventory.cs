@@ -21,10 +21,13 @@ public class UI_ChestInventory : MonoBehaviour
 
     private void Awake()
     {
+        // İlk olarak, kendimizi uygun şekilde ayarla
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            Debug.Log("UI_ChestInventory Singleton oluşturuldu, DontDestroyOnLoad aktif");
             
             // Butonları ayarla
             if (closeButton != null)
@@ -37,9 +40,30 @@ public class UI_ChestInventory : MonoBehaviour
             // Başlangıçta UI'ı gizle
             gameObject.SetActive(false);
         }
-        else
+        else if (Instance != this)
         {
+            Debug.Log("Fazladan UI_ChestInventory tespit edildi, yok ediliyor: " + gameObject.name);
             Destroy(gameObject);
+            return;
+        }
+    }
+    
+    // Restart sonrası instance'ı yeniden tanımlamak için OnEnable ekle
+    private void OnEnable()
+    {
+        // Eğer Instance farklı bir objeye atanmışsa ve bu obje etkinleştirilirse
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("UI_ChestInventory: Başka bir instance zaten var - bu obje yok edilecek");
+            Destroy(gameObject);
+            return;
+        }
+        
+        // Instance boşsa (örneğin sahne değişikliğinden sonra null olmuşsa)
+        if (Instance == null)
+        {
+            Instance = this;
+            Debug.Log("UI_ChestInventory: Instance OnEnable'da yeniden atandı");
         }
     }
 
