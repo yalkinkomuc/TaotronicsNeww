@@ -41,7 +41,7 @@ public class Chest_Enemy : Enemy,IInteractable
      private float preventFlipTimer = 0f;
      private float preventFlipDuration = 1f; // Süreyi biraz daha uzattım
     
-     [SerializeField] private float detectionRange = 15f;
+    // [SerializeField] private float detectionRange = 15f;
 
     #endregion
     [SerializeField] private InteractionPrompt prompt;
@@ -170,5 +170,13 @@ public class Chest_Enemy : Enemy,IInteractable
         Gizmos.DrawLine(transform.position,new Vector3(transform.position.x + attackDistance*facingdir,transform.position.y));
         
         Gizmos.DrawWireCube(attackCheck.position,attackSize);
+        
+        // Görüş mesafesi gösterimi
+        Gizmos.color = new Color(0.2f, 0.9f, 0.3f, 0.5f);
+        Gizmos.DrawLine(transform.position,new Vector3(transform.position.x+detectDistance*facingdir,transform.position.y));
+        
+        // Yakın mesafe gösterimi
+        Gizmos.color = new Color(0.9f, 0.2f, 0.2f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position,tooCloseRadius);
     }
 }

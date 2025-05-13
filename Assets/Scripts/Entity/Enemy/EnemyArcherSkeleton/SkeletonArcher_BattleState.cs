@@ -15,7 +15,7 @@ public class SkeletonArcher_BattleState : EnemyState
     public override void Enter()
     {
         base.Enter();
-        stateTimer = 2f;
+        stateTimer = 1f;
     }
 
    

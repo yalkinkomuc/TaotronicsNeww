@@ -42,6 +42,17 @@ public class EnemyChest_PatrolState : EnemyState
     {
         base.Update();
         
+        if (enemy.fightBegun )
+        {
+            if (enemy.IsPlayerBelow())
+            {
+                return;
+            }
+            
+            stateMachine.ChangeState(enemy.chaseState);
+            return;
+        }
+        
         // Duvar veya uçurum kontrolü
         if (enemy.IsWallDetected() || !enemy.IsGroundDetected())
         {

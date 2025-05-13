@@ -4,7 +4,7 @@ public class Bear_AttackState : EnemyState
 {
     private Enemy_Bear enemy;
     private float attackTime = 0.5f; // Saldırı animasyonu süresi
-    private float attackForwardSpeed = .75f; // Saldırı sırasında ileri kayma hızı
+    //private float attackForwardSpeed = .75f; // Saldırı sırasında ileri kayma hızı
     
     public Bear_AttackState(Enemy _enemyBase, EnemyStateMachine _stateMachine, string _animBoolName,Enemy_Bear _enemy) : base(_enemyBase, _stateMachine, _animBoolName)
     {
@@ -33,7 +33,7 @@ public class Bear_AttackState : EnemyState
         
         // Saldırı sırasında hafif bir kayma hareketi ver
         // Boğanın baktığı yönde düşük bir hızla ilerlesin
-        enemy.SetVelocity(attackForwardSpeed * enemy.facingdir, rb.linearVelocity.y);
+        enemy.SetVelocity(enemy.facingdir, rb.linearVelocity.y);
         
         // Animasyon event'i tetiklendiyse veya süre dolduysa
         if (triggerCalled || stateTimer < 0)
