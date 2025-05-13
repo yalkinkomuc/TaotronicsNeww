@@ -15,8 +15,7 @@ public class BlacksmithUI : MonoBehaviour
     [SerializeField] private Transform weaponButtonContainer;
     [SerializeField] private GameObject weaponButtonPrefab;
     
-    [Header("Upgrade UI")]
-    [SerializeField] private GameObject upgradeSection;
+    [Header("Weapon Info")]
     [SerializeField] private Image weaponIcon;
     [SerializeField] private TextMeshProUGUI weaponNameText;
     [SerializeField] private TextMeshProUGUI currentLevelText;
@@ -24,6 +23,8 @@ public class BlacksmithUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI nextLevelDamageText;
     [SerializeField] private TextMeshProUGUI upgradeCostText;
     [SerializeField] private Button upgradeButton;
+
+    [SerializeField] private Button closeButton;
     [SerializeField] private Image[] levelIndicators;
     
     [Header("Audio")]
@@ -44,6 +45,18 @@ public class BlacksmithUI : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
+
+         // Kapatma butonu için olay ekle
+        if (closeButton != null)
+        {
+            closeButton.onClick.RemoveAllListeners();
+            closeButton.onClick.AddListener(CloseBlacksmith);
+            Debug.Log("Kapatma butonuna tıklama olayı eklendi");
+        }
+        else
+        {
+            Debug.LogWarning("Kapatma butonu referansı atanmamış!");
+        }
         
         // UI referanslarını kontrol et
         if (blacksmithPanel == null)
@@ -59,11 +72,6 @@ public class BlacksmithUI : MonoBehaviour
         if (weaponButtonPrefab == null)
         {
             Debug.LogError("WeaponButtonPrefab referansı atanmamış!");
-        }
-        
-        if (upgradeSection == null)
-        {
-            Debug.LogError("UpgradeSection referansı atanmamış!");
         }
         
         if (weaponIcon == null)
@@ -158,12 +166,8 @@ public class BlacksmithUI : MonoBehaviour
             // Update UI
             UpdateGoldText();
             
-            // Diğer UI elemanlarını kontrol et
-            if (upgradeSection != null)
-            {
-                // Hide upgrade section until a weapon is selected
-                upgradeSection.SetActive(false);
-            }
+            // Silinecek weaponInfoUI referansını kaldır
+            ClearWeaponInfo();
             
             // Display default message
             if (descriptionText != null)
@@ -199,6 +203,29 @@ public class BlacksmithUI : MonoBehaviour
         
         // Time scale'i normal hale getir (oyunu devam ettir)
         Time.timeScale = 1f;
+    }
+    
+    // Silah bilgilerini temizle
+    private void ClearWeaponInfo()
+    {
+        if (weaponNameText != null) weaponNameText.text = "";
+        if (currentLevelText != null) currentLevelText.text = "";
+        if (currentDamageText != null) currentDamageText.text = "";
+        if (nextLevelDamageText != null) nextLevelDamageText.text = "";
+        if (upgradeCostText != null) upgradeCostText.text = "";
+        if (upgradeButton != null) upgradeButton.interactable = false;
+        
+        // Seviye göstergelerini sıfırla
+        if (levelIndicators != null)
+        {
+            foreach (var indicator in levelIndicators)
+            {
+                if (indicator != null)
+                {
+                    indicator.color = Color.gray;
+                }
+            }
+        }
     }
     
     private void CreateWeaponButtons()
@@ -332,7 +359,7 @@ public class BlacksmithUI : MonoBehaviour
             
             if (currentLevelText != null)
             {
-                currentLevelText.text = $"Seviye {selectedWeapon.level}/{selectedWeapon.maxLevel}";
+                currentLevelText.text = $" {selectedWeapon.level}/{selectedWeapon.maxLevel}";
             }
             
             // Update damage texts
@@ -340,7 +367,7 @@ public class BlacksmithUI : MonoBehaviour
             
             if (currentDamageText != null)
             {
-                currentDamageText.text = $"Mevcut Hasar Bonusu: +{currentDamage}";
+                currentDamageText.text = $" +{currentDamage}";
             }
             
             // Calculate next level damage if not max level
@@ -351,7 +378,7 @@ public class BlacksmithUI : MonoBehaviour
                 
                 if (nextLevelDamageText != null)
                 {
-                    nextLevelDamageText.text = $"Sonraki Seviye: +{nextLevelDamage}";
+                    nextLevelDamageText.text = $" +{nextLevelDamage}";
                 }
                 
                 // Set upgrade cost
@@ -359,7 +386,7 @@ public class BlacksmithUI : MonoBehaviour
                 
                 if (upgradeCostText != null)
                 {
-                    upgradeCostText.text = $"Geliştirme Bedeli: {upgradeCost} Altın";
+                    upgradeCostText.text = $" {upgradeCost} Altın";
                 }
                 
                 // Enable or disable upgrade button based on player's gold
@@ -404,12 +431,6 @@ public class BlacksmithUI : MonoBehaviour
                         }
                     }
                 }
-            }
-            
-            // Show upgrade section if it exists
-            if (upgradeSection != null)
-            {
-                upgradeSection.SetActive(true);
             }
         }
         catch (System.Exception e)

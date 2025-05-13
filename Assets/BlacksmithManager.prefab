@@ -51,7 +51,7 @@ MonoBehaviour:
     level: 1
     maxLevel: 10
     baseDamageBonus: 0
-    upgradeDamageIncrement: 1.2
+    upgradeDamageIncrement: 10
     baseUpgradeCost: 150
     upgradeCostMultiplier: 1.5
     weaponIcon: {fileID: 304685198442149715, guid: f5de301bc17e0a144baf43ee1ee52d39, type: 3}
@@ -61,7 +61,7 @@ MonoBehaviour:
     level: 1
     maxLevel: 10
     baseDamageBonus: 0
-    upgradeDamageIncrement: 1.2
+    upgradeDamageIncrement: 10
     baseUpgradeCost: 150
     upgradeCostMultiplier: 1.5
     weaponIcon: {fileID: -3858649371512188071, guid: 190280e45cbca0449b6a3d2dc9226398, type: 3}
@@ -70,8 +70,8 @@ MonoBehaviour:
     weaponType: 2
     level: 1
     maxLevel: 10
-    baseDamageBonus: 4
-    upgradeDamageIncrement: 1.2
+    baseDamageBonus: 0
+    upgradeDamageIncrement: 10
     baseUpgradeCost: 150
     upgradeCostMultiplier: 1.5
     weaponIcon: {fileID: 3286403360914397607, guid: cf524f4ab5f37f2429b240a2eff57d44, type: 3}
