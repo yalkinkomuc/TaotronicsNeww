@@ -6,6 +6,9 @@ public class PlayerWeaponManager : MonoBehaviour
     private int currentSecondaryWeaponIndex = 1; // 1'den başlıyoruz çünkü 0 kılıç
     
     [SerializeField] private KeyCode weaponSwitchKey = KeyCode.Q; // Silah değiştirme tuşu
+    
+    private Player player;
+    private PlayerStats playerStats;
 
     void Start()
     {
@@ -14,12 +17,22 @@ public class PlayerWeaponManager : MonoBehaviour
             Debug.LogError("En az 2 silah (kılıç ve ikincil silah) atanmalı!");
             return;
         }
+        
+        // Get player references
+        player = GetComponent<Player>();
+        playerStats = GetComponent<PlayerStats>();
 
         // Kılıcı aktif et (her zaman aktif kalacak)
         weapons[0].gameObject.SetActive(true);
         
         // İkincil silahı aktif et
         EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+        
+        // Initialize weapon upgrades
+        if (BlacksmithManager.Instance != null && playerStats != null)
+        {
+            BlacksmithManager.Instance.ApplyWeaponUpgrades(playerStats);
+        }
     }
 
     void Update()
@@ -46,7 +59,6 @@ public class PlayerWeaponManager : MonoBehaviour
         }
         
         // Player üzerindeki lastActiveWeaponState'i güncelle
-        Player player = GetComponent<Player>();
         if (player != null)
         {
             // Eğer aktif edilen silah boomerang ise
@@ -69,5 +81,30 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         // Refresh the secondary weapons visibility
         EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+    }
+    
+    // Get the current active weapons for blacksmith system
+    public WeaponType[] GetEquippedWeaponTypes()
+    {
+        WeaponType[] types = new WeaponType[weapons.Length];
+        
+        // Determine weapon types
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] is SwordWeaponStateMachine)
+            {
+                types[i] = WeaponType.Sword;
+            }
+            else if (weapons[i] is BoomerangWeaponStateMachine)
+            {
+                types[i] = WeaponType.Boomerang;
+            }
+            else if (weapons[i] is SpellbookWeaponStateMachine)
+            {
+                types[i] = WeaponType.Spellbook;
+            }
+        }
+        
+        return types;
     }
 }

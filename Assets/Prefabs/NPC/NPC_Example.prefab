@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 7383552489859959087}
   - component: {fileID: 646200370813014260}
   - component: {fileID: 2272933519628661393}
-  - component: {fileID: 8203361573187345588}
   - component: {fileID: 2618072051927302489}
+  - component: {fileID: 7710612601883752146}
+  - component: {fileID: 6249835174523710144}
   m_Layer: 0
   m_Name: NPC_Example
   m_TagString: Untagged
@@ -127,21 +128,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 1.41
---- !u!114 &8203361573187345588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4513608936065118298}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cbac6eece3ede341b174d61e433ad76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  npcID: Blacksmith
-  interactionPrompt: {fileID: 2388620175149280006}
-  dialogueData: {fileID: 11400000, guid: 0fae081c71fcd8d4d930b19ee556dc69, type: 2}
 --- !u!95 &2618072051927302489
 Animator:
   serializedVersion: 7
@@ -164,6 +150,36 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7710612601883752146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4513608936065118298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9698c46b974a81e45a035ddb20e1bd67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blacksmithUI: {fileID: 0}
+  greetingSound: {fileID: 8300000, guid: 50a7be6bbee274c4b8167a28f5c8ca30, type: 3}
+--- !u!114 &6249835174523710144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4513608936065118298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04b121c180b5d9f418ee91815042ec87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  npcID: Blacksmith
+  interactionPrompt: {fileID: 2388620175149280006}
+  dialogueData: {fileID: 11400000, guid: 0fae081c71fcd8d4d930b19ee556dc69, type: 2}
+  blacksmithHandler: {fileID: 7710612601883752146}
 --- !u!1001 &2242146937769981327
 PrefabInstance:
   m_ObjectHideFlags: 0

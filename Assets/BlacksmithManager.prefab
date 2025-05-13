@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8590714349150217129
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6197147152069310164}
+  - component: {fileID: 1058031071138051504}
+  m_Layer: 0
+  m_Name: BlacksmithManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6197147152069310164
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8590714349150217129}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1058031071138051504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8590714349150217129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f53de8add54f05549a47eb4153eade4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponDatabase:
+  - weaponId: sword
+    weaponName: Sword
+    weaponType: 0
+    level: 1
+    maxLevel: 10
+    baseDamageBonus: 0
+    upgradeDamageIncrement: 1.2
+    baseUpgradeCost: 150
+    upgradeCostMultiplier: 1.5
+    weaponIcon: {fileID: 304685198442149715, guid: f5de301bc17e0a144baf43ee1ee52d39, type: 3}
+  - weaponId: boomerang
+    weaponName: Boomerang
+    weaponType: 1
+    level: 1
+    maxLevel: 10
+    baseDamageBonus: 0
+    upgradeDamageIncrement: 1.2
+    baseUpgradeCost: 150
+    upgradeCostMultiplier: 1.5
+    weaponIcon: {fileID: -3858649371512188071, guid: 190280e45cbca0449b6a3d2dc9226398, type: 3}
+  - weaponId: spellbook
+    weaponName: Spellbook
+    weaponType: 2
+    level: 1
+    maxLevel: 10
+    baseDamageBonus: 4
+    upgradeDamageIncrement: 1.2
+    baseUpgradeCost: 150
+    upgradeCostMultiplier: 1.5
+    weaponIcon: {fileID: 3286403360914397607, guid: cf524f4ab5f37f2429b240a2eff57d44, type: 3}

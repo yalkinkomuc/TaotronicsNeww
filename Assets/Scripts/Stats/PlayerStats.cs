@@ -15,9 +15,13 @@ public class PlayerStats : CharacterStats
     [SerializeField] private int availableSkillPoints = 0;
     public int AvailableSkillPoints => availableSkillPoints;
     
+    [Header("Currency")]
+    [SerializeField] public int gold = 0;
+    
     [Header("UI References")]
     [SerializeField] private Image experienceBar;
     [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI goldText;
 
     private float playerBaseMaxHealth;
     private float playerBaseMaxDamage;
@@ -44,6 +48,12 @@ public class PlayerStats : CharacterStats
         
         // UI'ı güncelle
         UpdateLevelUI();
+        
+        // Ensure weapons are upgraded with saved values
+        if (BlacksmithManager.Instance != null)
+        {
+            BlacksmithManager.Instance.ApplyWeaponUpgrades(this);
+        }
     }
     
     private void Update()
@@ -52,6 +62,12 @@ public class PlayerStats : CharacterStats
         if (Input.GetKeyDown(KeyCode.X))
         {
             AddExperience(25);
+        }
+        
+        // Debug key to add gold (can be removed in final build)
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            AddGold(50);
         }
     }
 
@@ -124,6 +140,43 @@ public class PlayerStats : CharacterStats
             float experienceRatio = (float)experience / experienceToNextLevel;
             experienceBar.fillAmount = experienceRatio;
         }
+        
+        // Update gold text if assigned
+        if (goldText != null)
+        {
+            goldText.text = gold.ToString() + " G";
+        }
+    }
+    
+    // Gold handling methods
+    public void AddGold(int amount)
+    {
+        if (amount <= 0) return;
+        
+        gold += amount;
+        UpdateLevelUI();
+        SaveGoldData();
+        
+        Debug.Log($"Added {amount} gold. Total gold: {gold}");
+    }
+    
+    public bool SpendGold(int amount)
+    {
+        if (amount <= 0) return true;
+        if (gold < amount) return false;
+        
+        gold -= amount;
+        UpdateLevelUI();
+        SaveGoldData();
+        
+        Debug.Log($"Spent {amount} gold. Remaining gold: {gold}");
+        return true;
+    }
+    
+    private void SaveGoldData()
+    {
+        PlayerPrefs.SetInt("PlayerGold", gold);
+        PlayerPrefs.Save();
     }
     
     // Save player experience and level data to PlayerPrefs
@@ -150,6 +203,7 @@ public class PlayerStats : CharacterStats
             experience = PlayerPrefs.GetInt("PlayerExperience", 0);
             experienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
             availableSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
+            gold = PlayerPrefs.GetInt("PlayerGold", 0);
             
             // Stat değerlerini yükle
             float savedMaxHealth = PlayerPrefs.GetFloat("PlayerMaxHealth", maxHealth.GetValue());
@@ -169,13 +223,10 @@ public class PlayerStats : CharacterStats
                 maxMana.AddModifier(manaDiff, StatModifierType.Equipment);
             }
             
-            float damageDiff = savedBaseDamage - baseDamage.GetValue();
-            if (damageDiff > 0)
-            {
-                baseDamage.AddModifier(damageDiff, StatModifierType.Equipment);
-            }
+            // Not: baseDamage artık Blacksmith tarafından yönetiliyor
+            // Silah upgrade'leri ayrıca uygulanacak
             
-            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, MaxHP={savedMaxHealth}, MaxMana={savedMaxMana}, BaseDamage={savedBaseDamage}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
+            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, MaxHP={savedMaxHealth}, MaxMana={savedMaxMana}, Gold={gold}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
         }
         
         // Can ve manayı doldur
