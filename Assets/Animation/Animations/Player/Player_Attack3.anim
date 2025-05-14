@@ -22,20 +22,20 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 2047894177870576265, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.125
+    - time: 0.083333336
       value: {fileID: 1990968041653170916, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.25
+    - time: 0.16666667
       value: {fileID: -2653324402405756415, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.375
+    - time: 0.25
       value: {fileID: -771435313396464571, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.5
+    - time: 0.33333334
       value: {fileID: 8685556114004503577, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 8
+  m_SampleRate: 12
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -62,7 +62,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.625
+    m_StopTime: 0.4166667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -89,7 +89,14 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.125
+  - time: 0.083333336
+    functionName: AttackTrigger
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.16666667
     functionName: AttackTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -97,20 +104,13 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.25
-    functionName: AttackTrigger
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.375
     functionName: DisableAttackCollider
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.5
+  - time: 0.33333334
     functionName: AnimationTrigger
     data: 
     objectReferenceParameter: {fileID: 0}

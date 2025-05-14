@@ -17121,6 +17121,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dummy
       objectReference: {fileID: 0}
+    - target: {fileID: 8303815312952285803, guid: 406932be2c2ea434092db70ad5ffff48, type: 3}
+      propertyPath: isTestMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8303815312952285803, guid: 406932be2c2ea434092db70ad5ffff48, type: 3}
+      propertyPath: testDamageMin
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

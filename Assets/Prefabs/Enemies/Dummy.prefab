@@ -128,6 +128,10 @@ MonoBehaviour:
   currentHealth: 0
   isInvincible: 0
   invincibilityTime: 0.5
+  criticalHitChance: 0.15
+  criticalHitMultiplier: 1.5
+  hitParticlePrefab: {fileID: 4233927731194322223, guid: 2ccc25af58bdc1045a6a4c0595853b97, type: 3}
+  criticalHitParticlePrefab: {fileID: 3640434673979778771, guid: 0086d03691286ab4c9cccbfbf11dc4d6, type: 3}
 --- !u!61 &8452176845387062030
 BoxCollider2D:
   m_ObjectHideFlags: 0

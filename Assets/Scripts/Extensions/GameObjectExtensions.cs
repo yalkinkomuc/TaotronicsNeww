@@ -3,35 +3,82 @@ using UnityEngine;
 public static class GameObjectExtensions
 {
     /// <summary>
-    /// Displays a floating damage text above the game object
+    /// Nesnenin üzerinde hasar metni gösterir
     /// </summary>
-    /// <param name="gameObject">The game object above which to show text</param>
-    /// <param name="damage">The damage amount to display</param>
-    /// <param name="isCritical">Whether the damage is critical (affects color)</param>
+    /// <param name="gameObject">Hasar metninin gösterileceği nesne</param>
+    /// <param name="damage">Gösterilecek hasar miktarı</param>
+    /// <param name="isCritical">Kritik vuruş mu (rengi etkiler)</param>
     public static void ShowDamageText(this GameObject gameObject, float damage, bool isCritical = false)
     {
         if (FloatingTextManager.Instance != null)
         {
-            // Calculate position above the object
+            // Nesnenin biraz üzerinde pozisyon hesapla
             Vector3 position = gameObject.transform.position + Vector3.up * 1.5f;
             FloatingTextManager.Instance.ShowDamageText(damage, position, isCritical);
         }
     }
     
     /// <summary>
-    /// Displays a floating text with custom content above the game object
+    /// Nesnenin üzerinde özel içerikli yüzen metin gösterir
     /// </summary>
-    /// <param name="gameObject">The game object</param>
-    /// <param name="text">The text to display</param>
-    /// <param name="color">The color of the text</param>
+    /// <param name="gameObject">Nesne</param>
+    /// <param name="text">Gösterilecek metin</param>
+    /// <param name="color">Metnin rengi</param>
     public static void ShowFloatingText(this GameObject gameObject, string text, Color color)
     {
         if (FloatingTextManager.Instance != null)
         {
-            // Calculate position above the object
+            // Nesnenin biraz üzerinde pozisyon hesapla
             Vector3 position = gameObject.transform.position + Vector3.up * 1.5f;
-            // Use the implemented method
+            // Hazır metodu kullan
             FloatingTextManager.Instance.ShowCustomText(text, position, color);
+        }
+    }
+    
+    /// <summary>
+    /// Nesnenin üzerinde sihir hasarı metni gösterir (mavi renkte)
+    /// </summary>
+    /// <param name="gameObject">Hasar metninin gösterileceği nesne</param>
+    /// <param name="damage">Gösterilecek hasar miktarı</param>
+    public static void ShowMagicDamageText(this GameObject gameObject, float damage)
+    {
+        if (FloatingTextManager.Instance != null)
+        {
+            // Nesnenin biraz üzerinde pozisyon hesapla
+            Vector3 position = gameObject.transform.position + Vector3.up * 1.5f;
+            FloatingTextManager.Instance.ShowMagicDamageText(damage, position);
+        }
+    }
+    
+    /// <summary>
+    /// Nesnenin üzerinde iyileşme metni gösterir (yeşil renkte)
+    /// </summary>
+    /// <param name="gameObject">İyileşme metninin gösterileceği nesne</param>
+    /// <param name="healAmount">İyileşme miktarı</param>
+    public static void ShowHealText(this GameObject gameObject, float healAmount)
+    {
+        if (FloatingTextManager.Instance != null)
+        {
+            // Nesnenin biraz üzerinde pozisyon hesapla
+            Vector3 position = gameObject.transform.position + Vector3.up * 1.5f;
+            FloatingTextManager.Instance.ShowHealText(healAmount, position);
+        }
+    }
+    
+    /// <summary>
+    /// Nesnenin üzerinde düşmandan düşen altın miktarını gösterir
+    /// </summary>
+    /// <param name="gameObject">Nesne</param>
+    /// <param name="goldAmount">Altın miktarı</param>
+    public static void ShowGoldDropText(this GameObject gameObject, int goldAmount)
+    {
+        if (FloatingTextManager.Instance != null)
+        {
+            // Nesnenin biraz üzerinde pozisyon hesapla
+            Vector3 position = gameObject.transform.position + Vector3.up * 2f;
+            string goldText = $"+{goldAmount} Altın";
+            Color goldColor = new Color(1f, 0.84f, 0f); // Altın rengi
+            FloatingTextManager.Instance.ShowCustomText(goldText, position, goldColor);
         }
     }
 } 
