@@ -161,6 +161,30 @@ public class PlayerAnimTriggers : MonoBehaviour
             
             // Dummy'nin random hit animasyonunu oynat
             dummy.PlayRandomHit();
+            
+            // Hesaplanan hasar değerini belirle
+            float damage = player.stats.baseDamage.GetValue();
+            
+            // Combo sayısına göre hasarı artır
+            if (player.stateMachine.currentState is PlayerAttackState attackState)
+            {
+                switch (attackState.GetComboCounter())
+                {
+                    case 1:
+                        damage *= player.stats.secondComboDamageMultiplier.GetValue();
+                        break;
+                    case 2:
+                        damage *= player.stats.thirdComboDamageMultiplier.GetValue();
+                        break;
+                }
+            }
+            else if (player.stateMachine.currentState == player.crouchAttackState)
+            {
+                damage *= 1.2f; // Crouch attack damage multiplier
+            }
+            
+            // Dummy'ye hasar ver ve hasar miktarını göster
+            dummy.TakeDamage(damage);
          }
       }
    }

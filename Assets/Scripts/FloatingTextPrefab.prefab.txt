@@ -1,0 +1,56 @@
+## Floating Text Prefab Setup Instructions
+
+### Method 1: Using UI TextMeshPro (Recommended)
+
+1. Make sure you have a Canvas in your scene
+2. In Unity, create a new UI Text - TextMeshPro element (GameObject > UI > Text - TextMeshPro)
+3. Name it "FloatingTextPrefab"
+4. Add the FloatingText script to it
+5. Configure the TextMeshPro - Text (UI) component as follows:
+   - Font Size: 12
+   - Font Style: Bold
+   - Color: White
+   - Alignment: Center
+   - Wrapping: Disabled
+   - Auto Size: Disabled
+   - Material: Default
+6. Set the RectTransform:
+   - Width: 100
+   - Height: 30
+   - Anchors: Middle-Center
+   - Pivot: 0.5, 0.5
+7. Adjust the FloatingText component settings:
+   - Destroy Time: 1.0
+   - Offset: 0, 0, 0 (since we're already positioning it)
+   - Randomize Intensity: 0.5, 0, 0
+   - Move Up Speed: 1.0
+8. Drag the GameObject to your Project panel to create a prefab
+9. Delete the instance from your scene
+
+### Method 2: Using World Space TextMeshPro
+
+1. In Unity, create a new TextMeshPro - Text element (GameObject > 3D Object > TextMeshPro - Text)
+2. Name it "FloatingTextPrefab"
+3. Add the FloatingText script to it
+4. Configure the TextMeshPro component:
+   - Font Size: 8
+   - Font Style: Bold
+   - Color: White
+   - Alignment: Center
+   - Auto Size: Disabled
+5. Adjust the Transform:
+   - Scale: (0.1, 0.1, 0.1) or adjust as needed for your game scale
+6. Adjust the FloatingText component settings:
+   - Destroy Time: 1.0
+   - Offset: 0, 1.5, 0
+   - Randomize Intensity: 0.5, 0, 0
+   - Move Up Speed: 1.0
+7. Add a Billboard component to make the text always face the camera
+8. Drag the GameObject to your Project panel to create a prefab
+
+## FloatingTextManager Setup
+1. Create an empty GameObject named "FloatingTextManager"
+2. Add the FloatingTextManager script to it
+3. Assign the FloatingTextPrefab to the "Floating Text Prefab" field
+4. Assign your main Canvas to the "Canvas Transform" field
+5. Adjust the colors as desired 
