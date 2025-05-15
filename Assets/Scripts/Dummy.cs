@@ -12,13 +12,8 @@ public class Dummy : MonoBehaviour
     [SerializeField] private bool isInvincible = false;
     [SerializeField] private float invincibilityTime = 0.5f; // Vuruşlar arası kısa bekleme
     
-    [Header("Kritik Vuruş Ayarları")]
-    [SerializeField] private float criticalHitChance = 0.15f; // %15 kritik vuruş şansı
-    [SerializeField] private float criticalHitMultiplier = 1.5f; // Kritik vuruş %50 daha fazla hasar verir
-    
     [Header("Hasar Efektleri")]
     [SerializeField] private GameObject hitParticlePrefab; // Hasar partikül efekti
-    [SerializeField] private GameObject criticalHitParticlePrefab; // Kritik vuruş partikül efekti
     
     [Header("Test Ayarları")]
     [SerializeField] private bool isTestMode = false; // Test modu
@@ -26,12 +21,10 @@ public class Dummy : MonoBehaviour
     [SerializeField] private float testDamageMax = 50f; // Max test hasarı
     
     [Header("Hasar Testi")]
-    [SerializeField] private float testSmallDamage = 10f; // Düşük hasar (Sarı)
-    [SerializeField] private float testMediumDamage = 32f; // Orta hasar (Turuncu)
-    [SerializeField] private float testHighDamage = 60f; // Yüksek hasar (Kırmızı)
-    [SerializeField] private float testCriticalDamage = 45f; // Kritik hasar
+    [SerializeField] private float testFirstComboDamage = 10f; // İlk vuruş hasarı
+    [SerializeField] private float testSecondComboDamage = 12f; // İkinci vuruş hasarı
+    [SerializeField] private float testThirdComboDamage = 15f; // Üçüncü vuruş hasarı
     [SerializeField] private float testMagicDamage = 40f; // Büyü hasarı (Mavi)
-    [SerializeField] private float testHealAmount = 25f; // İyileştirme miktarı (Yeşil)
     
     private float lastHitTime = -1f;
     private int hitCounter = 0; // Üst üste vuruş sayacı
@@ -61,23 +54,19 @@ public class Dummy : MonoBehaviour
             // Rasgele test hasarı
             float testDamage = Random.Range(testDamageMin, testDamageMax);
             
-            // Rasgele: Normal, kritik veya büyü hasarı göster
-            int damageType = Random.Range(0, 4);
+            // Rasgele: Normal veya büyü hasarı göster
+            int damageType = Random.Range(0, 3);
             
             switch (damageType)
             {
                 case 0:
-                    TakeDamage(testDamage);
+                    TakeDamage(testDamage, 0); // İlk kombo
                     break;
                 case 1:
-                    // Kritik olarak zorla
-                    TakeDamage(testDamage, true);
+                    TakeDamage(testDamage, 1); // İkinci kombo
                     break;
                 case 2:
-                    TakeMagicDamage(testDamage);
-                    break;
-                case 3:
-                    Heal(testDamage * 0.5f);
+                    TakeDamage(testDamage, 2); // Üçüncü kombo
                     break;
             }
         }
@@ -100,7 +89,7 @@ public class Dummy : MonoBehaviour
     /// <summary>
     /// Dummy'e hasar verir ve hasar metnini gösterir
     /// </summary>
-    public void TakeDamage(float damage, bool forceCritical = false)
+    public void TakeDamage(float damage, int comboCount = 0)
     {
         // Eğer dummy şu an hasar alamıyorsa çık
         if (isInvincible || Time.time < lastHitTime + invincibilityTime)
@@ -120,32 +109,14 @@ public class Dummy : MonoBehaviour
         // Yeni bir resetHitCounter rutini başlat
         resetHitCounterRoutine = StartCoroutine(ResetHitCounterAfterDelay(1.5f));
         
-        // Kritik vuruş şansını hesapla (üst üste vuruşlar kritik şansını artırır)
-        float adjustedCriticalChance = criticalHitChance + (hitCounter * 0.05f); // Her vuruş %5 artış
-        bool isCriticalHit = forceCritical || Random.value < adjustedCriticalChance;
-        
-        float finalDamage = damage;
-        if (isCriticalHit)
+        // Normal vuruş partikül efekti
+        if (hitParticlePrefab != null)
         {
-            finalDamage *= criticalHitMultiplier;
-            
-            // Kritik vuruş partikül efekti
-            if (criticalHitParticlePrefab != null)
-            {
-                Instantiate(criticalHitParticlePrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
-            }
-        }
-        else
-        {
-            // Normal vuruş partikül efekti
-            if (hitParticlePrefab != null)
-            {
-                Instantiate(hitParticlePrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
-            }
+            Instantiate(hitParticlePrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
         }
         
         // Can değerini güncelle
-        currentHealth = Mathf.Max(0, currentHealth - finalDamage);
+        currentHealth = Mathf.Max(0, currentHealth - damage);
         
         // Hasar metnini göster
         if (FloatingTextManager.Instance != null)
@@ -153,21 +124,11 @@ public class Dummy : MonoBehaviour
             // Dummy'nin biraz üzerinde pozisyon belirle
             Vector3 textPosition = transform.position + Vector3.up * 1.5f;
             
-            // Kritik vuruş ise farklı renkte göster
-            if (isCriticalHit)
-            {
-                FloatingTextManager.Instance.ShowDamageText(finalDamage, textPosition, true);
-                
-                // Log kritik vuruş bilgisi
-                Debug.Log($"Kritik vuruş! Hasar: {finalDamage}");
-            }
-            else
-            {
-                FloatingTextManager.Instance.ShowDamageText(finalDamage, textPosition);
-                
-                // Log normal vuruş bilgisi
-                Debug.Log($"Normal vuruş. Hasar: {finalDamage}");
-            }
+            // Kombo sayısına göre farklı renkte metin göster
+            FloatingTextManager.Instance.ShowComboDamageText(damage, textPosition, comboCount);
+            
+            // Log vuruş bilgisi
+            Debug.Log($"Kombo {comboCount + 1}. Hasar: {damage}");
         }
         
         // Vuruş animasyonu
@@ -203,25 +164,6 @@ public class Dummy : MonoBehaviour
     }
     
     /// <summary>
-    /// İyileşme efekti ve yeşil metin gösterir
-    /// </summary>
-    public void Heal(float healAmount)
-    {
-        // Can değerini güncelle (maksimumu geçmemesini sağla)
-        currentHealth = Mathf.Min(maxHealth, currentHealth + healAmount);
-        
-        // İyileşme metnini yeşil renkte göster
-        if (FloatingTextManager.Instance != null)
-        {
-            Vector3 textPosition = transform.position + Vector3.up * 1.5f;
-            FloatingTextManager.Instance.ShowHealText(healAmount, textPosition);
-            
-            // Log iyileşme bilgisi
-            Debug.Log($"İyileşme. Değer: {healAmount}");
-        }
-    }
-    
-    /// <summary>
     /// Test için farklı boyutlarda hasar gösterimleri
     /// </summary>
     public void ShowDamageTest()
@@ -242,33 +184,23 @@ public class Dummy : MonoBehaviour
         // Kısa bir bekleme ile başla
         yield return new WaitForSeconds(0.5f);
         
-        Debug.Log("1. Düşük Hasar (SARI)");
-        TakeDamage(testSmallDamage);
+        Debug.Log("1. İlk Kombo Vuruşu (SARI)");
+        TakeDamage(testFirstComboDamage, 0);
         
         yield return new WaitForSeconds(1.2f);
         
-        Debug.Log("2. Orta Hasar (TURUNCU)");
-        TakeDamage(testMediumDamage);
+        Debug.Log("2. İkinci Kombo Vuruşu (TURUNCU)");
+        TakeDamage(testSecondComboDamage, 1);
         
         yield return new WaitForSeconds(1.2f);
         
-        Debug.Log("3. Yüksek Hasar (KIRMIZI)");
-        TakeDamage(testHighDamage);
+        Debug.Log("3. Üçüncü Kombo Vuruşu (KIRMIZI)");
+        TakeDamage(testThirdComboDamage, 2);
         
         yield return new WaitForSeconds(1.2f);
         
-        Debug.Log("4. Kritik Vuruş (PARLAK RENK)");
-        TakeDamage(testCriticalDamage, true);
-        
-        yield return new WaitForSeconds(1.2f);
-        
-        Debug.Log("5. Büyü Hasarı (MAVİ)");
+        Debug.Log("4. Büyü Hasarı (MAVİ)");
         TakeMagicDamage(testMagicDamage);
-        
-        yield return new WaitForSeconds(1.2f);
-        
-        Debug.Log("6. İyileştirme (YEŞİL)");
-        Heal(testHealAmount);
         
         yield return new WaitForSeconds(1.0f);
         Debug.Log("======= HASAR TEST TAMAMLANDI =======");

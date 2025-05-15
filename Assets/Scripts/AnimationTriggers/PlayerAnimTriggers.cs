@@ -71,12 +71,15 @@ public class PlayerAnimTriggers : MonoBehaviour
             player.MarkEntityAsHit(enemy);
             
             float currentDamage = player.stats.baseDamage.GetValue();
+            int comboCounter = 0;
             
             // Combo sayısına göre knockback gücünü artır
             if (player.stateMachine.currentState is PlayerAttackState attackState)
             {
                 Vector2 knockbackForce;
-                switch (attackState.GetComboCounter())
+                comboCounter = attackState.GetComboCounter();
+                
+                switch (comboCounter)
                 {
                     case 0:
                         currentDamage *= 1f;
@@ -104,7 +107,14 @@ public class PlayerAnimTriggers : MonoBehaviour
                 // TakeDamage doğrudan çağır, enemy.Damage() çağırma
                 enemy.stats.TakeDamage(currentDamage);
                 
-                // // Görsel efektler için HitFX çağır
+                // Eğer FloatingTextManager varsa, komboya göre hasar metni göster
+                if (FloatingTextManager.Instance != null)
+                {
+                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                    FloatingTextManager.Instance.ShowComboDamageText(currentDamage, textPosition, comboCounter);
+                }
+                
+                // Görsel efektler için HitFX çağır
                 if (enemy.entityFX != null)
                 {
                     enemy.entityFX.StartCoroutine("HitFX");
@@ -126,6 +136,13 @@ public class PlayerAnimTriggers : MonoBehaviour
                 
                 // TakeDamage doğrudan çağır, enemy.Damage() çağırma
                 enemy.stats.TakeDamage(currentDamage);
+                
+                // Eğer FloatingTextManager varsa, çömelme saldırısı için hasar metni göster
+                if (FloatingTextManager.Instance != null)
+                {
+                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                    FloatingTextManager.Instance.ShowDamageText(currentDamage, textPosition);
+                }
                 
                 // Görsel efektler için HitFX çağır
                 if (enemy.entityFX != null)
@@ -159,16 +176,15 @@ public class PlayerAnimTriggers : MonoBehaviour
             // Vurulan dummy ID'sini listeye ekle
             player.hitDummyIDs.Add(dummyID);
             
-            // Dummy'nin random hit animasyonunu oynat
-            dummy.PlayRandomHit();
-            
             // Hesaplanan hasar değerini belirle
             float damage = player.stats.baseDamage.GetValue();
+            int comboCounter = 0;
             
             // Combo sayısına göre hasarı artır
             if (player.stateMachine.currentState is PlayerAttackState attackState)
             {
-                switch (attackState.GetComboCounter())
+                comboCounter = attackState.GetComboCounter();
+                switch (comboCounter)
                 {
                     case 1:
                         damage *= player.stats.secondComboDamageMultiplier.GetValue();
@@ -177,14 +193,17 @@ public class PlayerAnimTriggers : MonoBehaviour
                         damage *= player.stats.thirdComboDamageMultiplier.GetValue();
                         break;
                 }
+                
+                // Dummy'ye hasar ver, kombo sayısı ile birlikte
+                dummy.TakeDamage(damage, comboCounter);
             }
             else if (player.stateMachine.currentState == player.crouchAttackState)
             {
                 damage *= 1.2f; // Crouch attack damage multiplier
+                
+                // Çömelme saldırısı için standart hasar
+                dummy.TakeDamage(damage);
             }
-            
-            // Dummy'ye hasar ver ve hasar miktarını göster
-            dummy.TakeDamage(damage);
          }
       }
    }

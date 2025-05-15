@@ -28,7 +28,7 @@ public class BlacksmithHandler : MonoBehaviour
         // Referans yoksa, sahnede bulmayı dene
         if (blacksmithUI == null)
         {
-            blacksmithUI = FindObjectOfType<BlacksmithUI>();
+            blacksmithUI = Object.FindFirstObjectByType<BlacksmithUI>();
             
             // Hala bulunamadıysa ve Resources kullanma seçeneği açıksa, prefab'dan yükle
             if (blacksmithUI == null && useResourcesForUI)
@@ -97,7 +97,7 @@ public class BlacksmithHandler : MonoBehaviour
             Debug.LogError("BlacksmithHandler: BlacksmithManager.Instance null!");
             
             // Manager'ı bulmayı dene
-            BlacksmithManager manager = FindObjectOfType<BlacksmithManager>();
+            BlacksmithManager manager = FindFirstObjectByType<BlacksmithManager>();
             if (manager != null)
             {
                 Debug.Log("BlacksmithHandler: BlacksmithManager bulundu, instance atanıyor.");

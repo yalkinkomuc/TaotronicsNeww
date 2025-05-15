@@ -14,7 +14,7 @@ public static class GameObjectExtensions
         {
             // Nesnenin biraz üzerinde pozisyon hesapla
             Vector3 position = gameObject.transform.position + Vector3.up * 1.5f;
-            FloatingTextManager.Instance.ShowDamageText(damage, position, isCritical);
+            FloatingTextManager.Instance.ShowDamageText(damage, position);
         }
     }
     
@@ -55,15 +55,7 @@ public static class GameObjectExtensions
     /// </summary>
     /// <param name="gameObject">İyileşme metninin gösterileceği nesne</param>
     /// <param name="healAmount">İyileşme miktarı</param>
-    public static void ShowHealText(this GameObject gameObject, float healAmount)
-    {
-        if (FloatingTextManager.Instance != null)
-        {
-            // Nesnenin biraz üzerinde pozisyon hesapla
-            Vector3 position = gameObject.transform.position + Vector3.up * 1.5f;
-            FloatingTextManager.Instance.ShowHealText(healAmount, position);
-        }
-    }
+    
     
     /// <summary>
     /// Nesnenin üzerinde düşmandan düşen altın miktarını gösterir

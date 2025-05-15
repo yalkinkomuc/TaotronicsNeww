@@ -20,9 +20,12 @@ public class Chest_Enemy : Enemy,IInteractable
 
     #region Components
 
-     public Rigidbody2D rb;
+     //public Rigidbody2D rb;
 
-     public CapsuleCollider2D capsuleCollider;
+     //public CapsuleCollider2D capsuleCollider;
+
+
+     private bool canTakeDamage = false;
 
      
      private int lastHitDirection = 0;
@@ -37,7 +40,7 @@ public class Chest_Enemy : Enemy,IInteractable
      [HideInInspector] public float lastTimeAttacked;
      
      
-     private bool preventFlip = false;
+    // private bool preventFlip = false;
      private float preventFlipTimer = 0f;
      private float preventFlipDuration = 1f; // Süreyi biraz daha uzattım
     
@@ -51,8 +54,8 @@ public class Chest_Enemy : Enemy,IInteractable
         base.Awake();
         
         
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
-        rb = gameObject.GetComponent<Rigidbody2D>();
+        //capsuleCollider = GetComponent<CapsuleCollider2D>();
+        //rb = gameObject.GetComponent<Rigidbody2D>();
         
         SetupDefaultFacingDir(-1);
 
@@ -75,10 +78,14 @@ public class Chest_Enemy : Enemy,IInteractable
     protected override void Update()
     {
         base.Update();
+        
+        
     }
     
     public override void Damage()
     {
+        
+        
         if (stats.isInvincible)
         {
             return;
@@ -107,7 +114,7 @@ public class Chest_Enemy : Enemy,IInteractable
     public override IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
         isKnocked = true;
-        preventFlip = true;
+        
         preventFlipTimer = preventFlipDuration;
         
         // Oyuncunun pozisyonuna göre hesaplanan yönü kullan
@@ -124,6 +131,8 @@ public class Chest_Enemy : Enemy,IInteractable
         // Knockback bittikten sonra hızı sıfırla
         rb.linearVelocity = Vector2.zero;
     }
+    
+    
 
     public override void Die()
     {
@@ -134,8 +143,10 @@ public class Chest_Enemy : Enemy,IInteractable
 
     public void Interact()
     {
+        
+        
         if (PlayerManager.instance?.player != null)
-        {
+        {  canTakeDamage = true;
            stateMachine.ChangeState(transformState);
         }
     }

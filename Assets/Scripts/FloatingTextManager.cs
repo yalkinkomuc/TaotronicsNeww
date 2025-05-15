@@ -10,20 +10,12 @@ public class FloatingTextManager : MonoBehaviour
     
     [Header("Hasar Metin Ayarları")]
     [SerializeField] private Color damageColor = Color.red; // Varsayılan kırmızı
-    [SerializeField] private Color critDamageColor = new Color(1.0f, 0.5f, 0f); // Turuncu
     [SerializeField] private Color magicDamageColor = new Color(0.3f, 0.3f, 1f); // Mavi
-    [SerializeField] private Color healColor = Color.green;
     
-    [Header("Hasar Değerine Göre Renk")]
-    [SerializeField] private bool useDynamicDamageColors = true; // Hasar değerine göre renklendirme
-    [SerializeField] private Color lowDamageColor = Color.yellow; // Düşük hasar rengi (sarı)
-    [SerializeField] private Color mediumDamageColor = new Color(1.0f, 0.5f, 0f); // Orta hasar rengi (turuncu)
-    [SerializeField] private Color highDamageColor = Color.red; // Yüksek hasar rengi (kırmızı)
-    
-    [Header("Hasar Eşikleri")]
-    [SerializeField] private float lowDamageThreshold = 25f; // 0-25 arası düşük hasar (SARI)
-    [SerializeField] private float mediumDamageThreshold = 45f; // 25-45 arası orta hasar (TURUNCU)
-    // 45+ yüksek hasar (KIRMIZI)
+    [Header("Kombo Hasar Renkleri")]
+    [SerializeField] private Color firstComboColor = Color.yellow; // İlk vuruş rengi
+    [SerializeField] private Color secondComboColor = new Color(1.0f, 0.5f, 0f); // İkinci vuruş rengi (turuncu)
+    [SerializeField] private Color thirdComboColor = Color.red; // Üçüncü vuruş rengi
     
     [Header("Pozisyon Ayarları")]
     [SerializeField] private float positionVariance = 0.5f; // Rastgele pozisyon aralığı
@@ -67,7 +59,7 @@ public class FloatingTextManager : MonoBehaviour
         // If no canvas specified, try to find one
         if (canvasTransform == null)
         {
-            Canvas canvas = FindObjectOfType<Canvas>();
+            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
             if (canvas != null)
             {
                 canvasTransform = canvas.transform;
@@ -113,49 +105,10 @@ public class FloatingTextManager : MonoBehaviour
         }
     }
     
-    // Sihir hasarı için yeni metod
+    // Sihir hasarı için metod
     public void ShowMagicDamageText(float damage, Vector3 position)
     {
         ShowDamageTextWithColor(damage, position, magicDamageColor);
-    }
-    
-    // İyileştirme için yeni metod
-    public void ShowHealText(float healAmount, Vector3 position)
-    {
-        ShowDamageTextWithColor(healAmount, position, healColor, "+" + Mathf.RoundToInt(healAmount).ToString());
-    }
-    
-    // Kritik vuruş için özel metod
-    public void ShowCriticalDamageText(float damage, Vector3 position)
-    {
-        // Kritik vuruşlar için özel renk
-        Color color = critDamageColor;
-        
-        // Eğer dinamik renkler kullanılıyorsa, hasar değerine göre renklendirmeye devam et
-        if (useDynamicDamageColors)
-        {
-            color = GetDamageColorByThreshold(damage);
-            // Kritik vuruşlar için rengi biraz daha parlak yap
-            color = Color.Lerp(color, Color.white, 0.3f);
-        }
-        
-        ShowDamageTextWithColor(damage, position, color);
-    }
-    
-    /// <summary>
-    /// Hasar değerine göre renk belirler
-    /// </summary>
-    /// <param name="damage">Hasar değeri</param>
-    /// <returns>Hasar seviyesine uygun renk</returns>
-    private Color GetDamageColorByThreshold(float damage)
-    {
-        // Sabit eşik değerlerine göre renk belirle
-        if (damage < lowDamageThreshold) // 0-25 arası
-            return lowDamageColor; // SARI
-        else if (damage < mediumDamageThreshold) // 25-45 arası
-            return mediumDamageColor; // TURUNCU
-        else
-            return highDamageColor; // KIRMIZI (45+)
     }
     
     // Ana hasar gösterme metodu (renk parametreli)
@@ -243,13 +196,6 @@ public class FloatingTextManager : MonoBehaviour
                 // Varsa özel metni kullan, yoksa hasarı göster
                 string textToShow = overrideText ?? displayDamage.ToString();
                 floatingText.SetText(textToShow);
-                
-                // Dinamik renkler kullanılıyorsa ve özel bir renk belirtilmediyse
-                if (useDynamicDamageColors && color == damageColor)
-                {
-                    color = GetDamageColorByThreshold(damage);
-                }
-                
                 floatingText.SetColor(color);
             }
             else
@@ -290,18 +236,34 @@ public class FloatingTextManager : MonoBehaviour
         return lastTextPosition + (directionFromLast * minTextSpacing);
     }
     
-    public void ShowDamageText(float damage, Vector3 position, bool isCritical = false)
+    // Normal hasar metni - Standart renk kullanır
+    public void ShowDamageText(float damage, Vector3 position)
     {
-        if (isCritical)
+        ShowDamageTextWithColor(damage, position, damageColor);
+    }
+    
+    // Kombo numarasına göre hasar metni göster
+    public void ShowComboDamageText(float damage, Vector3 position, int comboCount)
+    {
+        Color comboColor;
+        
+        switch(comboCount)
         {
-            ShowCriticalDamageText(damage, position);
+            case 0:
+                comboColor = firstComboColor; // İlk vuruş - sarı
+                break;
+            case 1:
+                comboColor = secondComboColor; // İkinci vuruş - turuncu
+                break;
+            case 2:
+                comboColor = thirdComboColor; // Üçüncü vuruş - kırmızı
+                break;
+            default:
+                comboColor = damageColor;
+                break;
         }
-        else
-        {
-            // Dinamik renkler kullanılıyorsa
-            Color color = useDynamicDamageColors ? GetDamageColorByThreshold(damage) : damageColor;
-            ShowDamageTextWithColor(damage, position, color);
-        }
+        
+        ShowDamageTextWithColor(damage, position, comboColor);
     }
     
     public void ShowCustomText(string text, Vector3 position, Color color)

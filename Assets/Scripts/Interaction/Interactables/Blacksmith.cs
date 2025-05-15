@@ -41,7 +41,7 @@ public class Blacksmith : MonoBehaviour, IInteractable
         // Find BlacksmithUI if not assigned
         if (blacksmithUI == null)
         {
-            blacksmithUI = FindObjectOfType<BlacksmithUI>();
+            blacksmithUI = Object.FindFirstObjectByType<BlacksmithUI>();
         }
     }
     

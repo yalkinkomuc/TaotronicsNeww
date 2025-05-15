@@ -26,7 +26,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8500627763903708592}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -151,5 +151,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyTime: 1
   offset: {x: 3, y: 3, z: 0}
-  randomizeIntensity: {x: 1, y: 2, z: 0}
+  randomizeIntensity: {x: 0.5, y: 0, z: 0}
   moveUpSpeed: 3
+  minSizeVariation: 0.8
+  maxSizeVariation: 1.2
+  colorVariation: 0.2
+  minFontSize: 30
+  maxFontSize: 90
+  minDamageForMaxSize: 40
+  wiggleAmount: 2
+  wiggleSpeed: 20

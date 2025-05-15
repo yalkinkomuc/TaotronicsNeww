@@ -36,7 +36,7 @@ public class BlacksmithDialogueNPC : DialogueNPC
         // Blacksmith UI'ı aç
         if (blacksmithHandler != null)
         {
-            Player player = FindObjectOfType<Player>();
+            Player player = PlayerManager.instance.player;
             if (player != null)
             {
                 blacksmithHandler.OpenBlacksmith(player);
