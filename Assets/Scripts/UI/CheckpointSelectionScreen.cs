@@ -11,7 +11,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
     [SerializeField] private Button upgradeSkillsButton;
     
     [Header("References")]
-    public UpgradePanel upgradePanel;
+    public AttributesUpgradePanel upgradePanel;
     [SerializeField] private SkillTreePanel skillTreePanel;
     
 
@@ -69,19 +69,45 @@ public class CheckpointSelectionScreen : MonoBehaviour
     {
         gameObject.SetActive(false);
         
-        if (UIInputBlocker.instance != null)
-            UIInputBlocker.instance.AddPanel(gameObject);
-        
-        if (upgradePanel != null)
+        // Önce paneli bul (instance üzerinden veya doğrudan referans)
+        if (upgradePanel == null)
         {
-            Player player = PlayerManager.instance?.player;
-            if (player != null)
+            upgradePanel = AttributesUpgradePanel.instance;
+            
+            if (upgradePanel == null)
             {
-                PlayerStats playerStats = player.GetComponent<PlayerStats>();
-                if (playerStats != null)
-                    upgradePanel.Show(playerStats);
+                upgradePanel = FindFirstObjectByType<AttributesUpgradePanel>();
+                
+                if (upgradePanel == null)
+                {
+                    Debug.LogError("AttributesUpgradePanel bulunamadı!");
+                    return;
+                }
             }
         }
+        
+        // Panel bulundu, şimdi oyuncuyu bul
+        Player player = PlayerManager.instance?.player;
+        if (player == null)
+        {
+            Debug.LogError("Player bulunamadı!");
+            return;
+        }
+        
+        // PlayerStats'i al
+        PlayerStats playerStats = player.GetComponent<PlayerStats>();
+        if (playerStats == null)
+        {
+            Debug.LogError("PlayerStats bulunamadı!");
+            return;
+        }
+        
+        // AttributesUpgradePanel'i göster ve playerStats'i ver
+        Debug.Log($"AttributesUpgradePanel açılıyor - Level: {playerStats.GetLevel()}, SP: {playerStats.AvailableSkillPoints}");
+        upgradePanel.gameObject.SetActive(true);
+        upgradePanel.Show(playerStats);
+        
+        // UI Input Blocker ekleme işlemi Attributes panel tarafından yapılıyor
     }
     
     private void OnUpgradeSkillsButtonClicked()

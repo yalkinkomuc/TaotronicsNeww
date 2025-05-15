@@ -6,6 +6,27 @@ public class PlayerStats : CharacterStats
 {
     public Player player;
     
+    [Header("Attribute System")]
+    [SerializeField] private int vitality = 0;  // Increases max health
+    [SerializeField] private int might = 0;     // Increases attack damage
+    [SerializeField] private int agility = 0;   // Increases speed (already used for mana)
+    [SerializeField] private int defense = 0;   // Reduces incoming damage
+    [SerializeField] private int luck = 0;      // Increases critical chance
+    
+    // Derived stats from attributes
+    public float criticalChance { get; private set; } = 0f;
+    public float criticalDamage { get; private set; } = 1.5f;  // Base critical damage multiplier
+    public float attackPower { get; private set; } = 0f;
+    public float speedStat { get; private set; } = 0f;
+    public float defenseStat { get; private set; } = 0f;
+    
+    // Per-point attribute bonuses
+    private const float HEALTH_PER_VITALITY = 30f;
+    private const float DAMAGE_PER_MIGHT = 2.5f;
+    private const float MANA_PER_AGILITY = 10f;
+    private const float DEFENSE_PER_POINT = 3f;
+    private const float CRIT_CHANCE_PER_LUCK = 0.01f;  // 1% per point
+    
     [Header("Experience System")]
     [SerializeField] private int experience = 0;
     [SerializeField] private int experienceToNextLevel = 100;
@@ -14,6 +35,13 @@ public class PlayerStats : CharacterStats
     [Header("Skill Points")]
     [SerializeField] private int availableSkillPoints = 0;
     public int AvailableSkillPoints => availableSkillPoints;
+    
+    // For accessing attributes from UI
+    public int Vitality => vitality;
+    public int Might => might;
+    public int Agility => agility;
+    public int Defense => defense;
+    public int Luck => luck;
     
     [Header("Currency")]
     [SerializeField] public int gold = 0;
@@ -40,6 +68,9 @@ public class PlayerStats : CharacterStats
         
         // Önce kaydedilmiş verileri yükle
         LoadPlayerData();
+        
+        // Apply attribute bonuses before CharacterStats initialization
+        ApplyAttributeBonuses();
         
         // Sonra CharacterStats'dan gelen işlemleri devam ettir
         base.Start();
@@ -69,6 +100,40 @@ public class PlayerStats : CharacterStats
         {
             AddGold(50);
         }
+    }
+    
+    // Apply all attribute bonuses to stats
+    private void ApplyAttributeBonuses()
+    {
+        // Reset any previous attribute bonuses
+        maxHealth.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        baseDamage.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        maxMana.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        
+        // Apply vitality to health
+        float healthBonus = vitality * HEALTH_PER_VITALITY;
+        maxHealth.AddModifier(healthBonus, StatModifierType.Attribute);
+        
+        // Apply might to damage
+        float damageBonus = might * DAMAGE_PER_MIGHT;
+        baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
+        
+        // Apply agility to mana (replacing the old mana upgrade)
+        float manaBonus = agility * MANA_PER_AGILITY;
+        maxMana.AddModifier(manaBonus, StatModifierType.Attribute);
+        
+        // Apply defense stat
+        defenseStat = defense * DEFENSE_PER_POINT;
+        
+        // Apply luck to critical hit chance
+        criticalChance = luck * CRIT_CHANCE_PER_LUCK;
+        
+        // Calculate derived stats for UI
+        attackPower = baseDamage.GetValue();
+        speedStat = 300 + (agility * 6); // Base speed + agility bonus
+        
+        Debug.Log($"Applied attribute bonuses: HP +{healthBonus}, DMG +{damageBonus}, Mana +{manaBonus}");
+        Debug.Log($"Defense: {defenseStat}, Crit Chance: {criticalChance*100}%, Speed: {speedStat}");
     }
 
     public void AddExperience(int amount)
@@ -205,28 +270,14 @@ public class PlayerStats : CharacterStats
             availableSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
             gold = PlayerPrefs.GetInt("PlayerGold", 0);
             
-            // Stat değerlerini yükle
-            float savedMaxHealth = PlayerPrefs.GetFloat("PlayerMaxHealth", maxHealth.GetValue());
-            float savedMaxMana = PlayerPrefs.GetFloat("PlayerMaxMana", maxMana.GetValue());
-            float savedBaseDamage = PlayerPrefs.GetFloat("PlayerBaseDamage", baseDamage.GetValue());
+            // Attribute values
+            vitality = PlayerPrefs.GetInt("PlayerVitality", 0);
+            might = PlayerPrefs.GetInt("PlayerMight", 0);
+            agility = PlayerPrefs.GetInt("PlayerAgility", 0);
+            defense = PlayerPrefs.GetInt("PlayerDefense", 0);
+            luck = PlayerPrefs.GetInt("PlayerLuck", 0);
             
-            // Farkları hesapla ve modifierları ekle
-            float healthDiff = savedMaxHealth - maxHealth.GetValue();
-            if (healthDiff > 0)
-            {
-                maxHealth.AddModifier(healthDiff, StatModifierType.Equipment);
-            }
-            
-            float manaDiff = savedMaxMana - maxMana.GetValue();
-            if (manaDiff > 0)
-            {
-                maxMana.AddModifier(manaDiff, StatModifierType.Equipment);
-            }
-            
-            // Not: baseDamage artık Blacksmith tarafından yönetiliyor
-            // Silah upgrade'leri ayrıca uygulanacak
-            
-            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, MaxHP={savedMaxHealth}, MaxMana={savedMaxMana}, Gold={gold}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
+            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, Vit={vitality}, Might={might}, Agi={agility}, Def={defense}, Luck={luck}, Gold={gold}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
         }
         
         // Can ve manayı doldur
@@ -264,71 +315,115 @@ public class PlayerStats : CharacterStats
         }
     }
     
-    // Stat upgrade methods
-    public void IncreaseMaxHealth()
+    // New attribute upgrade methods
+    public void IncreaseVitality()
     {
         if (availableSkillPoints <= 0) return;
         
-        // Increase by 10% of current value
-        float increaseAmount = maxHealth.GetValue() * 0.10f;
-        maxHealth.AddModifier(increaseAmount, StatModifierType.LevelBonus);
-        
-        // Update current health
-        currentHealth = maxHealth.GetValue();
-        
-        // Use a skill point
+        vitality++;
         availableSkillPoints--;
+        
+        // Apply vitality bonus
+        ApplyAttributeBonuses();
+        
+        // Update health
+        float healthPercentage = currentHealth / maxHealth.GetValue();
+        currentHealth = maxHealth.GetValue() * healthPercentage;
         
         // Update UI
         UpdateLevelUI();
+        UpdateHealthBarUI();
         
-        // Save changes after upgrade
+        // Save changes
         SaveStatsData();
-        
-        // Update health bar
-        if (player != null && player.healthBar != null)
-        {
-            player.healthBar.UpdateHealthBar(currentHealth, maxHealth.GetValue());
-        }
     }
     
-    public void IncreaseMaxMana()
+    public void IncreaseMight()
     {
         if (availableSkillPoints <= 0) return;
         
-        // Increase by 15% of current value
-        float increaseAmount = maxMana.GetValue() * 0.15f;
-        maxMana.AddModifier(increaseAmount, StatModifierType.LevelBonus);
-        
-        // Update current mana
-        currentMana = maxMana.GetValue();
-        
-        // Use a skill point
+        might++;
         availableSkillPoints--;
+        
+        // Apply might bonus
+        ApplyAttributeBonuses();
         
         // Update UI
         UpdateLevelUI();
         
-        // Save changes after upgrade
+        // Save changes
         SaveStatsData();
+    }
+    
+    public void IncreaseAgility()
+    {
+        if (availableSkillPoints <= 0) return;
+        
+        agility++;
+        availableSkillPoints--;
+        
+        // Apply agility bonus
+        ApplyAttributeBonuses();
+        
+        // Update mana
+        float manaPercentage = currentMana / maxMana.GetValue();
+        currentMana = maxMana.GetValue() * manaPercentage;
+        
+        // Update UI
+        UpdateLevelUI();
+        
+        // Save changes
+        SaveStatsData();
+    }
+    
+    public void IncreaseDefense()
+    {
+        if (availableSkillPoints <= 0) return;
+        
+        defense++;
+        availableSkillPoints--;
+        
+        // Apply defense bonus
+        ApplyAttributeBonuses();
+        
+        // Update UI
+        UpdateLevelUI();
+        
+        // Save changes
+        SaveStatsData();
+    }
+    
+    public void IncreaseLuck()
+    {
+        if (availableSkillPoints <= 0) return;
+        
+        luck++;
+        availableSkillPoints--;
+        
+        // Apply luck bonus
+        ApplyAttributeBonuses();
+        
+        // Update UI
+        UpdateLevelUI();
+        
+        // Save changes
+        SaveStatsData();
+    }
+    
+    // Legacy methods for compatibility - redirect to the new attribute methods
+    public void IncreaseMaxHealth()
+    {
+        IncreaseVitality();
     }
     
     public void IncreaseDamage()
     {
-        if (availableSkillPoints <= 0) return;
-        
-        // Increase by 8% of current value
-        float increaseAmount = baseDamage.GetValue() * 0.08f;
-        baseDamage.AddModifier(increaseAmount, StatModifierType.LevelBonus);
-        
-        // Use a skill point
-        availableSkillPoints--;
-        
-        // Update UI
-        UpdateLevelUI();
-        
-        // Save changes after upgrade
-        SaveStatsData();
+        IncreaseMight();
+    }
+    
+    public void IncreaseMaxMana()
+    {
+        IncreaseAgility();
     }
     
     // Method to reduce skill points externally
@@ -341,10 +436,17 @@ public class PlayerStats : CharacterStats
         }
     }
 
-    public override void TakeDamage(float _damage)
+    public override void TakeDamage(float damage)
     {
-        // Base sınıfta hasar işlemi uygulanır
-        base.TakeDamage(_damage);
+        // Apply defense reduction to damage
+        float damageReduction = Mathf.Min(defenseStat, damage * 0.7f); // Max 70% damage reduction
+        float finalDamage = damage - damageReduction;
+        
+        // Ensure minimum damage of 1
+        finalDamage = Mathf.Max(1f, finalDamage);
+        
+        // Apply the reduced damage
+        base.TakeDamage(finalDamage);
         
         // Health bar'ı güncelle
         UpdateHealthBarUI();
@@ -360,13 +462,50 @@ public class PlayerStats : CharacterStats
     // Save stat values to PlayerPrefs
     private void SaveStatsData()
     {
-        // Save stat values
-        PlayerPrefs.SetFloat("PlayerMaxHealth", maxHealth.GetValue());
-        PlayerPrefs.SetFloat("PlayerMaxMana", maxMana.GetValue());
-        PlayerPrefs.SetFloat("PlayerBaseDamage", baseDamage.GetValue());
+        // Save all attribute values
+        PlayerPrefs.SetInt("PlayerVitality", vitality);
+        PlayerPrefs.SetInt("PlayerMight", might);
+        PlayerPrefs.SetInt("PlayerAgility", agility);
+        PlayerPrefs.SetInt("PlayerDefense", defense);
+        PlayerPrefs.SetInt("PlayerLuck", luck);
+        
+        // Save skill points
         PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
         PlayerPrefs.Save();
         
-        Debug.Log($"Player stats saved: Health={maxHealth.GetValue()}, Mana={maxMana.GetValue()}, Damage={baseDamage.GetValue()}, SP={availableSkillPoints}");
+        Debug.Log($"Player attributes saved: Vitality={vitality}, Might={might}, Agility={agility}, Defense={defense}, Luck={luck}, SP={availableSkillPoints}");
+    }
+
+    // Reset all attributes and get skill points back
+    public void ResetAllAttributes()
+    {
+        // Calculate total spent points
+        int totalSpentPoints = vitality + might + agility + defense + luck;
+        
+        // Restore skill points
+        availableSkillPoints += totalSpentPoints;
+        
+        // Reset attribute values
+        vitality = 0;
+        might = 0;
+        agility = 0;
+        defense = 0;
+        luck = 0;
+        
+        // Reapply all attribute bonuses (zeros out the bonuses)
+        ApplyAttributeBonuses();
+        
+        // Reset health and mana percentage
+        currentHealth = maxHealth.GetValue();
+        currentMana = maxMana.GetValue();
+        
+        // Update UI elements
+        UpdateHealthBarUI();
+        UpdateLevelUI();
+        
+        // Save changes
+        SaveStatsData();
+        
+        Debug.Log($"All attributes reset. Returned {totalSpentPoints} skill points. Total available: {availableSkillPoints}");
     }
 }

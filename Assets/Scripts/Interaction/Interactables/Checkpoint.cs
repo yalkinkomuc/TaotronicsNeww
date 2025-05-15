@@ -15,11 +15,11 @@ public class Checkpoint : MonoBehaviour, IInteractable
     [SerializeField] private Color inactiveColor = new Color(0.5f, 0.5f, 0.5f, 0.2f);
     
     [Header("References")]
-    [SerializeField] private UpgradePanel upgradePanel;
+    [SerializeField] private AttributesUpgradePanel attributesPanel;
     [SerializeField] private CheckpointSelectionScreen selectionScreen;
     
     // Statik referanslar
-    public static UpgradePanel persistentUpgradePanel;
+    public static AttributesUpgradePanel persistentUpgradePanel;
     public static CheckpointSelectionScreen persistentSelectionScreen;
     
     private void Start()
@@ -41,17 +41,17 @@ public class Checkpoint : MonoBehaviour, IInteractable
     {
         // Önce statik referanslara bak
         if (persistentUpgradePanel != null)
-            upgradePanel = persistentUpgradePanel;
+            attributesPanel = persistentUpgradePanel;
         
         if (persistentSelectionScreen != null)
             selectionScreen = persistentSelectionScreen;
         
-        // Upgrade Panel bulma
-        if (upgradePanel == null)
+        // AttributesUpgradePanel bulma
+        if (attributesPanel == null)
         {
-            upgradePanel = FindFirstObjectByType<UpgradePanel>();
-            if (upgradePanel == null)
-                Debug.LogWarning("UpgradePanel bulunamadı!");
+            attributesPanel = FindFirstObjectByType<AttributesUpgradePanel>();
+            if (attributesPanel == null)
+                Debug.LogWarning("AttributesUpgradePanel bulunamadı!");
         }
         
         // Selection Screen bulma
@@ -62,9 +62,13 @@ public class Checkpoint : MonoBehaviour, IInteractable
                 Debug.LogWarning("CheckpointSelectionScreen bulunamadı!");
         }
         
-        // Bağlantıyı kur
-        if (selectionScreen != null && upgradePanel != null)
-            selectionScreen.upgradePanel = upgradePanel;
+        // AttributesUpgradePanel'i statik referansa ata
+        if (attributesPanel != null && persistentUpgradePanel == null)
+            persistentUpgradePanel = attributesPanel;
+            
+        // Selection Screen'i statik referansa ata
+        if (selectionScreen != null && persistentSelectionScreen == null)
+            persistentSelectionScreen = selectionScreen;
     }
 
     public void Interact()
@@ -85,16 +89,19 @@ public class Checkpoint : MonoBehaviour, IInteractable
         }
         else
         {
-            // Eğer selection screen yoksa, doğrudan iyileştir ve upgrade panelini göster
+            // Eğer selection screen yoksa, doğrudan iyileştir ve attribute panelini göster
             HealPlayer();
-            ShowUpgradePanel();
+            ShowAttributesPanel();
         }
     }
     
-    private void ShowUpgradePanel()
+    private void ShowAttributesPanel()
     {
-        if (upgradePanel == null)
+        if (attributesPanel == null)
+        {
+            Debug.LogWarning("AttributesUpgradePanel bulunamadı!");
             return;
+        }
         
         Player player = PlayerManager.instance?.player;
         if (player == null)
@@ -104,8 +111,13 @@ public class Checkpoint : MonoBehaviour, IInteractable
         if (playerStats == null)
             return;
             
-        upgradePanel.Show(playerStats);
+        // AttributesUpgradePanel'ın aktifliğini kontrol et ve etkinleştir
+        if (!attributesPanel.gameObject.activeSelf)
+        {
+            attributesPanel.gameObject.SetActive(true);
+        }
         
+        // Etkileşim panelini gizle
         if (interactionPrompt != null)
             interactionPrompt.SetActive(false);
     }
@@ -118,8 +130,8 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
     public void ShowInteractionPrompt()
     {
-        // Eğer upgrade paneli veya selection screen açıksa, etkileşim isteğini gösterme
-        if ((upgradePanel != null && upgradePanel.gameObject.activeSelf) ||
+        // Eğer attribute paneli veya selection screen açıksa, etkileşim isteğini gösterme
+        if ((attributesPanel != null && attributesPanel.gameObject.activeSelf) ||
             (selectionScreen != null && selectionScreen.gameObject.activeSelf))
             return;
             
@@ -194,6 +206,13 @@ public class Checkpoint : MonoBehaviour, IInteractable
                 PlayerPrefs.SetFloat("PlayerMaxMana", playerStats.maxMana.GetValue());
                 PlayerPrefs.SetFloat("PlayerBaseDamage", playerStats.baseDamage.GetValue());
                 PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
+                
+                // Attribute değerlerini kaydet
+                PlayerPrefs.SetInt("PlayerVitality", playerStats.Vitality);
+                PlayerPrefs.SetInt("PlayerMight", playerStats.Might);
+                PlayerPrefs.SetInt("PlayerAgility", playerStats.Agility);
+                PlayerPrefs.SetInt("PlayerDefense", playerStats.Defense);
+                PlayerPrefs.SetInt("PlayerLuck", playerStats.Luck);
                 
                 // Experience değerlerini kaydet
                 System.Type type = playerStats.GetType();

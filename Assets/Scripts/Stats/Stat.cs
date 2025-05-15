@@ -7,7 +7,8 @@ public enum StatModifierType
     Flat,
     Equipment,
     Buff,
-    LevelBonus
+    LevelBonus,
+    Attribute
 }
 
 [System.Serializable]
@@ -41,6 +42,11 @@ public class Stat
         }
      
         return finalValue;
+    }
+    
+    public float GetBaseValue()
+    {
+        return baseValue;
     }
 
     public void AddModifier(float value)
