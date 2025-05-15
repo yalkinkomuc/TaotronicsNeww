@@ -92,7 +92,7 @@ public class PlayerStats : CharacterStats
         // Debug key to gain experience (can be removed in final build)
         if (Input.GetKeyDown(KeyCode.X))
         {
-            AddExperience(25);
+            AddExperience(1000);
         }
         
         // Debug key to add gold (can be removed in final build)
@@ -133,7 +133,7 @@ public class PlayerStats : CharacterStats
         speedStat = 300 + (agility * 6); // Base speed + agility bonus
         
         Debug.Log($"Applied attribute bonuses: HP +{healthBonus}, DMG +{damageBonus}, Mana +{manaBonus}");
-        Debug.Log($"Defense: {defenseStat}, Crit Chance: {criticalChance*100}%, Speed: {speedStat}");
+        Debug.Log($"<color=cyan>Luck: {luck}</color> → <color=yellow>Crit Chance: {criticalChance*100:F1}%</color>, Defense: {defenseStat}, Speed: {speedStat}");
     }
 
     public void AddExperience(int amount)
@@ -397,6 +397,9 @@ public class PlayerStats : CharacterStats
     {
         if (availableSkillPoints <= 0) return;
         
+        // Debug için önceki değerleri kaydet
+        float oldCritChance = criticalChance;
+        
         luck++;
         availableSkillPoints--;
         
@@ -405,6 +408,10 @@ public class PlayerStats : CharacterStats
         
         // Update UI
         UpdateLevelUI();
+        
+        // Debug logları ekle
+        Debug.Log($"<color=green>LUCK ARTIRILDI!</color> Değer: {luck-1} → {luck}");
+        Debug.Log($"<color=yellow>Kritik Vuruş Şansı: {oldCritChance*100:F1}% → {criticalChance*100:F1}%</color>");
         
         // Save changes
         SaveStatsData();
@@ -507,5 +514,25 @@ public class PlayerStats : CharacterStats
         SaveStatsData();
         
         Debug.Log($"All attributes reset. Returned {totalSpentPoints} skill points. Total available: {availableSkillPoints}");
+    }
+    
+    // Kritik vuruş kontrolü yapan metot
+    public bool IsCriticalHit()
+    {
+        // Random.value 0-1 arası rastgele değer verir
+        float randomValue = Random.value;
+        bool isCritical = randomValue < criticalChance;
+        
+        // Debug log ile kritik vuruş değerlerini göster
+        if (isCritical)
+        {
+            Debug.Log($"<color=red>KRİTİK VURUŞ!</color> Luck: {luck}, Şans: {criticalChance*100:F1}%, Random Değer: {randomValue:F3}");
+        }
+        else if (Random.value < 0.1f) // Her seferinde log göstermeyelim, %10 ihtimalle gösterelim
+        {
+            Debug.Log($"Normal vuruş. Luck: {luck}, Şans: {criticalChance*100:F1}%, Random Değer: {randomValue:F3}");
+        }
+        
+        return isCritical;
     }
 }

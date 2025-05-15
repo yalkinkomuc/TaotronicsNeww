@@ -71,6 +71,19 @@ public class PlayerAnimTriggers : MonoBehaviour
             player.MarkEntityAsHit(enemy);
             
             float currentDamage = player.stats.baseDamage.GetValue();
+            
+            // Kritik vuruş kontrolü - minimal
+            bool isCritical = false;
+            if (player.stats is PlayerStats playerStats)
+            {
+                if (playerStats.IsCriticalHit())
+                {
+                    currentDamage *= 1.5f; // Kritik vuruş için %50 daha fazla hasar
+                    isCritical = true;
+                    Debug.Log("Kritik Vuruş! " + currentDamage);
+                }
+            }
+            
             int comboCounter = 0;
             
             // Combo sayısına göre knockback gücünü artır
@@ -134,6 +147,13 @@ public class PlayerAnimTriggers : MonoBehaviour
                 // Çömelme saldırısı için hasar ve knockback
                 currentDamage *= 1.2f; // Çömelme saldırısı biraz daha fazla hasar versin
                 
+                // Kritik vuruş kontrolü - minimal
+                if (player.stats is PlayerStats playerStatsForCrouch && playerStatsForCrouch.IsCriticalHit())
+                {
+                    currentDamage *= 1.5f;
+                    Debug.Log("Kritik Vuruş (Çömelme)! " + currentDamage);
+                }
+                
                 // TakeDamage doğrudan çağır, enemy.Damage() çağırma
                 enemy.stats.TakeDamage(currentDamage);
                 
@@ -178,6 +198,16 @@ public class PlayerAnimTriggers : MonoBehaviour
             
             // Hesaplanan hasar değerini belirle
             float damage = player.stats.baseDamage.GetValue();
+            
+            // Kritik vuruş kontrolü - minimal
+            bool isCritical = false;
+            if (player.stats is PlayerStats playerStats && playerStats.IsCriticalHit())
+            {
+                damage *= 1.5f;
+                isCritical = true;
+                Debug.Log("Kritik Vuruş (Dummy)! " + damage);
+            }
+            
             int comboCounter = 0;
             
             // Combo sayısına göre hasarı artır
@@ -195,14 +225,14 @@ public class PlayerAnimTriggers : MonoBehaviour
                 }
                 
                 // Dummy'ye hasar ver, kombo sayısı ile birlikte
-                dummy.TakeDamage(damage, comboCounter);
+                dummy.TakeDamage(damage, comboCounter, isCritical);
             }
             else if (player.stateMachine.currentState == player.crouchAttackState)
             {
                 damage *= 1.2f; // Crouch attack damage multiplier
                 
                 // Çömelme saldırısı için standart hasar
-                dummy.TakeDamage(damage);
+                dummy.TakeDamage(damage, 0, isCritical);
             }
          }
       }

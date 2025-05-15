@@ -89,7 +89,7 @@ public class Dummy : MonoBehaviour
     /// <summary>
     /// Dummy'e hasar verir ve hasar metnini gösterir
     /// </summary>
-    public void TakeDamage(float damage, int comboCount = 0)
+    public void TakeDamage(float damage, int comboCount = 0,bool isCritical = false)
     {
         // Eğer dummy şu an hasar alamıyorsa çık
         if (isInvincible || Time.time < lastHitTime + invincibilityTime)
