@@ -216,24 +216,25 @@ public class CheckpointSelectionScreen : MonoBehaviour
         PlayerStats playerStats = player.GetComponent<PlayerStats>();
         if (playerStats != null)
         {
-            // Kaydedilmiş stat değerlerini yükle
-            if (PlayerPrefs.HasKey("PlayerMaxHealth") && PlayerPrefs.HasKey("PlayerMaxMana"))
+            // Debug amacıyla önceki değerleri logla
+            float oldMaxHealth = playerStats.maxHealth.GetValue();
+            
+            // SADECE seviyeyi, deneyimi ve skill puanlarını yükle, stat değerlerini modifiye etme
+            if (PlayerPrefs.HasKey("PlayerLevel") && PlayerPrefs.HasKey("PlayerExperience"))
             {
-                // Stat değerlerini al
-                float savedMaxHealth = PlayerPrefs.GetFloat("PlayerMaxHealth");
-                float savedMaxMana = PlayerPrefs.GetFloat("PlayerMaxMana");
-                float savedBaseDamage = PlayerPrefs.GetFloat("PlayerBaseDamage");
                 int savedLevel = PlayerPrefs.GetInt("PlayerLevel", 1);
                 int savedExperience = PlayerPrefs.GetInt("PlayerExperience", 0);
                 int savedExperienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
                 int savedSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
                 
-                // Seviyeyi ayarla
-                if (savedLevel > 1)
-                    playerStats.SetLevel(savedLevel);
+                // Seviyeyi ayarla (diğer stat değerlerini değiştirmeden)
+                System.Type type = playerStats.GetType();
+                
+                // Seviyeyi reflection ile ayarla
+                type.GetField("level", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .SetValue(playerStats, savedLevel);
                 
                 // Deneyim ve skill point değerlerini ayarla
-                System.Type type = playerStats.GetType();
                 type.GetField("experience", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                     .SetValue(playerStats, savedExperience);
                     
@@ -242,20 +243,22 @@ public class CheckpointSelectionScreen : MonoBehaviour
                     
                 type.GetField("availableSkillPoints", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                     .SetValue(playerStats, savedSkillPoints);
-                
-                // Değerleri karşılaştırıp farklıysa güncelle
-                ApplyStatDifference(playerStats.maxHealth, savedMaxHealth);
-                ApplyStatDifference(playerStats.maxMana, savedMaxMana);
-                ApplyStatDifference(playerStats.baseDamage, savedBaseDamage);
             }
             
-            // Can ve manayı doldur
-            playerStats.currentHealth = playerStats.maxHealth.GetValue();
+            // Şu anki max health değerini al (modifiye etmeden)
+            float maxHealthValue = playerStats.maxHealth.GetValue();
+            
+            // Current health'i direkt MAX health'e eşitle (Full can yap)
+            playerStats.SetHealth(maxHealthValue);
             playerStats.currentMana = playerStats.maxMana.GetValue();
             
             // Health Bar'ı güncelle
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+                
+            // Rest açık bir şekilde logla
+            Debug.Log($"<color=green>OYUNCU REST YAPTI!</color> Can: {playerStats.currentHealth:F0}/{maxHealthValue:F0} (FULL CAN)");
+            Debug.Log($"<color=blue>Önceki Max Health: {oldMaxHealth:F0}, Yeni Max Health: {maxHealthValue:F0}</color>");
             
             // UI'ı güncelle
             System.Type playerStatsType = playerStats.GetType();
@@ -270,22 +273,19 @@ public class CheckpointSelectionScreen : MonoBehaviour
         else if (player.stats != null)
         {
             // Basit iyileştirme
-            player.stats.currentHealth = player.stats.maxHealth.GetValue();
-            player.stats.currentMana = player.stats.maxMana.GetValue();
+            float roundedMaxHealth = Mathf.Round(player.stats.maxHealth.GetValue());
+            float roundedMaxMana = Mathf.Round(player.stats.maxMana.GetValue());
+            
+            // Can ve manayı doldur (Current health MAX health'e eşitle)
+            player.stats.SetHealth(roundedMaxHealth);
+            player.stats.currentMana = roundedMaxMana;
             
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
-        }
-    }
-    
-    // Stat değerlerini karşılaştırıp fark varsa uygula
-    private void ApplyStatDifference(Stat stat, float savedValue)
-    {
-        float currentValue = stat.GetValue();
-        if (savedValue > currentValue)
-        {
-            float diff = savedValue - currentValue;
-            stat.AddModifier(diff, StatModifierType.Equipment);
+                
+            // Rest açık bir şekilde logla
+            Debug.Log($"<color=green>CHECKPOINT'TE İYİLEŞME!</color> Can: {player.stats.currentHealth:F0}/{roundedMaxHealth:F0} (FULL CAN)");
+            Debug.Log($"<color=blue>Max Health: {roundedMaxHealth:F0}</color>");
         }
     }
     

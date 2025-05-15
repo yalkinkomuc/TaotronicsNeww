@@ -39,6 +39,7 @@ public class AttributesUpgradePanel : MonoBehaviour
     
     [Header("Stat Preview Fields")]
     [SerializeField] private TextMeshProUGUI healthValueText;
+    [SerializeField] private TextMeshProUGUI manaValueText;
     [SerializeField] private TextMeshProUGUI attackValueText;
     [SerializeField] private TextMeshProUGUI speedValueText;
     [SerializeField] private TextMeshProUGUI defenseValueText;
@@ -228,12 +229,14 @@ public class AttributesUpgradePanel : MonoBehaviour
         // Calculate preview values based on temporary attributes
         float healthValue = CalculateHealth(tempVitality);
         float attackValue = CalculateAttack(tempMight);
+        float manaValue = CalculateMana(tempAgility);
         float speedValue = CalculateSpeed(tempAgility);
         float defenseValue = CalculateDefense(tempDefense);
         float critValue = CalculateCritRate(tempLuck);
         
         // Update UI
         if (healthValueText) healthValueText.text = healthValue.ToString("F0");
+        if (manaValueText) manaValueText.text = manaValue.ToString("F0");
         if (attackValueText) attackValueText.text = attackValue.ToString("F1");
         if (speedValueText) speedValueText.text = speedValue.ToString("F0");
         if (defenseValueText) defenseValueText.text = defenseValue.ToString("F0");
@@ -242,38 +245,55 @@ public class AttributesUpgradePanel : MonoBehaviour
     
     private float CalculateHealth(int vitality)
     {
-        // Base health + vitality bonus
+        // Use the player's existing method to calculate health bonus consistently
         float baseHealth = playerStats.maxHealth.GetBaseValue();
-        float vitalityBonus = vitality * 30f; // HEALTH_PER_VITALITY constant
+        float healthBonus = playerStats.CalculateHealthBonusForVitality(vitality);
         
-        return baseHealth + vitalityBonus;
+        return baseHealth + healthBonus;
     }
     
     private float CalculateAttack(int might)
     {
-        // Base damage + might bonus
+        // Use the player's existing method to calculate damage bonus consistently
         float baseDamage = playerStats.baseDamage.GetBaseValue();
-        float mightBonus = might * 2.5f; // DAMAGE_PER_MIGHT constant
+        float damageBonus = playerStats.CalculateDamageBonusForMight(might);
         
-        return baseDamage + mightBonus;
+        return baseDamage + damageBonus;
     }
     
     private float CalculateSpeed(int agility)
     {
-        // Base speed + agility bonus
-        return 300f + (agility * 6f); // Base speed + agility bonus
+        // Use exponential formula like in PlayerStats
+        float baseSpeed = 300f; // baseSpeedValue from PlayerStats
+        float speedGrowth = 0.02f; // SPEED_GROWTH from PlayerStats
+        float speedMultiplier = Mathf.Pow(1 + speedGrowth, agility) - 1;
+        
+        return baseSpeed * (1 + speedMultiplier);
     }
     
     private float CalculateDefense(int defense)
     {
-        // Defense calculation
-        return defense * 3f; // DEFENSE_PER_POINT constant
+        // Use exponential formula like in PlayerStats
+        float baseDefense = 5f; // baseDefenseValue from PlayerStats
+        float defenseGrowth = 0.05f; // DEFENSE_GROWTH from PlayerStats
+        float defenseMultiplier = Mathf.Pow(1 + defenseGrowth, defense) - 1;
+        
+        return baseDefense * (1 + defenseMultiplier);
     }
     
     private float CalculateCritRate(int luck)
     {
-        // Critical rate calculation
+        // Critical rate calculation (linear, same as PlayerStats)
         return luck * 0.01f; // CRIT_CHANCE_PER_LUCK constant (1% per point)
+    }
+    
+    private float CalculateMana(int agility)
+    {
+        // Use the player's existing method to calculate mana bonus consistently
+        float baseMana = playerStats.maxMana.GetBaseValue();
+        float manaBonus = playerStats.CalculateManaBonusForAgility(agility);
+        
+        return baseMana + manaBonus;
     }
     
     private void HandleAttributeSelection()
@@ -416,6 +436,7 @@ public class AttributesUpgradePanel : MonoBehaviour
         Debug.Log($"Applying changes: Vit +{vitalityDiff}, Might +{mightDiff}, Mind +{agilityDiff}, Def +{defenseDiff}, Luck +{luckDiff}");
         
         // Apply increases to actual player stats
+        // Each method already properly updates health percentage and health bar UI
         for (int i = 0; i < vitalityDiff; i++) playerStats.IncreaseVitality();
         for (int i = 0; i < mightDiff; i++) playerStats.IncreaseMight();
         for (int i = 0; i < agilityDiff; i++) playerStats.IncreaseAgility();

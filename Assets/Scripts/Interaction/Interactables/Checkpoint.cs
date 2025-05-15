@@ -161,12 +161,17 @@ public class Checkpoint : MonoBehaviour, IInteractable
             float roundedMaxHealth = Mathf.Round(playerStats.maxHealth.GetValue());
             float roundedMaxMana = Mathf.Round(playerStats.maxMana.GetValue());
             
+            // Can ve manayı doldur (Current health MAX health'e eşitle)
             playerStats.SetHealth(roundedMaxHealth);
             playerStats.currentMana = roundedMaxMana;
             
             // Health bar'ı güncelle
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+                
+            // Rest açık bir şekilde logla
+            Debug.Log($"<color=green>CHECKPOINT'TE İYİLEŞME!</color> Can: {playerStats.currentHealth:F0}/{roundedMaxHealth:F0} (FULL CAN)");
+            Debug.Log($"<color=blue>Max Health: {roundedMaxHealth:F0}</color>");
         }
         else if (player.stats != null)
         {
@@ -174,11 +179,16 @@ public class Checkpoint : MonoBehaviour, IInteractable
             float roundedMaxHealth = Mathf.Round(player.stats.maxHealth.GetValue());
             float roundedMaxMana = Mathf.Round(player.stats.maxMana.GetValue());
             
-            player.stats.currentHealth = roundedMaxHealth;
+            // Can ve manayı doldur (Current health MAX health'e eşitle)
+            player.stats.SetHealth(roundedMaxHealth);
             player.stats.currentMana = roundedMaxMana;
             
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
+                
+            // Rest açık bir şekilde logla
+            Debug.Log($"<color=green>CHECKPOINT'TE İYİLEŞME!</color> Can: {player.stats.currentHealth:F0}/{roundedMaxHealth:F0} (FULL CAN)");
+            Debug.Log($"<color=blue>Max Health: {roundedMaxHealth:F0}</color>");
         }
     }
 
