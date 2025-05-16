@@ -17092,7 +17092,7 @@ MonoBehaviour:
   boomerangCooldown: 1.5
   iceShardPrefab: {fileID: 3781980674335233421, guid: 35eb45ef5405f1046af3fe7f5e18d141, type: 3}
   spellSpacing: 1
-  delayBetweenShards: 0.2
+  delayBetweenShards: 0.1
   spell1ManaCost: 20
   spell2ManaDrainPerSecond: 20
   voidSkillManaCost: 40
@@ -17208,17 +17208,17 @@ MonoBehaviour:
   levelHealthMultiplier: 0.1
   levelDamageMultiplier: 0.1
   player: {fileID: 0}
-  vitality: 0
-  might: 0
-  agility: 0
-  defense: 0
-  luck: 0
-  maxAttributeLevel: 99
-  baseHealthValue: 100
-  baseDamageValue: 10
-  baseManaValue: 50
-  baseDefenseValue: 5
-  baseSpeedValue: 300
+  _vitality: 0
+  _might: 0
+  _agility: 0
+  _defense: 0
+  _luck: 0
+  _maxAttributeLevel: 99
+  _baseHealthValue: 100
+  _baseDamageValue: 10
+  _baseManaValue: 50
+  _baseDefenseValue: 5
+  _baseSpeedValue: 300
   experience: 0
   experienceToNextLevel: 100
   experienceLevelMultiplier: 1.5
@@ -24328,6 +24328,17 @@ MonoBehaviour:
   level: 1
   levelHealthMultiplier: 0.1
   levelDamageMultiplier: 0.05
+  _vitality: 0
+  _might: 0
+  _agility: 0
+  _defense: 0
+  _luck: 0
+  _maxAttributeLevel: 99
+  _baseHealthValue: 100
+  _baseDamageValue: 10
+  _baseManaValue: 50
+  _baseDefenseValue: 5
+  _baseSpeedValue: 300
   baseExperienceReward: 10
   experienceLevelMultiplier: 0.5
   baseGoldReward: 5
@@ -24335,6 +24346,8 @@ MonoBehaviour:
   goldRandomVariance: 0.2
   scaleWithPlayerLevel: 0
   levelOffset: 0
+  attributeFocus: 0
+  attributePointsPerLevel: 1.5
 --- !u!1 &2044795575
 GameObject:
   m_ObjectHideFlags: 0
@@ -25080,14 +25093,6 @@ PrefabInstance:
     - target: {fileID: 3833815688910405858, guid: 406932be2c2ea434092db70ad5ffff48, type: 3}
       propertyPath: m_Name
       value: Dummy
-      objectReference: {fileID: 0}
-    - target: {fileID: 8303815312952285803, guid: 406932be2c2ea434092db70ad5ffff48, type: 3}
-      propertyPath: isTestMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8303815312952285803, guid: 406932be2c2ea434092db70ad5ffff48, type: 3}
-      propertyPath: testDamageMin
-      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26326,13 +26331,17 @@ PrefabInstance:
       propertyPath: whatIsStair.m_Bits
       value: 2048
       objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: _vitality
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
       value: EliteSkeleton_Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
