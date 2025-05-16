@@ -95,7 +95,7 @@ public class PlayerStats : CharacterStats
         // Debug key to gain experience (can be removed in final build)
         if (Input.GetKeyDown(KeyCode.X))
         {
-            AddExperience(100000);
+            AddExperience(900000);
         }
         
         // Debug key to add gold (can be removed in final build)
@@ -128,10 +128,10 @@ public class PlayerStats : CharacterStats
         float manaBonus = _baseManaValue * manaMultiplier;
         maxMana.AddModifier(manaBonus, StatModifierType.Attribute);
         
-        // Calculate defense stat (% damage reduction) - linear growth
-        // Her defense puanı %1 hasar azaltma sağlar, maksimum %50
-        float defensePercentage = Mathf.Min(_defense, 50);
-        base.defenseStat = defensePercentage;
+        // Azalan marjinal getiri ile defense (%50'ye kadar, kök fonksiyonu)
+        float maxReduction = 50f;
+        float reduction = maxReduction * Mathf.Sqrt(_defense / 99f);
+        base.defenseStat = reduction;
         
         // Critical chance remains linear (1% per point)
         base.criticalChance = _luck * CRIT_CHANCE_PER_LUCK;
@@ -144,7 +144,7 @@ public class PlayerStats : CharacterStats
         base.attackPower = baseDamage.GetValue();
         
         Debug.Log($"Applied attribute bonuses: HP +{healthBonus:F0}, DMG +{damageBonus:F1}, Mana +{manaBonus:F0}");
-        Debug.Log($"<color=cyan>Defense: {defensePercentage}%</color>, <color=yellow>Crit Chance: {base.criticalChance*100:F1}%</color>, Speed: {base.speedStat:F0}");
+        Debug.Log($"<color=cyan>Defense: {reduction:F2}%</color>, <color=yellow>Crit Chance: {base.criticalChance*100:F1}%</color>, Speed: {base.speedStat:F0}");
     }
     
     // Calculates just the health bonus for a specific vitality level (for preview)
@@ -192,8 +192,8 @@ public class PlayerStats : CharacterStats
             // Increase XP needed for next level
             experienceToNextLevel = (int)(experienceToNextLevel * experienceLevelMultiplier);
             
-            // Add skill point on level up
-            availableSkillPoints++;
+            // Her levelde 3 skill point ver
+            availableSkillPoints += 3;
             
             // Heal on level up
             currentHealth = maxHealth.GetValue();
