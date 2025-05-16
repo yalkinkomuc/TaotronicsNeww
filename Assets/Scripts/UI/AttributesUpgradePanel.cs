@@ -226,8 +226,8 @@ public class AttributesUpgradePanel : MonoBehaviour
     {
         if (playerStats == null) return;
         
-        // Canı doğrudan playerStats.currentHealth'ten al
-        float healthValue = playerStats.currentHealth;
+        // Health preview: vitality arttıkça anlık güncellensin
+        float healthValue = CalculateHealth(tempVitality);
         float attackValue = CalculateAttack(tempMight);
         float manaValue = CalculateMana(tempAgility);
         float speedValue = CalculateSpeed(tempAgility);
@@ -248,13 +248,13 @@ public class AttributesUpgradePanel : MonoBehaviour
         if (playerStats == null)
             return 0f;
         
-        // Gerçek hesaplama: base health + vitality bonusu + level bonusu
+        // Base health
         float baseHealth = playerStats.maxHealth.GetBaseValue();
+        // Vitality bonus
         float healthMultiplier = Mathf.Pow(1 + 0.08f, vitality) - 1; // HEALTH_GROWTH = 0.08f
         float bonus = baseHealth * healthMultiplier;
-        int level = playerStats.GetLevel();
-        float levelBonus = baseHealth * 0.1f * (level - 1); // levelHealthMultiplier = 0.1f
-        return baseHealth + bonus + levelBonus;
+        // Sadece base health + vitality bonusu
+        return baseHealth + bonus;
     }
     
     private float CalculateAttack(int might)

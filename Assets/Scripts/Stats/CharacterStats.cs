@@ -83,32 +83,11 @@ public class CharacterStats : MonoBehaviour
 
     protected virtual void Start()
     {
-        // Apply attribute bonuses first
+        // Sadece attribute bonuslarını uygula
         ApplyAttributeBonuses();
-        
-        // Apply level multipliers
-        ApplyLevelMultipliers();
-        
         // Initialize health and mana to max values
         currentHealth = maxHealth.GetValue();
         currentMana = maxMana.GetValue();
-    }
-    
-    public virtual void ApplyLevelMultipliers()
-    {
-        // Reset stats to remove old level modifiers
-        maxHealth.RemoveAllModifiersOfType(StatModifierType.LevelBonus);
-        baseDamage.RemoveAllModifiersOfType(StatModifierType.LevelBonus);
-        
-        if (level > 1)
-        {
-            // Apply level multipliers (level-1 because level 1 is base stats)
-            float healthBonus = baseMaxHealth * levelHealthMultiplier * (level - 1);
-            float damageBonus = baseMaxDamage * levelDamageMultiplier * (level - 1);
-            
-            maxHealth.AddModifier(healthBonus, StatModifierType.LevelBonus);
-            baseDamage.AddModifier(damageBonus, StatModifierType.LevelBonus);
-        }
     }
     
     // Apply all attribute bonuses to stats using exponential growth
@@ -180,7 +159,6 @@ public class CharacterStats : MonoBehaviour
         if (newLevel < 1) newLevel = 1;
         
         level = newLevel;
-        ApplyLevelMultipliers();
         
         // Refresh current health and mana to the new maximum
         float healthPercentage = currentHealth / maxHealth.GetValue();
