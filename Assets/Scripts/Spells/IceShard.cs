@@ -2,13 +2,20 @@ using UnityEngine;
 
 public class IceShard : MonoBehaviour
 {
-    [SerializeField] private int damage = 10;
+    [Header("Damage Settings")]
+    [SerializeField] private int damage = 15; // Increased default damage
+    [SerializeField] private bool useRandomDamage = false;
+    [SerializeField] private int minDamage = 12;
+    [SerializeField] private int maxDamage = 20;
+    
+    [Header("Ground Check")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float groundCheckDistance = 10f;
     
     private BoxCollider2D iceCollider;
     private bool canDealDamage = false;
     private bool isGroundBelow = false;
+    private int actualDamage;
 
     // Method to set the ground layer from outside
     public void SetGroundLayer(LayerMask layer)
@@ -35,6 +42,9 @@ public class IceShard : MonoBehaviour
         // Başlangıçta kesinlikle kapalı olsun
         iceCollider.enabled = false;
         canDealDamage = false;
+        
+        // Calculate actual damage
+        actualDamage = useRandomDamage ? Random.Range(minDamage, maxDamage + 1) : damage;
     }
 
     private void Start()
@@ -94,7 +104,14 @@ public class IceShard : MonoBehaviour
             if (other.TryGetComponent<Enemy>(out Enemy enemy))
             {
                 enemy.Damage();
-                enemy.GetComponent<CharacterStats>()?.TakeDamage(damage);
+                enemy.GetComponent<CharacterStats>()?.TakeDamage(actualDamage);
+                
+                // Display magic damage text
+                if (FloatingTextManager.Instance != null)
+                {
+                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                    FloatingTextManager.Instance.ShowMagicDamageText(actualDamage, textPosition);
+                }
             }
         }
     }

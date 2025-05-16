@@ -159,5 +159,9 @@ MonoBehaviour:
   minFontSize: 30
   maxFontSize: 90
   minDamageForMaxSize: 40
-  wiggleAmount: 2
-  wiggleSpeed: 20
+  magicMinFontSize: 30
+  magicMaxFontSize: 90
+  minMagicDamageForMaxSize: 40
+  isMagicDamage: 0
+  wiggleAmount: 4
+  wiggleSpeed: 40

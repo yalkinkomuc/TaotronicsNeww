@@ -20,6 +20,12 @@ public class FloatingText : MonoBehaviour
     [SerializeField] private float maxFontSize = 36f; // Maximum font boyutu
     [SerializeField] private float minDamageForMaxSize = 50f; // Maksimum boyut için gereken minimum hasar
     
+    [Header("Büyü Hasarı Ayarları")]
+    [SerializeField] private float magicMinFontSize = 12f; // Büyü için minimum font boyutu
+    [SerializeField] private float magicMaxFontSize = 42f; // Büyü için maksimum font boyutu
+    [SerializeField] private float minMagicDamageForMaxSize = 30f; // Büyü için maksimum boyut gereken hasar
+    [SerializeField] private bool isMagicDamage = false; // Büyü hasarı mı?
+    
     // Random hareket için değişkenler
     [SerializeField] private float wiggleAmount = 0.3f;
     [SerializeField] private float wiggleSpeed = 5f;
@@ -87,8 +93,10 @@ public class FloatingText : MonoBehaviour
         // Hasara dayalı font boyutu ayarla
         if (textMesh != null)
         {
-            // Hasara göre boyut hesapla
-            float damageBasedSize = CalculateFontSizeByDamage(damageValue);
+            // Hasara göre boyut hesapla - büyü veya normal hasara göre
+            float damageBasedSize = isMagicDamage ? 
+                CalculateMagicFontSizeByDamage(damageValue) : 
+                CalculateFontSizeByDamage(damageValue);
             
             // Hafif rastgele varyasyon ekle
             float sizeMultiplier = Random.Range(minSizeVariation, maxSizeVariation);
@@ -137,6 +145,22 @@ public class FloatingText : MonoBehaviour
         
         // Doğrusal interpolasyon ile font boyutunu belirle
         return Mathf.Lerp(minFontSize, maxFontSize, normalizedDamage);
+    }
+    
+    /// <summary>
+    /// Büyü hasarı değerine göre font boyutunu hesaplar
+    /// </summary>
+    private float CalculateMagicFontSizeByDamage(float damage)
+    {
+        // Hasar 0 veya eksi ise, minimum boyutu kullan
+        if (damage <= 0)
+            return magicMinFontSize;
+            
+        // Hasarı 0-minMagicDamageForMaxSize aralığına normalize et
+        float normalizedDamage = Mathf.Clamp01(damage / minMagicDamageForMaxSize);
+        
+        // Doğrusal interpolasyon ile font boyutunu belirle
+        return Mathf.Lerp(magicMinFontSize, magicMaxFontSize, normalizedDamage);
     }
     
     /// <summary>
@@ -214,6 +238,12 @@ public class FloatingText : MonoBehaviour
         {
             textMesh.color = color;
             originalColor = color;
+            
+            // Mavi renk tonlarında ise büyü hasarı olarak işaretle
+            if (color.b > 0.6f && color.b > color.r && color.b > color.g)
+            {
+                isMagicDamage = true;
+            }
         }
     }
     
@@ -233,5 +263,13 @@ public class FloatingText : MonoBehaviour
         minFontSize = min;
         maxFontSize = max;
         minDamageForMaxSize = damageThreshold;
+    }
+    
+    /// <summary>
+    /// Büyü hasarı olarak işaretle
+    /// </summary>
+    public void SetAsMagicDamage(bool value = true)
+    {
+        isMagicDamage = value;
     }
 } 

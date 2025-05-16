@@ -10,7 +10,9 @@ public class FloatingTextManager : MonoBehaviour
     
     [Header("Hasar Metin Ayarları")]
     [SerializeField] private Color damageColor = Color.red; // Varsayılan kırmızı
-    [SerializeField] private Color magicDamageColor = new Color(0.3f, 0.3f, 1f); // Mavi
+    [SerializeField] private Color lightMagicDamageColor = new Color(0.5f, 0.7f, 1f); // Açık mavi (düşük büyü hasarı)
+    [SerializeField] private Color darkMagicDamageColor = new Color(0.1f, 0.2f, 1f); // Koyu mavi (yüksek büyü hasarı)
+    [SerializeField] private float magicDamageThreshold = 30f; // Bu değer ve üzeri için koyu mavi kullanılır
     
     [Header("Kombo Hasar Renkleri")]
     [SerializeField] private Color firstComboColor = Color.yellow; // İlk vuruş rengi
@@ -108,7 +110,11 @@ public class FloatingTextManager : MonoBehaviour
     // Sihir hasarı için metod
     public void ShowMagicDamageText(float damage, Vector3 position)
     {
-        ShowDamageTextWithColor(damage, position, magicDamageColor);
+        // Hasara göre rengi belirle (düşükten yükseğe doğru açık maviden koyu maviye)
+        float normalizedDamage = Mathf.Clamp01(damage / magicDamageThreshold);
+        Color magicColor = Color.Lerp(lightMagicDamageColor, darkMagicDamageColor, normalizedDamage);
+        
+        ShowDamageTextWithColor(damage, position, magicColor);
     }
     
     // Ana hasar gösterme metodu (renk parametreli)
