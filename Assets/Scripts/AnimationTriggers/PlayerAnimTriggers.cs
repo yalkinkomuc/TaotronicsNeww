@@ -4,7 +4,7 @@ using System.Collections;
 
 public class PlayerAnimTriggers : MonoBehaviour
 {
-   private int ogrenciNotu;
+   
    private Player player => GetComponentInParent<Player>();
    
    private void Awake()
@@ -47,195 +47,219 @@ public class PlayerAnimTriggers : MonoBehaviour
          return;
       
       // Saldırı pozisyonunu belirle - normal veya crouch durumuna göre
-      Vector2 attackPosition = player.attackCheck.position;
+      Vector2 attackPosition = GetAttackPosition();
 
+      // Saldırı alanındaki nesneleri kontrol et
+      Collider2D[] colliders = Physics2D.OverlapBoxAll(attackPosition, player.attackSize, 0, player.passableEnemiesLayerMask);
+
+      // Tüm hedeflere saldırıyı uygula
+      foreach (var hit in colliders)
+      {
+         // Düşmana saldır
+         TryAttackEnemy(hit);
+         
+         // Training dummy'ye saldır
+         TryAttackDummy(hit);
+      }
+   }
+
+   // Saldırı pozisyonunu belirler
+   private Vector2 GetAttackPosition()
+   {
       // Eğer çömelme saldırısı yapıyorsa konumu ayarla
       if (player.stateMachine.currentState == player.crouchAttackState)
       {
-         attackPosition = (Vector2)player.attackCheck.position + player.crouchAttackOffset;
+         return (Vector2)player.attackCheck.position + player.crouchAttackOffset;
       }
+      return player.attackCheck.position;
+   }
 
-      Collider2D[] colliders = Physics2D.OverlapBoxAll(attackPosition, player.attackSize, 0, player.passableEnemiesLayerMask);
+   // Düşmana saldırıyı dene
+   private void TryAttackEnemy(Collider2D hit)
+   {
+      Enemy enemy = hit.GetComponent<Enemy>();
+      if (enemy == null) return;
+      
+      // Bu düşmana zaten vurduk mu kontrol et
+      if (player.HasHitEntity(enemy)) return;
+            
+      // Bu düşmanı vurulmuş olarak işaretle
+      player.MarkEntityAsHit(enemy);
+      
+      // Hasar hesapla ve uygula
+      ApplyDamageToEnemy(enemy);
+   }
 
-      foreach (var hit in colliders)
+   // Düşmana hasar uygula
+   private void ApplyDamageToEnemy(Enemy enemy)
+   {
+      // Temel hasar değerini al
+      float currentDamage = CalculateDamage(out bool isCritical);
+      int comboCounter = 0;
+      
+      // Saldırı türüne göre hasar ve knockback'i ayarla
+      if (player.stateMachine.currentState is PlayerAttackState attackState)
       {
-         // Düşman kontrolü
-         Enemy enemy = hit.GetComponent<Enemy>();
-         if (enemy != null)
-         {
-            // Bu düşmana zaten vurduk mu kontrol et
-            if (player.HasHitEntity(enemy))
-               continue;  // Zaten vurmuşsak atla
-               
-            // Bu düşmanı vurulmuş olarak işaretle
-            player.MarkEntityAsHit(enemy);
-            
-            float currentDamage = player.stats.baseDamage.GetValue();
-            
-            // Kritik vuruş kontrolü - minimal
-            bool isCritical = false;
-            if (player.stats is PlayerStats playerStats)
-            {
-                if (playerStats.IsCriticalHit())
-                {
-                    currentDamage *= 1.5f; // Kritik vuruş için %50 daha fazla hasar
-                    isCritical = true;
-                    Debug.Log("Kritik Vuruş! " + currentDamage);
-                }
-            }
-            
-            int comboCounter = 0;
-            
-            // Combo sayısına göre knockback gücünü artır
-            if (player.stateMachine.currentState is PlayerAttackState attackState)
-            {
-                Vector2 knockbackForce;
-                comboCounter = attackState.GetComboCounter();
-                
-                switch (comboCounter)
-                {
-                    case 0:
-                        currentDamage *= 1f;
-                        Debug.Log(currentDamage);
-                        // Düşmanın baktığı yönün tersine knockback
-                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
-                        break;
-                    case 1:
-                        currentDamage *= player.stats.secondComboDamageMultiplier.GetValue();
-                        Debug.Log(currentDamage);
-                        // İkinci combo için daha güçlü knockback, düşmanın baktığı yönün tersine
-                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.secondComboKnockbackXMultiplier, enemy.knockbackDirection.y);
-                        break;
-                    case 2:
-                        currentDamage *= player.stats.thirdComboDamageMultiplier.GetValue();
-                        Debug.Log(currentDamage);
-                        // Üçüncü combo için en güçlü knockback, düşmanın baktığı yönün tersine
-                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.thirdComboKnockbackXMultiplier, enemy.knockbackDirection.y);
-                        break;
-                    default:
-                        knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
-                        break;
-                }
-                
-                // TakeDamage doğrudan çağır, enemy.Damage() çağırma
-                enemy.stats.TakeDamage(currentDamage);
-                
-                // Eğer FloatingTextManager varsa, komboya göre hasar metni göster
-                if (FloatingTextManager.Instance != null)
-                {
-                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    FloatingTextManager.Instance.ShowComboDamageText(currentDamage, textPosition, comboCounter);
-                }
-                
-                // Görsel efektler için HitFX çağır
-                if (enemy.entityFX != null)
-                {
-                    enemy.entityFX.StartCoroutine("HitFX");
-                }
-                
-                // Static düşmanlar için erken çıkış
-                if (enemy.rb.bodyType == RigidbodyType2D.Static)
-                {
-                   return;
-                }
-                
-                // Knockback uygula
-                StartCoroutine(enemy.HitKnockback(knockbackForce));
-            }
-            else if (player.stateMachine.currentState == player.crouchAttackState)
-            {
-                // Çömelme saldırısı için hasar ve knockback
-                currentDamage *= 1.2f; // Çömelme saldırısı biraz daha fazla hasar versin
-                
-                // Kritik vuruş kontrolü - minimal
-                if (player.stats is PlayerStats playerStatsForCrouch && playerStatsForCrouch.IsCriticalHit())
-                {
-                    currentDamage *= 1.5f;
-                    Debug.Log("Kritik Vuruş (Çömelme)! " + currentDamage);
-                }
-                
-                // TakeDamage doğrudan çağır, enemy.Damage() çağırma
-                enemy.stats.TakeDamage(currentDamage);
-                
-                // Eğer FloatingTextManager varsa, çömelme saldırısı için hasar metni göster
-                if (FloatingTextManager.Instance != null)
-                {
-                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    FloatingTextManager.Instance.ShowDamageText(currentDamage, textPosition);
-                }
-                
-                // Görsel efektler için HitFX çağır
-                if (enemy.entityFX != null)
-                {
-                    enemy.entityFX.StartCoroutine("HitFX");
-                }
-                
-                // Static düşmanlar için erken çıkış
-                if (enemy.rb.bodyType == RigidbodyType2D.Static)
-                {
-                   return;
-                }
-                
-                // Knockback uygula - düşmanın baktığı yönün tersine
-                Vector2 knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
-                StartCoroutine(enemy.HitKnockback(knockbackForce));
-            }
-         }
+         // Kombo saldırısı için hasar hesapla
+         HandleComboAttack(enemy, attackState, currentDamage, isCritical);
+      }
+      else if (player.stateMachine.currentState == player.crouchAttackState)
+      {
+         // Çömelme saldırısı için hasar hesapla
+         HandleCrouchAttack(enemy, currentDamage, isCritical);
+      }
+   }
 
-         // Training dummy kontrolü
-         Dummy dummy = hit.GetComponent<Dummy>();
-         if (dummy != null)
+   // Kombo saldırısı için hasar ve knockback hesapla
+   private void HandleComboAttack(Enemy enemy, PlayerAttackState attackState, float baseDamage, bool isCritical)
+   {
+      int comboCounter = attackState.GetComboCounter();
+      float damage = baseDamage;
+      Vector2 knockbackForce;
+      
+      // Combo sayısına göre hasarı ve knockback'i ayarla
+      switch (comboCounter)
+      {
+         case 0:
+            // İlk saldırı için standart hasar
+            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
+            break;
+         case 1:
+            // İkinci saldırı için arttırılmış hasar
+            damage *= player.stats.secondComboDamageMultiplier.GetValue();
+            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.secondComboKnockbackXMultiplier, enemy.knockbackDirection.y);
+            break;
+         case 2:
+            // Üçüncü saldırı için en yüksek hasar
+            damage *= player.stats.thirdComboDamageMultiplier.GetValue();
+            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.thirdComboKnockbackXMultiplier, enemy.knockbackDirection.y);
+            break;
+         default:
+            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
+            break;
+      }
+      
+      // Hasarı uygula
+      DealDamageToEnemy(enemy, damage, comboCounter, isCritical);
+      
+      // Static olmayan düşmanlara knockback uygula
+      if (enemy.rb.bodyType != RigidbodyType2D.Static)
+      {
+         StartCoroutine(enemy.HitKnockback(knockbackForce));
+      }
+   }
+
+   // Çömelme saldırısı için hasar ve knockback hesapla
+   private void HandleCrouchAttack(Enemy enemy, float baseDamage, bool isCritical)
+   {
+      // Çömelme saldırısı için %20 ekstra hasar
+      float damage = baseDamage * 1.2f;
+      
+      // Hasarı uygula
+      DealDamageToEnemy(enemy, damage, 0, isCritical);
+      
+      // Static olmayan düşmanlara knockback uygula
+      if (enemy.rb.bodyType != RigidbodyType2D.Static)
+      {
+         Vector2 knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
+         StartCoroutine(enemy.HitKnockback(knockbackForce));
+      }
+   }
+
+   // Düşmana hasarı uygula ve görsel efektleri göster
+   private void DealDamageToEnemy(Enemy enemy, float damage, int comboCounter, bool isCritical)
+   {
+      // Hasarı doğrudan uygula
+      enemy.stats.TakeDamage(damage);
+      
+      // Hasar metni göster
+      if (FloatingTextManager.Instance != null)
+      {
+         Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+         
+         if (comboCounter > 0)
          {
-            // Dummy objelerinin ID'sini kullanarak kontrol et
-            int dummyID = dummy.gameObject.GetInstanceID();
-            
-            // Eğer bu dummy'ye zaten vurduysak, atla
-            if (player.hitDummyIDs.Contains(dummyID))
-               continue;
-               
-            // Vurulan dummy ID'sini listeye ekle
-            player.hitDummyIDs.Add(dummyID);
-            
-            // Hesaplanan hasar değerini belirle
-            float damage = player.stats.baseDamage.GetValue();
-            
-            // Kritik vuruş kontrolü - minimal
-            bool isCritical = false;
-            if (player.stats is PlayerStats playerStats && playerStats.IsCriticalHit())
-            {
-                damage *= 1.5f;
-                isCritical = true;
-                Debug.Log("Kritik Vuruş (Dummy)! " + damage);
-            }
-            
-            int comboCounter = 0;
-            
-            // Combo sayısına göre hasarı artır
-            if (player.stateMachine.currentState is PlayerAttackState attackState)
-            {
-                comboCounter = attackState.GetComboCounter();
-                switch (comboCounter)
-                {
-                    case 1:
-                        damage *= player.stats.secondComboDamageMultiplier.GetValue();
-                        break;
-                    case 2:
-                        damage *= player.stats.thirdComboDamageMultiplier.GetValue();
-                        break;
-                }
-                
-                // Dummy'ye hasar ver, kombo sayısı ile birlikte
-                dummy.TakeDamage(damage, comboCounter, isCritical);
-            }
-            else if (player.stateMachine.currentState == player.crouchAttackState)
-            {
-                damage *= 1.2f; // Crouch attack damage multiplier
-                
-                // Çömelme saldırısı için standart hasar
-                dummy.TakeDamage(damage, 0, isCritical);
-            }
+            FloatingTextManager.Instance.ShowComboDamageText(damage, textPosition, comboCounter);
+         }
+         else
+         {
+            FloatingTextManager.Instance.ShowDamageText(damage, textPosition);
          }
       }
+      
+      // Vuruş efekti göster
+      if (enemy.entityFX != null)
+      {
+         enemy.entityFX.StartCoroutine("HitFX");
+      }
+   }
+
+   // Eğitim kuklaları (dummy) için saldırı işlemi
+   private void TryAttackDummy(Collider2D hit)
+   {
+      Dummy dummy = hit.GetComponent<Dummy>();
+      if (dummy == null) return;
+      
+      // Dummy objelerinin ID'sini kullanarak kontrol et
+      int dummyID = dummy.gameObject.GetInstanceID();
+      
+      // Eğer bu dummy'ye zaten vurduysak, atla
+      if (player.hitDummyIDs.Contains(dummyID)) return;
+            
+      // Vurulan dummy ID'sini listeye ekle
+      player.hitDummyIDs.Add(dummyID);
+      
+      // Hasarı hesapla ve uygula
+      ApplyDamageToDummy(dummy);
+   }
+
+   // Dummy'ye hasar uygula
+   private void ApplyDamageToDummy(Dummy dummy)
+   {
+      // Temel hasar değerini al
+      float damage = CalculateDamage(out bool isCritical);
+      int comboCounter = 0;
+      
+      // Saldırı türüne göre hasarı ayarla
+      if (player.stateMachine.currentState is PlayerAttackState attackState)
+      {
+         comboCounter = attackState.GetComboCounter();
+         
+         // Combo sayısına göre hasarı ayarla
+         switch (comboCounter)
+         {
+            case 1:
+               damage *= player.stats.secondComboDamageMultiplier.GetValue();
+               break;
+            case 2:
+               damage *= player.stats.thirdComboDamageMultiplier.GetValue();
+               break;
+         }
+      }
+      else if (player.stateMachine.currentState == player.crouchAttackState)
+      {
+         // Çömelme saldırısı için %20 ekstra hasar
+         damage *= 1.2f;
+      }
+      
+      // Dummy'ye hasarı uygula
+      dummy.TakeDamage(damage, comboCounter, isCritical);
+   }
+
+   // Temel hasar ve kritik vuruş hesaplama
+   private float CalculateDamage(out bool isCritical)
+   {
+      float damage = player.stats.baseDamage.GetValue();
+      isCritical = false;
+      
+      // Kritik vuruş kontrolü
+      if (player.stats is PlayerStats playerStats && playerStats.IsCriticalHit())
+      {
+         damage *= 1.5f; // Kritik vuruş için %50 daha fazla hasar
+         isCritical = true;
+      }
+      
+      return damage;
    }
 
    // Debug amaçlı - saldırı kutusunu görmek için

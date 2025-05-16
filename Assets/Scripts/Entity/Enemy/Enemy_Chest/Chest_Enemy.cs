@@ -25,7 +25,7 @@ public class Chest_Enemy : Enemy,IInteractable
      //public CapsuleCollider2D capsuleCollider;
 
 
-     private bool canTakeDamage = false;
+     
 
      
      private int lastHitDirection = 0;
@@ -146,7 +146,7 @@ public class Chest_Enemy : Enemy,IInteractable
         
         
         if (PlayerManager.instance?.player != null)
-        {  canTakeDamage = true;
+        {  
            stateMachine.ChangeState(transformState);
         }
     }

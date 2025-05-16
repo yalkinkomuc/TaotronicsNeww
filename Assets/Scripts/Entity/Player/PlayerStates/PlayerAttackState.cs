@@ -5,7 +5,7 @@ public class PlayerAttackState : PlayerState
     protected int comboCounter = 0;
     
     private float lastTimeAttacked;
-    private float comboWindow = 2;
+    private float comboWindow = .5f;
 
     public int GetComboCounter() => comboCounter;
 
