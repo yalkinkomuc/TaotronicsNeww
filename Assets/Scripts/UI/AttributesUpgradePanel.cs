@@ -226,8 +226,8 @@ public class AttributesUpgradePanel : MonoBehaviour
     {
         if (playerStats == null) return;
         
-        // Calculate preview values based on temporary attributes
-        float healthValue = CalculateHealth(tempVitality);
+        // Canı doğrudan playerStats.currentHealth'ten al
+        float healthValue = playerStats.currentHealth;
         float attackValue = CalculateAttack(tempMight);
         float manaValue = CalculateMana(tempAgility);
         float speedValue = CalculateSpeed(tempAgility);
@@ -245,55 +245,50 @@ public class AttributesUpgradePanel : MonoBehaviour
     
     private float CalculateHealth(int vitality)
     {
-        // Use the player's existing method to calculate health bonus consistently
-        float baseHealth = playerStats.maxHealth.GetBaseValue();
-        float healthBonus = playerStats.CalculateHealthBonusForVitality(vitality);
+        if (playerStats == null)
+            return 0f;
         
-        return baseHealth + healthBonus;
+        // Gerçek hesaplama: base health + vitality bonusu + level bonusu
+        float baseHealth = playerStats.maxHealth.GetBaseValue();
+        float healthMultiplier = Mathf.Pow(1 + 0.08f, vitality) - 1; // HEALTH_GROWTH = 0.08f
+        float bonus = baseHealth * healthMultiplier;
+        int level = playerStats.GetLevel();
+        float levelBonus = baseHealth * 0.1f * (level - 1); // levelHealthMultiplier = 0.1f
+        return baseHealth + bonus + levelBonus;
     }
     
     private float CalculateAttack(int might)
     {
-        // Use the player's existing method to calculate damage bonus consistently
-        float baseDamage = playerStats.baseDamage.GetBaseValue();
-        float damageBonus = playerStats.CalculateDamageBonusForMight(might);
-        
-        return baseDamage + damageBonus;
+        // Might bonus hesaplama (exponential growth)
+        float damageMultiplier = Mathf.Pow(1 + 0.06f, might) - 1; // DAMAGE_GROWTH = 0.06f
+        return 10f * damageMultiplier; // baseDamageValue = 10f
     }
     
     private float CalculateSpeed(int agility)
     {
-        // Use exponential formula like in PlayerStats
-        float baseSpeed = 300f; // baseSpeedValue from PlayerStats
-        float speedGrowth = 0.02f; // SPEED_GROWTH from PlayerStats
-        float speedMultiplier = Mathf.Pow(1 + speedGrowth, agility) - 1;
-        
-        return baseSpeed * (1 + speedMultiplier);
+        // Speed bonus hesaplama (exponential growth)
+        float speedMultiplier = Mathf.Pow(1 + 0.02f, agility) - 1; // SPEED_GROWTH = 0.02f
+        return 300f * speedMultiplier; // baseSpeedValue = 300f
     }
     
     private float CalculateDefense(int defense)
     {
-        // Use exponential formula like in PlayerStats
-        float baseDefense = 5f; // baseDefenseValue from PlayerStats
-        float defenseGrowth = 0.05f; // DEFENSE_GROWTH from PlayerStats
-        float defenseMultiplier = Mathf.Pow(1 + defenseGrowth, defense) - 1;
-        
-        return baseDefense * (1 + defenseMultiplier);
+        // Defense artık yüzdelik hasar azaltma olarak çalışıyor
+        // Her defense puanı %1 hasar azaltma sağlar, maksimum %50
+        return Mathf.Min(defense, 50);
     }
     
     private float CalculateCritRate(int luck)
     {
-        // Critical rate calculation (linear, same as PlayerStats)
-        return luck * 0.01f; // CRIT_CHANCE_PER_LUCK constant (1% per point)
+        // Kritik şansı doğrusal artış (her puan %1)
+        return luck * 0.01f; // CRIT_CHANCE_PER_LUCK = 0.01f
     }
     
     private float CalculateMana(int agility)
     {
-        // Use the player's existing method to calculate mana bonus consistently
-        float baseMana = playerStats.maxMana.GetBaseValue();
-        float manaBonus = playerStats.CalculateManaBonusForAgility(agility);
-        
-        return baseMana + manaBonus;
+        // Mana bonus hesaplama (exponential growth)
+        float manaMultiplier = Mathf.Pow(1 + 0.07f, agility) - 1; // MANA_GROWTH = 0.07f
+        return 50f * manaMultiplier; // baseManaValue = 50f
     }
     
     private void HandleAttributeSelection()

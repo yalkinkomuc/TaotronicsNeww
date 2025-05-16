@@ -240,17 +240,32 @@ public class CharacterStats : MonoBehaviour
     {
         if (isInvincible)
             return;
-            
-        // Apply defense reduction to damage
-        float damageReduction = Mathf.Min(defenseStat, _damage * 0.7f); // Max 70% damage reduction
-        float finalDamage = _damage - damageReduction;
         
-        // Ensure minimum damage of 1
-        finalDamage = Mathf.Max(1f, finalDamage);
+        // Yüzdesel hasar azaltma - Defense değerine göre 0-50% arası azaltma
+        float damageReductionPercent = Mathf.Clamp(defenseStat, 0f, 50f) / 100f; // Max %50 hasar azaltma
+        float finalDamage = _damage * (1f - damageReductionPercent);
         
         // Hasarı tam sayıya yuvarla
         float roundedDamage = Mathf.Round(finalDamage);
         currentHealth -= roundedDamage;
+
+        // Hasar gösterimini ekle
+        if (FloatingTextManager.Instance != null)
+        {
+            // Eğer hasar azaltma varsa, orijinal hasarı ve azaltılmış hasarı göster
+            if (damageReductionPercent > 0)
+            {
+                // Orijinal hasarı kırmızı renkte göster
+                FloatingTextManager.Instance.ShowDamageText(_damage, transform.position);
+                // Azaltılmış hasarı yeşil renkte göster
+                FloatingTextManager.Instance.ShowCustomText($"({roundedDamage})", transform.position + new Vector3(0, 0.5f, 0), Color.green);
+            }
+            else
+            {
+                // Hasar azaltma yoksa sadece normal hasarı göster
+                FloatingTextManager.Instance.ShowDamageText(roundedDamage, transform.position);
+            }
+        }
 
         if (currentHealth <= 0)
             Die();

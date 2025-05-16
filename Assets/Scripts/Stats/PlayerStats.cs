@@ -28,16 +28,7 @@ public class PlayerStats : CharacterStats
     [SerializeField] private float _baseHealthValue = 100f;
     [SerializeField] private float _baseDamageValue = 10f;
     [SerializeField] private float _baseManaValue = 50f;
-    [SerializeField] private float _baseDefenseValue = 5f;
     [SerializeField] private float _baseSpeedValue = 300f;
-    
-    // Growth constants
-    private const float HEALTH_GROWTH = 0.08f;      // 8% growth per point
-    private const float DAMAGE_GROWTH = 0.06f;      // 6% growth per point
-    private const float MANA_GROWTH = 0.07f;        // 7% growth per point
-    private const float DEFENSE_GROWTH = 0.05f;     // 5% growth per point
-    private const float SPEED_GROWTH = 0.02f;       // 2% growth per point
-    private const float CRIT_CHANCE_PER_LUCK = 0.01f; // 1% per point (linear)
     
     [Header("Experience System")]
     [SerializeField] private int experience = 0;
@@ -104,7 +95,7 @@ public class PlayerStats : CharacterStats
         // Debug key to gain experience (can be removed in final build)
         if (Input.GetKeyDown(KeyCode.X))
         {
-            AddExperience(1000);
+            AddExperience(100000);
         }
         
         // Debug key to add gold (can be removed in final build)
@@ -115,7 +106,46 @@ public class PlayerStats : CharacterStats
     }
     
     // Apply all attribute bonuses to stats using exponential growth
-    public new void ApplyAttributeBonuses() => base.ApplyAttributeBonuses();
+    public new void ApplyAttributeBonuses()
+    {
+        // Reset any previous attribute bonuses
+        maxHealth.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        baseDamage.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        maxMana.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        
+        // Calculate vitality bonus (exponential growth)
+        float healthMultiplier = Mathf.Pow(1 + HEALTH_GROWTH, _vitality) - 1;
+        float healthBonus = _baseHealthValue * healthMultiplier;
+        maxHealth.AddModifier(healthBonus, StatModifierType.Attribute);
+        
+        // Calculate might bonus (exponential growth)
+        float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, _might) - 1;
+        float damageBonus = _baseDamageValue * damageMultiplier;
+        baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
+        
+        // Calculate agility bonus for mana (exponential growth)
+        float manaMultiplier = Mathf.Pow(1 + MANA_GROWTH, _agility) - 1;
+        float manaBonus = _baseManaValue * manaMultiplier;
+        maxMana.AddModifier(manaBonus, StatModifierType.Attribute);
+        
+        // Calculate defense stat (% damage reduction) - linear growth
+        // Her defense puanı %1 hasar azaltma sağlar, maksimum %50
+        float defensePercentage = Mathf.Min(_defense, 50);
+        base.defenseStat = defensePercentage;
+        
+        // Critical chance remains linear (1% per point)
+        base.criticalChance = _luck * CRIT_CHANCE_PER_LUCK;
+        
+        // Calculate speed bonus (smaller exponential growth)
+        float speedMultiplier = Mathf.Pow(1 + SPEED_GROWTH, _agility) - 1;
+        base.speedStat = _baseSpeedValue * (1 + speedMultiplier);
+        
+        // Calculate derived stats for UI display
+        base.attackPower = baseDamage.GetValue();
+        
+        Debug.Log($"Applied attribute bonuses: HP +{healthBonus:F0}, DMG +{damageBonus:F1}, Mana +{manaBonus:F0}");
+        Debug.Log($"<color=cyan>Defense: {defensePercentage}%</color>, <color=yellow>Crit Chance: {base.criticalChance*100:F1}%</color>, Speed: {base.speedStat:F0}");
+    }
     
     // Calculates just the health bonus for a specific vitality level (for preview)
     public new float CalculateHealthBonusForVitality(int vitalityLevel)
@@ -486,22 +516,6 @@ public class PlayerStats : CharacterStats
             availableSkillPoints--;
             UpdateLevelUI();
         }
-    }
-
-    public override void TakeDamage(float damage)
-    {
-        // Apply defense reduction to damage
-        float damageReduction = Mathf.Min(defenseStat, damage * 0.7f); // Max 70% damage reduction
-        float finalDamage = damage - damageReduction;
-        
-        // Ensure minimum damage of 1
-        finalDamage = Mathf.Max(1f, finalDamage);
-        
-        // Apply the reduced damage
-        base.TakeDamage(finalDamage);
-        
-        // Health bar'ı güncelle
-        UpdateHealthBarUI();
     }
 
     public override void Die()
