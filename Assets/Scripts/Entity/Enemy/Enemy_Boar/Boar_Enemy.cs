@@ -113,7 +113,7 @@ public class Boar_Enemy : Enemy
         StartCoroutine("HitKnockback", knockbackDirection);
         
         Debug.Log(gameObject.name + " was damaged ");
-        stats.TakeDamage(stats.baseDamage.GetValue());
+        stats.TakeDamage(stats.baseDamage.GetValue(),CharacterStats.DamageType.Physical);
     }
 
     public override IEnumerator HitKnockback(Vector2 knockbackDirectionParam)

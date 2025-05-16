@@ -116,7 +116,7 @@ public class PlayerVoidState : PlayerState
             
             // Düşmana hasar ver
             float damage = player.stats.baseDamage.GetValue() * 0.8f; // Her slash temel hasarın %80'i
-            targetEnemy.GetComponent<CharacterStats>().TakeDamage(damage);
+            targetEnemy.GetComponent<CharacterStats>().TakeDamage(damage,CharacterStats.DamageType.Void);
             
             // Kılıç efektini belirli bir süre sonra yok et
             Object.Destroy(slashEffect, 0.5f);

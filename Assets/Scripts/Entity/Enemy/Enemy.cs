@@ -253,7 +253,7 @@ public class Enemy : Entity
        // Apply knockback
        StartCoroutine(HitKnockback(knockbackDir));
        
-       stats.TakeDamage(stats.baseDamage.GetValue());
+       stats.TakeDamage(stats.baseDamage.GetValue(),CharacterStats.DamageType.Physical);
    }
 
    /// <summary>

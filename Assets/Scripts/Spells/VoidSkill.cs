@@ -18,7 +18,7 @@ public class VoidSkill : MonoBehaviour
          Enemy enemyUnit = other.GetComponent<Enemy>();
          
          enemyUnit.Damage();
-         enemyUnit.stats.TakeDamage(damage);
+         enemyUnit.stats.TakeDamage(damage,CharacterStats.DamageType.Void);
       }
    }
 }

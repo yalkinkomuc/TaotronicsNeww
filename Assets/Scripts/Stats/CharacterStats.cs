@@ -64,6 +64,16 @@ public class CharacterStats : MonoBehaviour
     public int Defense => defense;
     public int Luck => luck;
 
+    // ELEMENTAL RESISTANCES
+    [Header("Elemental Resistances (% reduction, 0-100)")]
+    [Range(0,100)] public float fireResistance = 0f;
+    [Range(0,100)] public float iceResistance = 0f;
+    [Range(0,100)] public float voidResistance = 0f;
+    [Range(0,100)] public float earthResistance = 0f;
+
+    // Damage type enum
+    public enum DamageType { Physical, Fire, Ice, Void, Earth }
+
     protected virtual void Awake()
     {
         // Store base values before applying level multipliers
@@ -236,35 +246,46 @@ public class CharacterStats : MonoBehaviour
         return true;
     }
 
-    public virtual void TakeDamage(float _damage)
+    public virtual void TakeDamage(float _damage, DamageType damageType)
     {
         if (isInvincible)
             return;
         
-        // Yüzdesel hasar azaltma - Defense değerine göre 0-50% arası azaltma
-        float damageReductionPercent = Mathf.Clamp(defenseStat, 0f, 50f) / 100f; // Max %50 hasar azaltma
-        float finalDamage = _damage * (1f - damageReductionPercent);
-        
-        // Hasarı tam sayıya yuvarla
+        float reductionPercent = 0f;
+        switch (damageType)
+        {
+            case DamageType.Fire:
+                reductionPercent = fireResistance / 100f;
+                break;
+            case DamageType.Ice:
+                reductionPercent = iceResistance / 100f;
+                break;
+            case DamageType.Void:
+                reductionPercent = voidResistance / 100f;
+                break;
+            case DamageType.Earth:
+                reductionPercent = earthResistance / 100f;
+                break;
+            default:
+                reductionPercent = Mathf.Clamp(defenseStat, 0f, 50f) / 100f;
+                break;
+        }
+        float finalDamage = _damage * (1f - reductionPercent);
         float roundedDamage = Mathf.Round(finalDamage);
         currentHealth -= roundedDamage;
 
-        // Hasar gösterimini ekle
+        // Hasar gösterimini ekle (elemental renklerle)
         if (FloatingTextManager.Instance != null)
         {
-            // Eğer hasar azaltma varsa, orijinal hasarı ve azaltılmış hasarı göster
-            if (damageReductionPercent > 0)
+            Color dmgColor = Color.white;
+            switch (damageType)
             {
-                // Orijinal hasarı kırmızı renkte göster
-                FloatingTextManager.Instance.ShowDamageText(_damage, transform.position);
-                // Azaltılmış hasarı yeşil renkte göster
-                FloatingTextManager.Instance.ShowCustomText($"({roundedDamage})", transform.position + new Vector3(0, 0.5f, 0), Color.green);
+                case DamageType.Fire: dmgColor = Color.red; break;
+                case DamageType.Ice: dmgColor = Color.cyan; break;
+                case DamageType.Void: dmgColor = new Color(0.5f,0,1f); break;
+                case DamageType.Earth: dmgColor = new Color(0.5f,0.3f,0.1f); break;
             }
-            else
-            {
-                // Hasar azaltma yoksa sadece normal hasarı göster
-                FloatingTextManager.Instance.ShowDamageText(roundedDamage, transform.position);
-            }
+            FloatingTextManager.Instance.ShowCustomText(roundedDamage.ToString(), transform.position, dmgColor);
         }
 
         if (currentHealth <= 0)

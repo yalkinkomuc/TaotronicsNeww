@@ -129,7 +129,7 @@ public class FireSpell : MonoBehaviour
                     
                     // Calculate frame damage with ramp-up
                     float frameDamage = damagePerSecond * currentDamageMultiplier * Time.deltaTime;
-                    enemy.stats.TakeDamage(frameDamage);
+                    enemy.stats.TakeDamage(frameDamage,CharacterStats.DamageType.Fire);
                     
                     // Accumulated damage for text display
                     bool shouldShowText = false;

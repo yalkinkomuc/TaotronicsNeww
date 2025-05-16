@@ -170,7 +170,7 @@ public class PlayerAnimTriggers : MonoBehaviour
    private void DealDamageToEnemy(Enemy enemy, float damage, int comboCounter, bool isCritical)
    {
       // Hasarı doğrudan uygula
-      enemy.stats.TakeDamage(damage);
+      enemy.stats.TakeDamage(damage,CharacterStats.DamageType.Physical);
       
       // Hasar metni göster
       if (FloatingTextManager.Instance != null)

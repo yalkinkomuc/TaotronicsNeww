@@ -103,8 +103,8 @@ public class IceShard : MonoBehaviour
         {
             if (other.TryGetComponent<Enemy>(out Enemy enemy))
             {
-                enemy.Damage();
-                enemy.GetComponent<CharacterStats>()?.TakeDamage(actualDamage);
+                // enemy.Damage(); // Çifte hasarı engellemek için kaldırıldı
+                enemy.GetComponent<CharacterStats>()?.TakeDamage(actualDamage,CharacterStats.DamageType.Ice);
                 
                 // Display magic damage text
                 if (FloatingTextManager.Instance != null)
