@@ -17207,6 +17207,10 @@ MonoBehaviour:
   level: 1
   levelHealthMultiplier: 0.1
   levelDamageMultiplier: 0.1
+  fireResistance: 0
+  iceResistance: 0
+  voidResistance: 0
+  earthResistance: 0
   player: {fileID: 0}
   _vitality: 0
   _might: 0
@@ -17216,9 +17220,8 @@ MonoBehaviour:
   _maxAttributeLevel: 99
   _baseHealthValue: 100
   _baseDamageValue: 10
-  _baseManaValue: 50
-  _baseDefenseValue: 5
-  _baseSpeedValue: 300
+  _baseManaValue: 100
+  _baseSpeedValue: 10
   experience: 0
   experienceToNextLevel: 100
   experienceLevelMultiplier: 1.5
@@ -24328,6 +24331,10 @@ MonoBehaviour:
   level: 1
   levelHealthMultiplier: 0.1
   levelDamageMultiplier: 0.05
+  fireResistance: 0
+  iceResistance: 0
+  voidResistance: 0
+  earthResistance: 0
   _vitality: 0
   _might: 0
   _agility: 0
@@ -25519,6 +25526,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1683066506}
     m_Modifications:
+    - target: {fileID: 1440101779707244472, guid: 3622d7e6a459cb643a46f2df5d8f8f99, type: 3}
+      propertyPath: floatingTextManagerPrefab
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6072639664115584561, guid: 3622d7e6a459cb643a46f2df5d8f8f99, type: 3}
       propertyPath: m_Name
       value: FloatingTextManager
@@ -25892,6 +25903,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1655988990}
     m_Modifications:
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: _luck
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: _might
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: _agility
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: _defense
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: _vitality
+      value: 99
+      objectReference: {fileID: 0}
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: _baseDamageValue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: _baseDefenseValue
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_Name
       value: Bandit_Enemy
@@ -26332,8 +26371,36 @@ PrefabInstance:
       value: 2048
       objectReference: {fileID: 0}
     - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: _luck
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: _might
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: _defense
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: _vitality
-      value: 20
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: iceResistance
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: fireResistance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: voidResistance
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: earthResistance
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
@@ -26341,7 +26408,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
