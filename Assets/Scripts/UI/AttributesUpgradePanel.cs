@@ -259,9 +259,12 @@ public class AttributesUpgradePanel : MonoBehaviour
     
     private float CalculateAttack(int might)
     {
+        // Base damage
+        float baseDamage = playerStats.baseDamage.GetBaseValue();
         // Might bonus hesaplama (exponential growth)
         float damageMultiplier = Mathf.Pow(1 + 0.06f, might) - 1; // DAMAGE_GROWTH = 0.06f
-        return 10f * damageMultiplier; // baseDamageValue = 10f
+        float bonus = baseDamage * damageMultiplier;
+        return baseDamage + bonus;
     }
     
     private float CalculateSpeed(int agility)
