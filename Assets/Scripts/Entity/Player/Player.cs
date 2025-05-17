@@ -121,7 +121,7 @@ public class Player : Entity
     [SerializeField] private float boomerangCooldown = 2f;
     private float boomerangCooldownTimer;
 
-    [Header("Spell Settings")]
+    [Header("Ice Spell Settings")]
     [SerializeField] private GameObject iceShardPrefab;
     [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
@@ -138,9 +138,9 @@ public class Player : Entity
     [Header("Fire Spell Settings")]
     public GameObject fireSpellPrefab;
     public Transform fireSpellPoint;
-
-    [Header("Fire Spell Settings")]
     private bool isChargingFire = false;
+
+    
 
     [Header("Checkpoint")]
     private Vector2 lastCheckpointPosition;

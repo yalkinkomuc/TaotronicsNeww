@@ -106,6 +106,12 @@ public class IceShard : MonoBehaviour
                 // enemy.Damage(); // Çifte hasarı engellemek için kaldırıldı
                 enemy.GetComponent<CharacterStats>()?.TakeDamage(actualDamage,CharacterStats.DamageType.Ice);
                 
+                // Apply ice effect
+                if (enemy.entityFX != null)
+                {
+                    enemy.entityFX.StartCoroutine("IceFX");
+                }
+                
                 // Display magic damage text
                 if (FloatingTextManager.Instance != null)
                 {

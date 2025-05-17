@@ -422,8 +422,8 @@ MonoBehaviour:
   idleTime: 2
   moveSpeed: 2.7
   chaseSpeed: 3.5
-  tooCloseRadius: 2.2
-  detectDistance: 10
+  tooCloseRadius: 2.12
+  detectDistance: 3.55
   patrolDistance: 3
   patrolSpeed: 2
   fightBegun: 0
@@ -459,6 +459,7 @@ MonoBehaviour:
   - Skeleton_Hurt3
   vfxSpawnPoint: {fileID: 1893527124932000873}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
+  iceMat: {fileID: 2100000, guid: 066fa3013b7e6364898411e07f33a868, type: 2}
   deathEffectSpawnPoint: {fileID: 960792307035410129}
   explosionEffectPrefab: {fileID: 3757604410375930725, guid: 32a758ed4273e5648947b2b9fb0b7d90, type: 3}
   explosionCount: 5
@@ -489,10 +490,30 @@ MonoBehaviour:
   level: 1
   levelHealthMultiplier: 0.1
   levelDamageMultiplier: 0.05
+  fireResistance: 10
+  iceResistance: 10
+  voidResistance: 10
+  earthResistance: 10
+  _vitality: 1
+  _might: 1
+  _agility: 0
+  _defense: 1
+  _luck: 1
+  _maxAttributeLevel: 99
+  _baseHealthValue: 100
+  _baseDamageValue: 10
+  _baseManaValue: 50
+  _baseDefenseValue: 5
+  _baseSpeedValue: 300
   baseExperienceReward: 10
   experienceLevelMultiplier: 0.5
+  baseGoldReward: 5
+  goldLevelMultiplier: 0.3
+  goldRandomVariance: 0.2
   scaleWithPlayerLevel: 0
   levelOffset: 0
+  attributeFocus: 0
+  attributePointsPerLevel: 1.5
 --- !u!114 &8091781740480588764
 MonoBehaviour:
   m_ObjectHideFlags: 0
