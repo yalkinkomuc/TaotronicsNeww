@@ -127,14 +127,6 @@ public class IceShard : MonoBehaviour
                     elementalMultiplier = playerToUse.stats.GetTotalElementalDamageMultiplier();
                     mindValue = playerToUse.stats.Mind;
                     Debug.Log($"[IceShard DEBUG] Using player with Mind: {mindValue}");
-                    
-                    // Mind sıfırsa (UI'da değil ama kodda sıfırsa), %50 artış yap
-                    if (mindValue == 0)
-                    {
-                        Debug.Log($"[IceShard DEBUG] Mind değeri 0! Zorla 50 yapılıyor ve multiplier yeniden hesaplanıyor!");
-                        mindValue = 50; // UI'daki değerle eşleştir
-                        elementalMultiplier = 1f + mindValue * 0.01f; // Manual hesaplama
-                    }
                 }
 
                 float finalDamage = damage * elementalMultiplier;
