@@ -65,7 +65,7 @@ public class IceShard : MonoBehaviour
         Player player = PlayerManager.instance.player;
         float multipliedDamage = player.stats.GetTotalElementalDamageMultiplier();
         
-        Debug.Log(multipliedDamage);
+       
     }
 
     private void CheckGroundBelow()
@@ -73,10 +73,7 @@ public class IceShard : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
         isGroundBelow = (hit.collider != null);
         
-        if (!isGroundBelow)
-        {
-            Debug.Log("No ground below ice shard, destroying it");
-        }
+      
     }
 
     // Bu metodu animasyon event ile çağıracağız
@@ -101,19 +98,8 @@ public class IceShard : MonoBehaviour
     {
         if (!canDealDamage) return;
 
-        // Get player references in two ways
-        Player playerFromManager = PlayerManager.instance?.player;
-        Player playerFromScene = GameObject.FindObjectOfType<Player>();
-        
-        Debug.Log($"[IceShard DEBUG] PlayerManager.player: {playerFromManager}, FindObjectOfType<Player>: {playerFromScene}");
-        
-        // Compare Mind values from both
-        int mindFromManager = playerFromManager?.stats?.Mind ?? -1;
-        int mindFromScene = playerFromScene?.stats?.Mind ?? -1;
-        Debug.Log($"[IceShard DEBUG] Mind (Manager): {mindFromManager}, Mind (Scene): {mindFromScene}");
-        
-        // Use the player with highest Mind value
-        Player playerToUse = (mindFromManager >= mindFromScene) ? playerFromManager : playerFromScene;
+        // Get player reference from PlayerManager
+        Player player = PlayerManager.instance?.player;
         
         if (collision.CompareTag("Enemy"))
         {
@@ -122,15 +108,13 @@ public class IceShard : MonoBehaviour
             {
                 float elementalMultiplier = 1f;
                 int mindValue = 0;
-                if (playerToUse != null && playerToUse.stats != null)
+                if (player != null && player.stats != null)
                 {
-                    elementalMultiplier = playerToUse.stats.GetTotalElementalDamageMultiplier();
-                    mindValue = playerToUse.stats.Mind;
-                    Debug.Log($"[IceShard DEBUG] Using player with Mind: {mindValue}");
+                    elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
+                    mindValue = player.stats.Mind;
                 }
 
                 float finalDamage = damage * elementalMultiplier;
-                Debug.Log($"[IceShard] Mind: {mindValue}, Multiplier: {elementalMultiplier}, Base Damage: {damage}, Final Damage: {finalDamage}");
 
                 enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Ice);
 

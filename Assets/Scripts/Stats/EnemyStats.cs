@@ -264,7 +264,7 @@ public class EnemyStats : CharacterStats
                 playerStats.AddGold(goldReward);
                 
                 // Log rewards
-                Debug.Log($"Enemy defeated: +{xpReward} XP, +{goldReward} Gold");
+                
             }
         }
         

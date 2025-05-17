@@ -78,10 +78,8 @@ public class CharacterStats : MonoBehaviour
     // Returns the total elemental damage multiplier based on mind
     public float GetTotalElementalDamageMultiplier()
     {
-        // Debug için direct mind değerini de bakalım
         int mindValue = this.mind;
         float multiplier = 1f + mindValue * 0.01f; // Her mind puanı %1 elemental hasar artışı
-        Debug.Log($"[CharacterStats DEBUG] mind: {mindValue}, multiplier: {multiplier}");
         return multiplier;
         // Eğer üstel büyüme istersen: return Mathf.Pow(1 + ELEMENTAL_DAMAGE_GROWTH, mind);
     }

@@ -169,9 +169,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
                 
-            // Rest açık bir şekilde logla
-            Debug.Log($"<color=green>CHECKPOINT'TE İYİLEŞME!</color> Can: {playerStats.currentHealth:F0}/{roundedMaxHealth:F0} (FULL CAN)");
-            Debug.Log($"<color=blue>Max Health: {roundedMaxHealth:F0}</color>");
+           
         }
         else if (player.stats != null)
         {
@@ -186,9 +184,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
                 
-            // Rest açık bir şekilde logla
-            Debug.Log($"<color=green>CHECKPOINT'TE İYİLEŞME!</color> Can: {player.stats.currentHealth:F0}/{roundedMaxHealth:F0} (FULL CAN)");
-            Debug.Log($"<color=blue>Max Health: {roundedMaxHealth:F0}</color>");
+           
         }
     }
 

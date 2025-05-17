@@ -203,7 +203,7 @@ public class Player : Entity
     {
         base.Update();
         
-        //Debug.Log(CanCreateIceShards());
+       
         
         // Yetenek girişleri
         CheckForDashInput();
@@ -422,7 +422,7 @@ public class Player : Entity
         
         // Manayı doğrudan ayarla (stats.UseMana yerine)
         stats.currentMana -= manaCost;
-        Debug.Log($"Mana used: {manaCost}. Current mana: {stats.currentMana}/{stats.maxMana.GetValue()}");
+       
         
         // UI güncellemesi yapıyoruz
         ManaBar manaBar = GetComponent<ManaBar>();
@@ -969,7 +969,7 @@ public class Player : Entity
         if (amount <= 0) return;
         
         experience += amount;
-        Debug.Log($"Added {amount} XP. Total XP: {experience}");
+       
         
         // Seviye atlama kontrolü
         CheckLevelUp();
@@ -988,7 +988,7 @@ public class Player : Entity
             // Yeni seviye için gereken tecrübe puanını artır
             experienceToNextLevel = (int)(experienceToNextLevel * 1.5f);
             
-            Debug.Log($"Level up! New level: {level}");
+           
             
             // Seviye atlama bonusları (can, mana vs artırılabilir)
             stats.maxHealth.AddModifier(10);
@@ -1038,8 +1038,7 @@ public class Player : Entity
                 // Bu düşmanı vurulmuş olarak işaretle
                 MarkEntityAsHit(enemy);
                 
-                // Parry başarılı olduğunu logla
-                Debug.Log($"Parry successful on {enemy.gameObject.name}!");
+              
                 
                 // Parry bilgisini düşmana ilet
                 parryableEnemy.GetParried();
@@ -1100,7 +1099,6 @@ public class Player : Entity
         if (amount <= 0) return;
         
         gold += amount;
-        Debug.Log($"Added {amount} gold. Total gold: {gold}");
         
         // Burada UI güncellemesi yapılabilir
     }

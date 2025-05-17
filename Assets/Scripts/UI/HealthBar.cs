@@ -101,7 +101,7 @@ public class HealthBar : MonoBehaviour
         // Metin alanını güncelle
         UpdateHealthText(roundedCurrentHealth, roundedMaxHealth);
         
-        Debug.Log($"Health Bar güncellendi: {roundedCurrentHealth}/{roundedMaxHealth} = {targetFillAmount}");
+        
     }
     
     // Health metin alanını güncelle

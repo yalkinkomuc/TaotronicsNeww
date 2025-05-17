@@ -48,7 +48,6 @@ public class PlayerStats : CharacterStats
     {
         get
         {
-            Debug.Log($"[PlayerStats DEBUG] Mind property accessed, returning: {_mind}");
             return _mind;
         }
     }
@@ -145,8 +144,7 @@ public class PlayerStats : CharacterStats
         // Calculate derived stats for UI display
         base.attackPower = baseDamage.GetValue();
         
-        Debug.Log($"Applied attribute bonuses: HP +{healthBonus:F0}, DMG +{damageBonus:F1}, Mana +{maxMana.GetValue():F0}");
-        Debug.Log($"<color=cyan>Defense: {reduction:F2}%</color>, <color=yellow>Crit Chance: {base.criticalChance*100:F1}%</color>, Speed: {base.speedStat:F0}");
+       
     }
     
     // Calculates just the health bonus for a specific vitality level (for preview)
@@ -247,7 +245,7 @@ public class PlayerStats : CharacterStats
         UpdateLevelUI();
         SaveGoldData();
         
-        Debug.Log($"Added {amount} gold. Total gold: {gold}");
+        
     }
     
     public bool SpendGold(int amount)
@@ -259,7 +257,7 @@ public class PlayerStats : CharacterStats
         UpdateLevelUI();
         SaveGoldData();
         
-        Debug.Log($"Spent {amount} gold. Remaining gold: {gold}");
+        
         return true;
     }
     
@@ -279,7 +277,7 @@ public class PlayerStats : CharacterStats
         PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
         PlayerPrefs.Save();
         
-        Debug.Log($"Player progress saved: Level={level}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
+        
     }
     
     // Kaydedilmiş oyuncu verilerini PlayerPrefs'den yükle
@@ -302,7 +300,6 @@ public class PlayerStats : CharacterStats
             _luck = PlayerPrefs.GetInt("PlayerLuck", 0);
             _mind = PlayerPrefs.GetInt("PlayerMind", 0);
             
-            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, Vit={_vitality}, Might={_might}, Def={_defense}, Luck={_luck}, Mind={_mind}, Gold={gold}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
         }
         
         // Can ve manayı doldur
@@ -336,7 +333,7 @@ public class PlayerStats : CharacterStats
         if (player != null && player.healthBar != null)
         {
             player.healthBar.UpdateHealthBar(currentHealth, maxHealth.GetValue());
-            Debug.Log($"Health Bar UI güncellendi: {currentHealth}/{maxHealth.GetValue()}");
+           
         }
     }
     
@@ -367,10 +364,7 @@ public class PlayerStats : CharacterStats
         // Calculate actual health increase for debug
         float healthIncrease = newMaxHealth - oldMaxHealth;
         
-        // Debug log
-        Debug.Log($"<color=green>VITALITY ARTIRILDI!</color> Değer: {_vitality-1} → {_vitality}");
-        Debug.Log($"<color=red>Max Sağlık: {oldMaxHealth:F0} → {newMaxHealth:F0} (+{healthIncrease:F0})</color>");
-        Debug.Log($"<color=green>Can fullendi: {currentHealth:F0}/{newMaxHealth:F0}</color>");
+       
         
         // Save changes
         SaveStatsData();
@@ -396,8 +390,7 @@ public class PlayerStats : CharacterStats
         float damageIncrease = baseDamage.GetValue() - oldDamage;
         
         // Debug log
-        Debug.Log($"<color=green>MIGHT ARTIRILDI!</color> Değer: {_might-1} → {_might}");
-        Debug.Log($"<color=orange>Hasar: {oldDamage:F1} → {baseDamage.GetValue():F1} (+{damageIncrease:F1})</color>");
+        
         
         // Save changes
         SaveStatsData();
@@ -422,9 +415,8 @@ public class PlayerStats : CharacterStats
         // Calculate actual defense increase for debug
         float defenseIncrease = defenseStat - oldDefense;
         
-        // Debug log
-        Debug.Log($"<color=green>DEFENSE ARTIRILDI!</color> Değer: {_defense-1} → {_defense}");
-        Debug.Log($"<color=cyan>Savunma: {oldDefense:F1} → {defenseStat:F1} (+{defenseIncrease:F1})</color>");
+      
+       
         
         // Save changes
         SaveStatsData();
@@ -446,9 +438,7 @@ public class PlayerStats : CharacterStats
         // Update UI
         UpdateLevelUI();
         
-        // Debug logları ekle
-        Debug.Log($"<color=green>LUCK ARTIRILDI!</color> Değer: {_luck-1} → {_luck}");
-        Debug.Log($"<color=yellow>Kritik Vuruş Şansı: {oldCritChance*100:F1}% → {criticalChance*100:F1}%</color>");
+       
         
         // Save changes
         SaveStatsData();
@@ -462,7 +452,7 @@ public class PlayerStats : CharacterStats
         availableSkillPoints--;
         ApplyAttributeBonuses();
         UpdateLevelUI();
-        Debug.Log($"<color=purple>MIND ARTIRILDI!</color> Değer: {oldMind} → {_mind}");
+       
         SaveStatsData();
     }
     
@@ -508,7 +498,7 @@ public class PlayerStats : CharacterStats
         PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
         PlayerPrefs.Save();
         
-        Debug.Log($"Player attributes saved: Vitality={_vitality}, Might={_might}, Defense={_defense}, Luck={_luck}, Mind={_mind}, SP={availableSkillPoints}");
+       
     }
 
     // Reset all attributes and get skill points back
@@ -541,7 +531,7 @@ public class PlayerStats : CharacterStats
         // Save changes
         SaveStatsData();
         
-        Debug.Log($"All attributes reset. Returned {totalSpentPoints} skill points. Total available: {availableSkillPoints}");
+    
     }
     
     // Kritik vuruş kontrolü yapan metot
