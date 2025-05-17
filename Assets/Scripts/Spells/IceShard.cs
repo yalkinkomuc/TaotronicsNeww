@@ -95,28 +95,33 @@ public class IceShard : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!canDealDamage) return;
 
-        if (other.GetComponent<Enemy>() != null)
+        if (collision.GetComponent<Enemy>() != null)
         {
-            if (other.TryGetComponent<Enemy>(out Enemy enemy))
+            Enemy enemy = collision.GetComponent<Enemy>();
+            CharacterStats enemyStats = enemy.GetComponent<CharacterStats>();
+
+            if (enemyStats != null)
             {
-                // enemy.Damage(); // Çifte hasarı engellemek için kaldırıldı
-                enemy.GetComponent<CharacterStats>()?.TakeDamage(actualDamage,CharacterStats.DamageType.Ice);
-                
+                float actualDamage = damage;
+                enemyStats.TakeDamage(actualDamage, CharacterStats.DamageType.Ice);
+
                 // Apply ice effect
+                enemy.ApplyIceEffect();
+
+                // Apply ice material effect
                 if (enemy.entityFX != null)
                 {
-                    enemy.entityFX.StartCoroutine("IceFX");
+                    enemy.entityFX.StartCoroutine(enemy.entityFX.IceFX());
                 }
-                
-                // Display magic damage text
+
+                // Show floating text
                 if (FloatingTextManager.Instance != null)
                 {
-                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    FloatingTextManager.Instance.ShowMagicDamageText(actualDamage, textPosition);
+                    FloatingTextManager.Instance.ShowMagicDamageText(actualDamage, enemy.transform.position);
                 }
             }
         }

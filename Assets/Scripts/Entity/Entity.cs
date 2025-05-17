@@ -185,6 +185,51 @@ public class Entity : MonoBehaviour
 
     #endregion
 
+    #region IceEffect
+
+    private Coroutine currentIceEffectCoroutine;
+
+    public virtual void ApplyIceEffect()
+    {
+        if (this is Enemy enemy)
+        {
+            // Eğer zaten bir buz efekti varsa, onu durdur
+            if (currentIceEffectCoroutine != null)
+            {
+                StopCoroutine(currentIceEffectCoroutine);
+                // Önceki efektin hızlarını sıfırla
+                RemoveIceEffect();
+            }
+
+            originalMoveSpeed = enemy.moveSpeed;
+            originalChaseSpeed = enemy.chaseSpeed;
+            
+            enemy.moveSpeed *= 0.3f;
+            enemy.chaseSpeed *= 0.3f;
+
+            // Yeni efekti başlat
+            currentIceEffectCoroutine = StartCoroutine(RemoveIceEffectAfterDelay(1.5f));
+        }
+    }
+
+    private IEnumerator RemoveIceEffectAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        RemoveIceEffect();
+        currentIceEffectCoroutine = null;
+    }
+
+    public virtual void RemoveIceEffect()
+    {
+        if (this is Enemy enemy)
+        {
+            enemy.moveSpeed = originalMoveSpeed;
+            enemy.chaseSpeed = originalChaseSpeed;
+        }
+    }
+
+    #endregion
+
     #region HitList
 
     /// <summary>
