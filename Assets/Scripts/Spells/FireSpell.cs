@@ -127,9 +127,17 @@ public class FireSpell : MonoBehaviour
                     float burnTimeFactor = Mathf.Clamp01(enemyBurnTimes[enemy] / damageRampUpTime);
                     float currentDamageMultiplier = Mathf.Lerp(1f, maxDamageMultiplier, burnTimeFactor);
                     
-                    // Calculate frame damage with ramp-up
-                    float frameDamage = damagePerSecond * currentDamageMultiplier * Time.deltaTime;
-                    enemy.stats.TakeDamage(frameDamage,CharacterStats.DamageType.Fire);
+                    // Get player's elemental damage multiplier
+                    Player player = PlayerManager.instance.player;
+                    float elementalMultiplier = 1f;
+                    if (player != null && player.stats != null)
+                    {
+                        elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
+                    }
+                    
+                    // Calculate frame damage with ramp-up and elemental multiplier
+                    float frameDamage = damagePerSecond * currentDamageMultiplier * elementalMultiplier * Time.deltaTime;
+                    enemy.stats.TakeDamage(frameDamage, CharacterStats.DamageType.Fire);
                     
                     // Accumulated damage for text display
                     bool shouldShowText = false;
@@ -144,7 +152,7 @@ public class FireSpell : MonoBehaviour
                     else if (Time.time - lastTextTimes[enemy] >= textDisplayInterval)
                     {
                         // Show approximate damage over interval with current multiplier
-                        accumulatedDamage = damagePerSecond * currentDamageMultiplier * textDisplayInterval;
+                        accumulatedDamage = damagePerSecond * currentDamageMultiplier * elementalMultiplier * textDisplayInterval;
                         shouldShowText = true;
                         lastTextTimes[enemy] = Time.time;
                     }

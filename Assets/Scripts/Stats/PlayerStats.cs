@@ -9,9 +9,9 @@ public class PlayerStats : CharacterStats
     [Header("Attribute System")]
     [SerializeField] private int _vitality = 0;  // Increases max health
     [SerializeField] private int _might = 0;     // Increases attack damage
-    [SerializeField] private int _agility = 0;   // Increases speed (already used for mana)
     [SerializeField] private int _defense = 0;   // Reduces incoming damage
     [SerializeField] private int _luck = 0;      // Increases critical chance
+    [SerializeField] private int _mind = 0;      // Increases elemental damage
     
     [Header("Attribute Limits")]
     [SerializeField] private int _maxAttributeLevel = 99;  // Maximum level for any attribute
@@ -42,9 +42,16 @@ public class PlayerStats : CharacterStats
     // For accessing attributes from UI
     public new  int Vitality => _vitality;
     public new int Might => _might;
-    public new int Agility => _agility;
     public new int Defense => _defense;
     public new int Luck => _luck;
+    public new int Mind
+    {
+        get
+        {
+            Debug.Log($"[PlayerStats DEBUG] Mind property accessed, returning: {_mind}");
+            return _mind;
+        }
+    }
     
     [Header("Currency")]
     [SerializeField] public int gold = 0;
@@ -123,11 +130,6 @@ public class PlayerStats : CharacterStats
         float damageBonus = _baseDamageValue * damageMultiplier;
         baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
         
-        // Calculate agility bonus for mana (exponential growth)
-        float manaMultiplier = Mathf.Pow(1 + MANA_GROWTH, _agility) - 1;
-        float manaBonus = _baseManaValue * manaMultiplier;
-        maxMana.AddModifier(manaBonus, StatModifierType.Attribute);
-        
         // Azalan marjinal getiri ile defense (%50'ye kadar, kök fonksiyonu)
         float maxReduction = 50f;
         float reduction = maxReduction * Mathf.Sqrt(_defense / 99f);
@@ -136,14 +138,14 @@ public class PlayerStats : CharacterStats
         // Critical chance remains linear (1% per point)
         base.criticalChance = _luck * CRIT_CHANCE_PER_LUCK;
         
-        // Calculate speed bonus (smaller exponential growth)
-        float speedMultiplier = Mathf.Pow(1 + SPEED_GROWTH, _agility) - 1;
-        base.speedStat = _baseSpeedValue * (1 + speedMultiplier);
+        
+        float mindMultiplier = Mathf.Pow(1 + SPEED_GROWTH, _mind) - 1;
+        base.speedStat = _baseSpeedValue * (1 + mindMultiplier);
         
         // Calculate derived stats for UI display
         base.attackPower = baseDamage.GetValue();
         
-        Debug.Log($"Applied attribute bonuses: HP +{healthBonus:F0}, DMG +{damageBonus:F1}, Mana +{manaBonus:F0}");
+        Debug.Log($"Applied attribute bonuses: HP +{healthBonus:F0}, DMG +{damageBonus:F1}, Mana +{maxMana.GetValue():F0}");
         Debug.Log($"<color=cyan>Defense: {reduction:F2}%</color>, <color=yellow>Crit Chance: {base.criticalChance*100:F1}%</color>, Speed: {base.speedStat:F0}");
     }
     
@@ -159,12 +161,6 @@ public class PlayerStats : CharacterStats
         return base.CalculateDamageBonusForMight(mightLevel);
     }
     
-    // Calculates just the mana bonus for a specific agility level (for preview)
-    public new float CalculateManaBonusForAgility(int agilityLevel)
-    {
-        return base.CalculateManaBonusForAgility(agilityLevel);
-    }
-
     public void AddExperience(int amount)
     {
         if (amount <= 0) return;
@@ -302,11 +298,11 @@ public class PlayerStats : CharacterStats
             // Attribute values
             _vitality = PlayerPrefs.GetInt("PlayerVitality", 0);
             _might = PlayerPrefs.GetInt("PlayerMight", 0);
-            _agility = PlayerPrefs.GetInt("PlayerAgility", 0);
             _defense = PlayerPrefs.GetInt("PlayerDefense", 0);
             _luck = PlayerPrefs.GetInt("PlayerLuck", 0);
+            _mind = PlayerPrefs.GetInt("PlayerMind", 0);
             
-            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, Vit={_vitality}, Might={_might}, Agi={_agility}, Def={_defense}, Luck={_luck}, Gold={gold}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
+            Debug.Log($"Oyuncu verileri yüklendi: Seviye={level}, Vit={_vitality}, Might={_might}, Def={_defense}, Luck={_luck}, Mind={_mind}, Gold={gold}, XP={experience}/{experienceToNextLevel}, SP={availableSkillPoints}");
         }
         
         // Can ve manayı doldur
@@ -407,40 +403,6 @@ public class PlayerStats : CharacterStats
         SaveStatsData();
     }
     
-    public void IncreaseAgility()
-    {
-        if (availableSkillPoints <= 0 || _agility >= _maxAttributeLevel) return;
-        
-        // Debug için önceki değerleri kaydet
-        float oldMana = maxMana.GetValue();
-        float oldSpeed = speedStat;
-        
-        _agility++;
-        availableSkillPoints--;
-        
-        // Apply agility bonus
-        ApplyAttributeBonuses();
-        
-        // Update mana
-        float manaPercentage = currentMana / oldMana;
-        currentMana = maxMana.GetValue() * manaPercentage;
-        
-        // Update UI
-        UpdateLevelUI();
-        
-        // Calculate actual increases for debug
-        float manaIncrease = maxMana.GetValue() - oldMana;
-        float speedIncrease = speedStat - oldSpeed;
-        
-        // Debug log
-        Debug.Log($"<color=green>AGILITY ARTIRILDI!</color> Değer: {_agility-1} → {_agility}");
-        Debug.Log($"<color=blue>Mana: {oldMana:F0} → {maxMana.GetValue():F0} (+{manaIncrease:F0})</color>");
-        Debug.Log($"<color=yellow>Hız: {oldSpeed:F0} → {speedStat:F0} (+{speedIncrease:F0})</color>");
-        
-        // Save changes
-        SaveStatsData();
-    }
-    
     public void IncreaseDefense()
     {
         if (availableSkillPoints <= 0 || _defense >= _maxAttributeLevel) return;
@@ -492,6 +454,18 @@ public class PlayerStats : CharacterStats
         SaveStatsData();
     }
     
+    public void IncreaseMind()
+    {
+        if (availableSkillPoints <= 0 || _mind >= _maxAttributeLevel) return;
+        int oldMind = _mind;
+        _mind++;
+        availableSkillPoints--;
+        ApplyAttributeBonuses();
+        UpdateLevelUI();
+        Debug.Log($"<color=purple>MIND ARTIRILDI!</color> Değer: {oldMind} → {_mind}");
+        SaveStatsData();
+    }
+    
     // Legacy methods for compatibility - redirect to the new attribute methods
     public void IncreaseMaxHealth()
     {
@@ -501,11 +475,6 @@ public class PlayerStats : CharacterStats
     public void IncreaseDamage()
     {
         IncreaseMight();
-    }
-    
-    public void IncreaseMaxMana()
-    {
-        IncreaseAgility();
     }
     
     // Method to reduce skill points externally
@@ -531,22 +500,22 @@ public class PlayerStats : CharacterStats
         // Save all attribute values
         PlayerPrefs.SetInt("PlayerVitality", _vitality);
         PlayerPrefs.SetInt("PlayerMight", _might);
-        PlayerPrefs.SetInt("PlayerAgility", _agility);
         PlayerPrefs.SetInt("PlayerDefense", _defense);
         PlayerPrefs.SetInt("PlayerLuck", _luck);
+        PlayerPrefs.SetInt("PlayerMind", _mind);
         
         // Save skill points
         PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
         PlayerPrefs.Save();
         
-        Debug.Log($"Player attributes saved: Vitality={_vitality}, Might={_might}, Agility={_agility}, Defense={_defense}, Luck={_luck}, SP={availableSkillPoints}");
+        Debug.Log($"Player attributes saved: Vitality={_vitality}, Might={_might}, Defense={_defense}, Luck={_luck}, Mind={_mind}, SP={availableSkillPoints}");
     }
 
     // Reset all attributes and get skill points back
     public void ResetAllAttributes()
     {
         // Calculate total spent points
-        int totalSpentPoints = _vitality + _might + _agility + _defense + _luck;
+        int totalSpentPoints = _vitality + _might + _defense + _luck + _mind;
         
         // Restore skill points
         availableSkillPoints += totalSpentPoints;
@@ -554,9 +523,9 @@ public class PlayerStats : CharacterStats
         // Reset attribute values
         _vitality = 0;
         _might = 0;
-        _agility = 0;
         _defense = 0;
         _luck = 0;
+        _mind = 0;
         
         // Reapply all attribute bonuses (zeros out the bonuses)
         ApplyAttributeBonuses();
@@ -580,4 +549,7 @@ public class PlayerStats : CharacterStats
     {
         return base.IsCriticalHit();
     }
+
+    // Fix override to ensure this is correct
+    protected override int mind { get => _mind; set => _mind = value; }
 }

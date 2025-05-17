@@ -220,7 +220,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
                 // Attribute değerlerini kaydet
                 PlayerPrefs.SetInt("PlayerVitality", playerStats.Vitality);
                 PlayerPrefs.SetInt("PlayerMight", playerStats.Might);
-                PlayerPrefs.SetInt("PlayerAgility", playerStats.Agility);
+                PlayerPrefs.SetInt("PlayerMind", playerStats.Mind);
                 PlayerPrefs.SetInt("PlayerDefense", playerStats.Defense);
                 PlayerPrefs.SetInt("PlayerLuck", playerStats.Luck);
                 

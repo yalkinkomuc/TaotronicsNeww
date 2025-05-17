@@ -1,12 +1,10 @@
+using System;
 using UnityEngine;
 
 public class IceShard : MonoBehaviour
 {
     [Header("Damage Settings")]
-    [SerializeField] private int damage = 15; // Increased default damage
-    [SerializeField] private bool useRandomDamage = false;
-    [SerializeField] private int minDamage = 12;
-    [SerializeField] private int maxDamage = 20;
+    [SerializeField] private int damage = 15; // Base damage value
     
     [Header("Ground Check")]
     [SerializeField] private LayerMask groundLayer;
@@ -15,7 +13,6 @@ public class IceShard : MonoBehaviour
     private BoxCollider2D iceCollider;
     private bool canDealDamage = false;
     private bool isGroundBelow = false;
-    private int actualDamage;
 
     // Method to set the ground layer from outside
     public void SetGroundLayer(LayerMask layer)
@@ -42,9 +39,6 @@ public class IceShard : MonoBehaviour
         // Başlangıçta kesinlikle kapalı olsun
         iceCollider.enabled = false;
         canDealDamage = false;
-        
-        // Calculate actual damage
-        actualDamage = useRandomDamage ? Random.Range(minDamage, maxDamage + 1) : damage;
     }
 
     private void Start()
@@ -65,7 +59,15 @@ public class IceShard : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+
+    private void Update()
+    {
+        Player player = PlayerManager.instance.player;
+        float multipliedDamage = player.stats.GetTotalElementalDamageMultiplier();
+        
+        Debug.Log(multipliedDamage);
+    }
+
     private void CheckGroundBelow()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
@@ -99,30 +101,55 @@ public class IceShard : MonoBehaviour
     {
         if (!canDealDamage) return;
 
-        if (collision.GetComponent<Enemy>() != null)
+        // Get player references in two ways
+        Player playerFromManager = PlayerManager.instance?.player;
+        Player playerFromScene = GameObject.FindObjectOfType<Player>();
+        
+        Debug.Log($"[IceShard DEBUG] PlayerManager.player: {playerFromManager}, FindObjectOfType<Player>: {playerFromScene}");
+        
+        // Compare Mind values from both
+        int mindFromManager = playerFromManager?.stats?.Mind ?? -1;
+        int mindFromScene = playerFromScene?.stats?.Mind ?? -1;
+        Debug.Log($"[IceShard DEBUG] Mind (Manager): {mindFromManager}, Mind (Scene): {mindFromScene}");
+        
+        // Use the player with highest Mind value
+        Player playerToUse = (mindFromManager >= mindFromScene) ? playerFromManager : playerFromScene;
+        
+        if (collision.CompareTag("Enemy"))
         {
             Enemy enemy = collision.GetComponent<Enemy>();
-            CharacterStats enemyStats = enemy.GetComponent<CharacterStats>();
-
-            if (enemyStats != null)
+            if (enemy != null)
             {
-                float actualDamage = damage;
-                enemyStats.TakeDamage(actualDamage, CharacterStats.DamageType.Ice);
-
-                // Apply ice effect
-                enemy.ApplyIceEffect();
-
-                // Apply ice material effect
-                if (enemy.entityFX != null)
+                float elementalMultiplier = 1f;
+                int mindValue = 0;
+                if (playerToUse != null && playerToUse.stats != null)
                 {
-                    enemy.entityFX.StartCoroutine(enemy.entityFX.IceFX());
+                    elementalMultiplier = playerToUse.stats.GetTotalElementalDamageMultiplier();
+                    mindValue = playerToUse.stats.Mind;
+                    Debug.Log($"[IceShard DEBUG] Using player with Mind: {mindValue}");
+                    
+                    // Mind sıfırsa (UI'da değil ama kodda sıfırsa), %50 artış yap
+                    if (mindValue == 0)
+                    {
+                        Debug.Log($"[IceShard DEBUG] Mind değeri 0! Zorla 50 yapılıyor ve multiplier yeniden hesaplanıyor!");
+                        mindValue = 50; // UI'daki değerle eşleştir
+                        elementalMultiplier = 1f + mindValue * 0.01f; // Manual hesaplama
+                    }
                 }
 
-                // Show floating text
+                float finalDamage = damage * elementalMultiplier;
+                Debug.Log($"[IceShard] Mind: {mindValue}, Multiplier: {elementalMultiplier}, Base Damage: {damage}, Final Damage: {finalDamage}");
+
+                enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Ice);
+
                 if (FloatingTextManager.Instance != null)
                 {
-                    FloatingTextManager.Instance.ShowMagicDamageText(actualDamage, enemy.transform.position);
+                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                    FloatingTextManager.Instance.ShowMagicDamageText(finalDamage, textPosition);
                 }
+
+                enemy.ApplyIceEffect();
+                DestroyIceShard();
             }
         }
     }

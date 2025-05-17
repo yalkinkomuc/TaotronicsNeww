@@ -8,10 +8,10 @@ public class EnemyStats : CharacterStats
     // Override base class properties with concrete implementations
     [SerializeField] private int _vitality = 0;
     [SerializeField] private int _might = 0;
-    [SerializeField] private int _agility = 0;
     [SerializeField] private int _defense = 0;
     [SerializeField] private int _luck = 0;
     [SerializeField] private int _maxAttributeLevel = 99;
+    [SerializeField] private int _mind = 0;
     
     [SerializeField] private float _baseHealthValue = 100f;
     [SerializeField] private float _baseDamageValue = 10f;
@@ -22,10 +22,10 @@ public class EnemyStats : CharacterStats
     // Override properties from base class
     protected override int vitality { get => _vitality; set => _vitality = value; }
     protected override int might { get => _might; set => _might = value; }
-    protected override int agility { get => _agility; set => _agility = value; }
     protected override int defense { get => _defense; set => _defense = value; }
     protected override int luck { get => _luck; set => _luck = value; }
     protected override int maxAttributeLevel { get => _maxAttributeLevel; set => _maxAttributeLevel = value; }
+    protected override int mind { get => _mind; set => _mind = value; }
     
     protected override float baseHealthValue { get => _baseHealthValue; set => _baseHealthValue = value; }
     protected override float baseDamageValue { get => _baseDamageValue; set => _baseDamageValue = value; }
@@ -126,13 +126,11 @@ public class EnemyStats : CharacterStats
         // Distribute evenly across all attributes
         int pointsPerAttribute = points / 5;
         int remainder = points % 5;
-        
         _vitality += pointsPerAttribute;
         _might += pointsPerAttribute;
-        _agility += pointsPerAttribute;
         _defense += pointsPerAttribute;
         _luck += pointsPerAttribute;
-        
+        _mind += pointsPerAttribute;
         // Distribute remainder
         for (int i = 0; i < remainder; i++)
         {
@@ -140,75 +138,75 @@ public class EnemyStats : CharacterStats
             {
                 case 0: _vitality++; break;
                 case 1: _might++; break;
-                case 2: _agility++; break;
-                case 3: _defense++; break;
-                case 4: _luck++; break;
+                case 2: _defense++; break;
+                case 3: _luck++; break;
+                case 4: _mind++; break;
             }
         }
     }
     
     private void DistributeTank(int points)
     {
-        // Focus on vitality and defense
         int vitalityPoints = Mathf.FloorToInt(points * 0.4f);
         int defensePoints = Mathf.FloorToInt(points * 0.4f);
         int otherPoints = points - vitalityPoints - defensePoints;
-        
         _vitality += vitalityPoints;
         _defense += defensePoints;
-        
         // Distribute remaining points
-        _might += otherPoints / 3;
-        _agility += otherPoints / 3;
-        _luck += otherPoints - (2 * (otherPoints / 3));
+        int perStat = otherPoints / 3;
+        _might += perStat;
+        _luck += perStat;
+        _mind += otherPoints - 2 * perStat;
     }
     
     private void DistributeDamage(int points)
     {
-        // Focus on might and luck for critical hits
         int mightPoints = Mathf.FloorToInt(points * 0.5f);
         int luckPoints = Mathf.FloorToInt(points * 0.3f);
         int otherPoints = points - mightPoints - luckPoints;
-        
         _might += mightPoints;
         _luck += luckPoints;
-        
         // Distribute remaining points
-        _vitality += otherPoints / 3;
-        _agility += otherPoints / 3;
-        _defense += otherPoints - (2 * (otherPoints / 3));
+        int perStat = otherPoints / 3;
+        _vitality += perStat;
+        _defense += perStat;
+        _mind += otherPoints - 2 * perStat;
     }
     
     private void DistributeSpeed(int points)
     {
-        // Focus on agility and some might
-        int agilityPoints = Mathf.FloorToInt(points * 0.6f);
-        int mightPoints = Mathf.FloorToInt(points * 0.2f);
-        int otherPoints = points - agilityPoints - mightPoints;
-        
-        _agility += agilityPoints;
-        _might += mightPoints;
-        
-        // Distribute remaining points
-        _vitality += otherPoints / 3;
-        _defense += otherPoints / 3;
-        _luck += otherPoints - (2 * (otherPoints / 3));
+        // No agility, just distribute all points evenly
+        int perStat = points / 4;
+        int remainder = points % 4;
+        _vitality += perStat;
+        _might += perStat;
+        _defense += perStat;
+        _luck += perStat;
+        for (int i = 0; i < remainder; i++)
+        {
+            switch (i % 4)
+            {
+                case 0: _vitality++; break;
+                case 1: _might++; break;
+                case 2: _defense++; break;
+                case 3: _luck++; break;
+            }
+        }
     }
     
     private void DistributeMagic(int points)
     {
-        // Focus on agility (mana) and might (spell damage)
-        int agilityPoints = Mathf.FloorToInt(points * 0.5f);
+        // No agility, focus on mind and might
+        int mindPoints = Mathf.FloorToInt(points * 0.5f);
         int mightPoints = Mathf.FloorToInt(points * 0.3f);
-        int otherPoints = points - agilityPoints - mightPoints;
-        
-        _agility += agilityPoints;
+        int otherPoints = points - mindPoints - mightPoints;
+        _mind += mindPoints;
         _might += mightPoints;
-        
         // Distribute remaining points
-        _vitality += otherPoints / 3;
-        _defense += otherPoints / 3;
-        _luck += otherPoints - (2 * (otherPoints / 3));
+        int perStat = otherPoints / 3;
+        _vitality += perStat;
+        _defense += perStat;
+        _luck += otherPoints - 2 * perStat;
     }
 
     /// <summary>
@@ -286,7 +284,7 @@ public enum EnemyAttributeFocus
     Balanced,   // Even distribution
     Tank,       // High vitality and defense
     Damage,     // High might and luck
-    Speed,      // High agility
-    Magic       // High agility and might
+    Speed,      // (Unused)
+    Magic       // (Unused)
 }
 

@@ -22,9 +22,9 @@ public class CharacterStats : MonoBehaviour
     // These properties will be overridden by derived classes
     protected virtual int vitality { get => 0; set { } }
     protected virtual int might { get => 0; set { } }
-    protected virtual int agility { get => 0; set { } }
     protected virtual int defense { get => 0; set { } }
     protected virtual int luck { get => 0; set { } }
+    protected virtual int mind { get => 0; set { } }
     
     [Header("Attribute Limits")]
     protected virtual int maxAttributeLevel { get => 99; set { } }
@@ -51,6 +51,7 @@ public class CharacterStats : MonoBehaviour
     protected const float DEFENSE_GROWTH = 0.05f;     // 5% growth per point
     protected const float SPEED_GROWTH = 0.02f;       // 2% growth per point
     protected const float CRIT_CHANCE_PER_LUCK = 0.01f; // 1% per point (linear)
+    protected const float ELEMENTAL_DAMAGE_GROWTH = 0.08f; // 8% growth per point for elemental damage
     
     protected float baseMaxHealth;
     protected float baseMaxDamage;
@@ -60,9 +61,9 @@ public class CharacterStats : MonoBehaviour
     // Properties to access attribute values
     public int Vitality => vitality;
     public int Might => might;
-    public int Agility => agility;
     public int Defense => defense;
     public int Luck => luck;
+    public int Mind => mind;
 
     // ELEMENTAL RESISTANCES
     [Header("Elemental Resistances (% reduction, 0-100)")]
@@ -73,6 +74,17 @@ public class CharacterStats : MonoBehaviour
 
     // Damage type enum
     public enum DamageType { Physical, Fire, Ice, Void, Earth }
+
+    // Returns the total elemental damage multiplier based on mind
+    public float GetTotalElementalDamageMultiplier()
+    {
+        // Debug için direct mind değerini de bakalım
+        int mindValue = this.mind;
+        float multiplier = 1f + mindValue * 0.01f; // Her mind puanı %1 elemental hasar artışı
+        Debug.Log($"[CharacterStats DEBUG] mind: {mindValue}, multiplier: {multiplier}");
+        return multiplier;
+        // Eğer üstel büyüme istersen: return Mathf.Pow(1 + ELEMENTAL_DAMAGE_GROWTH, mind);
+    }
 
     protected virtual void Awake()
     {
@@ -108,21 +120,12 @@ public class CharacterStats : MonoBehaviour
         float damageBonus = baseDamageValue * damageMultiplier;
         baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
         
-        // Calculate agility bonus for mana (exponential growth)
-        float manaMultiplier = Mathf.Pow(1 + MANA_GROWTH, agility) - 1;
-        float manaBonus = baseManaValue * manaMultiplier;
-        maxMana.AddModifier(manaBonus, StatModifierType.Attribute);
-        
         // Calculate defense stat (exponential growth)
         float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, defense) - 1;
         defenseStat = baseDefenseValue * (1 + defenseMultiplier);
         
         // Critical chance remains linear (1% per point)
         criticalChance = luck * CRIT_CHANCE_PER_LUCK;
-        
-        // Calculate speed bonus (smaller exponential growth)
-        float speedMultiplier = Mathf.Pow(1 + SPEED_GROWTH, agility) - 1;
-        speedStat = baseSpeedValue * (1 + speedMultiplier);
         
         // Calculate derived stats for UI display
         attackPower = baseDamage.GetValue();
@@ -140,13 +143,6 @@ public class CharacterStats : MonoBehaviour
     {
         float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, mightLevel) - 1;
         return baseDamageValue * damageMultiplier;
-    }
-    
-    // Calculates just the mana bonus for a specific agility level (for preview)
-    public float CalculateManaBonusForAgility(int agilityLevel)
-    {
-        float manaMultiplier = Mathf.Pow(1 + MANA_GROWTH, agilityLevel) - 1;
-        return baseManaValue * manaMultiplier;
     }
     
     public int GetLevel()
@@ -186,17 +182,6 @@ public class CharacterStats : MonoBehaviour
         
         might += amount;
         if (might > maxAttributeLevel) might = maxAttributeLevel;
-        
-        ApplyAttributeBonuses();
-        return true;
-    }
-    
-    public virtual bool IncreaseAgility(int amount = 1)
-    {
-        if (agility >= maxAttributeLevel) return false;
-        
-        agility += amount;
-        if (agility > maxAttributeLevel) agility = maxAttributeLevel;
         
         ApplyAttributeBonuses();
         return true;

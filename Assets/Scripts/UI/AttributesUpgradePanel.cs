@@ -19,14 +19,14 @@ public class AttributesUpgradePanel : MonoBehaviour
     [Header("Attribute Current Values")]
     [SerializeField] private TextMeshProUGUI vitalityCurrentValue;
     [SerializeField] private TextMeshProUGUI mightCurrentValue;
-    [SerializeField] private TextMeshProUGUI mindCurrentValue; // Mind = Agility
+    [SerializeField] private TextMeshProUGUI mindCurrentValue;
     [SerializeField] private TextMeshProUGUI defenseCurrentValue;
     [SerializeField] private TextMeshProUGUI luckCurrentValue;
     
     [Header("Attribute New Values")]
     [SerializeField] private TextMeshProUGUI vitalityNewValue;
     [SerializeField] private TextMeshProUGUI mightNewValue;
-    [SerializeField] private TextMeshProUGUI mindNewValue; // Mind = Agility
+    [SerializeField] private TextMeshProUGUI mindNewValue;
     [SerializeField] private TextMeshProUGUI defenseNewValue;
     [SerializeField] private TextMeshProUGUI luckNewValue;
     
@@ -44,6 +44,7 @@ public class AttributesUpgradePanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI speedValueText;
     [SerializeField] private TextMeshProUGUI defenseValueText;
     [SerializeField] private TextMeshProUGUI critRateValueText;
+    [SerializeField] private TextMeshProUGUI magicPowerValueText;
     
     [Header("Points Display")]
     [SerializeField] private TextMeshProUGUI pointsAvailableText;
@@ -58,7 +59,7 @@ public class AttributesUpgradePanel : MonoBehaviour
     // Temporary values for preview
     private int tempVitality;
     private int tempMight;
-    private int tempAgility;
+    private int tempMind;
     private int tempDefense;
     private int tempLuck;
     private int tempSkillPoints;
@@ -192,12 +193,12 @@ public class AttributesUpgradePanel : MonoBehaviour
         
         tempVitality = playerStats.Vitality;
         tempMight = playerStats.Might;
-        tempAgility = playerStats.Agility;
+        tempMind = playerStats.Mind;
         tempDefense = playerStats.Defense;
         tempLuck = playerStats.Luck;
         tempSkillPoints = playerStats.AvailableSkillPoints;
         
-        Debug.Log($"Loaded attributes: Vit={tempVitality}, Might={tempMight}, Mind={tempAgility}, Def={tempDefense}, Luck={tempLuck}, SP={tempSkillPoints}");
+        Debug.Log($"Loaded attributes: Vit={tempVitality}, Might={tempMight}, Mind={tempMind}, Def={tempDefense}, Luck={tempLuck}, SP={tempSkillPoints}");
     }
     
     private void UpdateAttributeUI()
@@ -207,14 +208,14 @@ public class AttributesUpgradePanel : MonoBehaviour
         // Update current values
         if (vitalityCurrentValue) vitalityCurrentValue.text = playerStats.Vitality.ToString();
         if (mightCurrentValue) mightCurrentValue.text = playerStats.Might.ToString();
-        if (mindCurrentValue) mindCurrentValue.text = playerStats.Agility.ToString();
+        if (mindCurrentValue) mindCurrentValue.text = playerStats.Mind.ToString();
         if (defenseCurrentValue) defenseCurrentValue.text = playerStats.Defense.ToString();
         if (luckCurrentValue) luckCurrentValue.text = playerStats.Luck.ToString();
         
         // Update new values
         if (vitalityNewValue) vitalityNewValue.text = tempVitality.ToString();
         if (mightNewValue) mightNewValue.text = tempMight.ToString();
-        if (mindNewValue) mindNewValue.text = tempAgility.ToString();
+        if (mindNewValue) mindNewValue.text = tempMind.ToString();
         if (defenseNewValue) defenseNewValue.text = tempDefense.ToString();
         if (luckNewValue) luckNewValue.text = tempLuck.ToString();
         
@@ -229,18 +230,18 @@ public class AttributesUpgradePanel : MonoBehaviour
         // Health preview: vitality arttıkça anlık güncellensin
         float healthValue = CalculateHealth(tempVitality);
         float attackValue = CalculateAttack(tempMight);
-        float manaValue = CalculateMana(tempAgility);
-        float speedValue = CalculateSpeed(tempAgility);
+        float elementalPower = CalculateElementalMultiplier(tempMind);
         float defenseValue = CalculateDefense(tempDefense);
         float critValue = CalculateCritRate(tempLuck);
         
         // Update UI
         if (healthValueText) healthValueText.text = healthValue.ToString("F0");
-        if (manaValueText) manaValueText.text = manaValue.ToString("F0");
+        if (manaValueText) manaValueText.text = "-";
         if (attackValueText) attackValueText.text = attackValue.ToString("F1");
-        if (speedValueText) speedValueText.text = speedValue.ToString("F0");
+        if (speedValueText) speedValueText.text = "-";
         if (defenseValueText) defenseValueText.text = defenseValue.ToString("F0");
         if (critRateValueText) critRateValueText.text = (critValue * 100).ToString("F1") + "%";
+        if (magicPowerValueText) magicPowerValueText.text = $"{((elementalPower-1f)*100f):F0}%";
     }
     
     private float CalculateHealth(int vitality)
@@ -267,13 +268,6 @@ public class AttributesUpgradePanel : MonoBehaviour
         return baseDamage + bonus;
     }
     
-    private float CalculateSpeed(int agility)
-    {
-        // Speed bonus hesaplama (exponential growth)
-        float speedMultiplier = Mathf.Pow(1 + 0.02f, agility) - 1; // SPEED_GROWTH = 0.02f
-        return 300f * speedMultiplier; // baseSpeedValue = 300f
-    }
-    
     private float CalculateDefense(int defense)
     {
         // Defense artık yüzdelik hasar azaltma olarak çalışıyor
@@ -287,11 +281,10 @@ public class AttributesUpgradePanel : MonoBehaviour
         return luck * 0.01f; // CRIT_CHANCE_PER_LUCK = 0.01f
     }
     
-    private float CalculateMana(int agility)
+    private float CalculateElementalMultiplier(int mind)
     {
-        // Mana bonus hesaplama (exponential growth)
-        float manaMultiplier = Mathf.Pow(1 + 0.07f, agility) - 1; // MANA_GROWTH = 0.07f
-        return 50f * manaMultiplier; // baseManaValue = 50f
+        // Elemental multiplier calculation
+        return 1f + (mind * 0.01f); // ELEMENTAL_MULTIPLIER_PER_MIND = 0.01f
     }
     
     private void HandleAttributeSelection()
@@ -340,8 +333,8 @@ public class AttributesUpgradePanel : MonoBehaviour
             case 1: // Might
                 tempMight++;
                 break;
-            case 2: // Mind (Agility)
-                tempAgility++;
+            case 2: // Mind
+                tempMind++;
                 break;
             case 3: // Defense
                 tempDefense++;
@@ -376,10 +369,10 @@ public class AttributesUpgradePanel : MonoBehaviour
                     decreased = true;
                 }
                 break;
-            case 2: // Mind (Agility)
-                if (tempAgility > playerStats.Agility)
+            case 2: // Mind
+                if (tempMind > playerStats.Mind)
                 {
-                    tempAgility--;
+                    tempMind--;
                     decreased = true;
                 }
                 break;
@@ -427,17 +420,17 @@ public class AttributesUpgradePanel : MonoBehaviour
         // Calculate differences
         int vitalityDiff = tempVitality - playerStats.Vitality;
         int mightDiff = tempMight - playerStats.Might;
-        int agilityDiff = tempAgility - playerStats.Agility;
+        int mindDiff = tempMind - playerStats.Mind;
         int defenseDiff = tempDefense - playerStats.Defense;
         int luckDiff = tempLuck - playerStats.Luck;
         
-        Debug.Log($"Applying changes: Vit +{vitalityDiff}, Might +{mightDiff}, Mind +{agilityDiff}, Def +{defenseDiff}, Luck +{luckDiff}");
+        Debug.Log($"Applying changes: Vit +{vitalityDiff}, Might +{mightDiff}, Mind +{mindDiff}, Def +{defenseDiff}, Luck +{luckDiff}");
         
         // Apply increases to actual player stats
         // Each method already properly updates health percentage and health bar UI
         for (int i = 0; i < vitalityDiff; i++) playerStats.IncreaseVitality();
         for (int i = 0; i < mightDiff; i++) playerStats.IncreaseMight();
-        for (int i = 0; i < agilityDiff; i++) playerStats.IncreaseAgility();
+        for (int i = 0; i < mindDiff; i++) playerStats.IncreaseMind();
         for (int i = 0; i < defenseDiff; i++) playerStats.IncreaseDefense();
         for (int i = 0; i < luckDiff; i++) playerStats.IncreaseLuck();
         
