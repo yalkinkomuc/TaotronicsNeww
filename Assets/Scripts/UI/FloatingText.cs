@@ -239,10 +239,31 @@ public class FloatingText : MonoBehaviour
             textMesh.color = color;
             originalColor = color;
             
-            // Mavi renk tonlarında ise büyü hasarı olarak işaretle
-            if (color.b > 0.6f && color.b > color.r && color.b > color.g)
+            // Büyü/elemental hasar renk kontrolü
+            // Earth damage (green)
+            if (color.g > 0.5f && color.g > color.r * 1.5f && color.g > color.b * 1.5f)
             {
                 isMagicDamage = true;
+            }
+            // Fire damage (red/orange)
+            else if (color.r > 0.7f && color.r > color.g * 1.5f && color.r > color.b * 1.5f)
+            {
+                isMagicDamage = true;
+            }
+            // Ice damage (blue/cyan)
+            else if (color.b > 0.6f && color.b > color.r * 1.2f)
+            {
+                isMagicDamage = true;
+            }
+            // Void damage (purple)
+            else if (color.r > 0.5f && color.b > 0.5f && color.g < 0.3f)
+            {
+                isMagicDamage = true;
+            }
+            // Diğer renkler fiziksel hasar olarak kabul edilir
+            else
+            {
+                isMagicDamage = false;
             }
         }
     }
