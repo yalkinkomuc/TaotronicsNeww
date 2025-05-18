@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EarthPush : MonoBehaviour
 {
@@ -15,8 +16,14 @@ public class EarthPush : MonoBehaviour
     [Header("Visual Settings")]
     [SerializeField] private Color damageTextColor = new Color(0.2f, 0.8f, 0.2f); // Green color for earth damage
     
+    [Header("Knockback Settings")]
+    [SerializeField] private string[] ignoreKnockbackTags = { "Boss", "HeavyEnemy" }; // Enemy tags that ignore knockback
+    
     private bool isDamageActive;
     private Animator animator;
+    
+    // Track which enemies have already been hit by this spell
+    private HashSet<int> hitEnemies = new HashSet<int>();
     
     private void Awake()
     {
@@ -64,18 +71,28 @@ public class EarthPush : MonoBehaviour
         float boxAngle = transform.eulerAngles.z; // Use Z rotation
         
         // Find all enemies in the damage box
-        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(
             boxPosition, 
             boxSize, 
             boxAngle, 
             enemyLayer);
         
-        foreach (Collider2D enemyCollider in hitEnemies)
+        foreach (Collider2D enemyCollider in hitColliders)
         {
-            // Get the enemy component and apply earth damage
+            // Get the enemy component
             Enemy enemy = enemyCollider.GetComponent<Enemy>();
             if (enemy != null)
             {
+                // Get unique ID for this enemy
+                int enemyID = enemy.gameObject.GetInstanceID();
+                
+                // Skip if this enemy has already been hit
+                if (hitEnemies.Contains(enemyID))
+                    continue;
+                    
+                // Add this enemy to the hit list
+                hitEnemies.Add(enemyID);
+                
                 // Calculate knockback direction (away from spell origin)
                 Vector2 knockbackDirection = (enemyCollider.transform.position - transform.position).normalized;
                 Vector2 finalKnockback = new Vector2(
@@ -90,8 +107,12 @@ public class EarthPush : MonoBehaviour
                 // Display Earth damage text in green
                 ShowEarthDamageText(damage, enemy.transform.position);
                 
-                // Then apply the knockback using the HitKnockback coroutine
-                enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
+                // Check if this enemy should ignore knockback
+                if (!ShouldIgnoreKnockback(enemy.gameObject))
+                {
+                    // Then apply the knockback using the HitKnockback coroutine
+                    enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
+                }
                 
                 // Apply visual hit effect
                 enemy.entityFX.StartCoroutine("HitFX");
@@ -101,6 +122,16 @@ public class EarthPush : MonoBehaviour
             EnemyStats enemyStats = enemyCollider.GetComponent<EnemyStats>();
             if (enemyStats != null && enemy == null)
             {
+                // Get unique ID for this object
+                int enemyID = enemyStats.gameObject.GetInstanceID();
+                
+                // Skip if this object has already been hit
+                if (hitEnemies.Contains(enemyID))
+                    continue;
+                    
+                // Add this object to the hit list
+                hitEnemies.Add(enemyID);
+                
                 enemyStats.TakeDamage(damage, CharacterStats.DamageType.Earth);
                 
                 // Display Earth damage text in green
@@ -129,6 +160,16 @@ public class EarthPush : MonoBehaviour
         Enemy enemy = other.GetComponent<Enemy>();
         if (enemy != null)
         {
+            // Get unique ID for this enemy
+            int enemyID = enemy.gameObject.GetInstanceID();
+                
+            // Skip if this enemy has already been hit
+            if (hitEnemies.Contains(enemyID))
+                return;
+                
+            // Add this enemy to the hit list
+            hitEnemies.Add(enemyID);
+            
             // Calculate knockback direction (away from spell origin)
             Vector2 knockbackDirection = (other.transform.position - transform.position).normalized;
             Vector2 finalKnockback = new Vector2(
@@ -143,12 +184,32 @@ public class EarthPush : MonoBehaviour
             // Display Earth damage text in green
             ShowEarthDamageText(damage, enemy.transform.position);
             
-            // Then apply the knockback using the HitKnockback coroutine
-            enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
+            // Check if this enemy should ignore knockback
+            if (!ShouldIgnoreKnockback(enemy.gameObject))
+            {
+                // Then apply the knockback using the HitKnockback coroutine
+                enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
+            }
             
             // Apply visual hit effect
             enemy.entityFX.StartCoroutine("HitFX");
         }
+    }
+    
+    // Helper method to check if an enemy should ignore knockback
+    private bool ShouldIgnoreKnockback(GameObject enemy)
+    {
+        if (enemy == null) return false;
+        
+        // Check if the enemy's tag is in the ignore list
+        string enemyTag = enemy.tag;
+        foreach (string ignoreTag in ignoreKnockbackTags)
+        {
+            if (enemyTag == ignoreTag)
+                return true;
+        }
+        
+        return false;
     }
     
     private void OnDrawGizmosSelected()
