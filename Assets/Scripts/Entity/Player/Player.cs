@@ -376,28 +376,64 @@ public class Player : Entity
     {
         if (!Application.isPlaying || capsuleCollider == null) return;
 
+        // Ground Check Gizmos
         Vector2 boxCenter = (Vector2)transform.position + 
-                            new Vector2(0, -capsuleCollider.size.y / 2);
+                          new Vector2(0, -capsuleCollider.size.y / 2);
         
-        // Ana box
-        Gizmos.color = IsGroundDetected() ? Color.green : Color.red;
+        // Ana box gizmosu
+        bool isGrounded = Application.isPlaying ? IsGroundDetected() : false;
+        Gizmos.color = isGrounded ? new Color(0, 1f, 0, 0.8f) : new Color(1f, 0, 0, 0.8f);
+        Gizmos.DrawCube(boxCenter, new Vector3(groundCheckWidth, groundCheckHeight, 0.05f));
+        
+        // BoxCast için outline
+        Gizmos.color = isGrounded ? new Color(0, 1f, 0, 1f) : new Color(1f, 0, 0, 1f);
         Gizmos.DrawWireCube(boxCenter, new Vector3(groundCheckWidth, groundCheckHeight, 0));
         
+        // Çoklu ray check noktaları
+        Vector2 leftStart = boxCenter + new Vector2(-groundCheckWidth/2, 0);
+        Vector2 rightStart = boxCenter + new Vector2(groundCheckWidth/2, 0);
         
-        Gizmos.DrawWireCube(attackCheck.position,attackSize);
+        // Tüm raycast noktaları
+        Vector2[] rayPoints = new Vector2[]
+        {
+            leftStart, // Sol dış
+            leftStart + Vector2.right * sideRaySpacing, // Sol iç
+            boxCenter, // Merkez
+            rightStart + Vector2.left * sideRaySpacing, // Sağ iç
+            rightStart // Sağ dış
+        };
         
-        // Kenar raycast'leri
-        Vector2 leftPoint = boxCenter + new Vector2(-groundCheckWidth/2, 0);
-        Vector2 rightPoint = boxCenter + new Vector2(groundCheckWidth/2, 0);
+        // Her ray için
+        foreach (Vector2 point in rayPoints)
+        {
+            // Ray başlangıç noktası
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(point, 0.03f);
+            
+            // Ray çizgisi
+            Gizmos.color = Color.cyan;
+            Vector2 rayEnd = point + Vector2.down * (groundCheckExtraHeight + groundCheckHeight);
+            Gizmos.DrawLine(point, rayEnd);
+            
+            // Ray bitiş noktası
+            Gizmos.color = new Color(1f, 0.5f, 0, 1f); // Turuncu
+            Gizmos.DrawSphere(rayEnd, 0.02f);
+        }
         
-        Gizmos.DrawLine(leftPoint, leftPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
-        Gizmos.DrawLine(rightPoint, rightPoint + Vector2.down * (groundCheckExtraHeight + groundCheckHeight));
+        // Extra BoxCast gösterimi (merkez box)
+        Gizmos.color = new Color(0, 0.8f, 0.8f, 0.5f);
+        Vector2 boxCastEnd = boxCenter + Vector2.down * groundCheckExtraHeight;
+        Gizmos.DrawCube(boxCastEnd, new Vector3(groundCheckWidth * 0.8f, groundCheckHeight, 0.05f));
+        
+        // Saldırı kutusu
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(attackCheck.position, attackSize);
 
-        // Parry yarıçapını her zaman göster
+        // Parry yarıçapını göster
         Gizmos.color = new Color(0, 0.5f, 1f, 0.3f); // Daha rahat görünür mavi renk
         Gizmos.DrawWireSphere(transform.position, parryRadius);
         
-        if (stateMachine != null)
+        if (stateMachine != null && stateMachine.currentState == parryState)
         {
             // Parry durumundayken daha belirgin göster
             Gizmos.color = new Color(0, 0.5f, 1f, 0.8f);
