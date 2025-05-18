@@ -39,11 +39,7 @@ public class Dummy : MonoBehaviour
     
     private void Update()
     {
-        // Editor testi - F tuşuna basılınca hasar testi başlat
-        if (Input.GetKeyDown(KeyCode.F) && !testRunning)
-        {
-            ShowDamageTest();
-        }
+       
     }
     
     // Test için metni oynatma metodu - Unite Editörü için
@@ -70,11 +66,7 @@ public class Dummy : MonoBehaviour
                     break;
             }
         }
-        else if (!testRunning)
-        {
-            // Test çalışmıyorsa, test fonksiyonunu çağır
-            ShowDamageTest();
-        }
+       
     }
 
     /// <summary>
@@ -163,54 +155,7 @@ public class Dummy : MonoBehaviour
         PlayRandomHit();
     }
     
-    /// <summary>
-    /// Test için farklı boyutlarda hasar gösterimleri
-    /// </summary>
-    public void ShowDamageTest()
-    {
-        if (!testRunning)
-        {
-            // Farklı boyutlarda hasarlar göster
-            StartCoroutine(DamageTestRoutine());
-        }
-    }
     
-    private IEnumerator DamageTestRoutine()
-    {
-        testRunning = true;
-        
-        Debug.Log("======= HASAR TEST BAŞLIYOR =======");
-        
-        // Kısa bir bekleme ile başla
-        yield return new WaitForSeconds(0.5f);
-        
-        Debug.Log("1. İlk Kombo Vuruşu (SARI)");
-        TakeDamage(testFirstComboDamage, 0);
-        
-        yield return new WaitForSeconds(1.2f);
-        
-        Debug.Log("2. İkinci Kombo Vuruşu (TURUNCU)");
-        TakeDamage(testSecondComboDamage, 1);
-        
-        yield return new WaitForSeconds(1.2f);
-        
-        Debug.Log("3. Üçüncü Kombo Vuruşu (KIRMIZI)");
-        TakeDamage(testThirdComboDamage, 2);
-        
-        yield return new WaitForSeconds(1.2f);
-        
-        Debug.Log("4. Büyü Hasarı (MAVİ)");
-        TakeMagicDamage(testMagicDamage);
-        
-        yield return new WaitForSeconds(1.0f);
-        Debug.Log("======= HASAR TEST TAMAMLANDI =======");
-        
-        testRunning = false;
-    }
-    
-    /// <summary>
-    /// Üst üste vuruş sayacını belirli bir süre sonra sıfırlar
-    /// </summary>
     private IEnumerator ResetHitCounterAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);

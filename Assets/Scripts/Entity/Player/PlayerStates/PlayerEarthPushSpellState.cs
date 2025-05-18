@@ -25,7 +25,7 @@ public class PlayerEarthPushSpellState : PlayerState
             return;
         }
         
-        // Consume mana
+        // Consume mana - cooldown is managed in the Player class
         player.UseMana(player.earthPushManaCost);
     }
 

@@ -145,6 +145,8 @@ public class Player : Entity
     [Header("Earth Spell Settings")]
     public GameObject earthPushPrefab;
     public Transform earthPushSpawnPoint;
+    [SerializeField] private float earthPushCooldown = 3f; // 3 saniye cooldown
+    private float earthPushCooldownTimer;
 
     [Header("Checkpoint")]
     private Vector2 lastCheckpointPosition;
@@ -254,6 +256,12 @@ public class Player : Entity
         if (boomerangCooldownTimer > 0)
         {
             boomerangCooldownTimer -= Time.deltaTime;
+        }
+        
+        // Earth Push cooldown'unu güncelle
+        if (earthPushCooldownTimer > 0)
+        {
+            earthPushCooldownTimer -= Time.deltaTime;
         }
         
         // Parry cooldown'unu güncelle
@@ -549,6 +557,12 @@ public class Player : Entity
         return boomerangCooldownTimer <= 0f && isBoomerangActive;
     }
     
+    public bool CanUseEarthPush()
+    {
+        // Earth Push cooldown kontrolü
+        return earthPushCooldownTimer <= 0f && HasEnoughMana(earthPushManaCost);
+    }
+    
     public void StartBoomerangKnockbackCoroutine()
     {
         StartCoroutine(HitKnockback(boomerangCatchForce));
@@ -829,9 +843,10 @@ public class Player : Entity
             StartFireSpell();
         }
         // Earth Push kontrolü
-        else if (playerInput.earthPushInput && HasEnoughMana(earthPushManaCost))
+        else if (playerInput.earthPushInput && CanUseEarthPush())
         {
             stateMachine.ChangeState(earthPushState);
+            earthPushCooldownTimer = earthPushCooldown;
         }
         else if (!playerInput.spell2Input && isChargingFire)
         {
