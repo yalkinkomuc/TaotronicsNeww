@@ -17,16 +17,36 @@ public class PlayerEarthPushSpellState : PlayerState
         // Reset state variables
         isAnimationFinished = false;
         
-        // Check if player has enough mana
-        if (!player.HasEnoughMana(player.earthPushManaCost))
+        // SkillManager üzerinden mana kontrolü
+        if (SkillManager.Instance != null)
         {
-            Debug.Log($"Not enough mana for Earth Push! Required: {player.earthPushManaCost}, Current: {player.stats.currentMana}");
-            stateMachine.ChangeState(player.idleState);
-            return;
+            float manaCost = SkillManager.Instance.GetSkillManaCost(SkillType.EarthPush);
+            
+            // Yeterli mana yoksa state'i değiştir
+            if (player.stats.currentMana < manaCost)
+            {
+                Debug.Log($"Not enough mana for Earth Push! Required: {manaCost}, Current: {player.stats.currentMana}");
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+            
+            // Manayı kullan
+            player.UseMana(manaCost);
         }
-        
-        // Consume mana - cooldown is managed in the Player class
-        player.UseMana(player.earthPushManaCost);
+        else
+        {
+            // Eski yöntem - SkillManager yoksa
+            // Check if player has enough mana
+            if (!player.HasEnoughMana(player.earthPushManaCost))
+            {
+                Debug.Log($"Not enough mana for Earth Push! Required: {player.earthPushManaCost}, Current: {player.stats.currentMana}");
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+            
+            // Consume mana - cooldown is managed in the Player class
+            player.UseMana(player.earthPushManaCost);
+        }
     }
 
     public override void Update()

@@ -2,9 +2,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+public enum SkillType
+{
+    None,
+    IceShard,
+    EarthPush,
+    FireSpell,
+    VoidSkill
+}
+
+[System.Serializable]
+public class SkillInfo
+{
+    public string skillID;
+    public SkillType skillType;
+    public string skillName;
+    public float baseCooldown = 5f;
+    public float cooldownTimer = 0f;
+    public float manaCost = 10f;
+    public bool isUnlocked = false;
+    public GameObject skillPrefab;
+    
+    public bool IsReady(float currentMana)
+    {
+        return cooldownTimer <= 0f && currentMana >= manaCost && isUnlocked;
+    }
+}
+
 public class SkillManager : MonoBehaviour
 {
     public static SkillManager Instance { get; private set; }
+    
+    // Beceri listesi
+    [SerializeField] private List<SkillInfo> skills = new List<SkillInfo>();
+    
+    // Beceri verilerine hızlı erişim için
+    private Dictionary<SkillType, SkillInfo> skillDict = new Dictionary<SkillType, SkillInfo>();
+    private Dictionary<string, SkillInfo> skillIdDict = new Dictionary<string, SkillInfo>();
+    
+    // Cooldown azaltma
+    [Range(0f, 80f)]
+    [SerializeField] private float globalCooldownReduction = 0f;
     
     // Mevcut shard sayısı
     private int currentShards = 0;
@@ -22,12 +60,96 @@ public class SkillManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Dictionary'leri doldur
+            InitializeSkillDictionaries();
+            
+            // Kaydedilmiş verileri yükle
             LoadSkillData();
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+    
+    private void InitializeSkillDictionaries()
+    {
+        skillDict.Clear();
+        skillIdDict.Clear();
+        
+        // Varsayılan becerileri ekle
+        if (skills.Count == 0)
+        {
+            AddDefaultSkills();
+        }
+        
+        // Dict'lere doldur
+        foreach (var skill in skills)
+        {
+            if (skill.skillType != SkillType.None && !skillDict.ContainsKey(skill.skillType))
+            {
+                skillDict.Add(skill.skillType, skill);
+            }
+            
+            if (!string.IsNullOrEmpty(skill.skillID) && !skillIdDict.ContainsKey(skill.skillID))
+            {
+                skillIdDict.Add(skill.skillID, skill);
+            }
+        }
+    }
+    
+    private void AddDefaultSkills()
+    {
+        // Earth Push becerisi
+        skills.Add(new SkillInfo
+        {
+            skillID = "earth_push",
+            skillType = SkillType.EarthPush,
+            skillName = "Earth Push",
+            baseCooldown = 3f,
+            manaCost = 25f,
+            isUnlocked = true
+        });
+        
+        // Ice Shard becerisi
+        skills.Add(new SkillInfo
+        {
+            skillID = "ice_shard",
+            skillType = SkillType.IceShard,
+            skillName = "Ice Shard",
+            baseCooldown = 5f,
+            manaCost = 20f,
+            isUnlocked = true
+        });
+        
+        // Fire Spell becerisi
+        skills.Add(new SkillInfo
+        {
+            skillID = "fire_spell",
+            skillType = SkillType.FireSpell,
+            skillName = "Fire Spell",
+            baseCooldown = 7f,
+            manaCost = 5f,
+            isUnlocked = true
+        });
+        
+        // Void Skill becerisi
+        skills.Add(new SkillInfo
+        {
+            skillID = "void_skill",
+            skillType = SkillType.VoidSkill,
+            skillName = "Void Disappear",
+            baseCooldown = 15f,
+            manaCost = 40f,
+            isUnlocked = true
+        });
+    }
+    
+    private void Update()
+    {
+        // Tüm cooldown'ları güncelle
+        UpdateAllCooldowns();
     }
     
     private void OnDisable()
@@ -41,6 +163,94 @@ public class SkillManager : MonoBehaviour
         // Oyun kapatılırken skill verilerini kesin olarak kaydet
         SaveSkillData();
         Debug.Log("Oyun kapatılıyor, skill verileri kaydedildi!");
+    }
+    
+    private void UpdateAllCooldowns()
+    {
+        foreach (var skill in skills)
+        {
+            if (skill.cooldownTimer > 0)
+            {
+                skill.cooldownTimer -= Time.deltaTime;
+                if (skill.cooldownTimer < 0)
+                {
+                    skill.cooldownTimer = 0;
+                }
+            }
+        }
+    }
+    
+    // Beceri kullanma işlemi
+    public void UseSkill(SkillType skillType)
+    {
+        if (skillDict.TryGetValue(skillType, out SkillInfo skill))
+        {
+            // Cooldown'a etkili azaltma uygula
+            float effectiveCooldown = skill.baseCooldown * (1f - globalCooldownReduction / 100f);
+            skill.cooldownTimer = effectiveCooldown;
+        }
+    }
+    
+    // Beceri hazır mı kontrolü (cooldown + mana + unlock)
+    public bool IsSkillReady(SkillType skillType, float currentMana)
+    {
+        if (skillDict.TryGetValue(skillType, out SkillInfo skill))
+        {
+            return skill.IsReady(currentMana);
+        }
+        return false;
+    }
+    
+    // Beceri mana maliyeti
+    public float GetSkillManaCost(SkillType skillType)
+    {
+        if (skillDict.TryGetValue(skillType, out SkillInfo skill))
+        {
+            return skill.manaCost;
+        }
+        return 0f;
+    }
+    
+    // Beceri cooldown süresi
+    public float GetSkillCooldown(SkillType skillType)
+    {
+        if (skillDict.TryGetValue(skillType, out SkillInfo skill))
+        {
+            return skill.cooldownTimer;
+        }
+        return 0f;
+    }
+    
+    // Beceri açık mı kontrolü (ID ile)
+    public bool IsSkillUnlocked(string skillID)
+    {
+        // Önce dictionary'de kontrol et
+        if (skillIdDict.TryGetValue(skillID, out SkillInfo skill))
+        {
+            return skill.isUnlocked || unlockedSkills.Contains(skillID);
+        }
+        
+        // Dictionary'de yoksa HashSet'te kontrol et
+        return unlockedSkills.Contains(skillID);
+    }
+    
+    // Beceriyi aç
+    public bool UnlockSkill(string skillID, int shardCost)
+    {
+        if (UseShards(shardCost))
+        {
+            unlockedSkills.Add(skillID);
+            
+            // Dictionary'deki skill'i de güncelle
+            if (skillIdDict.TryGetValue(skillID, out SkillInfo skill))
+            {
+                skill.isUnlocked = true;
+            }
+            
+            SaveSkillData();
+            return true;
+        }
+        return false;
     }
     
     // Shard sayısını al
@@ -68,25 +278,7 @@ public class SkillManager : MonoBehaviour
         return false;
     }
     
-    // Beceri açıldı mı kontrol et
-    public bool IsSkillUnlocked(string skillName)
-    {
-        return unlockedSkills.Contains(skillName);
-    }
-    
-    // Beceriyi aç
-    public bool UnlockSkill(string skillName, int shardCost)
-    {
-        if (UseShards(shardCost))
-        {
-            unlockedSkills.Add(skillName);
-            SaveSkillData();
-            return true;
-        }
-        return false;
-    }
-    
-    // Beceri veri kaydı
+    // Skill verilerini kaydet
     private void SaveSkillData()
     {
         // Shard sayısını kaydet
@@ -99,7 +291,7 @@ public class SkillManager : MonoBehaviour
         PlayerPrefs.Save();
     }
     
-    // Beceri verilerini yükle
+    // Skill verilerini yükle
     private void LoadSkillData()
     {
         // Shard sayısını yükle
@@ -112,6 +304,15 @@ public class SkillManager : MonoBehaviour
             SerializableStringArray loadedSkills = JsonUtility.FromJson<SerializableStringArray>(skillsJson);
             
             unlockedSkills = new HashSet<string>(loadedSkills.items);
+            
+            // Dictionary'deki skill'leri de güncelle
+            foreach (string skillID in unlockedSkills)
+            {
+                if (skillIdDict.TryGetValue(skillID, out SkillInfo skill))
+                {
+                    skill.isUnlocked = true;
+                }
+            }
         }
     }
     
@@ -120,6 +321,11 @@ public class SkillManager : MonoBehaviour
     {
         unlockedSkills.Clear();
         SaveSkillData();
+        
+        foreach (var skill in skills)
+        {
+            skill.cooldownTimer = 0f;
+        }
     }
     
     // String dizisini serileştirmek için yardımcı sınıf (ItemCollectionManager'daki gibi)

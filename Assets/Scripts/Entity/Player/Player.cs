@@ -126,6 +126,8 @@ public class Player : Entity
     [SerializeField] private GameObject iceShardPrefab;
     [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
+    [SerializeField] private float iceShardCooldown = 5f; // 5 saniye cooldown
+    private float iceShardCooldownTimer;
     //[SerializeField] private int shardCount = 3;
     
     [Header("Mana Costs")]
@@ -262,6 +264,12 @@ public class Player : Entity
         if (earthPushCooldownTimer > 0)
         {
             earthPushCooldownTimer -= Time.deltaTime;
+        }
+        
+        // Ice Shard cooldown'unu güncelle
+        if (iceShardCooldownTimer > 0)
+        {
+            iceShardCooldownTimer -= Time.deltaTime;
         }
         
         // Parry cooldown'unu güncelle
@@ -559,8 +567,11 @@ public class Player : Entity
     
     public bool CanUseEarthPush()
     {
-        // Earth Push cooldown kontrolü
-        return earthPushCooldownTimer <= 0f && HasEnoughMana(earthPushManaCost);
+        if (SkillManager.Instance == null)
+            return earthPushCooldownTimer <= 0f && HasEnoughMana(earthPushManaCost);
+        
+        // SkillManager üzerinden kontrol et
+        return SkillManager.Instance.IsSkillReady(SkillType.EarthPush, stats.currentMana);
     }
     
     public void StartBoomerangKnockbackCoroutine()
@@ -827,28 +838,77 @@ public class Player : Entity
         if (!CanCastSpells() || IsGroundDetected() == false)
             return;
 
-        // Spell1 kontrolü
-        if (playerInput.spell1Input && HasEnoughMana(spell1ManaCost))
+        // SkillManager kontrolü yaparak yetenek kullanımı
+        if (SkillManager.Instance != null)
         {
-            // Geçerli buz parçası pozisyonu var mı kontrol et
-            if (!CanCreateIceShards())
-                return; // Pozisyon yoksa direkt çık
-                
-            // Pozisyon varsa state'e geç
-            stateMachine.ChangeState(spell1State);
+            // Ice Shard kontrolü
+            if (playerInput.spell1Input && 
+                SkillManager.Instance.IsSkillReady(SkillType.IceShard, stats.currentMana) && 
+                CanCreateIceShards())
+            {
+                // Mana kullanımı PlayerSpell1State içinde yapılacak
+                stateMachine.ChangeState(spell1State);
+                SkillManager.Instance.UseSkill(SkillType.IceShard);
+                return;
+            }
+            
+            // Fire Spell kontrolü
+            else if (playerInput.spell2Input && 
+                    SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
+            {
+                StartFireSpell();
+                SkillManager.Instance.UseSkill(SkillType.FireSpell);
+                return;
+            }
+            
+            // Earth Push kontrolü
+            else if (playerInput.earthPushInput && 
+                    SkillManager.Instance.IsSkillReady(SkillType.EarthPush, stats.currentMana))
+            {
+                stateMachine.ChangeState(earthPushState);
+                SkillManager.Instance.UseSkill(SkillType.EarthPush);
+                return;
+            }
+            
+            // Void kontrolü
+            else if (playerInput.voidSkillInput && 
+                    SkillManager.Instance.IsSkillReady(SkillType.VoidSkill, stats.currentMana))
+            {
+                stateMachine.ChangeState(voidState);
+                SkillManager.Instance.UseSkill(SkillType.VoidSkill);
+                return;
+            }
         }
-        // Spell2 kontrolü
-        else if (playerInput.spell2Input && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
+        else
         {
-            StartFireSpell();
+            // Eski yöntem - SkillManager yoksa
+            // Spell1 kontrolü
+            if (playerInput.spell1Input && HasEnoughMana(spell1ManaCost))
+            {
+                // Geçerli buz parçası pozisyonu var mı kontrol et
+                if (!CanCreateIceShards())
+                    return; // Pozisyon yoksa direkt çık
+                    
+                // Pozisyon varsa state'e geç
+                stateMachine.ChangeState(spell1State);
+                // Ice Shard cooldown'unu başlat
+                iceShardCooldownTimer = iceShardCooldown;
+            }
+            // Spell2 kontrolü
+            else if (playerInput.spell2Input && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
+            {
+                StartFireSpell();
+            }
+            // Earth Push kontrolü
+            else if (playerInput.earthPushInput && CanUseEarthPush())
+            {
+                stateMachine.ChangeState(earthPushState);
+                earthPushCooldownTimer = earthPushCooldown;
+            }
         }
-        // Earth Push kontrolü
-        else if (playerInput.earthPushInput && CanUseEarthPush())
-        {
-            stateMachine.ChangeState(earthPushState);
-            earthPushCooldownTimer = earthPushCooldown;
-        }
-        else if (!playerInput.spell2Input && isChargingFire)
+        
+        // Fire spell durdurma kontrolü her iki yöntemde de yapılmalı
+        if (!playerInput.spell2Input && isChargingFire)
         {
             StopFireSpell();
         }
@@ -1240,10 +1300,12 @@ public class Player : Entity
     // Void becerisi için özel kontrol (beceri açık değilse kullanılamaz)
     public bool CanUseVoidSkill()
     {
-        // Void becerisi açık mı, mana yeterli mi kontrol et
-        return SkillManager.Instance != null && 
-               SkillManager.Instance.IsSkillUnlocked("void_skill") && 
-               HasEnoughMana(voidSkillManaCost);
+        if (SkillManager.Instance == null)
+            // Eski yöntem - yerel kontrol
+            return HasEnoughMana(voidSkillManaCost);
+        
+        // SkillManager üzerinden kontrol et
+        return SkillManager.Instance.IsSkillReady(SkillType.VoidSkill, stats.currentMana);
     }
     
     // XXX becerisi için özel kontrol (beceri açık değilse kullanılamaz)
@@ -1288,6 +1350,16 @@ public class Player : Entity
             // Yeterli mana ve beceri açıksa state'e geçiş yap
             stateMachine.ChangeState(voidState);
         }
+    }
+
+    public bool CanUseIceShard()
+    {
+        // Ice Shard cooldown kontrolü
+        if (SkillManager.Instance == null)
+            return iceShardCooldownTimer <= 0f && HasEnoughMana(spell1ManaCost) && CanCreateIceShards();
+        
+        // SkillManager üzerinden kontrol et
+        return SkillManager.Instance.IsSkillReady(SkillType.IceShard, stats.currentMana) && CanCreateIceShards();
     }
 }
 

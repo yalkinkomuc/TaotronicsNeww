@@ -15,12 +15,34 @@ public class PlayerSpell1State : PlayerState
     {
         base.Enter();
         
-        // Mana kullanımı kontrolü
-        if (!player.HasEnoughMana(player.spell1ManaCost))
+        // SkillManager üzerinden mana kontrolü
+        if (SkillManager.Instance != null)
         {
-            Debug.Log($"Not enough mana for Spell1! Required: {player.spell1ManaCost}, Current: {player.stats.currentMana}");
-            stateMachine.ChangeState(player.idleState);
-            return;
+            float manaCost = SkillManager.Instance.GetSkillManaCost(SkillType.IceShard);
+            
+            // Yeterli mana yoksa state'i değiştir
+            if (player.stats.currentMana < manaCost)
+            {
+                Debug.Log($"Not enough mana for Ice Shard! Required: {manaCost}, Current: {player.stats.currentMana}");
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+            
+            // Manayı kullan
+            player.UseMana(manaCost);
+        }
+        else
+        {
+            // Eski yöntem - Mana kullanımı kontrolü
+            if (!player.HasEnoughMana(player.spell1ManaCost))
+            {
+                Debug.Log($"Not enough mana for Spell1! Required: {player.spell1ManaCost}, Current: {player.stats.currentMana}");
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+            
+            // Manayı kullan
+            player.UseMana(player.spell1ManaCost);
         }
         
         // Önce pozisyonları hesapla
@@ -34,9 +56,6 @@ public class PlayerSpell1State : PlayerState
             stateMachine.ChangeState(player.idleState);
             return;
         }
-        
-        // Geçerli pozisyon varsa, mana kullan
-        player.UseMana(player.spell1ManaCost);
     }
 
     private void CalculateSpawnPositions()

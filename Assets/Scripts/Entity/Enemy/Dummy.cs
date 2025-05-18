@@ -20,11 +20,7 @@ public class Dummy : MonoBehaviour
     [SerializeField] private float testDamageMin = 5f; // Min test hasarı
     [SerializeField] private float testDamageMax = 50f; // Max test hasarı
     
-    [Header("Hasar Testi")]
-    [SerializeField] private float testFirstComboDamage = 10f; // İlk vuruş hasarı
-    [SerializeField] private float testSecondComboDamage = 12f; // İkinci vuruş hasarı
-    [SerializeField] private float testThirdComboDamage = 15f; // Üçüncü vuruş hasarı
-    [SerializeField] private float testMagicDamage = 40f; // Büyü hasarı (Mavi)
+   
     
     private float lastHitTime = -1f;
     private int hitCounter = 0; // Üst üste vuruş sayacı
