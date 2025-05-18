@@ -70,6 +70,23 @@ public class EarthPush : MonoBehaviour
         Vector2 boxSize = damageCollider.size * transform.localScale; // Adjust for scale
         float boxAngle = transform.eulerAngles.z; // Use Z rotation
         
+        // Get player reference for Mind attribute scaling
+        Player player = PlayerManager.instance?.player;
+        float finalDamage = damage;
+        
+        // Scale damage with player's Mind attribute if available
+        if (player != null && player.stats != null)
+        {
+            float elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
+            finalDamage = damage * elementalMultiplier;
+            
+            // Debug mesajı (sadece geliştirme sırasında)
+            if (Debug.isDebugBuild)
+            {
+                Debug.Log($"Earth Push: Base Damage={damage}, Mind Multiplier={elementalMultiplier:F2}, Final Damage={finalDamage:F1}");
+            }
+        }
+        
         // Find all enemies in the damage box
         Collider2D[] hitColliders = Physics2D.OverlapBoxAll(
             boxPosition, 
@@ -102,10 +119,10 @@ public class EarthPush : MonoBehaviour
                 
                 // Apply earth damage with knockback
                 // First apply the damage directly to the enemy stats
-                enemy.stats.TakeDamage(damage, CharacterStats.DamageType.Earth);
+                enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
                 
                 // Display Earth damage text in green
-                ShowEarthDamageText(damage, enemy.transform.position);
+                ShowEarthDamageText(finalDamage, enemy.transform.position);
                 
                 // Check if this enemy should ignore knockback
                 if (!ShouldIgnoreKnockback(enemy.gameObject))
@@ -132,10 +149,10 @@ public class EarthPush : MonoBehaviour
                 // Add this object to the hit list
                 hitEnemies.Add(enemyID);
                 
-                enemyStats.TakeDamage(damage, CharacterStats.DamageType.Earth);
+                enemyStats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
                 
                 // Display Earth damage text in green
-                ShowEarthDamageText(damage, enemyCollider.transform.position);
+                ShowEarthDamageText(finalDamage, enemyCollider.transform.position);
             }
         }
     }
@@ -156,6 +173,17 @@ public class EarthPush : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!isDamageActive) return;
+        
+        // Get player reference for Mind attribute scaling
+        Player player = PlayerManager.instance?.player;
+        float finalDamage = damage;
+        
+        // Scale damage with player's Mind attribute if available
+        if (player != null && player.stats != null)
+        {
+            float elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
+            finalDamage = damage * elementalMultiplier;
+        }
         
         Enemy enemy = other.GetComponent<Enemy>();
         if (enemy != null)
@@ -179,10 +207,10 @@ public class EarthPush : MonoBehaviour
             
             // Apply earth damage with knockback
             // First apply the damage directly to the enemy stats
-            enemy.stats.TakeDamage(damage, CharacterStats.DamageType.Earth);
+            enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
             
             // Display Earth damage text in green
-            ShowEarthDamageText(damage, enemy.transform.position);
+            ShowEarthDamageText(finalDamage, enemy.transform.position);
             
             // Check if this enemy should ignore knockback
             if (!ShouldIgnoreKnockback(enemy.gameObject))
