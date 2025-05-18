@@ -125,12 +125,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 20
-  knockbackForce: {x: 5, y: 2}
-  damageRadius: 1.88
+  knockbackForce: {x: 15, y: 4}
   damageCollider: {fileID: 8157872550203761763}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
+  damageTextColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
 --- !u!61 &8157872550203761763
 BoxCollider2D:
   m_ObjectHideFlags: 0

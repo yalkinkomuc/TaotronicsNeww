@@ -6,11 +6,14 @@ public class EarthPush : MonoBehaviour
     [Header("Damage Settings")]
     [SerializeField] private float damage = 20f;
     [SerializeField] private Vector2 knockbackForce = new Vector2(5f, 2f);
-    [SerializeField] private float damageRadius = 2f;
+     
     
     [Header("References")]
-    [SerializeField] private Collider2D damageCollider;
+    [SerializeField] private BoxCollider2D damageCollider;
     [SerializeField] private LayerMask enemyLayer;
+    
+    [Header("Visual Settings")]
+    [SerializeField] private Color damageTextColor = new Color(0.2f, 0.8f, 0.2f); // Green color for earth damage
     
     private bool isDamageActive;
     private Animator animator;
@@ -19,6 +22,10 @@ public class EarthPush : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         
+        // Get box collider if not assigned
+        if (damageCollider == null)
+            damageCollider = GetComponent<BoxCollider2D>();
+            
         // Ensure collider is initially disabled
         if (damageCollider != null)
             damageCollider.enabled = false;
@@ -34,7 +41,7 @@ public class EarthPush : MonoBehaviour
         if (damageCollider != null)
             damageCollider.enabled = true;
             
-        // Alternative approach using Physics2D.OverlapCircle
+        // Damage enemies using the collider's size
         DealDamageInArea();
     }
     
@@ -49,8 +56,19 @@ public class EarthPush : MonoBehaviour
     
     private void DealDamageInArea()
     {
-        // Find all enemies in the damage radius
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, damageRadius, enemyLayer);
+        if (damageCollider == null) return;
+        
+        // Calculate box position and size
+        Vector2 boxPosition = transform.position;
+        Vector2 boxSize = damageCollider.size * transform.localScale; // Adjust for scale
+        float boxAngle = transform.eulerAngles.z; // Use Z rotation
+        
+        // Find all enemies in the damage box
+        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(
+            boxPosition, 
+            boxSize, 
+            boxAngle, 
+            enemyLayer);
         
         foreach (Collider2D enemyCollider in hitEnemies)
         {
@@ -69,6 +87,9 @@ public class EarthPush : MonoBehaviour
                 // First apply the damage directly to the enemy stats
                 enemy.stats.TakeDamage(damage, CharacterStats.DamageType.Earth);
                 
+                // Display Earth damage text in green
+                ShowEarthDamageText(damage, enemy.transform.position);
+                
                 // Then apply the knockback using the HitKnockback coroutine
                 enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
                 
@@ -81,7 +102,23 @@ public class EarthPush : MonoBehaviour
             if (enemyStats != null && enemy == null)
             {
                 enemyStats.TakeDamage(damage, CharacterStats.DamageType.Earth);
+                
+                // Display Earth damage text in green
+                ShowEarthDamageText(damage, enemyCollider.transform.position);
             }
+        }
+    }
+    
+    private void ShowEarthDamageText(float damageAmount, Vector3 position)
+    {
+        // Show the damage text with Earth color (green)
+        if (FloatingTextManager.Instance != null)
+        {
+            // Option 1: Use custom text method if available
+            FloatingTextManager.Instance.ShowCustomText(
+                damageAmount.ToString("0"), // Round to nearest integer
+                position + Vector3.up * 1.2f, // Position above enemy
+                damageTextColor);
         }
     }
     
@@ -103,6 +140,9 @@ public class EarthPush : MonoBehaviour
             // First apply the damage directly to the enemy stats
             enemy.stats.TakeDamage(damage, CharacterStats.DamageType.Earth);
             
+            // Display Earth damage text in green
+            ShowEarthDamageText(damage, enemy.transform.position);
+            
             // Then apply the knockback using the HitKnockback coroutine
             enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
             
@@ -114,7 +154,21 @@ public class EarthPush : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(0.5f, 0.3f, 0.1f, 0.3f); // Brown color for earth
-        Gizmos.DrawWireSphere(transform.position, damageRadius);
+        
+        // Draw box gizmo if collider is available
+        if (damageCollider != null)
+        {
+            // Calculate box position and size
+            Vector3 boxPosition = transform.position;
+            Vector3 boxSize = damageCollider.size * transform.localScale;
+            
+            // Draw the box using current transform rotation
+            Matrix4x4 originalMatrix = Gizmos.matrix;
+            Gizmos.matrix = Matrix4x4.TRS(boxPosition, transform.rotation, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, boxSize);
+            Gizmos.matrix = originalMatrix;
+        }
+        
     }
     
     // Called by animation event to destroy the spell
