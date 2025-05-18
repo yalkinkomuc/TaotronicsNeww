@@ -16960,9 +16960,9 @@ MonoBehaviour:
   player: {fileID: 0}
   _vitality: 0
   _might: 0
-  _agility: 0
   _defense: 0
   _luck: 0
+  _mind: 0
   _maxAttributeLevel: 99
   _baseHealthValue: 100
   _baseDamageValue: 10
@@ -22668,6 +22668,7 @@ MonoBehaviour:
   speedValueText: {fileID: 118590980}
   defenseValueText: {fileID: 1347129755}
   critRateValueText: {fileID: 2135590165}
+  magicPowerValueText: {fileID: 118590980}
   pointsAvailableText: {fileID: 209826668}
   levelText: {fileID: 193391931}
 --- !u!4 &1936673014 stripped
