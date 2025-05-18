@@ -99,6 +99,7 @@ public class Player : Entity
     
     public PlayerSpell1State spell1State {get;private set;}
     public PlayerSpell2State spell2State {get;private set;}
+    public PlayerEarthPushSpellState earthPushState {get;private set;}
     
     public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
     public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
@@ -130,6 +131,7 @@ public class Player : Entity
     [Header("Mana Costs")]
     [SerializeField] public float spell1ManaCost = 20f;
     [SerializeField] public float spell2ManaDrainPerSecond = 5f; // Saniyede tüketilecek mana
+    [SerializeField] public float earthPushManaCost = 25f;
     [SerializeField] public float voidSkillManaCost = 40f;
 
     [Header("Void Skill Settings")]
@@ -140,7 +142,9 @@ public class Player : Entity
     public Transform fireSpellPoint;
     private bool isChargingFire = false;
 
-    
+    [Header("Earth Spell Settings")]
+    public GameObject earthPushPrefab;
+    public Transform earthPushSpawnPoint;
 
     [Header("Checkpoint")]
     private Vector2 lastCheckpointPosition;
@@ -313,6 +317,7 @@ public class Player : Entity
         spell2State = new PlayerSpell2State(this, stateMachine, "Spell2");
         voidState = new PlayerVoidState(this,stateMachine,"VoidDisappear");
         succesfulParryState = new PlayerSuccesfulParryState(this, stateMachine, "SuccesfulParry");
+        earthPushState = new PlayerEarthPushSpellState(this, stateMachine, "EarthPush");
     }
     
     private void AssignWeapons()
@@ -822,6 +827,11 @@ public class Player : Entity
         else if (playerInput.spell2Input && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
         {
             StartFireSpell();
+        }
+        // Earth Push kontrolü
+        else if (playerInput.earthPushInput && HasEnoughMana(earthPushManaCost))
+        {
+            stateMachine.ChangeState(earthPushState);
         }
         else if (!playerInput.spell2Input && isChargingFire)
         {

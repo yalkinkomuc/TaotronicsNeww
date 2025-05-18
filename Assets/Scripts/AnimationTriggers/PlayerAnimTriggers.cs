@@ -303,6 +303,60 @@ public class PlayerAnimTriggers : MonoBehaviour
       player.SpellOneTrigger();
    }
 
+   // Earth Push spell animation event trigger - called when player's foot hits the ground
+   private void EarthPushTrigger()
+   {
+      if (player.stateMachine.currentState is PlayerEarthPushSpellState && player.earthPushPrefab != null)
+      {
+         // Use custom spawn point if available, otherwise calculate based on player position
+         Vector3 spawnPosition;
+         Quaternion spawnRotation;
+         
+         if (player.earthPushSpawnPoint != null)
+         {
+            // Use the custom spawn point's position and rotation
+            spawnPosition = player.earthPushSpawnPoint.position;
+            spawnRotation = player.earthPushSpawnPoint.rotation;
+         }
+         else
+         {
+            // Fallback to calculated position
+            spawnPosition = player.transform.position;
+            spawnPosition.x += player.facingdir * 1.5f; // Spawn in front of player
+            spawnRotation = Quaternion.identity;
+         }
+         
+         // Create the earth push effect
+         GameObject earthPushObj = Instantiate(
+            player.earthPushPrefab, 
+            spawnPosition, 
+            spawnRotation);
+         
+         // Set the correct scale based on player facing direction
+         if (player.facingdir < 0 && player.earthPushSpawnPoint == null) // Only flip if using calculated position
+         {
+            earthPushObj.transform.localScale = new Vector3(
+               -Mathf.Abs(earthPushObj.transform.localScale.x),
+               earthPushObj.transform.localScale.y,
+               earthPushObj.transform.localScale.z);
+         }
+      }
+   }
+   
+   // Earth Push spell destruction animation event trigger
+   private void DestroyEarthPush()
+   {
+      // Find any active earth push objects and destroy them
+      EarthPush[] activeEarthPushes = FindObjectsOfType<EarthPush>();
+      foreach (EarthPush push in activeEarthPushes)
+      {
+         if (push != null)
+         {
+            push.DestroySpell();
+         }
+      }
+   }
+
    // Animation Event tarafından çağrılacak
    public void PauseSpell2Animation()
    {
