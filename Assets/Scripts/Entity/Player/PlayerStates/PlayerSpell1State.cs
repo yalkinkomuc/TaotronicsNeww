@@ -34,15 +34,15 @@ public class PlayerSpell1State : PlayerState
         else
         {
             // Eski yöntem - Mana kullanımı kontrolü
-            if (!player.HasEnoughMana(player.spell1ManaCost))
+            if (!player.HasEnoughMana(player.iceShardManaCost))
             {
-                Debug.Log($"Not enough mana for Spell1! Required: {player.spell1ManaCost}, Current: {player.stats.currentMana}");
+                Debug.Log($"Not enough mana for Spell1! Required: {player.iceShardManaCost}, Current: {player.stats.currentMana}");
                 stateMachine.ChangeState(player.idleState);
                 return;
             }
             
             // Manayı kullan
-            player.UseMana(player.spell1ManaCost);
+            player.UseMana(player.iceShardManaCost);
         }
         
         // Önce pozisyonları hesapla

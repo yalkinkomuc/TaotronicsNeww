@@ -44,7 +44,7 @@ public class PlayerSpell2State : PlayerState
         // Minimum şarj süresinden sonra mana tüketmeye başla
         if (currentChargeTime >= MIN_CHARGE_TIME && isSpellActive)
         {
-            float manaCost = player.spell2ManaDrainPerSecond * Time.deltaTime;
+            float manaCost = player.fireSpellManaDrainPerSecond * Time.deltaTime;
             // Mana kontrolü
             if (!player.HasEnoughMana(manaCost))
             {

@@ -122,20 +122,22 @@ public class Player : Entity
     [SerializeField] private float boomerangCooldown = 2f;
     private float boomerangCooldownTimer;
 
+    #region Spell Section
+
+    [Header("Mana Costs")]
+    [SerializeField] public float iceShardManaCost = 20f;
+    [SerializeField] public float fireSpellManaDrainPerSecond = 5f; // Saniyede tüketilecek mana
+    [SerializeField] public float earthPushManaCost = 25f;
+    [SerializeField] public float voidSkillManaCost = 40f;
+
     [Header("Ice Spell Settings")]
     [SerializeField] private GameObject iceShardPrefab;
     [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
-    [SerializeField] private float iceShardCooldown = 5f; // 5 saniye cooldown
+    private float iceShardCooldown = 5f; // 5 saniye cooldown
     private float iceShardCooldownTimer;
     //[SerializeField] private int shardCount = 3;
     
-    [Header("Mana Costs")]
-    [SerializeField] public float spell1ManaCost = 20f;
-    [SerializeField] public float spell2ManaDrainPerSecond = 5f; // Saniyede tüketilecek mana
-    [SerializeField] public float earthPushManaCost = 25f;
-    [SerializeField] public float voidSkillManaCost = 40f;
-
     [Header("Void Skill Settings")]
     [SerializeField] public GameObject voidSlashPrefab;
 
@@ -147,8 +149,15 @@ public class Player : Entity
     [Header("Earth Spell Settings")]
     public GameObject earthPushPrefab;
     public Transform earthPushSpawnPoint;
-    [SerializeField] private float earthPushCooldown = 3f; // 3 saniye cooldown
+    private float earthPushCooldown = 3f; // 3 saniye cooldown
     private float earthPushCooldownTimer;
+
+    #endregion
+    
+   
+    
+
+   
 
     [Header("Checkpoint")]
     private Vector2 lastCheckpointPosition;
@@ -883,7 +892,7 @@ public class Player : Entity
         {
             // Eski yöntem - SkillManager yoksa
             // Spell1 kontrolü
-            if (playerInput.spell1Input && HasEnoughMana(spell1ManaCost))
+            if (playerInput.spell1Input && HasEnoughMana(iceShardManaCost))
             {
                 // Geçerli buz parçası pozisyonu var mı kontrol et
                 if (!CanCreateIceShards())
@@ -895,7 +904,7 @@ public class Player : Entity
                 iceShardCooldownTimer = iceShardCooldown;
             }
             // Spell2 kontrolü
-            else if (playerInput.spell2Input && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
+            else if (playerInput.spell2Input && HasEnoughMana(fireSpellManaDrainPerSecond * Time.deltaTime))
             {
                 StartFireSpell();
             }
@@ -916,7 +925,7 @@ public class Player : Entity
 
     private void StartFireSpell()
     {
-        if (!isChargingFire && HasEnoughMana(spell2ManaDrainPerSecond * Time.deltaTime))
+        if (!isChargingFire && HasEnoughMana(fireSpellManaDrainPerSecond * Time.deltaTime))
         {
             isChargingFire = true;
             stateMachine.ChangeState(spell2State);
@@ -1356,7 +1365,7 @@ public class Player : Entity
     {
         // Ice Shard cooldown kontrolü
         if (SkillManager.Instance == null)
-            return iceShardCooldownTimer <= 0f && HasEnoughMana(spell1ManaCost) && CanCreateIceShards();
+            return iceShardCooldownTimer <= 0f && HasEnoughMana(iceShardManaCost) && CanCreateIceShards();
         
         // SkillManager üzerinden kontrol et
         return SkillManager.Instance.IsSkillReady(SkillType.IceShard, stats.currentMana) && CanCreateIceShards();
