@@ -7,6 +7,8 @@ public class PlayerVoidState : PlayerState
     private const float detectionRadius = 5f; // Void skill menzili
     private const int slashCount = 3; // Vuruş sayısı
     private const float slashInterval = 0.3f; // Vuruşlar arası süre
+    // Yeni değişken - void skill teleport mesafesi
+    private const float teleportDistance = 2.5f; // Düşmanın arkasına ışınlanma mesafesi
      // Kılıç efekti prefabı
 
     public PlayerVoidState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
@@ -148,10 +150,26 @@ public class PlayerVoidState : PlayerState
     {
         // Düşmanın baktığı yönün tam tersine oyuncuyu konumlandır
         Vector2 repositionDirection = new Vector2(-targetEnemy.facingdir, 0).normalized;
-        Vector3 newPosition = targetEnemy.transform.position + new Vector3(repositionDirection.x * 5f, 0, 0);
+        Vector3 newPosition = targetEnemy.transform.position + new Vector3(repositionDirection.x * teleportDistance, 0, 0);
         
-        // Player'ın Y pozisyonunu yerden yükselt
-        newPosition.y = player.groundCheck.position.y;
+        // Zemin kontrolü için yüksekten bir raycast at
+        RaycastHit2D hit = Physics2D.Raycast(
+            new Vector2(newPosition.x, newPosition.y + 5f), // Yeterince yüksekten başla
+            Vector2.down,
+            10f, // Zemin bulmak için yeterli mesafe
+            player.whatIsGround
+        );
+        
+        if (hit.collider != null)
+        {
+            // Zemin bulunduysa, zeminin biraz üstüne konumlandır
+            newPosition.y = hit.point.y + 0.2f; // 0.2 birim zeminin üstünde
+        }
+        else
+        {
+            // Zemin bulunamadıysa orijinal groundCheck'i kullan
+            newPosition.y = player.groundCheck.position.y;
+        }
         
         // Oyuncuyu yeni pozisyona taşı
         player.transform.position = newPosition;
