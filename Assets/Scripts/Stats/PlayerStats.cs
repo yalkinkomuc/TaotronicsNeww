@@ -63,23 +63,38 @@ public class PlayerStats : CharacterStats
     private float playerBaseMaxHealth;
     private float playerBaseMaxDamage;
 
+    [Header("Weapon Damage")]
+    public Stat boomerangDamage;
+
     protected override void Awake()
     {
         // Önce baz sınıfın Awake metodunu çağır
         base.Awake();
+        // Initialize boomerangDamage with 80% of base damage
+        boomerangDamage = new Stat(baseDamageValue * 0.8f);
     }
 
     protected override void Start()
     {
+        // Baz değerleri sakla
+        playerBaseMaxHealth = maxHealth.GetValue();
+        playerBaseMaxDamage = baseDamage.GetValue();
+        
+        // Önce kaydedilmiş verileri yükle
         LoadPlayerData();
-        base.Start();
-
-        // Panelde F'ye basılmış gibi statları ve bonusları uygula
+        
+        // Apply attribute bonuses before CharacterStats initialization
         ApplyAttributeBonuses();
-        UpdateLevelUI();
-        UpdateHealthBarUI();
-
+        
+        // Sonra CharacterStats'dan gelen işlemleri devam ettir
+        base.Start();
+        
         player = GetComponent<Player>();
+        
+        // UI'ı güncelle
+        UpdateLevelUI();
+        
+        // Ensure weapons are upgraded with saved values
         if (BlacksmithManager.Instance != null)
         {
             BlacksmithManager.Instance.ApplyWeaponUpgrades(this);
@@ -107,6 +122,7 @@ public class PlayerStats : CharacterStats
         // Reset any previous attribute bonuses
         maxHealth.RemoveAllModifiersOfType(StatModifierType.Attribute);
         baseDamage.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        boomerangDamage.RemoveAllModifiersOfType(StatModifierType.Attribute);
         maxMana.RemoveAllModifiersOfType(StatModifierType.Attribute);
         
         // Calculate vitality bonus (exponential growth)
@@ -118,15 +134,13 @@ public class PlayerStats : CharacterStats
         float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, _might) - 1;
         float damageBonus = _baseDamageValue * damageMultiplier;
         baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
+        boomerangDamage.AddModifier(damageBonus * 0.8f, StatModifierType.Attribute); // Apply 80% of the damage bonus to boomerang
         
-        // Azalan marjinal getiri ile defense (%50'ye kadar, kök fonksiyonu)
-        float maxReduction = 50f;
-        float reduction = maxReduction * Mathf.Sqrt(_defense / 99f);
-        base.defenseStat = reduction;
+        // Calculate defense stat (exponential growth)
+        float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, _defense) - 1;
         
         // Critical chance remains linear (1% per point)
         base.criticalChance = _luck * CRIT_CHANCE_PER_LUCK;
-        
         
         float mindMultiplier = Mathf.Pow(1 + SPEED_GROWTH, _mind) - 1;
         base.speedStat = _baseSpeedValue * (1 + mindMultiplier);
@@ -270,51 +284,37 @@ public class PlayerStats : CharacterStats
         
     }
     
-    // Save stat values to PlayerPrefs
-    private void SaveStatsData()
-    {
-        PlayerPrefs.SetInt("PlayerVitality", _vitality);
-        PlayerPrefs.SetInt("PlayerMight", _might);
-        PlayerPrefs.SetInt("PlayerDefense", _defense);
-        PlayerPrefs.SetInt("PlayerLuck", _luck);
-        PlayerPrefs.SetInt("PlayerMind", _mind);
-        PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
-        PlayerPrefs.SetFloat("PlayerCurrentHealth", currentHealth);
-        PlayerPrefs.SetFloat("PlayerCurrentMana", currentMana);
-        PlayerPrefs.SetInt("PlayerLevel", level);
-        PlayerPrefs.SetInt("PlayerExperience", experience);
-        PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
-        PlayerPrefs.SetInt("PlayerGold", gold);
-        PlayerPrefs.Save();
-    }
-
     // Kaydedilmiş oyuncu verilerini PlayerPrefs'den yükle
     private void LoadPlayerData()
     {
+        // Eğer kaydedilmiş veriler varsa yükle
         if (PlayerPrefs.HasKey("PlayerLevel"))
         {
+            // Seviye, deneyim ve skill point verilerini yükle
             level = PlayerPrefs.GetInt("PlayerLevel", 1);
             experience = PlayerPrefs.GetInt("PlayerExperience", 0);
             experienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
             availableSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
             gold = PlayerPrefs.GetInt("PlayerGold", 0);
+            
+            // Attribute values
             _vitality = PlayerPrefs.GetInt("PlayerVitality", 0);
             _might = PlayerPrefs.GetInt("PlayerMight", 0);
             _defense = PlayerPrefs.GetInt("PlayerDefense", 0);
             _luck = PlayerPrefs.GetInt("PlayerLuck", 0);
             _mind = PlayerPrefs.GetInt("PlayerMind", 0);
-            currentHealth = PlayerPrefs.GetFloat("PlayerCurrentHealth", maxHealth.GetValue());
-            currentMana = PlayerPrefs.GetFloat("PlayerCurrentMana", maxMana.GetValue());
+            
         }
-        else
-        {
-            currentHealth = maxHealth.GetValue();
-            currentMana = maxMana.GetValue();
-        }
-
+        
+        // Can ve manayı doldur
+        currentHealth = maxHealth.GetValue();
+        currentMana = maxMana.GetValue();
+        
+        // Player ve healthBar referanslarının güncellendiğinden emin olalım
         RefreshReferences();
+        
+        // Health bar'ı güncelle
         UpdateHealthBarUI();
-        ApplyAttributeBonuses();
     }
     
     // Gerekli referansları güncelle
@@ -488,6 +488,23 @@ public class PlayerStats : CharacterStats
         player.Die();
     }
 
+    // Save stat values to PlayerPrefs
+    private void SaveStatsData()
+    {
+        // Save all attribute values
+        PlayerPrefs.SetInt("PlayerVitality", _vitality);
+        PlayerPrefs.SetInt("PlayerMight", _might);
+        PlayerPrefs.SetInt("PlayerDefense", _defense);
+        PlayerPrefs.SetInt("PlayerLuck", _luck);
+        PlayerPrefs.SetInt("PlayerMind", _mind);
+        
+        // Save skill points
+        PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
+        PlayerPrefs.Save();
+        
+       
+    }
+
     // Reset all attributes and get skill points back
     public void ResetAllAttributes()
     {
@@ -529,9 +546,4 @@ public class PlayerStats : CharacterStats
 
     // Fix override to ensure this is correct
     protected override int mind { get => _mind; set => _mind = value; }
-
-    private void OnApplicationQuit()
-    {
-        SaveStatsData();
-    }
 }

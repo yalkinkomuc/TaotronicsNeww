@@ -5,8 +5,6 @@ using UnityEngine.Serialization;
 public class CharacterStats : MonoBehaviour
 {
     [FormerlySerializedAs("damage")] public Stat baseDamage;
-    public Stat boomerangDamage;
-    public Stat enemyDamage;
     public Stat secondComboDamageMultiplier;
     public Stat thirdComboDamageMultiplier;
     public Stat maxHealth;
@@ -91,12 +89,6 @@ public class CharacterStats : MonoBehaviour
         // Store base values before applying level multipliers
         baseMaxHealth = maxHealth.GetValue();
         baseMaxDamage = baseDamage.GetValue();
-        
-        // Initialize other damage types if they don't exist
-        if (boomerangDamage == null)
-            boomerangDamage = new Stat(baseDamageValue * 0.8f); // Boomerang does 80% of base damage
-        if (enemyDamage == null)
-            enemyDamage = new Stat(baseDamageValue * 0.7f); // Enemies do 70% of base damage
     }
 
     protected virtual void Start()

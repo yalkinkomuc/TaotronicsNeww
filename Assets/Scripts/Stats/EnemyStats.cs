@@ -13,6 +13,7 @@ public class EnemyStats : CharacterStats
     [SerializeField] private int _maxAttributeLevel = 99;
     [SerializeField] private int _mind = 0;
     
+    [Header("Base Stats")]
     [SerializeField] private float _baseHealthValue = 100f;
     [SerializeField] private float _baseDamageValue = 10f;
     [SerializeField] private float _baseManaValue = 50f;
@@ -50,9 +51,12 @@ public class EnemyStats : CharacterStats
     [SerializeField] private EnemyAttributeFocus attributeFocus = EnemyAttributeFocus.Balanced;
     [SerializeField] private float attributePointsPerLevel = 1.5f; // How many attribute points to distribute per level
 
+    public Stat enemyDamage;
+
     protected override void Awake()
     {
         base.Awake();
+        enemyDamage = new Stat(_baseDamageValue);
     }
 
     protected override void Start()
@@ -68,12 +72,6 @@ public class EnemyStats : CharacterStats
 
         // Distribute attributes based on enemy type and level
         DistributeAttributePoints();
-        
-        // Initialize enemy damage
-        if (enemyDamage == null)
-        {
-            enemyDamage = new Stat(_baseDamageValue);
-        }
         
         // Call base Start after setting attributes
         base.Start();
@@ -281,6 +279,24 @@ public class EnemyStats : CharacterStats
         {
             myDropSystem.GenerateDrop();
         }
+    }
+
+    // Apply all attribute bonuses to stats using exponential growth
+    public override void ApplyAttributeBonuses()
+    {
+        maxHealth.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        enemyDamage.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        maxMana.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        float healthMultiplier = Mathf.Pow(1 + HEALTH_GROWTH, vitality) - 1;
+        float healthBonus = baseHealthValue * healthMultiplier;
+        maxHealth.AddModifier(healthBonus, StatModifierType.Attribute);
+        float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, might) - 1;
+        float damageBonus = baseDamageValue * damageMultiplier;
+        enemyDamage.AddModifier(damageBonus, StatModifierType.Attribute);
+        float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, defense) - 1;
+        defenseStat = baseDefenseValue * (1 + defenseMultiplier);
+        criticalChance = luck * CRIT_CHANCE_PER_LUCK;
+        attackPower = enemyDamage.GetValue();
     }
 }
 
