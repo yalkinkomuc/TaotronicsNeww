@@ -17,8 +17,26 @@ public class VoidSkill : MonoBehaviour
       {
          Enemy enemyUnit = other.GetComponent<Enemy>();
          
+         Player player = PlayerManager.instance?.player;
+         bool isCritical = false;
+         float critMultiplier = 1f;
+         if (player != null && player.stats != null && player.stats.IsCriticalHit())
+         {
+            critMultiplier = 1.5f;
+            isCritical = true;
+         }
+         float finalDamage = damage * critMultiplier;
          enemyUnit.Damage();
-         enemyUnit.stats.TakeDamage(damage,CharacterStats.DamageType.Void);
+         enemyUnit.stats.TakeDamage(finalDamage,CharacterStats.DamageType.Void);
+         
+         if (FloatingTextManager.Instance != null)
+         {
+            Vector3 textPosition = enemyUnit.transform.position + Vector3.up * 1.5f;
+            if (isCritical)
+               FloatingTextManager.Instance.ShowCustomText(finalDamage.ToString("0"), textPosition, Color.yellow);
+            else
+               FloatingTextManager.Instance.ShowCustomText(finalDamage.ToString("0"), textPosition, new Color(0.5f,0,1f));
+         }
       }
    }
 }

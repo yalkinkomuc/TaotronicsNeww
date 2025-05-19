@@ -63,16 +63,12 @@ public class EarthPush : MonoBehaviour
     
     private void DealDamageInArea()
     {
-        if (damageCollider == null) return;
-        
-        // Calculate box position and size
-        Vector2 boxPosition = transform.position;
-        Vector2 boxSize = damageCollider.size * transform.localScale; // Adjust for scale
-        float boxAngle = transform.eulerAngles.z; // Use Z rotation
+        if (!isDamageActive) return;
         
         // Get player reference for Mind attribute scaling
         Player player = PlayerManager.instance?.player;
         float finalDamage = damage;
+        bool isCritical = false;
         
         // Scale damage with player's Mind attribute if available
         if (player != null && player.stats != null)
@@ -80,18 +76,19 @@ public class EarthPush : MonoBehaviour
             float elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
             finalDamage = damage * elementalMultiplier;
             
-            // Debug mesajı (sadece geliştirme sırasında)
-            if (Debug.isDebugBuild)
+            // Critical hit check
+            if (player.stats.IsCriticalHit())
             {
-                Debug.Log($"Earth Push: Base Damage={damage}, Mind Multiplier={elementalMultiplier:F2}, Final Damage={finalDamage:F1}");
+                finalDamage *= 1.5f;
+                isCritical = true;
             }
         }
         
-        // Find all enemies in the damage box
+        // Get all enemies in the box area
         Collider2D[] hitColliders = Physics2D.OverlapBoxAll(
-            boxPosition, 
-            boxSize, 
-            boxAngle, 
+            transform.position,
+            damageCollider.size * transform.localScale,
+            transform.eulerAngles.z,
             enemyLayer);
         
         foreach (Collider2D enemyCollider in hitColliders)
@@ -118,16 +115,14 @@ public class EarthPush : MonoBehaviour
                 );
                 
                 // Apply earth damage with knockback
-                // First apply the damage directly to the enemy stats
                 enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
                 
-                // Display Earth damage text in green
-                ShowEarthDamageText(finalDamage, enemy.transform.position);
+                // Display Earth damage text in green or yellow if critical
+                ShowEarthDamageText(finalDamage, enemy.transform.position, isCritical);
                 
                 // Check if this enemy should ignore knockback
                 if (!ShouldIgnoreKnockback(enemy.gameObject))
                 {
-                    // Then apply the knockback using the HitKnockback coroutine
                     enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
                 }
                 
@@ -151,22 +146,21 @@ public class EarthPush : MonoBehaviour
                 
                 enemyStats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
                 
-                // Display Earth damage text in green
-                ShowEarthDamageText(finalDamage, enemyCollider.transform.position);
+                // Display Earth damage text in green or yellow if critical
+                ShowEarthDamageText(finalDamage, enemyCollider.transform.position, isCritical);
             }
         }
     }
     
-    private void ShowEarthDamageText(float damageAmount, Vector3 position)
+    private void ShowEarthDamageText(float damageAmount, Vector3 position, bool isCritical = false)
     {
-        // Show the damage text with Earth color (green)
         if (FloatingTextManager.Instance != null)
         {
-            // Option 1: Use custom text method if available
+            Color color = isCritical ? Color.yellow : damageTextColor;
             FloatingTextManager.Instance.ShowCustomText(
-                damageAmount.ToString("0"), // Round to nearest integer
-                position + Vector3.up * 1.2f, // Position above enemy
-                damageTextColor);
+                damageAmount.ToString("0"),
+                position + Vector3.up * 1.2f,
+                color);
         }
     }
     
@@ -177,12 +171,20 @@ public class EarthPush : MonoBehaviour
         // Get player reference for Mind attribute scaling
         Player player = PlayerManager.instance?.player;
         float finalDamage = damage;
+        bool isCritical = false;
         
         // Scale damage with player's Mind attribute if available
         if (player != null && player.stats != null)
         {
             float elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
             finalDamage = damage * elementalMultiplier;
+            
+            // Critical hit check
+            if (player.stats.IsCriticalHit())
+            {
+                finalDamage *= 1.5f;
+                isCritical = true;
+            }
         }
         
         Enemy enemy = other.GetComponent<Enemy>();
@@ -206,16 +208,14 @@ public class EarthPush : MonoBehaviour
             );
             
             // Apply earth damage with knockback
-            // First apply the damage directly to the enemy stats
             enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
             
-            // Display Earth damage text in green
-            ShowEarthDamageText(finalDamage, enemy.transform.position);
+            // Display Earth damage text in green or yellow if critical
+            ShowEarthDamageText(finalDamage, enemy.transform.position, isCritical);
             
             // Check if this enemy should ignore knockback
             if (!ShouldIgnoreKnockback(enemy.gameObject))
             {
-                // Then apply the knockback using the HitKnockback coroutine
                 enemy.StartCoroutine(enemy.HitKnockback(finalKnockback));
             }
             

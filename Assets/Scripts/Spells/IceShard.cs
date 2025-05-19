@@ -114,14 +114,26 @@ public class IceShard : MonoBehaviour
                     mindValue = player.stats.Mind;
                 }
 
-                float finalDamage = damage * elementalMultiplier;
+                // KRİTİK KONTROLÜ
+                bool isCritical = false;
+                float critMultiplier = 1f;
+                if (player != null && player.stats != null && player.stats.IsCriticalHit())
+                {
+                    critMultiplier = 1.5f;
+                    isCritical = true;
+                }
+
+                float finalDamage = damage * elementalMultiplier * critMultiplier;
 
                 enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Ice);
 
                 if (FloatingTextManager.Instance != null)
                 {
                     Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    FloatingTextManager.Instance.ShowMagicDamageText(finalDamage, textPosition);
+                    if (isCritical)
+                        FloatingTextManager.Instance.ShowCustomText(finalDamage.ToString("0"), textPosition, Color.yellow);
+                    else
+                        FloatingTextManager.Instance.ShowMagicDamageText(finalDamage, textPosition);
                 }
 
                 enemy.ApplyIceEffect();
