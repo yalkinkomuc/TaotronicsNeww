@@ -136,7 +136,7 @@ public class PlayerStats : CharacterStats
         float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, _might) - 1;
         float damageBonus = _baseDamageValue * damageMultiplier;
         baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
-        boomerangDamage.AddModifier(damageBonus * 0.8f, StatModifierType.Attribute); // Apply 80% of the damage bonus to boomerang
+        boomerangDamage.AddModifier(damageBonus, StatModifierType.Attribute); // Apply full might bonus to boomerang
         
         // Calculate defense stat (exponential growth)
         float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, _defense) - 1;

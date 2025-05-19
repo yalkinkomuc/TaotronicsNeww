@@ -161,13 +161,22 @@ public class BlacksmithManager : MonoBehaviour
             
         // First remove all existing equipment modifiers
         playerStats.baseDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
+        playerStats.boomerangDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
         
         // Calculate total damage bonus from all upgraded weapons
         float totalDamageBonus = 0f;
+        float boomerangDamageBonus = 0f;
         
         foreach (var weapon in activeWeapons.Values)
         {
-            totalDamageBonus += weapon.GetCurrentDamageBonus();
+            float weaponBonus = weapon.GetCurrentDamageBonus();
+            totalDamageBonus += weaponBonus;
+            
+            // If this is the boomerang weapon, add its bonus to boomerang damage
+            if (weapon.weaponType == WeaponType.Boomerang)
+            {
+                boomerangDamageBonus += weaponBonus;
+            }
         }
         
         // Apply total damage bonus if it's greater than 0
@@ -176,7 +185,13 @@ public class BlacksmithManager : MonoBehaviour
             playerStats.baseDamage.AddModifier(totalDamageBonus, StatModifierType.Equipment);
         }
         
-        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus} damage");
+        // Apply boomerang-specific damage bonus
+        if (boomerangDamageBonus > 0)
+        {
+            playerStats.boomerangDamage.AddModifier(boomerangDamageBonus, StatModifierType.Equipment);
+        }
+        
+        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus} base damage, +{boomerangDamageBonus} boomerang damage");
     }
     
     // Save weapon data to PlayerPrefs
