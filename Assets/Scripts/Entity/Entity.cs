@@ -64,8 +64,13 @@ public class Entity : MonoBehaviour
         }
         
         entityFX.StartCoroutine("HitFX");
-        StartCoroutine("HitKnockback",knockbackDirection);
-        stats.TakeDamage(0, CharacterStats.DamageType.Physical, stats.baseDamage);
+        StartCoroutine("HitKnockback", knockbackDirection);
+        Stat damageStat = null;
+        if (stats is PlayerStats playerStats)
+            damageStat = playerStats.baseDamage;
+        else if (stats is EnemyStats enemyStats)
+            damageStat = enemyStats.enemyDamage;
+        stats.TakeDamage(0, CharacterStats.DamageType.Physical, damageStat);
     }
     
     public virtual void Die() { }
@@ -79,7 +84,12 @@ public class Entity : MonoBehaviour
             return;
         }
         entityFX.StartCoroutine("HitFX");
-        stats.TakeDamage(0, CharacterStats.DamageType.Physical, stats.baseDamage);
+        Stat damageStat = null;
+        if (stats is PlayerStats playerStats)
+            damageStat = playerStats.baseDamage;
+        else if (stats is EnemyStats enemyStats)
+            damageStat = enemyStats.enemyDamage;
+        stats.TakeDamage(0, CharacterStats.DamageType.Physical, damageStat);
     }
     
     public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)

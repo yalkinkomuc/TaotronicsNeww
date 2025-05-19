@@ -4,7 +4,6 @@ using UnityEngine.Serialization;
 
 public class CharacterStats : MonoBehaviour
 {
-    [FormerlySerializedAs("damage")] public Stat baseDamage;
     public Stat secondComboDamageMultiplier;
     public Stat thirdComboDamageMultiplier;
     public Stat maxHealth;
@@ -88,7 +87,7 @@ public class CharacterStats : MonoBehaviour
     {
         // Store base values before applying level multipliers
         baseMaxHealth = maxHealth.GetValue();
-        baseMaxDamage = baseDamage.GetValue();
+       
     }
 
     protected virtual void Start()
@@ -105,7 +104,7 @@ public class CharacterStats : MonoBehaviour
     {
         // Reset any previous attribute bonuses
         maxHealth.RemoveAllModifiersOfType(StatModifierType.Attribute);
-        baseDamage.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        
         maxMana.RemoveAllModifiersOfType(StatModifierType.Attribute);
         
         // Calculate vitality bonus (exponential growth)
@@ -116,7 +115,7 @@ public class CharacterStats : MonoBehaviour
         // Calculate might bonus (exponential growth)
         float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, might) - 1;
         float damageBonus = baseDamageValue * damageMultiplier;
-        baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
+       
         
         // Calculate defense stat (exponential growth)
         float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, defense) - 1;
@@ -126,7 +125,7 @@ public class CharacterStats : MonoBehaviour
         criticalChance = luck * CRIT_CHANCE_PER_LUCK;
         
         // Calculate derived stats for UI display
-        attackPower = baseDamage.GetValue();
+      
     }
     
     // Calculates just the health bonus for a specific vitality level (for preview)

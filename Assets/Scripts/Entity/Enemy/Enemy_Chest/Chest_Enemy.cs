@@ -84,23 +84,17 @@ public class Chest_Enemy : Enemy,IInteractable
     
     public override void Damage()
     {
-        
-        
         if (stats.isInvincible)
         {
             return;
         }
         
-        // Oyuncunun pozisyonunu kullanarak çarpma yönünü belirle
         if (player != null)
         {
-            // Oyuncunun boğaya göre hangi tarafta olduğunu belirle
-            // Oyuncu sağdaysa 1, soldaysa -1
             lastHitDirection = (player.transform.position.x > transform.position.x) ? 1 : -1;
         }
         else
         {
-            // Oyuncu referansı yoksa, varsayılan olarak facingdir'in tersini kullan
             lastHitDirection = -facingdir;
         }
         
@@ -108,7 +102,10 @@ public class Chest_Enemy : Enemy,IInteractable
         StartCoroutine("HitKnockback", knockbackDirection);
         
         Debug.Log(gameObject.name + " was damaged ");
-        stats.TakeDamage(stats.baseDamage.GetValue(),CharacterStats.DamageType.Physical);
+        if (stats is EnemyStats enemyStats)
+            stats.TakeDamage(enemyStats.enemyDamage.GetValue(), CharacterStats.DamageType.Physical);
+        else
+            stats.TakeDamage(0, CharacterStats.DamageType.Physical);
     }
 
     public override IEnumerator HitKnockback(Vector2 knockbackDirectionParam)

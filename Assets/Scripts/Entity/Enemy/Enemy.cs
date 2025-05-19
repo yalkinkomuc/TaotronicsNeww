@@ -253,7 +253,14 @@ public class Enemy : Entity
        // Apply knockback
        StartCoroutine(HitKnockback(knockbackDir));
        
-       stats.TakeDamage(stats.baseDamage.GetValue(),CharacterStats.DamageType.Physical);
+       // Use enemyDamage if available
+       Stat damageStat = null;
+       if (stats is PlayerStats playerStats)
+           damageStat = playerStats.baseDamage;
+       else if (stats is EnemyStats enemyStats)
+           damageStat = enemyStats.enemyDamage;
+       if (damageStat != null)
+           stats.TakeDamage(damageStat.GetValue(), CharacterStats.DamageType.Physical);
    }
 
    /// <summary>

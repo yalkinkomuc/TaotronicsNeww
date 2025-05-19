@@ -66,12 +66,14 @@ public class PlayerStats : CharacterStats
     [Header("Weapon Damage")]
     public Stat boomerangDamage;
 
+    public Stat baseDamage;
+
     protected override void Awake()
     {
         // Önce baz sınıfın Awake metodunu çağır
         base.Awake();
-        // Initialize boomerangDamage with 80% of base damage
-        boomerangDamage = new Stat(baseDamageValue * 0.8f);
+        baseDamage = new Stat(_baseDamageValue);
+        boomerangDamage = new Stat(_baseDamageValue * 0.8f);
     }
 
     protected override void Start()

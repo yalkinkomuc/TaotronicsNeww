@@ -249,16 +249,16 @@ public class PlayerAnimTriggers : MonoBehaviour
    // Temel hasar ve kritik vuruş hesaplama
    private float CalculateDamage(out bool isCritical)
    {
-      float damage = player.stats.baseDamage.GetValue();
+      float damage = 0f;
+      if (player.stats is PlayerStats playerStats)
+         damage = playerStats.baseDamage.GetValue();
       isCritical = false;
-      
       // Kritik vuruş kontrolü
-      if (player.stats is PlayerStats playerStats && playerStats.IsCriticalHit())
+      if (player.stats is PlayerStats ps && ps.IsCriticalHit())
       {
          damage *= 1.5f; // Kritik vuruş için %50 daha fazla hasar
          isCritical = true;
       }
-      
       return damage;
    }
 
