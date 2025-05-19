@@ -182,16 +182,28 @@ public class BlacksmithManager : MonoBehaviour
         // Apply total damage bonus if it's greater than 0
         if (totalDamageBonus > 0)
         {
-            playerStats.baseDamage.AddModifier(totalDamageBonus, StatModifierType.Equipment);
+            // Calculate the base damage with MIGHT attribute bonus
+            float baseDamageWithMight = playerStats.baseDamage.GetBaseValue() + 
+                                      playerStats.CalculateDamageBonusForMight(playerStats.Might);
+            
+            // Add equipment bonus as a percentage of the base damage with MIGHT
+            float equipmentBonus = baseDamageWithMight * (totalDamageBonus / 100f);
+            playerStats.baseDamage.AddModifier(equipmentBonus, StatModifierType.Equipment);
         }
         
         // Apply boomerang-specific damage bonus
         if (boomerangDamageBonus > 0)
         {
-            playerStats.boomerangDamage.AddModifier(boomerangDamageBonus, StatModifierType.Equipment);
+            // Calculate boomerang damage with MIGHT attribute bonus
+            float boomerangBaseWithMight = playerStats.boomerangDamage.GetBaseValue() + 
+                                         playerStats.CalculateDamageBonusForMight(playerStats.Might);
+            
+            // Add equipment bonus as a percentage of the boomerang base damage with MIGHT
+            float boomerangEquipmentBonus = boomerangBaseWithMight * (boomerangDamageBonus / 100f);
+            playerStats.boomerangDamage.AddModifier(boomerangEquipmentBonus, StatModifierType.Equipment);
         }
         
-        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus} base damage, +{boomerangDamageBonus} boomerang damage");
+        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus}% base damage, +{boomerangDamageBonus}% boomerang damage");
     }
     
     // Save weapon data to PlayerPrefs
