@@ -170,5 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fec947693c8b32d42a876c73c09f6402, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damagePerTick: 1
-  tickRate: 0.001
+  damagePerSecond: 50
+  damageRampUpTime: 2
+  maxDamageMultiplier: 1.5
+  textDisplayInterval: 0.5

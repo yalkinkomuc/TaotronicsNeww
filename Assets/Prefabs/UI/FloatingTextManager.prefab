@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6410813061523853642}
   - component: {fileID: 1440101779707244472}
+  - component: {fileID: 458711087910094513}
   m_Layer: 0
   m_Name: FloatingTextManager
   m_TagString: Untagged
@@ -44,5 +45,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 549954599a48ac945b7f19e235543720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floatingTextManagerPrefab: {fileID: 0}
+  floatingTextManagerPrefab: {fileID: 6072639664115584561}
   floatingTextPrefab: {fileID: 8500627763903708592, guid: e833370633c240343840d3d0259fb88e, type: 3}
+--- !u!114 &458711087910094513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6072639664115584561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75bcbc40d41f88643a9940e2f43b503f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floatingTextPrefab: {fileID: 8500627763903708592, guid: e833370633c240343840d3d0259fb88e, type: 3}
+  canvasTransform: {fileID: 0}
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  lightMagicDamageColor: {r: 0.5, g: 0.7, b: 1, a: 1}
+  darkMagicDamageColor: {r: 0.1, g: 0.2, b: 1, a: 1}
+  magicDamageThreshold: 30
+  firstComboColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  secondComboColor: {r: 1, g: 0.5, b: 0, a: 1}
+  thirdComboColor: {r: 1, g: 0, b: 0, a: 1}
+  positionVariance: 0.5
+  minTextSpacing: 0.5

@@ -5,8 +5,8 @@ public class FloatingTextManager : MonoBehaviour
 {
     public static FloatingTextManager Instance { get; private set; }
     
-    [SerializeField] private GameObject floatingTextPrefab;
-    [SerializeField] private Transform canvasTransform; // Canvas to parent the text to
+    [SerializeField] public GameObject floatingTextPrefab;
+    [SerializeField] public Transform canvasTransform; // Canvas to parent the text to
     
     [Header("Hasar Metin Ayarları")]
     [SerializeField] private Color damageColor = Color.red; // Varsayılan kırmızı
