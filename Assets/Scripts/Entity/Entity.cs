@@ -65,7 +65,7 @@ public class Entity : MonoBehaviour
         
         entityFX.StartCoroutine("HitFX");
         StartCoroutine("HitKnockback",knockbackDirection);
-        stats.TakeDamage(stats.baseDamage.GetValue(),CharacterStats.DamageType.Physical);
+        stats.TakeDamage(0, CharacterStats.DamageType.Physical, stats.baseDamage);
     }
     
     public virtual void Die() { }
@@ -79,7 +79,7 @@ public class Entity : MonoBehaviour
             return;
         }
         entityFX.StartCoroutine("HitFX");
-        stats.TakeDamage(1,CharacterStats.DamageType.Physical);
+        stats.TakeDamage(0, CharacterStats.DamageType.Physical, stats.baseDamage);
     }
     
     public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)

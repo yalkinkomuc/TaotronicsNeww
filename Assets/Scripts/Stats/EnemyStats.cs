@@ -69,6 +69,12 @@ public class EnemyStats : CharacterStats
         // Distribute attributes based on enemy type and level
         DistributeAttributePoints();
         
+        // Initialize enemy damage
+        if (enemyDamage == null)
+        {
+            enemyDamage = new Stat(_baseDamageValue);
+        }
+        
         // Call base Start after setting attributes
         base.Start();
     }

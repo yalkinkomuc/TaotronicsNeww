@@ -5,6 +5,8 @@ using UnityEngine.Serialization;
 public class CharacterStats : MonoBehaviour
 {
     [FormerlySerializedAs("damage")] public Stat baseDamage;
+    public Stat boomerangDamage;
+    public Stat enemyDamage;
     public Stat secondComboDamageMultiplier;
     public Stat thirdComboDamageMultiplier;
     public Stat maxHealth;
@@ -89,6 +91,12 @@ public class CharacterStats : MonoBehaviour
         // Store base values before applying level multipliers
         baseMaxHealth = maxHealth.GetValue();
         baseMaxDamage = baseDamage.GetValue();
+        
+        // Initialize other damage types if they don't exist
+        if (boomerangDamage == null)
+            boomerangDamage = new Stat(baseDamageValue * 0.8f); // Boomerang does 80% of base damage
+        if (enemyDamage == null)
+            enemyDamage = new Stat(baseDamageValue * 0.7f); // Enemies do 70% of base damage
     }
 
     protected virtual void Start()
@@ -207,7 +215,7 @@ public class CharacterStats : MonoBehaviour
         return true;
     }
 
-    public virtual void TakeDamage(float _damage, DamageType damageType)
+    public virtual void TakeDamage(float _damage, DamageType damageType, Stat damageSource = null)
     {
         if (isInvincible)
             return;
@@ -231,7 +239,10 @@ public class CharacterStats : MonoBehaviour
                 reductionPercent = Mathf.Clamp(defenseStat, 0f, 50f) / 100f;
                 break;
         }
-        float finalDamage = _damage * (1f - reductionPercent);
+        
+        // Use the appropriate damage source if provided
+        float finalDamage = damageSource != null ? damageSource.GetValue() : _damage;
+        finalDamage = finalDamage * (1f - reductionPercent);
         float roundedDamage = Mathf.Round(finalDamage);
         currentHealth -= roundedDamage;
 

@@ -138,7 +138,7 @@ public class BoomerangSkill : MonoBehaviour
             //enemy.Damage();
             if (enemy.TryGetComponent<CharacterStats>(out CharacterStats enemyStats))
             {
-                enemyStats.TakeDamage(player.stats.baseDamage.GetValue(),CharacterStats.DamageType.Physical);
+                enemyStats.TakeDamage(0, CharacterStats.DamageType.Physical, player.stats.boomerangDamage);
             }
             
             StartReturning();

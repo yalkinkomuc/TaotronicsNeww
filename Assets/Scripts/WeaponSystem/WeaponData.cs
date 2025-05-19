@@ -11,8 +11,7 @@ public class WeaponData
     public float baseDamageBonus;  // Base damage bonus at level 1
     
     [Header("Upgrade Settings")]
-    public float upgradeDamageIncrement = 20f; // How much damage increases per level
-    public float damageGrowthRate = 0.15f;    // Exponential growth rate for damage (15% per level)
+    public float upgradeDamageIncrement = 2f; // How much damage increases per level
     public int baseUpgradeCost = 100;         // Base cost for first upgrade
     public float upgradeCostMultiplier = 1.1f; // Cost multiplier per level
     
@@ -34,15 +33,7 @@ public class WeaponData
     public float GetCurrentDamageBonus()
     {
         if (level <= 0) return 0;
-        
-        // Calculate exponential damage growth
-        float exponentialBonus = baseDamageBonus * (Mathf.Pow(1 + damageGrowthRate, level - 1) - 1);
-        
-        // Add linear component for consistent progression
-        float linearBonus = upgradeDamageIncrement * (level - 1);
-        
-        // Return total damage bonus
-        return baseDamageBonus + exponentialBonus + linearBonus;
+        return baseDamageBonus + (upgradeDamageIncrement * (level - 1));
     }
     
     // Get the cost for the next upgrade
