@@ -71,25 +71,15 @@ public class PlayerStats : CharacterStats
 
     protected override void Start()
     {
-        // Baz değerleri sakla
-        playerBaseMaxHealth = maxHealth.GetValue();
-        playerBaseMaxDamage = baseDamage.GetValue();
-        
-        // Önce kaydedilmiş verileri yükle
         LoadPlayerData();
-        
-        // Apply attribute bonuses before CharacterStats initialization
-        ApplyAttributeBonuses();
-        
-        // Sonra CharacterStats'dan gelen işlemleri devam ettir
         base.Start();
-        
-        player = GetComponent<Player>();
-        
-        // UI'ı güncelle
+
+        // Panelde F'ye basılmış gibi statları ve bonusları uygula
+        ApplyAttributeBonuses();
         UpdateLevelUI();
-        
-        // Ensure weapons are upgraded with saved values
+        UpdateHealthBarUI();
+
+        player = GetComponent<Player>();
         if (BlacksmithManager.Instance != null)
         {
             BlacksmithManager.Instance.ApplyWeaponUpgrades(this);
@@ -280,37 +270,51 @@ public class PlayerStats : CharacterStats
         
     }
     
+    // Save stat values to PlayerPrefs
+    private void SaveStatsData()
+    {
+        PlayerPrefs.SetInt("PlayerVitality", _vitality);
+        PlayerPrefs.SetInt("PlayerMight", _might);
+        PlayerPrefs.SetInt("PlayerDefense", _defense);
+        PlayerPrefs.SetInt("PlayerLuck", _luck);
+        PlayerPrefs.SetInt("PlayerMind", _mind);
+        PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
+        PlayerPrefs.SetFloat("PlayerCurrentHealth", currentHealth);
+        PlayerPrefs.SetFloat("PlayerCurrentMana", currentMana);
+        PlayerPrefs.SetInt("PlayerLevel", level);
+        PlayerPrefs.SetInt("PlayerExperience", experience);
+        PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
+        PlayerPrefs.SetInt("PlayerGold", gold);
+        PlayerPrefs.Save();
+    }
+
     // Kaydedilmiş oyuncu verilerini PlayerPrefs'den yükle
     private void LoadPlayerData()
     {
-        // Eğer kaydedilmiş veriler varsa yükle
         if (PlayerPrefs.HasKey("PlayerLevel"))
         {
-            // Seviye, deneyim ve skill point verilerini yükle
             level = PlayerPrefs.GetInt("PlayerLevel", 1);
             experience = PlayerPrefs.GetInt("PlayerExperience", 0);
             experienceToNextLevel = PlayerPrefs.GetInt("PlayerExperienceToNextLevel", 100);
             availableSkillPoints = PlayerPrefs.GetInt("PlayerSkillPoints", 0);
             gold = PlayerPrefs.GetInt("PlayerGold", 0);
-            
-            // Attribute values
             _vitality = PlayerPrefs.GetInt("PlayerVitality", 0);
             _might = PlayerPrefs.GetInt("PlayerMight", 0);
             _defense = PlayerPrefs.GetInt("PlayerDefense", 0);
             _luck = PlayerPrefs.GetInt("PlayerLuck", 0);
             _mind = PlayerPrefs.GetInt("PlayerMind", 0);
-            
+            currentHealth = PlayerPrefs.GetFloat("PlayerCurrentHealth", maxHealth.GetValue());
+            currentMana = PlayerPrefs.GetFloat("PlayerCurrentMana", maxMana.GetValue());
         }
-        
-        // Can ve manayı doldur
-        currentHealth = maxHealth.GetValue();
-        currentMana = maxMana.GetValue();
-        
-        // Player ve healthBar referanslarının güncellendiğinden emin olalım
+        else
+        {
+            currentHealth = maxHealth.GetValue();
+            currentMana = maxMana.GetValue();
+        }
+
         RefreshReferences();
-        
-        // Health bar'ı güncelle
         UpdateHealthBarUI();
+        ApplyAttributeBonuses();
     }
     
     // Gerekli referansları güncelle
@@ -484,23 +488,6 @@ public class PlayerStats : CharacterStats
         player.Die();
     }
 
-    // Save stat values to PlayerPrefs
-    private void SaveStatsData()
-    {
-        // Save all attribute values
-        PlayerPrefs.SetInt("PlayerVitality", _vitality);
-        PlayerPrefs.SetInt("PlayerMight", _might);
-        PlayerPrefs.SetInt("PlayerDefense", _defense);
-        PlayerPrefs.SetInt("PlayerLuck", _luck);
-        PlayerPrefs.SetInt("PlayerMind", _mind);
-        
-        // Save skill points
-        PlayerPrefs.SetInt("PlayerSkillPoints", availableSkillPoints);
-        PlayerPrefs.Save();
-        
-       
-    }
-
     // Reset all attributes and get skill points back
     public void ResetAllAttributes()
     {
@@ -542,4 +529,9 @@ public class PlayerStats : CharacterStats
 
     // Fix override to ensure this is correct
     protected override int mind { get => _mind; set => _mind = value; }
+
+    private void OnApplicationQuit()
+    {
+        SaveStatsData();
+    }
 }
