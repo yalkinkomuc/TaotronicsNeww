@@ -89,7 +89,7 @@ public class Boar_Enemy : Enemy
     //     stateMachine.currentState.AnimationFinishTrigger();
     // }
 
-    public override void Damage()
+    public override void Damage(Stat attackerDamageStat = null)
     {
         if (stats.isInvincible)
         {
@@ -110,8 +110,11 @@ public class Boar_Enemy : Enemy
         StartCoroutine("HitKnockback", knockbackDirection);
         
         Debug.Log(gameObject.name + " was damaged ");
-        if (stats is EnemyStats enemyStats)
-            stats.TakeDamage(enemyStats.enemyDamage.GetValue(), CharacterStats.DamageType.Physical);
+        Stat damageStat = attackerDamageStat;
+        if (damageStat == null && stats is EnemyStats enemyStats)
+            damageStat = enemyStats.enemyDamage;
+        if (damageStat != null)
+            stats.TakeDamage(damageStat.GetValue(), CharacterStats.DamageType.Physical);
         else
             stats.TakeDamage(0, CharacterStats.DamageType.Physical);
     }

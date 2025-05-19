@@ -762,20 +762,20 @@ public class Player : Entity
     
     #region Damage Region
 
-    public override void Damage()
+    public override void Damage(Stat attackerDamageStat = null)
     {
         if (!isInvulnerable)
         {
-            base.Damage();
+            base.Damage(attackerDamageStat);
             StartCoroutine(InvulnerabilityCoroutine());
         }
     }
 
-    public override void DamageWithoutKnockback()
+    public override void DamageWithoutKnockback(Stat attackerDamageStat = null)
     {
         if (!isInvulnerable)
         {
-            base.DamageWithoutKnockback();
+            base.DamageWithoutKnockback(attackerDamageStat);
             StartCoroutine(InvulnerabilityCoroutine());
         }
     }

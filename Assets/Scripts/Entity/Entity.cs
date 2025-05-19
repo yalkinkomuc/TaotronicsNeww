@@ -56,7 +56,7 @@ public class Entity : MonoBehaviour
         stats = GetComponent<CharacterStats>();
     }
     
-    public virtual void Damage()
+    public virtual void Damage(Stat attackerDamageStat = null)
     {
         if (stats.isInvincible)
         {
@@ -65,11 +65,14 @@ public class Entity : MonoBehaviour
         
         entityFX.StartCoroutine("HitFX");
         StartCoroutine("HitKnockback", knockbackDirection);
-        Stat damageStat = null;
-        if (stats is PlayerStats playerStats)
-            damageStat = playerStats.baseDamage;
-        else if (stats is EnemyStats enemyStats)
-            damageStat = enemyStats.enemyDamage;
+        Stat damageStat = attackerDamageStat;
+        if (damageStat == null)
+        {
+            if (stats is PlayerStats playerStats)
+                damageStat = playerStats.baseDamage;
+            else if (stats is EnemyStats enemyStats)
+                damageStat = enemyStats.enemyDamage;
+        }
         stats.TakeDamage(0, CharacterStats.DamageType.Physical, damageStat);
     }
     
@@ -77,18 +80,21 @@ public class Entity : MonoBehaviour
 
     #region Knockback
 
-    public virtual void DamageWithoutKnockback()
+    public virtual void DamageWithoutKnockback(Stat attackerDamageStat = null)
     {
         if (stats.isInvincible)
         {
             return;
         }
         entityFX.StartCoroutine("HitFX");
-        Stat damageStat = null;
-        if (stats is PlayerStats playerStats)
-            damageStat = playerStats.baseDamage;
-        else if (stats is EnemyStats enemyStats)
-            damageStat = enemyStats.enemyDamage;
+        Stat damageStat = attackerDamageStat;
+        if (damageStat == null)
+        {
+            if (stats is PlayerStats playerStats)
+                damageStat = playerStats.baseDamage;
+            else if (stats is EnemyStats enemyStats)
+                damageStat = enemyStats.enemyDamage;
+        }
         stats.TakeDamage(0, CharacterStats.DamageType.Physical, damageStat);
     }
     

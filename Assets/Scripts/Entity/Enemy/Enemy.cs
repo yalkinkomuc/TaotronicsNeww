@@ -238,7 +238,7 @@ public class Enemy : Entity
        SetVelocity(patrolDirection * patrolSpeed, rb.linearVelocity.y);
    }
 
-   public override void Damage()
+   public override void Damage(Stat attackerDamageStat = null)
    {
        if (stats.isInvincible)
        {
@@ -254,11 +254,14 @@ public class Enemy : Entity
        StartCoroutine(HitKnockback(knockbackDir));
        
        // Use enemyDamage if available
-       Stat damageStat = null;
-       if (stats is PlayerStats playerStats)
-           damageStat = playerStats.baseDamage;
-       else if (stats is EnemyStats enemyStats)
-           damageStat = enemyStats.enemyDamage;
+       Stat damageStat = attackerDamageStat;
+       if (damageStat == null)
+       {
+           if (stats is PlayerStats playerStats)
+               damageStat = playerStats.baseDamage;
+           else if (stats is EnemyStats enemyStats)
+               damageStat = enemyStats.enemyDamage;
+       }
        if (damageStat != null)
            stats.TakeDamage(damageStat.GetValue(), CharacterStats.DamageType.Physical);
    }

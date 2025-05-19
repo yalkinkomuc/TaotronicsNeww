@@ -46,10 +46,20 @@ public class BlacksmithManager : MonoBehaviour
         // Önce listeyi temizle
         weaponDatabase.Clear();
         
-        // Create default weapon data
-        AddWeaponWithIcon("sword", "Kılıç", WeaponType.Sword, 3f, 100);
-        AddWeaponWithIcon("boomerang", "Bumerang", WeaponType.Boomerang, 2f, 120);
-        AddWeaponWithIcon("spellbook", "Büyü Kitabı", WeaponType.Spellbook, 4f, 150);
+        // Kılıç
+        WeaponData sword = new WeaponData("sword", "Kılıç", WeaponType.Sword, 25f, 100);
+        sword.upgradeDamageIncrement = 20f; // Kılıç için seviye başına +2 hasar
+        weaponDatabase.Add(sword);
+        
+        // Bumerang
+        WeaponData boomerang = new WeaponData("boomerang", "Bumerang", WeaponType.Boomerang, 15f, 120);
+        boomerang.upgradeDamageIncrement = 12f; // Bumerang için seviye başına +6 hasar (daha yüksek)
+        weaponDatabase.Add(boomerang);
+        
+        // Büyü Kitabı
+        WeaponData spellbook = new WeaponData("spellbook", "Büyü Kitabı", WeaponType.Spellbook, 10f, 150);
+        spellbook.upgradeDamageIncrement = 8f;
+        weaponDatabase.Add(spellbook);
         
         Debug.Log("Default weapons added: " + weaponDatabase.Count);
     }

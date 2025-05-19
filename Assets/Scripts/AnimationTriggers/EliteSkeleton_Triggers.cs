@@ -74,7 +74,11 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
                 // Eğer parry penceresi açıkken oyuncu parry state'deyse parry olur
                 
                 // Parry durumunda değilse normal hasar ver
-                player.Damage();
+                var enemyStats = enemyEliteSkeleton.stats as EnemyStats;
+                if (enemyStats != null)
+                    player.Damage(enemyStats.enemyDamage);
+                else
+                    player.Damage();
                 Debug.Log("Elite Skeleton attacked player!");
             }
         }
