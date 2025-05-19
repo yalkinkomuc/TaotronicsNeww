@@ -16,8 +16,6 @@ public class FireSpell : MonoBehaviour
     private List<Enemy> burningEnemies = new List<Enemy>();
     private Dictionary<Enemy, float> lastTextTimes = new Dictionary<Enemy, float>();
     private Dictionary<Enemy, float> enemyBurnTimes = new Dictionary<Enemy, float>(); // Track how long each enemy has been burning
-    private Dictionary<Enemy, GameObject> fireSpellFloatingTexts = new Dictionary<Enemy, GameObject>();
-    private Dictionary<Enemy, float> fireSpellTotalDamages = new Dictionary<Enemy, float>();
 
     private void Awake()
     {
@@ -48,13 +46,8 @@ public class FireSpell : MonoBehaviour
         burningEnemies.Clear();
         lastTextTimes.Clear();
         enemyBurnTimes.Clear();
-        foreach (var kvp in fireSpellFloatingTexts)
-        {
-            if (kvp.Value != null)
-                Destroy(kvp.Value);
-        }
-        fireSpellFloatingTexts.Clear();
-        fireSpellTotalDamages.Clear();
+        
+        // Kendini yok et
         Destroy(gameObject);
     }
 
@@ -82,22 +75,10 @@ public class FireSpell : MonoBehaviour
             burningEnemies.Add(enemy);
             enemy.entityFX.StartCoroutine("BurnFX");
             enemy.ApplyBurnEffect();
+            
+            // Initialize tracking dictionaries
             lastTextTimes[enemy] = 0f;
             enemyBurnTimes[enemy] = 0f;
-            fireSpellTotalDamages[enemy] = 0f;
-            if (FloatingTextManager.Instance != null)
-            {
-                Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                GameObject textObj = Instantiate(FloatingTextManager.Instance.floatingTextPrefab, textPosition, Quaternion.identity, FloatingTextManager.Instance.canvasTransform);
-                fireSpellFloatingTexts[enemy] = textObj;
-                var floatingText = textObj.GetComponent<FloatingText>();
-                if (floatingText != null)
-                {
-                    floatingText.SetText("0");
-                    floatingText.SetColor(Color.red);
-                    floatingText.SetAsMagicDamage(true);
-                }
-            }
         }
     }
 
@@ -110,23 +91,16 @@ public class FireSpell : MonoBehaviour
             enemy.entityFX.StopCoroutine("BurnFX");
             enemy.entityFX.ResetToOriginalMaterial();
             enemy.RemoveBurnEffect();
+            
+            // Remove from dictionaries
             if (lastTextTimes.ContainsKey(enemy))
             {
                 lastTextTimes.Remove(enemy);
             }
+            
             if (enemyBurnTimes.ContainsKey(enemy))
             {
                 enemyBurnTimes.Remove(enemy);
-            }
-            if (fireSpellFloatingTexts.ContainsKey(enemy))
-            {
-                if (fireSpellFloatingTexts[enemy] != null)
-                    Destroy(fireSpellFloatingTexts[enemy]);
-                fireSpellFloatingTexts.Remove(enemy);
-            }
-            if (fireSpellTotalDamages.ContainsKey(enemy))
-            {
-                fireSpellTotalDamages.Remove(enemy);
             }
         }
     }
@@ -135,37 +109,59 @@ public class FireSpell : MonoBehaviour
     {
         while (true)
         {
+            // Her frame'de hasar ver
             for (int i = burningEnemies.Count - 1; i >= 0; i--)
             {
                 if (burningEnemies[i] != null)
                 {
                     Enemy enemy = burningEnemies[i];
+                    
+                    // Update burn time for this enemy
                     if (!enemyBurnTimes.ContainsKey(enemy))
                     {
                         enemyBurnTimes[enemy] = 0f;
                     }
                     enemyBurnTimes[enemy] += Time.deltaTime;
+                    
+                    // Calculate damage multiplier based on how long enemy has been burning
                     float burnTimeFactor = Mathf.Clamp01(enemyBurnTimes[enemy] / damageRampUpTime);
                     float currentDamageMultiplier = Mathf.Lerp(1f, maxDamageMultiplier, burnTimeFactor);
+                    
+                    // Get player's elemental damage multiplier
                     Player player = PlayerManager.instance.player;
                     float elementalMultiplier = 1f;
                     if (player != null && player.stats != null)
                     {
                         elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
                     }
+                    
+                    // Calculate frame damage with ramp-up and elemental multiplier
                     float frameDamage = damagePerSecond * currentDamageMultiplier * elementalMultiplier * Time.deltaTime;
                     enemy.stats.TakeDamage(frameDamage, CharacterStats.DamageType.Fire);
-                    if (!fireSpellTotalDamages.ContainsKey(enemy))
-                        fireSpellTotalDamages[enemy] = 0f;
-                    fireSpellTotalDamages[enemy] += frameDamage;
-                    if (fireSpellFloatingTexts.ContainsKey(enemy) && fireSpellFloatingTexts[enemy] != null)
+                    
+                    // Accumulated damage for text display
+                    bool shouldShowText = false;
+                    float accumulatedDamage = frameDamage;
+                    
+                    // Check if it's time to show damage text
+                    if (!lastTextTimes.ContainsKey(enemy))
                     {
-                        var floatingText = fireSpellFloatingTexts[enemy].GetComponent<FloatingText>();
-                        if (floatingText != null)
-                        {
-                            floatingText.SetText(Mathf.RoundToInt(fireSpellTotalDamages[enemy]).ToString());
-                        }
-                        fireSpellFloatingTexts[enemy].transform.position = enemy.transform.position + Vector3.up * 1.5f;
+                        lastTextTimes[enemy] = 0f;
+                        shouldShowText = true;
+                    }
+                    else if (Time.time - lastTextTimes[enemy] >= textDisplayInterval)
+                    {
+                        // Show approximate damage over interval with current multiplier
+                        accumulatedDamage = damagePerSecond * currentDamageMultiplier * elementalMultiplier * textDisplayInterval;
+                        shouldShowText = true;
+                        lastTextTimes[enemy] = Time.time;
+                    }
+                    
+                    // Display magic damage text at intervals
+                    if (shouldShowText && FloatingTextManager.Instance != null)
+                    {
+                        Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                        FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage, textPosition);
                     }
                 }
                 else
@@ -173,7 +169,8 @@ public class FireSpell : MonoBehaviour
                     burningEnemies.RemoveAt(i);
                 }
             }
-            yield return null;
+
+            yield return null; // Her frame'de çalış
         }
     }
 } 

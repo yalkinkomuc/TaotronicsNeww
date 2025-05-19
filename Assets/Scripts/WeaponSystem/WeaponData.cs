@@ -7,13 +7,14 @@ public class WeaponData
     public string weaponName;      // Display name for the weapon
     public WeaponType weaponType;  // Type of weapon (sword, boomerang, spellbook)
     public int level;              // Current upgrade level of the weapon
-    public int maxLevel = 5;       // Maximum upgrade level
+    public int maxLevel = 30;       // Maximum upgrade level
     public float baseDamageBonus;  // Base damage bonus at level 1
     
     [Header("Upgrade Settings")]
-    public float upgradeDamageIncrement = 2f; // How much damage increases per level
+    public float upgradeDamageIncrement = 20f; // How much damage increases per level
+    public float damageGrowthRate = 0.15f;    // Exponential growth rate for damage (15% per level)
     public int baseUpgradeCost = 100;         // Base cost for first upgrade
-    public float upgradeCostMultiplier = 1.5f; // Cost multiplier per level
+    public float upgradeCostMultiplier = 1.1f; // Cost multiplier per level
     
     [Header("UI")]
     public Sprite weaponIcon;      // Icon for the weapon in UI
@@ -33,7 +34,15 @@ public class WeaponData
     public float GetCurrentDamageBonus()
     {
         if (level <= 0) return 0;
-        return baseDamageBonus + (upgradeDamageIncrement * (level - 1));
+        
+        // Calculate exponential damage growth
+        float exponentialBonus = baseDamageBonus * (Mathf.Pow(1 + damageGrowthRate, level - 1) - 1);
+        
+        // Add linear component for consistent progression
+        float linearBonus = upgradeDamageIncrement * (level - 1);
+        
+        // Return total damage bonus
+        return baseDamageBonus + exponentialBonus + linearBonus;
     }
     
     // Get the cost for the next upgrade

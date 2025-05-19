@@ -135,7 +135,7 @@ public class BoomerangSkill : MonoBehaviour
         // Düşmana çarpınca hasar ver ve geri dön
         if (other.TryGetComponent<Enemy>(out Enemy enemy))
         {
-            enemy.Damage();
+            //enemy.Damage();
             if (enemy.TryGetComponent<CharacterStats>(out CharacterStats enemyStats))
             {
                 enemyStats.TakeDamage(player.stats.baseDamage.GetValue(),CharacterStats.DamageType.Physical);
