@@ -172,10 +172,12 @@ public class BlacksmithManager : MonoBehaviour
         // First remove all existing equipment modifiers
         playerStats.baseDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
         playerStats.boomerangDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
+        playerStats.spellbookDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
         
         // Calculate total damage bonus from all upgraded weapons
         float totalDamageBonus = 0f;
         float boomerangDamageBonus = 0f;
+        float spellbookDamageBonus = 0f;
         
         foreach (var weapon in activeWeapons.Values)
         {
@@ -186,6 +188,12 @@ public class BlacksmithManager : MonoBehaviour
             if (weapon.weaponType == WeaponType.Boomerang)
             {
                 boomerangDamageBonus += weaponBonus;
+            }
+            
+            // If this is the spellbook weapon, add its bonus to spellbook damage
+            if (weapon.weaponType == WeaponType.Spellbook)
+            {
+                spellbookDamageBonus += weaponBonus;
             }
         }
         
@@ -213,7 +221,15 @@ public class BlacksmithManager : MonoBehaviour
             playerStats.boomerangDamage.AddModifier(boomerangEquipmentBonus, StatModifierType.Equipment);
         }
         
-        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus}% base damage, +{boomerangDamageBonus}% boomerang damage");
+        // Apply spellbook-specific damage bonus
+        if (spellbookDamageBonus > 0)
+        {
+            float spellbookBaseWithMind = playerStats.spellbookDamage.GetBaseValue() + playerStats.CalculateDamageBonusForMind(playerStats.Mind);
+            float spellbookEquipmentBonus = spellbookBaseWithMind * (spellbookDamageBonus / 100f);
+            playerStats.spellbookDamage.AddModifier(spellbookEquipmentBonus, StatModifierType.Equipment);
+        }
+        
+        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus}% base damage, +{boomerangDamageBonus}% boomerang damage, +{spellbookDamageBonus}% spellbook damage");
     }
     
     // Save weapon data to PlayerPrefs

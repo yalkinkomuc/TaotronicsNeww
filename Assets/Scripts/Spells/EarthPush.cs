@@ -70,11 +70,11 @@ public class EarthPush : MonoBehaviour
         float finalDamage = damage;
         bool isCritical = false;
         
-        // Scale damage with player's Mind attribute if available
-        if (player != null && player.stats != null)
+        // Scale damage with player's Mind attribute and spellbook upgrades if available
+        if (player != null && player.stats is PlayerStats playerStats)
         {
             float elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
-            finalDamage = damage * elementalMultiplier;
+            finalDamage = (damage + playerStats.spellbookDamage.GetValue()) * elementalMultiplier;
             
             // Critical hit check
             if (player.stats.IsCriticalHit())
@@ -173,11 +173,11 @@ public class EarthPush : MonoBehaviour
         float finalDamage = damage;
         bool isCritical = false;
         
-        // Scale damage with player's Mind attribute if available
-        if (player != null && player.stats != null)
+        // Scale damage with player's Mind attribute and spellbook upgrades if available
+        if (player != null && player.stats is PlayerStats playerStats)
         {
             float elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
-            finalDamage = damage * elementalMultiplier;
+            finalDamage = (damage + playerStats.spellbookDamage.GetValue()) * elementalMultiplier;
             
             // Critical hit check
             if (player.stats.IsCriticalHit())

@@ -130,13 +130,15 @@ public class FireSpell : MonoBehaviour
                     // Get player's elemental damage multiplier
                     Player player = PlayerManager.instance.player;
                     float elementalMultiplier = 1f;
-                    if (player != null && player.stats != null)
+                    float spellbookBonus = 0f;
+                    if (player != null && player.stats is PlayerStats playerStats)
                     {
                         elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
+                        spellbookBonus = playerStats.spellbookDamage.GetValue();
                     }
                     
                     // Calculate frame damage with ramp-up and elemental multiplier
-                    float frameDamage = damagePerSecond * currentDamageMultiplier * elementalMultiplier * Time.deltaTime;
+                    float frameDamage = (damagePerSecond + spellbookBonus) * currentDamageMultiplier * elementalMultiplier * Time.deltaTime;
                     enemy.stats.TakeDamage(frameDamage, CharacterStats.DamageType.Fire);
                     
                     // Accumulated damage for text display
@@ -152,7 +154,7 @@ public class FireSpell : MonoBehaviour
                     else if (Time.time - lastTextTimes[enemy] >= textDisplayInterval)
                     {
                         // Show approximate damage over interval with current multiplier
-                        accumulatedDamage = damagePerSecond * currentDamageMultiplier * elementalMultiplier * textDisplayInterval;
+                        accumulatedDamage = (damagePerSecond + spellbookBonus) * currentDamageMultiplier * elementalMultiplier * textDisplayInterval;
                         shouldShowText = true;
                         lastTextTimes[enemy] = Time.time;
                     }

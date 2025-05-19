@@ -68,12 +68,16 @@ public class PlayerStats : CharacterStats
 
     public Stat baseDamage;
 
+    [Header("Spellbook Damage")]
+    public Stat spellbookDamage;
+
     protected override void Awake()
     {
         // Önce baz sınıfın Awake metodunu çağır
         base.Awake();
         baseDamage = new Stat(_baseDamageValue);
         boomerangDamage = new Stat(_baseDamageValue * 0.8f);
+        spellbookDamage = new Stat(_baseDamageValue * 0.7f);
     }
 
     protected override void Start()
@@ -163,6 +167,13 @@ public class PlayerStats : CharacterStats
     public new float CalculateDamageBonusForMight(int mightLevel)
     {
         return base.CalculateDamageBonusForMight(mightLevel);
+    }
+    
+    // Calculates just the damage bonus for a specific mind level (for preview)
+    public float CalculateDamageBonusForMind(int mindLevel)
+    {
+        float mindMultiplier = Mathf.Pow(1 + SPEED_GROWTH, mindLevel) - 1;
+        return _baseDamageValue * mindMultiplier;
     }
     
     public void AddExperience(int amount)

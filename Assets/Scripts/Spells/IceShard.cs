@@ -106,12 +106,14 @@ public class IceShard : MonoBehaviour
             Enemy enemy = collision.GetComponent<Enemy>();
             if (enemy != null)
             {
+                float spellbookBonus = 0f;
                 float elementalMultiplier = 1f;
                 int mindValue = 0;
-                if (player != null && player.stats != null)
+                if (player != null && player.stats is PlayerStats playerStats)
                 {
                     elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
                     mindValue = player.stats.Mind;
+                    spellbookBonus = playerStats.spellbookDamage.GetValue();
                 }
 
                 // KRİTİK KONTROLÜ
@@ -123,7 +125,7 @@ public class IceShard : MonoBehaviour
                     isCritical = true;
                 }
 
-                float finalDamage = damage * elementalMultiplier * critMultiplier;
+                float finalDamage = (damage + spellbookBonus) * elementalMultiplier * critMultiplier;
 
                 enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Ice);
 
