@@ -105,7 +105,8 @@ public class PlayerSpell2State : PlayerState
         {
             GameObject spellObj = GameObject.Instantiate(player.fireSpellPrefab, 
                 player.fireSpellPoint.position, 
-                player.fireSpellPoint.rotation);
+                player.fireSpellPoint.rotation,
+                player.transform);
             
             currentFireSpell = spellObj.GetComponent<FireSpell>();
         }
