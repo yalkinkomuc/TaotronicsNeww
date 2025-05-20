@@ -47,18 +47,18 @@ public class BlacksmithManager : MonoBehaviour
         weaponDatabase.Clear();
         
         // Kılıç
-        WeaponData sword = new WeaponData("sword", "Kılıç", WeaponType.Sword, 25f, 100);
-        sword.upgradeDamageIncrement = 20f; // Kılıç için seviye başına +2 hasar
+        WeaponData sword = new WeaponData("sword", "Kılıç", WeaponType.Sword, 10f, 100);
+        sword.upgradeDamageIncrement = 5f; 
         weaponDatabase.Add(sword);
         
         // Bumerang
-        WeaponData boomerang = new WeaponData("boomerang", "Bumerang", WeaponType.Boomerang, 15f, 120);
-        boomerang.upgradeDamageIncrement = 12f; // Bumerang için seviye başına +6 hasar (daha yüksek)
+        WeaponData boomerang = new WeaponData("boomerang", "Bumerang", WeaponType.Boomerang, 8f, 120);
+        boomerang.upgradeDamageIncrement = 4f; 
         weaponDatabase.Add(boomerang);
         
         // Büyü Kitabı
-        WeaponData spellbook = new WeaponData("spellbook", "Büyü Kitabı", WeaponType.Spellbook, 10f, 150);
-        spellbook.upgradeDamageIncrement = 8f;
+        WeaponData spellbook = new WeaponData("spellbook", "Büyü Kitabı", WeaponType.Spellbook, 6f, 150);
+        spellbook.upgradeDamageIncrement = 3f;
         weaponDatabase.Add(spellbook);
         
         Debug.Log("Default weapons added: " + weaponDatabase.Count);
@@ -200,36 +200,22 @@ public class BlacksmithManager : MonoBehaviour
         // Apply total damage bonus if it's greater than 0
         if (totalDamageBonus > 0)
         {
-            // Calculate the base damage with MIGHT attribute bonus
-            float baseDamageWithMight = playerStats.baseDamage.GetBaseValue() + 
-                                      playerStats.CalculateDamageBonusForMight(playerStats.Might);
-            
-            // Add equipment bonus as a percentage of the base damage with MIGHT
-            float equipmentBonus = baseDamageWithMight * (totalDamageBonus / 100f);
-            playerStats.baseDamage.AddModifier(equipmentBonus, StatModifierType.Equipment);
+            playerStats.baseDamage.AddModifier(totalDamageBonus, StatModifierType.Equipment);
         }
         
         // Apply boomerang-specific damage bonus
         if (boomerangDamageBonus > 0)
         {
-            // Calculate boomerang damage with MIGHT attribute bonus
-            float boomerangBaseWithMight = playerStats.boomerangDamage.GetBaseValue() + 
-                                         playerStats.CalculateDamageBonusForMight(playerStats.Might);
-            
-            // Add equipment bonus as a percentage of the boomerang base damage with MIGHT
-            float boomerangEquipmentBonus = boomerangBaseWithMight * (boomerangDamageBonus / 100f);
-            playerStats.boomerangDamage.AddModifier(boomerangEquipmentBonus, StatModifierType.Equipment);
+            playerStats.boomerangDamage.AddModifier(boomerangDamageBonus, StatModifierType.Equipment);
         }
         
         // Apply spellbook-specific damage bonus
         if (spellbookDamageBonus > 0)
         {
-            float spellbookBaseWithMind = playerStats.spellbookDamage.GetBaseValue() + playerStats.CalculateDamageBonusForMind(playerStats.Mind);
-            float spellbookEquipmentBonus = spellbookBaseWithMind * (spellbookDamageBonus / 100f);
-            playerStats.spellbookDamage.AddModifier(spellbookEquipmentBonus, StatModifierType.Equipment);
+            playerStats.spellbookDamage.AddModifier(spellbookDamageBonus, StatModifierType.Equipment);
         }
         
-        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus}% base damage, +{boomerangDamageBonus}% boomerang damage, +{spellbookDamageBonus}% spellbook damage");
+        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus} base damage, +{boomerangDamageBonus} boomerang damage, +{spellbookDamageBonus} spellbook damage");
     }
     
     // Save weapon data to PlayerPrefs
