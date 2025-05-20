@@ -380,8 +380,25 @@ public class BlacksmithUI : MonoBehaviour
                 currentLevelText.text = $" {selectedWeapon.level}/{selectedWeapon.maxLevel}";
             }
             
+            // Get the appropriate base damage based on weapon type
+            float baseDamage;
+            switch (selectedWeapon.weaponType)
+            {
+                case WeaponType.Sword:
+                    baseDamage = playerStats.baseDamage.GetBaseValue();
+                    break;
+                case WeaponType.Boomerang:
+                    baseDamage = playerStats.boomerangDamage.GetBaseValue();
+                    break;
+                case WeaponType.Spellbook:
+                    baseDamage = playerStats.spellbookDamage.GetBaseValue();
+                    break;
+                default:
+                    baseDamage = playerStats.baseDamage.GetBaseValue();
+                    break;
+            }
+            
             // Calculate current damage (base damage + might bonus + current weapon bonus)
-            float baseDamage = playerStats.baseDamage.GetBaseValue();
             float mightBonus = playerStats.CalculateDamageBonusForMight(playerStats.Might);
             float currentWeaponBonus = selectedWeapon.GetCurrentDamageBonus();
             float totalCurrentDamage = baseDamage + mightBonus + currentWeaponBonus;
