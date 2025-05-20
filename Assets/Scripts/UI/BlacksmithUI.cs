@@ -380,23 +380,27 @@ public class BlacksmithUI : MonoBehaviour
                 currentLevelText.text = $" {selectedWeapon.level}/{selectedWeapon.maxLevel}";
             }
             
-            // Update damage texts
-            float currentDamage = selectedWeapon.GetCurrentDamageBonus();
+            // Calculate current damage (base damage + might bonus + current weapon bonus)
+            float baseDamage = playerStats.baseDamage.GetBaseValue();
+            float mightBonus = playerStats.CalculateDamageBonusForMight(playerStats.Might);
+            float currentWeaponBonus = selectedWeapon.GetCurrentDamageBonus();
+            float totalCurrentDamage = baseDamage + mightBonus + currentWeaponBonus;
             
             if (currentDamageText != null)
             {
-                currentDamageText.text = $" +{currentDamage}";
+                currentDamageText.text = $" {totalCurrentDamage}";
             }
             
             // Calculate next level damage if not max level
             if (selectedWeapon.level < selectedWeapon.maxLevel)
             {
-                float nextLevelDamage = selectedWeapon.baseDamageBonus + 
-                                      (selectedWeapon.upgradeDamageIncrement * selectedWeapon.level);
+                float nextLevelWeaponBonus = selectedWeapon.baseDamageBonus + 
+                                           (selectedWeapon.upgradeDamageIncrement * selectedWeapon.level);
+                float totalNextLevelDamage = baseDamage + mightBonus + nextLevelWeaponBonus;
                 
                 if (nextLevelDamageText != null)
                 {
-                    nextLevelDamageText.text = $" +{nextLevelDamage}";
+                    nextLevelDamageText.text = $" {totalNextLevelDamage}";
                 }
                 
                 // Set upgrade cost
