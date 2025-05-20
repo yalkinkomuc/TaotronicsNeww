@@ -37,7 +37,8 @@ public class SkeletonArrow : MonoBehaviour
             Player player = other.GetComponent<Player>();
             if (player != null)
             {
-                player.Damage();
+                // Deal physical damage from ranged attack
+                player.TakePlayerDamage(null, CharacterStats.DamageType.Physical);
             }
             Destroy(gameObject);
         }

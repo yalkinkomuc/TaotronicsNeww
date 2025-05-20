@@ -56,7 +56,12 @@ public class EnemyStats : CharacterStats
     protected override void Awake()
     {
         base.Awake();
+        
+        // Create the damage stat with the base value
         enemyDamage = new Stat(_baseDamageValue);
+        
+        // Log initial value for debugging
+        Debug.Log($"Enemy {gameObject.name} initialized with base damage: {_baseDamageValue}");
     }
 
     protected override void Start()
@@ -284,18 +289,35 @@ public class EnemyStats : CharacterStats
     // Apply all attribute bonuses to stats using exponential growth
     public override void ApplyAttributeBonuses()
     {
+        // Reset existing modifiers to prevent stacking
         maxHealth.RemoveAllModifiersOfType(StatModifierType.Attribute);
         enemyDamage.RemoveAllModifiersOfType(StatModifierType.Attribute);
         maxMana.RemoveAllModifiersOfType(StatModifierType.Attribute);
+        
+        // Calculate health bonus based on vitality
         float healthMultiplier = Mathf.Pow(1 + HEALTH_GROWTH, vitality) - 1;
         float healthBonus = baseHealthValue * healthMultiplier;
         maxHealth.AddModifier(healthBonus, StatModifierType.Attribute);
+        
+        // Calculate damage bonus based on might
+        // Modified formula to keep damage values more reasonable
         float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, might) - 1;
         float damageBonus = baseDamageValue * damageMultiplier;
+        
+        // Apply the calculated damage bonus
         enemyDamage.AddModifier(damageBonus, StatModifierType.Attribute);
-        float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, defense) - 1;
-        defenseStat = baseDefenseValue * (1 + defenseMultiplier);
+        
+        // Debug final value
+        Debug.Log($"Enemy {gameObject.name} final damage value: {enemyDamage.GetValue()}");
+        
+        // ÖNEMLİ: Defense değerini doğrudan attribute'dan alma
+        // Bunun yerine defenseStat'ı doğrudan defense attribute'una eşitliyoruz
+        defenseStat = defense;
+        
+        // Calculate critical chance based on luck
         criticalChance = luck * CRIT_CHANCE_PER_LUCK;
+        
+        // Set attackPower for reference
         attackPower = enemyDamage.GetValue();
     }
 }

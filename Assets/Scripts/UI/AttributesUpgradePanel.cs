@@ -270,9 +270,10 @@ public class AttributesUpgradePanel : MonoBehaviour
     
     private float CalculateDefense(int defense)
     {
-        // Defense artık yüzdelik hasar azaltma olarak çalışıyor
-        // Her defense puanı %1 hasar azaltma sağlar, maksimum %50
-        return Mathf.Min(defense, 50);
+        // Hasar azaltma formülü: Her 1 defans puanı için %1 hasar azaltma
+        // (Aynı formülün hem gösterimde hem de gerçek hasarda kullanıldığından emin ol)
+        float reduction = Mathf.Min(defense, 80);
+        return reduction;
     }
     
     private float CalculateCritRate(int luck)

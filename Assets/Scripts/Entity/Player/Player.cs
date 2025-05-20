@@ -766,16 +766,96 @@ public class Player : Entity
     {
         if (!isInvulnerable)
         {
-            base.Damage(attackerDamageStat);
-            StartCoroutine(InvulnerabilityCoroutine());
+            // Use the new player damage system for better control
+            TakePlayerDamage(attackerDamageStat, CharacterStats.DamageType.Physical);
         }
+    }
+    
+    // New method to handle player-specific damage with damage type
+    public void TakePlayerDamage(Stat attackerDamageStat = null, CharacterStats.DamageType damageType = CharacterStats.DamageType.Physical)
+    {
+        if (isInvulnerable)
+            return;
+            
+        // Show visual feedback
+        entityFX.StartCoroutine("HitFX");
+        
+        // Apply knockback if not in specific states
+        if (stateMachine.currentState != parryState && 
+            stateMachine.currentState != succesfulParryState)
+        {
+            StartCoroutine(HitKnockback(knockbackDirection));
+        }
+        
+        // Apply damage with type
+        var playerStats = stats as PlayerStats;
+        if (playerStats != null)
+        {
+            // Use the custom TakeDamage method in CharacterStats 
+            // that properly applies defense and resistances
+            stats.TakeDamage(0, damageType, attackerDamageStat);
+            
+            // Update the UI health bar
+            if (healthBar != null)
+            {
+                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+            }
+        }
+        
+        // Start invulnerability period
+        StartCoroutine(InvulnerabilityCoroutine());
+    }
+    
+    // Method to take elemental damage (for environmental hazards, spells, etc.)
+    public void TakeElementalDamage(float amount, CharacterStats.DamageType elementType)
+    {
+        if (isInvulnerable)
+            return;
+            
+        // Apply appropriate visual effect based on element type
+        switch (elementType)
+        {
+            case CharacterStats.DamageType.Fire:
+                entityFX.StartCoroutine("FireFX");
+                break;
+            case CharacterStats.DamageType.Ice:
+                entityFX.StartCoroutine("IceFX");
+                break;
+            default:
+                entityFX.StartCoroutine("HitFX");
+                break;
+        }
+        
+        // Apply damage directly with the element type
+        stats.TakeDamage(amount, elementType);
+        
+        // Update UI
+        if (healthBar != null)
+        {
+            healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+        }
+        
+        // Start invulnerability period
+        StartCoroutine(InvulnerabilityCoroutine());
     }
 
     public override void DamageWithoutKnockback(Stat attackerDamageStat = null)
     {
         if (!isInvulnerable)
         {
-            base.DamageWithoutKnockback(attackerDamageStat);
+            // Show visual feedback
+            entityFX.StartCoroutine("HitFX");
+            
+            // Apply damage with physical type by default
+            stats.TakeDamage(0, CharacterStats.DamageType.Physical, attackerDamageStat);
+            
+            // Update UI
+            if (healthBar != null)
+            {
+                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
+            }
+            
+            // Start invulnerability period
             StartCoroutine(InvulnerabilityCoroutine());
         }
     }

@@ -71,14 +71,21 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
                 // Bu oyuncuyu vurulmuş olarak işaretle
                 enemyEliteSkeleton.MarkEntityAsHit(player);
                 
-                // Eğer parry penceresi açıkken oyuncu parry state'deyse parry olur
+                // Get enemy stats for damage calculation
+                var enemyStats = enemyEliteSkeleton.stats as EnemyStats;
+                
+                // Log damage values for debugging
+                if (enemyStats != null)
+                {
+                    Debug.Log($"EliteSkeleton attacking with damage: {enemyStats.enemyDamage.GetValue()}");
+                }
                 
                 // Parry durumunda değilse normal hasar ver
-                var enemyStats = enemyEliteSkeleton.stats as EnemyStats;
                 if (enemyStats != null)
-                    player.Damage(enemyStats.enemyDamage);
+                    player.TakePlayerDamage(enemyStats.enemyDamage, CharacterStats.DamageType.Physical);
                 else
-                    player.Damage();
+                    player.TakePlayerDamage(null, CharacterStats.DamageType.Physical);
+                
                 Debug.Log("Elite Skeleton attacked player!");
             }
         }

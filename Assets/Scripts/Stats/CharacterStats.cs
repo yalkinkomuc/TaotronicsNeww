@@ -116,16 +116,16 @@ public class CharacterStats : MonoBehaviour
         float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, might) - 1;
         float damageBonus = baseDamageValue * damageMultiplier;
        
+        // ÖNEMLİ: Defense değerini doğrudan attribute'dan alma
+        // Bu formül defenseStat'ı çok düşük gösteriyor, bu yüzden siliyoruz
+        // float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, defense) - 1;
+        // defenseStat = baseDefenseValue * (1 + defenseMultiplier);
         
-        // Calculate defense stat (exponential growth)
-        float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, defense) - 1;
-        defenseStat = baseDefenseValue * (1 + defenseMultiplier);
+        // Bunun yerine defenseStat'ı doğrudan defense attribute'una eşitliyoruz
+        defenseStat = defense;
         
         // Critical chance remains linear (1% per point)
         criticalChance = luck * CRIT_CHANCE_PER_LUCK;
-        
-        // Calculate derived stats for UI display
-      
     }
     
     // Calculates just the health bonus for a specific vitality level (for preview)
@@ -211,6 +211,17 @@ public class CharacterStats : MonoBehaviour
         if (isInvincible)
             return;
         
+        // Debug the incoming damage for testing
+        Debug.Log($"Raw incoming damage from source: {(damageSource != null ? damageSource.GetValue() : _damage)}");
+        
+        // Debug bilgisi - defans değerleri
+        Debug.Log($"Defense stat value: {defenseStat}");
+        Debug.Log($"Defense attribute: {defense}");
+        
+        // Determine base damage amount
+        float rawDamage = damageSource != null ? damageSource.GetValue() : _damage;
+        
+        // Apply resistance based on damage type
         float reductionPercent = 0f;
         switch (damageType)
         {
@@ -226,27 +237,44 @@ public class CharacterStats : MonoBehaviour
             case DamageType.Earth:
                 reductionPercent = earthResistance / 100f;
                 break;
-            default:
-                reductionPercent = Mathf.Clamp(defenseStat, 0f, 50f) / 100f;
+            case DamageType.Physical:
+                // Her 1 defans puanı için %1 hasar azaltma (linear)
+                // Maximum reduction capped at 80%
+                reductionPercent = Mathf.Clamp(defense * 0.01f, 0f, 0.8f);
+                Debug.Log($"Damage reduction from defense: {reductionPercent * 100}%");
                 break;
         }
         
-        // Use the appropriate damage source if provided
-        float finalDamage = damageSource != null ? damageSource.GetValue() : _damage;
-        finalDamage = finalDamage * (1f - reductionPercent);
-        float roundedDamage = Mathf.Round(finalDamage);
+        // Calculate final damage after reductions
+        float finalDamage = rawDamage * (1f - reductionPercent);
+        
+        // Apply critical hit to the player if it's from an enemy with luck
+        if (damageSource != null && UnityEngine.Random.value < 0.05f) // 5% base chance for enemies
+        {
+            finalDamage *= 1.5f; // 50% more damage on critical hit
+            if (FloatingTextManager.Instance != null)
+            {
+                FloatingTextManager.Instance.ShowCustomText("CRITICAL!", transform.position + Vector3.up * 0.5f, Color.red);
+            }
+        }
+        
+        // Ensure minimum damage of 1 and round damage to nearest integer for cleaner UI
+        float roundedDamage = Mathf.Max(1, Mathf.Round(finalDamage));
+        Debug.Log($"Final damage after reductions: {roundedDamage}");
+        
         currentHealth -= roundedDamage;
 
-        // Hasar gösterimini ekle (elemental renklerle)
+        // Show damage numbers with appropriate colors
         if (FloatingTextManager.Instance != null)
         {
-            Color dmgColor = Color.white;
+            Color dmgColor;
             switch (damageType)
             {
                 case DamageType.Fire: dmgColor = Color.red; break;
                 case DamageType.Ice: dmgColor = Color.cyan; break;
                 case DamageType.Void: dmgColor = new Color(0.5f,0,1f); break;
                 case DamageType.Earth: dmgColor = new Color(0.5f,0.3f,0.1f); break;
+                default: dmgColor = Color.white; break;
             }
             FloatingTextManager.Instance.ShowCustomText(roundedDamage.ToString(), transform.position, dmgColor);
         }

@@ -51,7 +51,12 @@ public class Spider_Enemy : Enemy
 
         if (player != null)
         {
-            player.Damage();
+            // Apply contact damage
+            var enemyStats = stats as EnemyStats;
+            if (enemyStats != null)
+                player.TakePlayerDamage(enemyStats.enemyDamage, CharacterStats.DamageType.Physical);
+            else
+                player.TakePlayerDamage(null, CharacterStats.DamageType.Physical);
         }
     }
 

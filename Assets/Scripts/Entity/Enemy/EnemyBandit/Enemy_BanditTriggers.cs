@@ -69,8 +69,12 @@ public class Enemy_BanditTriggers : EnemyAnimationTriggers
                 // Eğer parry penceresi açıkken oyuncu parry state'deyse parry olur
                 
                 // Parry durumunda değilse normal hasar ver
-                player.Damage();
-                Debug.Log("Elite Skeleton attacked player!");
+                var enemyStats = banditEnemy.stats as EnemyStats;
+                if (enemyStats != null)
+                    player.TakePlayerDamage(enemyStats.enemyDamage, CharacterStats.DamageType.Physical);
+                else
+                    player.TakePlayerDamage(null, CharacterStats.DamageType.Physical);
+                Debug.Log("Bandit attacked player!");
             }
         }
     }
