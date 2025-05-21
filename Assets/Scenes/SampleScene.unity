@@ -14615,6 +14615,14 @@ MonoBehaviour:
     manaCost: 30
     isUnlocked: 1
     skillPrefab: {fileID: 2187963067883842217, guid: e934d529a0955f146b7c5e71335d28e1, type: 3}
+  - skillID: AirPush
+    skillType: 6
+    skillName: Air Push
+    baseCooldown: 1
+    cooldownTimer: 0
+    manaCost: 30
+    isUnlocked: 1
+    skillPrefab: {fileID: 4299426031986039047, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
   globalCooldownReduction: 0
 --- !u!1 &1033984563
 GameObject:
@@ -17270,6 +17278,7 @@ MonoBehaviour:
   fireSpellManaDrainPerSecond: 5
   earthPushManaCost: 25
   voidSkillManaCost: 40
+  airPushManaCost: 15
   iceShardPrefab: {fileID: 3781980674335233421, guid: 35eb45ef5405f1046af3fe7f5e18d141, type: 3}
   spellSpacing: 0.75
   delayBetweenShards: 0.1
@@ -17278,6 +17287,8 @@ MonoBehaviour:
   fireSpellPoint: {fileID: 1301243577}
   earthPushPrefab: {fileID: 5834622055319074674, guid: 8e63c5ab6633e7346950e09a8086c801, type: 3}
   earthPushSpawnPoint: {fileID: 83089445}
+  airPushPrefab: {fileID: 4299426031986039047, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+  airPushSpawnPoint: {fileID: 1452067825}
   groundCheckWidth: 0.65
   groundCheckHeight: 0.02
   groundCheckExtraHeight: 0.05
@@ -17311,6 +17322,7 @@ Transform:
   - {fileID: 1301243577}
   - {fileID: 83089445}
   - {fileID: 1033984564}
+  - {fileID: 1452067825}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1377457615
@@ -17393,6 +17405,7 @@ MonoBehaviour:
   voidResistance: 0
   earthResistance: 0
   electricResistance: 0
+  airResistance: 0
   player: {fileID: 0}
   _vitality: 0
   _might: 0
@@ -18264,6 +18277,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.101, y: 0.12400008, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1377457613}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1452067824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1452067825}
+  m_Layer: 8
+  m_Name: AirPushLaunchPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1452067825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452067824}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.486, y: 0.145, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27073,6 +27117,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 470636a188c0b4947a36f34130c5f507, type: 3}
+--- !u!1001 &7983125895038093269
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4299426031986039047, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_Name
+      value: AirPush
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.0140877
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.0867233
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107663840900892020, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
 --- !u!1001 &8008447393794491405
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27502,3 +27603,4 @@ SceneRoots:
   - {fileID: 4928066905770713212}
   - {fileID: 2125244442}
   - {fileID: 8008447393794491405}
+  - {fileID: 7983125895038093269}

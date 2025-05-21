@@ -6,7 +6,7 @@ public class AirPush : MonoBehaviour
     [Header("Air Push Settings")]
     [SerializeField] private float baseDamage = 20f;
     [SerializeField] private float pushForce = 15f;
-    [SerializeField] private float lifeTime = 1.5f;
+   // [SerializeField] private float lifeTime = 1.5f;
     //[SerializeField] private float radius = 3f;
     [SerializeField] private LayerMask enemyLayer;
     //[SerializeField] private ParticleSystem airEffect;
@@ -33,11 +33,7 @@ public class AirPush : MonoBehaviour
         polyCollider.isTrigger = true;
     }
 
-    void Start()
-    {
-        // Destroy after lifetime
-        Destroy(gameObject, lifeTime);
-    }
+   
 
     public void Initialize(float dir, CharacterStats stats)
     {
@@ -47,7 +43,7 @@ public class AirPush : MonoBehaviour
         // Face the correct direction
         if (direction < 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1);
+            transform.localScale = new Vector3(-2.5f, 1.5f, 1);
         }
         
         // Calculate damage with mind attribute scaling if available

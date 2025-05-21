@@ -162,7 +162,7 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Stunned);
         }
-        else if (player.stateMachine.currentState == player.airState)
+        else if (player.stateMachine.currentState == player.airPushState)
         {
             ChangeState(WeaponState.AirPush);
         }
