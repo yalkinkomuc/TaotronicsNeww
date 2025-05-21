@@ -6,33 +6,18 @@ public class EnemyStats : CharacterStats
     private ItemDrop myDropSystem;
     
     // Override base class properties with concrete implementations
-    [SerializeField] private int _vitality = 0;
-    [SerializeField] private int _might = 0;
-    [SerializeField] private int _defense = 0;
-    [SerializeField] private int _luck = 0;
-    [SerializeField] private int _maxAttributeLevel = 99;
-    [SerializeField] private int _mind = 0;
-    
-    [Header("Base Stats")]
-    [SerializeField] private float _baseHealthValue = 100f;
-    [SerializeField] private float _baseDamageValue = 10f;
-    [SerializeField] private float _baseManaValue = 50f;
-    [SerializeField] private float _baseDefenseValue = 5f;
-    [SerializeField] private float _baseSpeedValue = 300f;
+    [SerializeField] private int _vitality = 0;  // Increases max health
+    [SerializeField] private int _might = 0;     // Increases attack damage
+    [SerializeField] private int _defense = 0;   // Reduces incoming damage
+    [SerializeField] private int _luck = 0;      // Increases critical chance
+    [SerializeField] private int _mind = 0;      // Increases elemental damage
     
     // Override properties from base class
     protected override int vitality { get => _vitality; set => _vitality = value; }
     protected override int might { get => _might; set => _might = value; }
     protected override int defense { get => _defense; set => _defense = value; }
     protected override int luck { get => _luck; set => _luck = value; }
-    protected override int maxAttributeLevel { get => _maxAttributeLevel; set => _maxAttributeLevel = value; }
     protected override int mind { get => _mind; set => _mind = value; }
-    
-    protected override float baseHealthValue { get => _baseHealthValue; set => _baseHealthValue = value; }
-    protected override float baseDamageValue { get => _baseDamageValue; set => _baseDamageValue = value; }
-    protected override float baseManaValue { get => _baseManaValue; set => _baseManaValue = value; }
-    protected override float baseDefenseValue { get => _baseDefenseValue; set => _baseDefenseValue = value; }
-    protected override float baseSpeedValue { get => _baseSpeedValue; set => _baseSpeedValue = value; }
     
     [Header("Experience Reward")]
     [SerializeField] private int baseExperienceReward = 10;
@@ -51,6 +36,9 @@ public class EnemyStats : CharacterStats
     [SerializeField] private EnemyAttributeFocus attributeFocus = EnemyAttributeFocus.Balanced;
     [SerializeField] private float attributePointsPerLevel = 1.5f; // How many attribute points to distribute per level
 
+    [Header("Base Values")]
+    [SerializeField] private float baseDamageValue = 10f;
+
     public Stat enemyDamage;
 
     protected override void Awake()
@@ -58,10 +46,10 @@ public class EnemyStats : CharacterStats
         base.Awake();
         
         // Create the damage stat with the base value
-        enemyDamage = new Stat(_baseDamageValue);
+        enemyDamage = new Stat(baseDamageValue);
         
         // Log initial value for debugging
-        Debug.Log($"Enemy {gameObject.name} initialized with base damage: {_baseDamageValue}");
+        Debug.Log($"Enemy {gameObject.name} initialized with base damage: {baseDamageValue}");
     }
 
     protected override void Start()

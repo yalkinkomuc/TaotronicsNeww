@@ -47,6 +47,14 @@ public class Player : Entity
     public float dashSpeed;
     public float groundDashSpeed;
     
+    [Header("Electric Dash Info")]
+    [SerializeField] public float electricDashSpeed = 15f;
+    [SerializeField] public float electricDashDuration = 0.3f;
+    [SerializeField] public float electricDashDistance = 6f;
+    [SerializeField] public GameObject electricDashPrefab;
+    [SerializeField] public Transform electricDashSpawnPoint;
+    [SerializeField] private float electricDashManaCost = 30f;
+    
     [Header("DashVFX")]
     public GameObject dashEffectPrefab;
     public GameObject groundDashEffectPrefab;
@@ -105,6 +113,7 @@ public class Player : Entity
     public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
     public PlayerVoidState voidState {get;private set;}
     public PlayerSuccesfulParryState succesfulParryState {get;private set;}
+    public PlayerElectricDashState electricDashState {get;private set;}
     
     #endregion
     
@@ -225,6 +234,7 @@ public class Player : Entity
         // Yetenek girişleri
         CheckForDashInput();
         CheckForGroundDashInput();
+        CheckForElectricDashInput();
         
         // Stun durumunu kontrol et
         bool isStunned = stateMachine.currentState == stunnedState;
@@ -343,6 +353,7 @@ public class Player : Entity
         voidState = new PlayerVoidState(this,stateMachine,"VoidDisappear");
         succesfulParryState = new PlayerSuccesfulParryState(this, stateMachine, "SuccesfulParry");
         earthPushState = new PlayerEarthPushSpellState(this, stateMachine, "EarthPush");
+        electricDashState = new PlayerElectricDashState(this, stateMachine, "Dash");
     }
     
     private void AssignWeapons()
@@ -1485,6 +1496,46 @@ public class Player : Entity
         
         // SkillManager üzerinden kontrol et
         return SkillManager.Instance.IsSkillReady(SkillType.IceShard, stats.currentMana) && CanCreateIceShards();
+    }
+
+    // Add new method to check for electric dash input
+    private void CheckForElectricDashInput()
+    {
+        // Make sure we're not in void state and can use the skill
+        if (stateMachine.currentState == voidState)
+        {
+            return;
+        }
+        
+        // Check for the electric dash input
+        if (playerInput.electricDashInput && CanUseElectricDash())
+        {
+            // Set direction
+            dashDirection = playerInput.xInput;
+            if (dashDirection == 0)
+            {
+                dashDirection = facingdir;
+            }
+            
+            // Change to electric dash state
+            stateMachine.ChangeState(electricDashState);
+            
+            // Mark the skill as used in SkillManager
+            if (SkillManager.Instance != null)
+            {
+                SkillManager.Instance.UseSkill(SkillType.ElectricDash);
+            }
+        }
+    }
+
+    // Check if electric dash can be used
+    public bool CanUseElectricDash()
+    {
+        if (SkillManager.Instance == null)
+            return HasEnoughMana(electricDashManaCost);
+        
+        // Use SkillManager to check if skill is ready and mana is sufficient
+        return SkillManager.Instance.IsSkillReady(SkillType.ElectricDash, stats.currentMana);
     }
 }
 

@@ -23,6 +23,9 @@ public class EntityFX : MonoBehaviour
    [Header("IceFX")]
    [SerializeField] public Material iceMat; // Unity'de buz mavisi materyal atanacak
 
+   [Header("ElectricFX")]
+   [SerializeField] public Material electricMat; // Sarı elektrik efekti materyali
+
    [Header("Death Effect")]
    [SerializeField] private Transform deathEffectSpawnPoint;
    [SerializeField] private GameObject explosionEffectPrefab; // Patlama efekti prefab'ı
@@ -159,6 +162,27 @@ public class EntityFX : MonoBehaviour
        {
            // Flash açık
            sr.material = iceMat;
+           yield return new WaitForSeconds(flashDuration);
+           
+           // Flash kapalı
+           sr.material = originalMat;
+           yield return new WaitForSeconds(flashInterval);
+       }
+       
+       // Son durumda normal materyal
+       sr.material = originalMat;
+   }
+
+   public IEnumerator ElectricFX()
+   {
+       float endTime = Time.time + 1.2f;
+       float flashDuration = 0.05f; // Daha hızlı flash (elektrik çarpması gibi)
+       float flashInterval = 0.05f; // Flash'lar arası kısa bekleme
+       
+       while (Time.time < endTime)
+       {
+           // Flash açık
+           sr.material = electricMat;
            yield return new WaitForSeconds(flashDuration);
            
            // Flash kapalı

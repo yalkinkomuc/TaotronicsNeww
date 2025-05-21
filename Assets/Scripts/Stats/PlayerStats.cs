@@ -142,8 +142,8 @@ public class PlayerStats : CharacterStats
         baseDamage.AddModifier(damageBonus, StatModifierType.Attribute);
         boomerangDamage.AddModifier(damageBonus, StatModifierType.Attribute); // Apply full might bonus to boomerang
         
-        // ÖNEMLİ: Defans değerini direkt olarak atayalım
-        base.defenseStat = _defense;
+        // Calculate defense stat (exponential growth)
+        float defenseMultiplier = Mathf.Pow(1 + DEFENSE_GROWTH, _defense) - 1;
         
         // Critical chance remains linear (1% per point)
         base.criticalChance = _luck * CRIT_CHANCE_PER_LUCK;
@@ -154,8 +154,7 @@ public class PlayerStats : CharacterStats
         // Calculate derived stats for UI display
         base.attackPower = baseDamage.GetValue();
         
-        // Debug edip değerleri kontrol et
-        Debug.Log($"PlayerStats.ApplyAttributeBonuses: defense={_defense}, defenseStat={base.defenseStat}");
+       
     }
     
     // Calculates just the health bonus for a specific vitality level (for preview)
@@ -558,38 +557,6 @@ public class PlayerStats : CharacterStats
         return base.IsCriticalHit();
     }
 
-    // Base class property'lerini override et - BUNLARI MUTLAKA BU ŞEKİLDE EKLE
-    protected override int vitality { get => _vitality; set => _vitality = value; }
-    protected override int might { get => _might; set => _might = value; }
-    protected override int defense { get => _defense; set => _defense = value; }
-    protected override int luck { get => _luck; set => _luck = value; }
+    // Fix override to ensure this is correct
     protected override int mind { get => _mind; set => _mind = value; }
-    protected override int maxAttributeLevel { get => _maxAttributeLevel; set => _maxAttributeLevel = value; }
-    
-    protected override float baseHealthValue { get => _baseHealthValue; set => _baseHealthValue = value; }
-    protected override float baseDamageValue { get => _baseDamageValue; set => _baseDamageValue = value; }
-    protected override float baseManaValue { get => _baseManaValue; set => _baseManaValue = value; }
-    protected override float baseSpeedValue { get => _baseSpeedValue; set => _baseSpeedValue = value; }
-
-    // Calculates the current damage reduction percentage from defense
-    public float GetDefenseReductionPercentage()
-    {
-        // Her 1 defans puanı için %1 hasar azaltma (lineer)
-        // Maximum reduction capped at 80%
-        float reduction = Mathf.Clamp(_defense * 0.01f, 0f, 0.8f);
-        
-        // Return as a percentage (0-100)
-        return reduction * 100f;
-    }
-    
-    // For UI tooltip - Calculate defense reduction for a specific defense level
-    public float GetDefenseReductionForLevel(int defenseLevel)
-    {
-        // Her 1 defans puanı için %1 hasar azaltma (lineer)
-        // Maximum reduction capped at 80%
-        float reduction = Mathf.Clamp(defenseLevel * 0.01f, 0f, 0.8f);
-        
-        // Return as a percentage (0-100)
-        return reduction * 100f;
-    }
 }

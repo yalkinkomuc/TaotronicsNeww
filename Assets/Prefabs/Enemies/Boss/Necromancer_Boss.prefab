@@ -267,7 +267,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2762347492465732489
 Transform:
   m_ObjectHideFlags: 0
@@ -369,6 +369,9 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
+  whatIsStair:
+    serializedVersion: 2
+    m_Bits: 0
   wallCheck: {fileID: 2981558565480874075}
   wallCheckDistance: 1.26
   facingdir: 1
@@ -386,12 +389,14 @@ MonoBehaviour:
   idleTime: 1
   moveSpeed: 2
   chaseSpeed: 3
-  tooCloseDistance: 3
+  tooCloseRadius: 3
   detectDistance: 500
   patrolDistance: 5
   patrolSpeed: 2
   fightBegun: 0
   isDefeated: 0
+  isQuestEnemy: 0
+  uniqueEnemyId: 
   spellPrefab: {fileID: 7215539477136866372, guid: 302ad76f4e05bcd4cb4c11062ef69d95, type: 3}
   spellSpawnPoint: {fileID: 6573887789776312726}
   spellCooldown: 3.5
@@ -427,7 +432,11 @@ MonoBehaviour:
   - BloodVFX2
   vfxSpawnPoint: {fileID: 2267727980904717625}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
-  deathVFXIds: []
+  iceMat: {fileID: 0}
+  electricMat: {fileID: 2100000, guid: 6395b9930a6409247abdd97eaa15abc2, type: 2}
+  deathEffectSpawnPoint: {fileID: 0}
+  explosionEffectPrefab: {fileID: 0}
+  explosionCount: 5
 --- !u!114 &4508352989967533048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,8 +449,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696e681ce93ee644784651941034bea4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseDamage:
-    baseValue: 15
   secondComboDamageMultiplier:
     baseValue: 0
   thirdComboDamageMultiplier:
@@ -455,7 +462,25 @@ MonoBehaviour:
   level: 1
   levelHealthMultiplier: 0.1
   levelDamageMultiplier: 0.05
+  fireResistance: 0
+  iceResistance: 0
+  voidResistance: 0
+  earthResistance: 0
+  electricResistance: 0
+  _vitality: 0
+  _might: 0
+  _defense: 0
+  _luck: 0
+  _mind: 0
   baseExperienceReward: 10
   experienceLevelMultiplier: 0.5
+  baseGoldReward: 5
+  goldLevelMultiplier: 0.3
+  goldRandomVariance: 0.2
   scaleWithPlayerLevel: 0
   levelOffset: 0
+  attributeFocus: 0
+  attributePointsPerLevel: 1.5
+  baseDamageValue: 10
+  enemyDamage:
+    baseValue: 0

@@ -17,6 +17,7 @@ public interface IPlayerInput
      bool earthPushInput { get; }
      bool boomerangInput { get; }
      bool voidSkillInput { get; }
+     bool electricDashInput { get; }
      
      void DisableAllInput();
      void EnableAllInput();

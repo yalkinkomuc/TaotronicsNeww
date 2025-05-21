@@ -70,9 +70,10 @@ public class CharacterStats : MonoBehaviour
     [Range(0,100)] public float iceResistance = 0f;
     [Range(0,100)] public float voidResistance = 0f;
     [Range(0,100)] public float earthResistance = 0f;
+    [Range(0,100)] public float electricResistance = 0f;
 
     // Damage type enum
-    public enum DamageType { Physical, Fire, Ice, Void, Earth }
+    public enum DamageType { Physical, Fire, Ice, Void, Earth, Electric }
 
     // Returns the total elemental damage multiplier based on mind
     public float GetTotalElementalDamageMultiplier()
@@ -237,6 +238,9 @@ public class CharacterStats : MonoBehaviour
             case DamageType.Earth:
                 reductionPercent = earthResistance / 100f;
                 break;
+            case DamageType.Electric:
+                reductionPercent = electricResistance / 100f;
+                break;
             case DamageType.Physical:
                 // Her 1 defans puanı için %1 hasar azaltma (linear)
                 // Maximum reduction capped at 80%
@@ -274,6 +278,7 @@ public class CharacterStats : MonoBehaviour
                 case DamageType.Ice: dmgColor = Color.cyan; break;
                 case DamageType.Void: dmgColor = new Color(0.5f,0,1f); break;
                 case DamageType.Earth: dmgColor = new Color(0.5f,0.3f,0.1f); break;
+                case DamageType.Electric: dmgColor = new Color(1f,1f,0); break; // Yellow color for electric
                 default: dmgColor = Color.white; break;
             }
             FloatingTextManager.Instance.ShowCustomText(roundedDamage.ToString(), transform.position, dmgColor);

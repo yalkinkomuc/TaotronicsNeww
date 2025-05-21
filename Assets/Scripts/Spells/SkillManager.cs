@@ -8,7 +8,8 @@ public enum SkillType
     IceShard,
     EarthPush,
     FireSpell,
-    VoidSkill
+    VoidSkill,
+    ElectricDash
 }
 
 [System.Serializable]
@@ -142,6 +143,17 @@ public class SkillManager : MonoBehaviour
             skillName = "Void Disappear",
             baseCooldown = 15f,
             manaCost = 40f,
+            isUnlocked = true
+        });
+        
+        // Electric Dash becerisi
+        skills.Add(new SkillInfo
+        {
+            skillID = "electric_dash",
+            skillType = SkillType.ElectricDash,
+            skillName = "Electric Dash",
+            baseCooldown = 8f,
+            manaCost = 30f,
             isUnlocked = true
         });
     }
