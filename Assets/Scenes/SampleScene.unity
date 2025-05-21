@@ -17207,7 +17207,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1377457612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18307,7 +18307,7 @@ Transform:
   m_GameObject: {fileID: 1452067824}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.486, y: 0.145, z: 0}
+  m_LocalPosition: {x: 2.271, y: 0.126, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25998,9 +25998,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1655988990}
     m_Modifications:
+    - target: {fileID: 3073608302890412038, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: maxHealth.baseValue
+      value: 100000
+      objectReference: {fileID: 0}
     - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_Name
       value: Bandit_Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8065499046978125994, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8939395246029523988, guid: ec82f06816d03f745b4d7af98e2edd0c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -26454,9 +26462,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5671088416529142098, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: airResistance
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
       value: EliteSkeleton_Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

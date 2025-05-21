@@ -6,9 +6,12 @@ public class AirPush : MonoBehaviour
 {
     [Header("Air Push Settings")]
     [SerializeField] private float baseDamage = 20f;
-    [SerializeField] private float pushForce = 8f; // Daha düşük bir değer
+    //[SerializeField] private float pushForce = 8f; // Daha düşük bir değer
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private float minPushDistance = 3f; // Minimum itme mesafesi
+    [SerializeField] private float extraPushBeyondBoundary = 1.0f; // Sınırın ötesine ekstra itme mesafesi
     private PolygonCollider2D polyCollider;
+    private float effectWidth = 2.0f; // Varsayılan genişlik (collider yoksa)
 
     [Header("Mind Scaling")]
     [SerializeField] private float mindDamageMultiplier = 0.1f; // 10% damage increase per mind point
@@ -32,6 +35,34 @@ public class AirPush : MonoBehaviour
         
         // Make sure it's a trigger
         polyCollider.isTrigger = true;
+        
+        // Efektin genişliğini hesapla (X sınırlarını bul)
+        CalculateEffectWidth();
+    }
+    
+    private void CalculateEffectWidth()
+    {
+        // Eğer PolygonCollider2D varsa onun sınırlarını kullan
+        if (polyCollider != null && polyCollider.points.Length > 0)
+        {
+            // X koordinatlarındaki min ve max değerleri bul
+            float minX = float.MaxValue;
+            float maxX = float.MinValue;
+            
+            foreach (Vector2 point in polyCollider.points)
+            {
+                if (point.x < minX) minX = point.x;
+                if (point.x > maxX) maxX = point.x;
+            }
+            
+            // Genişliği hesapla
+            effectWidth = maxX - minX;
+        }
+        else
+        {
+            // Eğer collider yoksa varsayılan değeri kullan
+            effectWidth = 2.0f;
+        }
     }
 
     public void Initialize(float dir, CharacterStats stats)
@@ -52,17 +83,19 @@ public class AirPush : MonoBehaviour
             transform.localScale = new Vector3(-2.5f, 1.5f, 1);
         }
         
-        // Calculate damage with mind attribute scaling if available
-        if (stats != null)
+        // Calculate damage based on player's spellbook damage and mind attribute
+        if (stats != null && stats is PlayerStats playerStatsRef)
         {
-            // Get mind attribute value if it's a PlayerStats
-            int mindValue = (stats is PlayerStats) ? ((PlayerStats)stats).Mind : 0;
+            // Get base damage from spellbook
+            finalDamage = baseDamage;
             
-            // Calculate damage with mind scaling
-            float mindMultiplier = 1f + (mindValue * mindDamageMultiplier);
-            finalDamage = baseDamage * mindMultiplier;
+            // Add spellbook damage if available
+            if (playerStatsRef.spellbookDamage != null)
+            {
+                finalDamage = playerStatsRef.spellbookDamage.GetValue();
+            }
             
-            // Apply elemental damage multiplier from stats
+            // Apply elemental damage multiplier from stats (includes mind scaling)
             finalDamage *= stats.GetTotalElementalDamageMultiplier();
         }
         else
@@ -89,17 +122,48 @@ public class AirPush : MonoBehaviour
                     enemyComponent.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Air);
                 }
                 
-                // HER ZAMAN OYUNCUDAN UZAKLAŞTIR
-                // Oyuncunun yönünü kullanarak düşmanı it
+                // HER ZAMAN OYUNCUDAN UZAKLAŞTIR VE PREFABİN DIŞINA İT
                 float pushDirectionX = direction; // Oyuncunun baktığı yönü kullan
                 
-                // Yeni pozisyonu hesapla - oyuncunun pozisyonundan uzaklaşacak şekilde
-                Vector3 targetPosition = collision.transform.position + new Vector3(pushDirectionX * 1.5f, 0, 0);
+                // Düşmanın prefaba göre göreceli pozisyonunu bul
+                Vector3 localEnemyPos = transform.InverseTransformPoint(collision.transform.position);
+                
+                // Düşmanın prefab sınırının dışına çıkması için gereken mesafeyi hesapla
+                float pushDistance = CalculatePushDistance(localEnemyPos, pushDirectionX);
+                
+                // Yeni pozisyonu hesapla - prefabin sınırlarının dışına
+                Vector3 targetPosition = collision.transform.position + new Vector3(pushDirectionX * pushDistance, 0, 0);
                 
                 // Nazik bir hareket için coroutine başlat
                 StartCoroutine(SmoothMoveEnemy(collision.transform, targetPosition, 0.3f));
             }
         }
+    }
+    
+    // Düşmanı prefabin dışına itmek için gereken mesafeyi hesapla
+    private float CalculatePushDistance(Vector3 localEnemyPos, float pushDir)
+    {
+        // Prefabin kenarına olan mesafeyi hesapla
+        float distanceToBoundary;
+        
+        if (pushDir > 0) // Sağa doğru itiyorsak
+        {
+            // Prefabin sağ kenarını bul (scale'i de dikkate al)
+            float rightEdge = effectWidth / 2 * Mathf.Abs(transform.localScale.x);
+            distanceToBoundary = rightEdge - localEnemyPos.x;
+        }
+        else // Sola doğru itiyorsak
+        {
+            // Prefabin sol kenarını bul (scale'i de dikkate al)
+            float leftEdge = -effectWidth / 2 * Mathf.Abs(transform.localScale.x);
+            distanceToBoundary = localEnemyPos.x - leftEdge;
+        }
+        
+        // Mesafe negatifse, düşman zaten sınırın dışında demektir
+        distanceToBoundary = Mathf.Max(0, distanceToBoundary);
+        
+        // Minimum itme mesafesi ve sınırın ötesine ekstra itme mesafesini ekle
+        return Mathf.Max(minPushDistance, distanceToBoundary + extraPushBeyondBoundary);
     }
     
     // Düşmanı daha yumuşak hareket ettir
@@ -138,6 +202,24 @@ public class AirPush : MonoBehaviour
                 Vector2 point = transform.TransformPoint(points[i]);
                 Vector2 nextPoint = transform.TransformPoint(points[(i + 1) % points.Length]);
                 Gizmos.DrawLine(point, nextPoint);
+            }
+            
+            // Ayrıca sınırları göster
+            float width = effectWidth;
+            if (width > 0)
+            {
+                Vector3 leftEdge = transform.TransformPoint(new Vector3(-width/2, 0, 0));
+                Vector3 rightEdge = transform.TransformPoint(new Vector3(width/2, 0, 0));
+                
+                // Sınırları belirt
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(leftEdge + Vector3.up, leftEdge + Vector3.down);
+                Gizmos.DrawLine(rightEdge + Vector3.up, rightEdge + Vector3.down);
+                
+                // İtme mesafesini belirt
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(rightEdge, rightEdge + Vector3.right * extraPushBeyondBoundary);
+                Gizmos.DrawLine(leftEdge, leftEdge + Vector3.left * extraPushBeyondBoundary);
             }
         }
     }
