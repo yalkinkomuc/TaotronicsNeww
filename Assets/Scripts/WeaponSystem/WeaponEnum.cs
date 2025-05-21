@@ -1,5 +1,3 @@
-
-
 public enum WeaponState
 {
     Idle,
@@ -20,5 +18,5 @@ public enum WeaponState
     Spell2,
     Parry,
     SuccesfulParry,
-
+    AirPush,
 }

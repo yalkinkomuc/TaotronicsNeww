@@ -108,6 +108,7 @@ public class Player : Entity
     public PlayerSpell1State spell1State {get;private set;}
     public PlayerSpell2State spell2State {get;private set;}
     public PlayerEarthPushSpellState earthPushState {get;private set;}
+    public PlayerAirPushState airPushState {get;private set;}
     
     public PlayerThrowBoomerangState throwBoomerangState {get;private set;}
     public PlayerCatchBoomerangState catchBoomerangState {get;private set;}
@@ -138,6 +139,7 @@ public class Player : Entity
     [SerializeField] public float fireSpellManaDrainPerSecond = 5f; // Saniyede tüketilecek mana
     [SerializeField] public float earthPushManaCost = 25f;
     [SerializeField] public float voidSkillManaCost = 40f;
+    [SerializeField] public float airPushManaCost = 15f;
 
     [Header("Ice Spell Settings")]
     [SerializeField] private GameObject iceShardPrefab;
@@ -160,6 +162,12 @@ public class Player : Entity
     public Transform earthPushSpawnPoint;
     private float earthPushCooldown = 3f; // 3 saniye cooldown
     private float earthPushCooldownTimer;
+    
+    [Header("Air Spell Settings")]
+    public GameObject airPushPrefab;
+    public Transform airPushSpawnPoint;
+    private float airPushCooldown = 2f; // 2 saniye cooldown
+    private float airPushCooldownTimer;
 
     #endregion
     
@@ -249,6 +257,9 @@ public class Player : Entity
             
             // Void becerisi kontrolü
             CheckForVoidSkillInput();
+            
+            // Air Push becerisi kontrolü
+            CheckForAirPushInput();
             
             // Etkileşim kontrolü
             if (playerInput.interactionInput && currentInteractable != null)
@@ -354,6 +365,7 @@ public class Player : Entity
         succesfulParryState = new PlayerSuccesfulParryState(this, stateMachine, "SuccesfulParry");
         earthPushState = new PlayerEarthPushSpellState(this, stateMachine, "EarthPush");
         electricDashState = new PlayerElectricDashState(this, stateMachine, "Dash");
+        airPushState = new PlayerAirPushState(this, stateMachine, "AirPush");
     }
     
     private void AssignWeapons()
@@ -1536,6 +1548,36 @@ public class Player : Entity
         
         // Use SkillManager to check if skill is ready and mana is sufficient
         return SkillManager.Instance.IsSkillReady(SkillType.ElectricDash, stats.currentMana);
+    }
+
+    // Add this method where other input check methods are
+    private void CheckForAirPushInput()
+    {
+        // Check if player can use Air Push
+        if (playerInput.airPushInput && CanUseAirPush() && CanCastSpells())
+        {
+            // Change to AirPush state
+            stateMachine.ChangeState(airPushState);
+            
+            // Start cooldown
+            airPushCooldownTimer = airPushCooldown;
+            
+            // If using SkillManager, mark skill as used
+            if (SkillManager.Instance != null)
+            {
+                SkillManager.Instance.UseSkill(SkillType.AirPush);
+            }
+        }
+    }
+
+    // Add this method with other Can methods
+    public bool CanUseAirPush()
+    {
+        if (SkillManager.Instance == null)
+            return airPushCooldownTimer <= 0f && HasEnoughMana(airPushManaCost);
+        
+        // Use SkillManager to check if skill is ready and mana is sufficient
+        return SkillManager.Instance.IsSkillReady(SkillType.AirPush, stats.currentMana);
     }
 }
 

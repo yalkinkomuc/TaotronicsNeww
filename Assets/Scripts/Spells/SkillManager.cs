@@ -9,7 +9,8 @@ public enum SkillType
     EarthPush,
     FireSpell,
     VoidSkill,
-    ElectricDash
+    ElectricDash,
+    AirPush
 }
 
 [System.Serializable]
@@ -154,6 +155,17 @@ public class SkillManager : MonoBehaviour
             skillName = "Electric Dash",
             baseCooldown = 8f,
             manaCost = 30f,
+            isUnlocked = true
+        });
+        
+        // Air Push becerisi
+        skills.Add(new SkillInfo
+        {
+            skillID = "air_push",
+            skillType = SkillType.AirPush,
+            skillName = "Air Push",
+            baseCooldown = 2f,
+            manaCost = 15f,
             isUnlocked = true
         });
     }

@@ -32,9 +32,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SwordStunned",false);
         animator.SetBool("SwordThrowBoomerang",false);
         animator.SetBool("SwordCatchBoomerang",false);
-        animator.SetBool("SwordBlock",false);
-        
-        animator.SetBool("SwordSuccesfulParry",false);
+                animator.SetBool("SwordBlock",false);                animator.SetBool("SwordSuccesfulParry",false);        animator.SetBool("SwordAirPush",false);
        
         // Bool yerine integer kullanıyoruz
         animator.SetInteger("SwordComboCounter", 0);
@@ -93,9 +91,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
             case WeaponState.Spell2:
                 animator.SetBool("SwordSpell2", true);
                 break;
-            case WeaponState.SuccesfulParry:
-                animator.SetBool("SwordSuccesfulParry", true);
-                break;
+                        case WeaponState.SuccesfulParry:                animator.SetBool("SwordSuccesfulParry", true);                break;            case WeaponState.AirPush:                animator.SetBool("SwordAirPush", true);                break;
 
 
         }
@@ -166,10 +162,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.SuccesfulParry);
         }
-        else if (player.stateMachine.currentState == player.parryState)
-        {
-            ChangeState(WeaponState.Parry);
-        }
+                else if (player.stateMachine.currentState == player.parryState)        {            ChangeState(WeaponState.Parry);        }        else if (player.stateMachine.currentState == player.airPushState)        {            ChangeState(WeaponState.AirPush);        }
         
         
         
