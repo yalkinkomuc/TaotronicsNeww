@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 673544128991126551}
   - component: {fileID: 8157872550203761763}
   m_Layer: 0
-  m_Name: Earth-Push_0
+  m_Name: Earth-Push
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 20
-  knockbackForce: {x: 15, y: 4}
+  knockbackForce: {x: 0, y: 0}
   damageCollider: {fileID: 8157872550203761763}
   enemyLayer:
     serializedVersion: 2

@@ -475,8 +475,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696e681ce93ee644784651941034bea4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseDamage:
-    baseValue: 40
   secondComboDamageMultiplier:
     baseValue: 0
   thirdComboDamageMultiplier:
@@ -494,12 +492,12 @@ MonoBehaviour:
   iceResistance: 10
   voidResistance: 10
   earthResistance: 10
-  _vitality: 1
-  _might: 1
-  _agility: 0
-  _defense: 1
-  _luck: 1
+  _vitality: 0
+  _might: 0
+  _defense: 0
+  _luck: 0
   _maxAttributeLevel: 99
+  _mind: 0
   _baseHealthValue: 100
   _baseDamageValue: 10
   _baseManaValue: 50
@@ -514,6 +512,8 @@ MonoBehaviour:
   levelOffset: 0
   attributeFocus: 0
   attributePointsPerLevel: 1.5
+  enemyDamage:
+    baseValue: 0
 --- !u!114 &8091781740480588764
 MonoBehaviour:
   m_ObjectHideFlags: 0
