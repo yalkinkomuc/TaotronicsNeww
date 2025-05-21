@@ -1,24 +1,25 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class AirPush : MonoBehaviour
 {
     [Header("Air Push Settings")]
     [SerializeField] private float baseDamage = 20f;
-    [SerializeField] private float pushForce = 15f;
-   // [SerializeField] private float lifeTime = 1.5f;
-    //[SerializeField] private float radius = 3f;
+    [SerializeField] private float pushForce = 8f; // Daha düşük bir değer
     [SerializeField] private LayerMask enemyLayer;
-    //[SerializeField] private ParticleSystem airEffect;
     private PolygonCollider2D polyCollider;
 
     [Header("Mind Scaling")]
     [SerializeField] private float mindDamageMultiplier = 0.1f; // 10% damage increase per mind point
 
-    private float direction;
+    private float direction; // Oyuncunun baktığı yön (1 veya -1)
     private CharacterStats playerStats;
     private float finalDamage;
-    private HashSet<Collider2D> hitEnemies = new HashSet<Collider2D>(); // To prevent multiple hits on the same enemy
+    private HashSet<Collider2D> hitEnemies = new HashSet<Collider2D>();
+    
+    // Oyuncunun transform referansı
+    private Transform playerTransform;
 
     private void Awake()
     {
@@ -33,12 +34,17 @@ public class AirPush : MonoBehaviour
         polyCollider.isTrigger = true;
     }
 
-   
-
     public void Initialize(float dir, CharacterStats stats)
     {
-        direction = dir;
+        direction = dir; // Oyuncunun baktığı yön
         playerStats = stats;
+        
+        // Oyuncuyu bul (Player komponenti olan)
+        Player player = FindObjectOfType<Player>();
+        if (player != null)
+        {
+            playerTransform = player.transform;
+        }
         
         // Face the correct direction
         if (direction < 0)
@@ -63,9 +69,6 @@ public class AirPush : MonoBehaviour
         {
             finalDamage = baseDamage;
         }
-        
-        // Set layer to interact with enemyLayer
-        //gameObject.layer = LayerMask.NameToLayer("PlayerAttack");
     }
     
     private void OnTriggerEnter2D(Collider2D collision)
@@ -86,16 +89,37 @@ public class AirPush : MonoBehaviour
                     enemyComponent.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Air);
                 }
                 
-                // Calculate push direction
-                Vector2 pushDirection = (collision.transform.position - transform.position).normalized;
+                // HER ZAMAN OYUNCUDAN UZAKLAŞTIR
+                // Oyuncunun yönünü kullanarak düşmanı it
+                float pushDirectionX = direction; // Oyuncunun baktığı yönü kullan
                 
-                // Apply push force
-                Rigidbody2D enemyRb = collision.GetComponent<Rigidbody2D>();
-                if (enemyRb != null)
-                {
-                    enemyRb.AddForce(pushDirection * pushForce, ForceMode2D.Impulse);
-                }
+                // Yeni pozisyonu hesapla - oyuncunun pozisyonundan uzaklaşacak şekilde
+                Vector3 targetPosition = collision.transform.position + new Vector3(pushDirectionX * 1.5f, 0, 0);
+                
+                // Nazik bir hareket için coroutine başlat
+                StartCoroutine(SmoothMoveEnemy(collision.transform, targetPosition, 0.3f));
             }
+        }
+    }
+    
+    // Düşmanı daha yumuşak hareket ettir
+    private IEnumerator SmoothMoveEnemy(Transform enemyTransform, Vector3 targetPosition, float duration)
+    {
+        if (enemyTransform == null) yield break;
+        
+        Vector3 startPosition = enemyTransform.position;
+        float elapsed = 0;
+        
+        while (elapsed < duration && enemyTransform != null)
+        {
+            enemyTransform.position = Vector3.Lerp(startPosition, targetPosition, Mathf.SmoothStep(0, 1, elapsed / duration));
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        
+        if (enemyTransform != null)
+        {
+            enemyTransform.position = targetPosition;
         }
     }
     
