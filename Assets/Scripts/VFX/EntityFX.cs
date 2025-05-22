@@ -19,6 +19,8 @@ public class EntityFX : MonoBehaviour
 
    [Header("BurnFX")] 
    [SerializeField] public Material burnMat; // Unity'de turuncu flash materyali atanacak
+   [SerializeField] private float burnDuration =1f; // Default burn duration
+   [SerializeField] private float burnFlashInterval = 0.10f; // Flash interval during burn effect
 
    [Header("IceFX")]
    [SerializeField] public Material iceMat; // Unity'de buz mavisi materyal atanacak
@@ -144,12 +146,23 @@ public class EntityFX : MonoBehaviour
 
    public IEnumerator BurnFX()
    {
-       sr.material = burnMat;
-       // Artık flash yok, sürekli turuncu kalacak
-       while (true)
+       // Get the current time plus burn duration
+       float endTime = Time.time + burnDuration;
+       
+       // Flash effect with burn material
+       while (Time.time < endTime)
        {
-           yield return null;
+           // Burn material on
+           sr.material = burnMat;
+           yield return new WaitForSeconds(burnFlashInterval);
+           
+           // Original material briefly
+           sr.material = originalMat;
+           yield return new WaitForSeconds(burnFlashInterval / 2);
        }
+       
+       // Reset to original material when finished
+       sr.material = originalMat;
    }
 
    public IEnumerator IceFX()

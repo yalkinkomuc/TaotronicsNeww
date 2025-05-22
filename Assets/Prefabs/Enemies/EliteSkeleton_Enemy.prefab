@@ -459,6 +459,8 @@ MonoBehaviour:
   - Skeleton_Hurt3
   vfxSpawnPoint: {fileID: 1893527124932000873}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
+  burnDuration: 1
+  burnFlashInterval: 0.1
   iceMat: {fileID: 2100000, guid: 066fa3013b7e6364898411e07f33a868, type: 2}
   electricMat: {fileID: 2100000, guid: 6395b9930a6409247abdd97eaa15abc2, type: 2}
   deathEffectSpawnPoint: {fileID: 960792307035410129}
@@ -494,6 +496,7 @@ MonoBehaviour:
   voidResistance: 10
   earthResistance: 50
   electricResistance: 0
+  airResistance: 50
   _vitality: 0
   _might: 0
   _defense: 0
