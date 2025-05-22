@@ -60,6 +60,7 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SpellbookStunned",false);
         animator.SetBool("SpellbookParry",false);
         animator.SetBool("SpellbookAirPushSpell",false);
+        animator.SetBool("SpellbookFireBallSpell",false);
 
         switch (currentState)
         {
@@ -71,7 +72,7 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Spell2:
                 animator.SetBool("SpellbookSpell2", true);
-            break ;
+                break;
             case WeaponState.Move:
                 animator.SetBool("SpellbookMove", true);
                 break;
@@ -104,6 +105,9 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.AirPush:
                 animator.SetBool("SpellbookAirPushSpell", true);
+                break;
+            case WeaponState.FireballSpell:
+                animator.SetBool("SpellbookFireBallSpell", true);
                 break;
         }
     }
@@ -166,7 +170,10 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.AirPush);
         }
-        
+        else if (player.stateMachine.currentState ==player.fireballSpellState)
+        {
+            ChangeState(WeaponState.FireballSpell);
+        }
     }
 
 }

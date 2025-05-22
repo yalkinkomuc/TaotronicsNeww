@@ -19,6 +19,7 @@ public interface IPlayerInput
      bool voidSkillInput { get; }
      bool electricDashInput { get; }
      bool airPushInput { get; }
+     bool fireballInput { get; }
      
      void DisableAllInput();
      void EnableAllInput();

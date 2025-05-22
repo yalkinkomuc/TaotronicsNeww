@@ -115,6 +115,7 @@ public class Player : Entity
     public PlayerVoidState voidState {get;private set;}
     public PlayerSuccesfulParryState succesfulParryState {get;private set;}
     public PlayerElectricDashState electricDashState {get;private set;}
+    public PlayerFireballSpellState fireballSpellState {get;private set;}
     
     #endregion
     
@@ -156,6 +157,10 @@ public class Player : Entity
     public GameObject fireSpellPrefab;
     public Transform fireSpellPoint;
     private bool isChargingFire = false;
+    
+    [Header("Fireball Spell Settings")]
+    public GameObject fireballPrefab;
+    public Transform fireballSpawnPoint;
 
     [Header("Earth Spell Settings")]
     public GameObject earthPushPrefab;
@@ -366,6 +371,7 @@ public class Player : Entity
         earthPushState = new PlayerEarthPushSpellState(this, stateMachine, "EarthPush");
         electricDashState = new PlayerElectricDashState(this, stateMachine, "Dash");
         airPushState = new PlayerAirPushState(this, stateMachine, "AirPush");
+        fireballSpellState = new PlayerFireballSpellState(this, stateMachine, "Fireball");
     }
     
     private void AssignWeapons()
@@ -982,83 +988,144 @@ public class Player : Entity
     
     private void CheckForSpellInput()
     {
-        // Eğer spellbook aktif değilse büyü kullanamaz
-        if (!CanCastSpells() || IsGroundDetected() == false)
-            return;
-
-        // SkillManager kontrolü yaparak yetenek kullanımı
-        if (SkillManager.Instance != null)
+        // State kontrolü
+        bool canCastNewSpell = CanCastSpells();
+        
+        // SkillManager instance kontrolü
+        bool hasSkillManager = SkillManager.Instance != null;
+        
+        // Ice Shard
+        if (playerInput.spell1Input && canCastNewSpell)
         {
-            // Ice Shard kontrolü
-            if (playerInput.spell1Input && 
-                SkillManager.Instance.IsSkillReady(SkillType.IceShard, stats.currentMana) && 
-                CanCreateIceShards())
+            if (hasSkillManager)
             {
-                // Mana kullanımı PlayerSpell1State içinde yapılacak
-                stateMachine.ChangeState(spell1State);
-                SkillManager.Instance.UseSkill(SkillType.IceShard);
-                return;
+                // SkillManager üzerinden kontrol et
+                if (SkillManager.Instance.IsSkillReady(SkillType.IceShard, stats.currentMana))
+                {
+                    stateMachine.ChangeState(spell1State);
+                }
+                else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.IceShard))
+                {
+                    // Mana yetersiz uyarısı
+                    if (FloatingTextManager.Instance != null)
+                    {
+                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
+                    }
+                }
             }
-            
-            // Fire Spell kontrolü
-            else if (playerInput.spell2Input && 
-                    SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
+            else
             {
-                StartFireSpell();
-                SkillManager.Instance.UseSkill(SkillType.FireSpell);
-                return;
-            }
-            
-            // Earth Push kontrolü
-            else if (playerInput.earthPushInput && 
-                    SkillManager.Instance.IsSkillReady(SkillType.EarthPush, stats.currentMana))
-            {
-                stateMachine.ChangeState(earthPushState);
-                SkillManager.Instance.UseSkill(SkillType.EarthPush);
-                return;
-            }
-            
-            // Void kontrolü
-            else if (playerInput.voidSkillInput && 
-                    SkillManager.Instance.IsSkillReady(SkillType.VoidSkill, stats.currentMana))
-            {
-                stateMachine.ChangeState(voidState);
-                SkillManager.Instance.UseSkill(SkillType.VoidSkill);
-                return;
-            }
-        }
-        else
-        {
-            // Eski yöntem - SkillManager yoksa
-            // Spell1 kontrolü
-            if (playerInput.spell1Input && HasEnoughMana(iceShardManaCost))
-            {
-                // Geçerli buz parçası pozisyonu var mı kontrol et
-                if (!CanCreateIceShards())
-                    return; // Pozisyon yoksa direkt çık
-                    
-                // Pozisyon varsa state'e geç
-                stateMachine.ChangeState(spell1State);
-                // Ice Shard cooldown'unu başlat
-                iceShardCooldownTimer = iceShardCooldown;
-            }
-            // Spell2 kontrolü
-            else if (playerInput.spell2Input && HasEnoughMana(fireSpellManaDrainPerSecond * Time.deltaTime))
-            {
-                StartFireSpell();
-            }
-            // Earth Push kontrolü
-            else if (playerInput.earthPushInput && CanUseEarthPush())
-            {
-                stateMachine.ChangeState(earthPushState);
-                earthPushCooldownTimer = earthPushCooldown;
+                // Eskisi gibi kontrol et
+                if (CanCreateIceShards())
+                {
+                    stateMachine.ChangeState(spell1State);
+                }
+                else if (stats.currentMana < iceShardManaCost)
+                {
+                    // Mana yetersiz uyarısı
+                    if (FloatingTextManager.Instance != null)
+                    {
+                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
+                    }
+                }
             }
         }
         
-        // Fire spell durdurma kontrolü her iki yöntemde de yapılmalı
-        if (!playerInput.spell2Input && isChargingFire)
+        // Fire Spell
+        if (playerInput.spell2Input)
         {
-            StopFireSpell();
+            if (canCastNewSpell) // Henüz ateş büyüsü aktif değilse
+            {
+                if (hasSkillManager)
+                {
+                    // SkillManager üzerinden kontrol et
+                    if (SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
+                    {
+                        stateMachine.ChangeState(spell2State);
+                    }
+                    else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.FireSpell))
+                    {
+                        // Mana yetersiz uyarısı
+                        if (FloatingTextManager.Instance != null)
+                        {
+                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
+                        }
+                    }
+                }
+                else
+                {
+                    // Eskisi gibi kontrol et
+                    if (stats.currentMana >= fireSpellManaDrainPerSecond)
+                    {
+                        stateMachine.ChangeState(spell2State);
+                    }
+                    else
+                    {
+                        // Mana yetersiz uyarısı
+                        if (FloatingTextManager.Instance != null)
+                        {
+                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Earth Push
+        if (playerInput.earthPushInput && canCastNewSpell)
+        {
+            if (hasSkillManager)
+            {
+                // SkillManager üzerinden kontrol et
+                if (SkillManager.Instance.IsSkillReady(SkillType.EarthPush, stats.currentMana))
+                {
+                    stateMachine.ChangeState(earthPushState);
+                }
+            }
+            else
+            {
+                // Eskisi gibi kontrol et
+                if (CanUseEarthPush())
+                {
+                    earthPushCooldownTimer = earthPushCooldown;
+                    stateMachine.ChangeState(earthPushState);
+                }
+            }
+        }
+        
+        // Air Push
+        if (playerInput.airPushInput && canCastNewSpell)
+        {
+            if (hasSkillManager)
+            {
+                // SkillManager üzerinden kontrol et
+                if (SkillManager.Instance.IsSkillReady(SkillType.AirPush, stats.currentMana))
+                {
+                    stateMachine.ChangeState(airPushState);
+                }
+            }
+            else
+            {
+                // Eskisi gibi kontrol et
+                if (CanUseAirPush())
+                {
+                    airPushCooldownTimer = airPushCooldown;
+                    stateMachine.ChangeState(airPushState);
+                }
+            }
+        }
+        
+        // Fireball Spell
+        if (playerInput.fireballInput && canCastNewSpell)
+        {
+            if (hasSkillManager)
+            {
+                // SkillManager üzerinden kontrol et
+                if (SkillManager.Instance.IsSkillReady(SkillType.FireballSpell, stats.currentMana))
+                {
+                    stateMachine.ChangeState(fireballSpellState);
+                }
+            }
         }
     }
 

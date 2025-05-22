@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2928013114468114517}
   - component: {fileID: 3303081147826327482}
   - component: {fileID: 846937228019530190}
+  - component: {fileID: 5082933420668630003}
   m_Layer: 0
   m_Name: FireballSpell
   m_TagString: Untagged
@@ -102,6 +103,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a2c36141d7d2a341abbe2cb3b94aace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 10
+  lifetime: 5
+  damage: 20
+  groundImpactPrefab: {fileID: 1758678415767406302, guid: 772a0aa5c9dc412448e14c38c4e74e4a, type: 3}
+  enemyImpactPrefab: {fileID: 1953591774166807034, guid: 037a62a4a6da3dc47b3b0c2a895984d9, type: 3}
 --- !u!95 &3303081147826327482
 Animator:
   serializedVersion: 7
@@ -170,3 +176,30 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.4090612, y: 0.27384663}
   m_EdgeRadius: 0
+--- !u!50 &5082933420668630003
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27853844425704398}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 1
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 4

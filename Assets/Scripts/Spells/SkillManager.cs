@@ -10,7 +10,8 @@ public enum SkillType
     FireSpell,
     VoidSkill,
     ElectricDash,
-    AirPush
+    AirPush,
+    FireballSpell
 }
 
 [System.Serializable]
@@ -166,6 +167,17 @@ public class SkillManager : MonoBehaviour
             skillName = "Air Push",
             baseCooldown = 2f,
             manaCost = 15f,
+            isUnlocked = true
+        });
+        
+        // Fireball Spell becerisi
+        skills.Add(new SkillInfo
+        {
+            skillID = "fireball_spell",
+            skillType = SkillType.FireballSpell,
+            skillName = "Fireball Spell",
+            baseCooldown = 4f,
+            manaCost = 18f,
             isUnlocked = true
         });
     }

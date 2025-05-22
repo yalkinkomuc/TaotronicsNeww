@@ -19,6 +19,15 @@ public class PlayerAnimTriggers : MonoBehaviour
 
    private void ThrowBoomerangTrigger() => player.ThrowBoomerang();
    
+   // Fireball spell animation trigger - called from animation event
+   private void FireballSpellTrigger()
+   {
+      if (player.stateMachine.currentState is PlayerFireballSpellState fireballState)
+      {
+         fireballState.CastFireball();
+      }
+   }
+   
    // Attack hitbox'ını aktif et - Animation Event tarafından çağrılır
    private void EnableAttackCollider()
    {
