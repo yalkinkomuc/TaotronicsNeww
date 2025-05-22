@@ -14,7 +14,7 @@ public class AirPush : MonoBehaviour
     private float effectWidth = 2.0f; // Varsayılan genişlik (collider yoksa)
 
     [Header("Mind Scaling")]
-    [SerializeField] private float mindDamageMultiplier = 0.1f; // 10% damage increase per mind point
+    //[SerializeField] private float mindDamageMultiplier = 0.1f; // 10% damage increase per mind point
 
     private float direction; // Oyuncunun baktığı yön (1 veya -1)
     private CharacterStats playerStats;
@@ -71,7 +71,7 @@ public class AirPush : MonoBehaviour
         playerStats = stats;
         
         // Oyuncuyu bul (Player komponenti olan)
-        Player player = FindObjectOfType<Player>();
+        Player player = PlayerManager.instance.player;
         if (player != null)
         {
             playerTransform = player.transform;

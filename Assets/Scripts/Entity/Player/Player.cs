@@ -146,9 +146,9 @@ public class Player : Entity
     [SerializeField] private GameObject iceShardPrefab;
     [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
-    private float iceShardCooldown = 5f; // 5 saniye cooldown
     private float iceShardCooldownTimer;
-    //[SerializeField] private int shardCount = 3;
+    
+    
     
     [Header("Void Skill Settings")]
     [SerializeField] public GameObject voidSlashPrefab;

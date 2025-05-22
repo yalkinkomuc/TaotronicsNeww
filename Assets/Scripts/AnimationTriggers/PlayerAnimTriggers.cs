@@ -104,7 +104,7 @@ public class PlayerAnimTriggers : MonoBehaviour
    {
       // Temel hasar değerini al
       float currentDamage = CalculateDamage(out bool isCritical);
-      int comboCounter = 0;
+      //int comboCounter = 0;
       
       // Saldırı türüne göre hasar ve knockback'i ayarla
       if (player.stateMachine.currentState is PlayerAttackState attackState)
@@ -353,6 +353,7 @@ public class PlayerAnimTriggers : MonoBehaviour
    }
    
    // Earth Push spell destruction animation event trigger
+   [Obsolete("Obsolete")]
    private void DestroyEarthPush()
    {
       // Find any active earth push objects and destroy them

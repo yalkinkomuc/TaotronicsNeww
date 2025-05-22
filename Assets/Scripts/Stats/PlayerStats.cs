@@ -27,7 +27,7 @@ public class PlayerStats : CharacterStats
     [Header("Base Stats")]
     [SerializeField] private float _baseHealthValue = 100f;
     [SerializeField] private float _baseDamageValue = 10f;
-    [SerializeField] private float _baseManaValue = 50f;
+    //[SerializeField] private float _baseManaValue = 50f;
     [SerializeField] private float _baseSpeedValue = 300f;
     
     [Header("Experience System")]

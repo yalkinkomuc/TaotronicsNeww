@@ -5,7 +5,7 @@ public class ElectricDash : MonoBehaviour
     [Header("Electric Dash Properties")]
     [SerializeField] private float damage = 25f;
     [SerializeField] private float lifeTime = 0.5f;
-    [SerializeField] private float dashDistance = 5f;
+    //[SerializeField] private float dashDistance = 5f;
     [SerializeField] private LayerMask enemyLayerMask;
     
     private BoxCollider2D boxCollider;
@@ -24,7 +24,7 @@ public class ElectricDash : MonoBehaviour
 
         boxCollider = GetComponent<BoxCollider2D>();
         
-        player = FindObjectOfType<Player>();
+        player = PlayerManager.instance.player;
         if (player != null)
         {
             

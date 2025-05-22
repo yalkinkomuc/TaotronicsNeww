@@ -7,6 +7,7 @@ public class FireballSpell : MonoBehaviour
     [SerializeField] private float speed = 15f;
     [SerializeField] private float lifetime = 5f;
     [SerializeField] private float damage = 20f;
+   
     
     [Header("Effects")]
     [SerializeField] private GameObject groundImpactPrefab;
@@ -67,11 +68,18 @@ public class FireballSpell : MonoBehaviour
             {
                 hasHit = true;
                 
-                // Calculate damage based on player's mind attribute
+                // Calculate damage based on player's mind attribute and spellbook upgrades
                 float finalDamage = CalculateDamage();
                 
                 // Apply damage with fire type
                 enemyStats.TakeDamage(finalDamage, CharacterStats.DamageType.Fire);
+                
+                // Apply burn effect
+                EntityFX enemyFX = other.GetComponent<EntityFX>();
+                if (enemyFX != null)
+                {
+                    enemyFX.StartCoroutine("BurnFX");
+                }
                 
                 // Spawn hit effect
                 SpawnImpactEffect(enemyImpactPrefab, other);
@@ -85,8 +93,9 @@ public class FireballSpell : MonoBehaviour
     {
         if (playerStats == null) return damage;
         
-        // Base damage
-        float finalDamage = damage;
+        // Base damage uses spellbook damage which includes blacksmith upgrades
+        float baseDamage = playerStats.spellbookDamage.GetValue();
+        float finalDamage = baseDamage;
         
         // Apply mind attribute bonus from player
         float mindMultiplier = playerStats.GetTotalElementalDamageMultiplier();

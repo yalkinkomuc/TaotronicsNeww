@@ -6,6 +6,7 @@ public class PlayerFireballSpellState : PlayerState
     private Transform fireballSpawnPoint;
     
     private bool fireballCast = false;
+    private bool triggerCalled = false;
     private SkillType skillType = SkillType.FireballSpell;
     
     public PlayerFireballSpellState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
@@ -19,6 +20,7 @@ public class PlayerFireballSpellState : PlayerState
     {
         base.Enter();
         fireballCast = false;
+        triggerCalled = false;
         
         // Play fireball animation
         player.anim.SetBool("FireballSpell", true);
@@ -55,7 +57,7 @@ public class PlayerFireballSpellState : PlayerState
     public override void Update()
     {
         base.Update();
-
+  
         if (triggerCalled)
         {
             stateMachine.ChangeState(player.idleState);
@@ -84,6 +86,7 @@ public class PlayerFireballSpellState : PlayerState
         SkillManager.Instance.UseSkill(skillType);
         
         fireballCast = true;
+        triggerCalled = true;
         
         // Determine spawn point
         Vector3 spawnPosition;
