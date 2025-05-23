@@ -5,10 +5,8 @@ public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
-    public const float MIN_CHARGE_TIME = 0.2f; // Minimum şarj süresi
     private const float MAX_CHARGE_TIME = 1000f;
     private float currentChargeTime;
-    private bool hasSpawnedSpell;
     private bool isSpellActive;
 
     public PlayerSpell2State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
@@ -20,7 +18,6 @@ public class PlayerSpell2State : PlayerState
         base.Enter();
         
         currentChargeTime = 0f;
-        hasSpawnedSpell = false;
         isSpellActive = false;
         
         player.anim.Play(SPELL2_ANIM_NAME);
@@ -32,23 +29,14 @@ public class PlayerSpell2State : PlayerState
         player.SetZeroVelocity();
 
         currentChargeTime += Time.deltaTime;
-
-        // Minimum şarj süresine ulaştıysak ve henüz spawn etmediysek
-        if (currentChargeTime >= MIN_CHARGE_TIME && !hasSpawnedSpell)
-        {
-            hasSpawnedSpell = true;
-            isSpellActive = true;
-            player.StartCoroutine(DelayedSpawnFireSpell());
-        }
         
-        // Minimum şarj süresinden sonra mana tüketmeye başla
-        if (currentChargeTime >= MIN_CHARGE_TIME && isSpellActive)
+        // Spell aktifse mana tüketmeye başla
+        if (isSpellActive)
         {
             float manaCost = player.fireSpellManaDrainPerSecond * Time.deltaTime;
             // Mana kontrolü
             if (!player.HasEnoughMana(manaCost))
             {
-                Debug.Log($"Not enough mana to sustain fire spell! Required: {manaCost}, Current: {player.stats.currentMana}");
                 CleanupSpell();
                 stateMachine.ChangeState(player.idleState);
                 return;
@@ -93,15 +81,10 @@ public class PlayerSpell2State : PlayerState
         isSpellActive = false;
     }
 
-    private IEnumerator DelayedSpawnFireSpell()
+    // Animation event'ten çağrılacak metod - PauseSpell2Animation çağrıldığında fire spell'i spawn et
+    public void SpawnFireSpell()
     {
-        yield return new WaitForSeconds(0.1f); // Çok kısa bir delay
-        SpawnFireSpell();
-    }
-
-    private void SpawnFireSpell()
-    {
-        if (player.fireSpellPrefab != null && player.fireSpellPoint != null && isSpellActive)
+        if (player.fireSpellPrefab != null && player.fireSpellPoint != null && !isSpellActive)
         {
             GameObject spellObj = GameObject.Instantiate(player.fireSpellPrefab, 
                 player.fireSpellPoint.position, 
@@ -109,6 +92,13 @@ public class PlayerSpell2State : PlayerState
                 player.transform);
             
             currentFireSpell = spellObj.GetComponent<FireSpell>();
+            isSpellActive = true;
+            
+            // Fire spell'in damage collider'ını aktif et
+            if (currentFireSpell != null)
+            {
+                currentFireSpell.EnableDamage();
+            }
         }
     }
 

@@ -370,9 +370,11 @@ public class PlayerAnimTriggers : MonoBehaviour
    // Animation Event tarafından çağrılacak
    public void PauseSpell2Animation()
    {
-      if (player.stateMachine.currentState is PlayerSpell2State)
+      if (player.stateMachine.currentState is PlayerSpell2State spell2State)
       {
+         // Animation'ı durdur
          player.anim.speed = 0;
+         
          // Spellbook ve sword için de aynı frame'de durduralım
          if (player.spellbookWeapon != null)
          {
@@ -382,6 +384,9 @@ public class PlayerAnimTriggers : MonoBehaviour
          {
             player.swordWeapon.animator.speed = 0;
          }
+         
+         // Fire Spell'i spawn et
+         spell2State.SpawnFireSpell();
       }
    }
    

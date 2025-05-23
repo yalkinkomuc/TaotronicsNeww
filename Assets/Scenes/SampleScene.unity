@@ -14617,9 +14617,9 @@ MonoBehaviour:
   - skillID: FireSpell
     skillType: 3
     skillName: Fire Spell
-    baseCooldown: 0
+    baseCooldown: 2
     cooldownTimer: 0
-    manaCost: 0
+    manaCost: 1
     isUnlocked: 1
     skillPrefab: {fileID: 32532192634965339, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
   - skillID: EarthPush
@@ -16571,7 +16571,7 @@ Transform:
   m_GameObject: {fileID: 1301243576}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.587, y: 0.101, z: 0}
+  m_LocalPosition: {x: 1.552, y: 0.154, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17292,7 +17292,7 @@ MonoBehaviour:
   groundDashSpeed: 10
   electricDashSpeed: 15
   electricDashDuration: 0.15
-  electricDashDistance: 2.5
+  electricDashDistance: 2.25
   electricDashPrefab: {fileID: 2187963067883842217, guid: e934d529a0955f146b7c5e71335d28e1, type: 3}
   electricDashSpawnPoint: {fileID: 1033984564}
   electricDashManaCost: 10
@@ -24251,67 +24251,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2415207155687973107, guid: 504a2022e8007534aa22658e01218e40, type: 3}
   m_PrefabInstance: {fileID: 7685267033618204106}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &2008286317
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 32532192634965339, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_Name
-      value: Spell2_Fire
-      objectReference: {fileID: 0}
-    - target: {fileID: 32532192634965339, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 3.6211882
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -4.097832
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6398403547945744133, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
 --- !u!1 &2022707241
 GameObject:
   m_ObjectHideFlags: 0
@@ -26627,6 +26566,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EliteSkeleton_Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -27894,4 +27837,3 @@ SceneRoots:
   - {fileID: 8433152733004464597}
   - {fileID: 8453830892710239463}
   - {fileID: 3619168876320978225}
-  - {fileID: 2008286317}

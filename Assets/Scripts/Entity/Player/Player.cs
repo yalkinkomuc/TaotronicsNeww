@@ -1034,38 +1034,20 @@ public class Player : Entity
         // Fire Spell
         if (playerInput.spell2Input)
         {
-            if (canCastNewSpell) // Henüz ateş büyüsü aktif değilse
+            // Eğer zaten spell2State'deyse tekrar state değiştirme (charge mechanic için)
+            if (stateMachine.currentState != spell2State && canCastNewSpell)
             {
-                if (hasSkillManager)
+                // Basit mana kontrolü - SkillManager olmadan
+                if (stats.currentMana >= fireSpellManaDrainPerSecond)
                 {
-                    // SkillManager üzerinden kontrol et
-                    if (SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
-                    {
-                        stateMachine.ChangeState(spell2State);
-                    }
-                    else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.FireSpell))
-                    {
-                        // Mana yetersiz uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                        }
-                    }
+                    stateMachine.ChangeState(spell2State);
                 }
                 else
                 {
-                    // Eskisi gibi kontrol et
-                    if (stats.currentMana >= fireSpellManaDrainPerSecond)
+                    // Mana yetersiz uyarısı
+                    if (FloatingTextManager.Instance != null)
                     {
-                        stateMachine.ChangeState(spell2State);
-                    }
-                    else
-                    {
-                        // Mana yetersiz uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                        }
+                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
                     }
                 }
             }

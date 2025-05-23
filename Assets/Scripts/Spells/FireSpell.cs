@@ -46,9 +46,6 @@ public class FireSpell : MonoBehaviour
         burningEnemies.Clear();
         lastTextTimes.Clear();
         enemyBurnTimes.Clear();
-        
-        // Kendini yok et
-        Destroy(gameObject);
     }
 
     public void EnableDamage()
