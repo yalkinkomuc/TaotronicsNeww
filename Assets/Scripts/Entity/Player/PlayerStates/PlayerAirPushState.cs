@@ -53,6 +53,8 @@ public class PlayerAirPushState : PlayerState
     {
         base.Update();
         
+        player.SetZeroVelocity();
+        
         // If animation is finished, return to idle state
         if (triggerCalled)
         {

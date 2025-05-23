@@ -57,6 +57,12 @@ public class PlayerFireballSpellState : PlayerState
     public override void Update()
     {
         base.Update();
+
+        if (player.IsGroundDetected())
+        {
+        player.SetZeroVelocity();
+            
+        }
   
         if (triggerCalled)
         {
