@@ -22,8 +22,7 @@ public class PlayerFireballSpellState : PlayerState
         fireballCast = false;
         triggerCalled = false;
         
-        // Play fireball animation
-        player.anim.SetBool("FireballSpell", true);
+        
         
         // Check if skill is ready (includes mana and cooldown check)
         if (!SkillManager.Instance.IsSkillReady(skillType, player.stats.currentMana))
@@ -51,7 +50,7 @@ public class PlayerFireballSpellState : PlayerState
     public override void Exit()
     {
         base.Exit();
-        player.anim.SetBool("FireballSpell", false);
+       
     }
     
     public override void Update()
@@ -60,8 +59,7 @@ public class PlayerFireballSpellState : PlayerState
 
         if (player.IsGroundDetected())
         {
-        player.SetZeroVelocity();
-            
+            player.SetZeroVelocity();
         }
   
         if (triggerCalled)
