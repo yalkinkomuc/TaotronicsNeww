@@ -26290,6 +26290,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FireballSpell_Ground
       objectReference: {fileID: 0}
+    - target: {fileID: 1758678415767406302, guid: 772a0aa5c9dc412448e14c38c4e74e4a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8774373289273282416, guid: 772a0aa5c9dc412448e14c38c4e74e4a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.2052658
@@ -26568,7 +26572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -27342,6 +27346,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ElectricDash_Skill
       objectReference: {fileID: 0}
+    - target: {fileID: 2187963067883842217, guid: e934d529a0955f146b7c5e71335d28e1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -27358,6 +27366,10 @@ PrefabInstance:
     - target: {fileID: 27853844425704398, guid: 9fb377ec49b33874bb0087bb919fe3d6, type: 3}
       propertyPath: m_Name
       value: FireballSpell
+      objectReference: {fileID: 0}
+    - target: {fileID: 27853844425704398, guid: 9fb377ec49b33874bb0087bb919fe3d6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3979851544092880127, guid: 9fb377ec49b33874bb0087bb919fe3d6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -27415,6 +27427,10 @@ PrefabInstance:
     - target: {fileID: 1953591774166807034, guid: 037a62a4a6da3dc47b3b0c2a895984d9, type: 3}
       propertyPath: m_Name
       value: FireballSpell_Mob
+      objectReference: {fileID: 0}
+    - target: {fileID: 1953591774166807034, guid: 037a62a4a6da3dc47b3b0c2a895984d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5958891444453855783, guid: 037a62a4a6da3dc47b3b0c2a895984d9, type: 3}
       propertyPath: m_LocalPosition.x
