@@ -94,6 +94,9 @@ public class DoorTrigger : MonoBehaviour, IInteractable
         // Interaction prompt'u gizle
         HideInteractionPrompt();
         
+        // Spawn point bilgisini kaydet (basit yöntem)
+        SaveDoorSpawnInfo();
+        
         // Ses efekti çal
         PlayDoorSound();
         
@@ -120,6 +123,17 @@ public class DoorTrigger : MonoBehaviour, IInteractable
         {
             interactionPrompt.HidePrompt();
         }
+    }
+    
+    private void SaveDoorSpawnInfo()
+    {
+        // Basit yöntem: Hedef sahneye "DoorSpawn" isimli spawn point kullanacağımızı belirt
+        PlayerPrefs.SetString("TargetSpawnPointName", "DoorSpawn");
+        PlayerPrefs.SetInt("UseNamedSpawnPoint", 1);
+        PlayerPrefs.SetInt("UseCustomSpawn", 0);
+        PlayerPrefs.Save();
+        
+        Debug.Log("Door spawn info saved: Target spawn point = DoorSpawn");
     }
     
     private void PlayDoorSound()
@@ -161,6 +175,4 @@ public class DoorTrigger : MonoBehaviour, IInteractable
             UnityEngine.SceneManagement.SceneManager.LoadScene(targetSceneIndex);
         }
     }
-    
-    
 } 
