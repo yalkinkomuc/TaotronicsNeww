@@ -6,6 +6,9 @@ public class DoorTrigger : MonoBehaviour, IInteractable
     [SerializeField] private int targetSceneIndex = 1;
     [SerializeField] private string playerTag = "Player";
     
+    [Header("Spawn Settings")]
+    [SerializeField] private string targetSpawnPointName = "DoorSpawn";
+    
     [Header("Interaction Settings")]
     [SerializeField] private InteractionPrompt interactionPrompt;
     
@@ -94,7 +97,7 @@ public class DoorTrigger : MonoBehaviour, IInteractable
         // Interaction prompt'u gizle
         HideInteractionPrompt();
         
-        // Spawn point bilgisini kaydet (basit yöntem)
+        // Spawn point bilgisini kaydet (unique isim ile)
         SaveDoorSpawnInfo();
         
         // Ses efekti çal
@@ -127,13 +130,13 @@ public class DoorTrigger : MonoBehaviour, IInteractable
     
     private void SaveDoorSpawnInfo()
     {
-        // Basit yöntem: Hedef sahneye "DoorSpawn" isimli spawn point kullanacağımızı belirt
-        PlayerPrefs.SetString("TargetSpawnPointName", "DoorSpawn");
+        // Unique isim ile spawn point belirt
+        PlayerPrefs.SetString("TargetSpawnPointName", targetSpawnPointName);
         PlayerPrefs.SetInt("UseNamedSpawnPoint", 1);
         PlayerPrefs.SetInt("UseCustomSpawn", 0);
         PlayerPrefs.Save();
         
-        Debug.Log("Door spawn info saved: Target spawn point = DoorSpawn");
+        Debug.Log($"Door spawn info saved: Target spawn point = {targetSpawnPointName}");
     }
     
     private void PlayDoorSound()

@@ -5,24 +5,25 @@ En basit ve güvenilir kapı sistemi. SceneManager tarafından otomatik olarak y
 ## 🎮 Nasıl Çalışır
 
 1. **DoorTrigger** → Kapının yanına koy, W/↑ ile sahne geçişi
-2. **DoorSpawn** → Hedef sahnede kapının önüne koy, otomatik spawn
+2. **Unique Spawn Point** → Hedef sahnede kapının önüne koy, otomatik spawn
 3. **SceneManager** → Her şeyi otomatik halleder
 
 ## 📋 Kurulum (Süper Basit!)
 
 ### 1. Ana Sahne (Kapı Var)
 ```
-DoorTrigger
+DoorTrigger_House
 ├── BoxCollider2D (Is Trigger ✓)
 ├── DoorTrigger Script
-│   └── Target Scene Index: [Hedef sahne numarası]
+│   ├── Target Scene Index: [Hedef sahne numarası]
+│   └── Target Spawn Point Name: "HouseExit"
 └── InteractionPrompt (opsiyonel)
     └── W tuşu sprite'ı
 ```
 
 ### 2. Hedef Sahne (İç Mekan)
 ```
-DoorSpawn
+HouseExit (empty GameObject)
 └── Transform pozisyonu kapının önünde
 ```
 
@@ -30,47 +31,85 @@ DoorSpawn
 
 ### DoorTrigger
 - **Target Scene Index**: Gidilecek sahnenin build index'i
+- **Target Spawn Point Name**: Hedef sahnedeki spawn point'in adı
 - **Player Tag**: "Player" (varsayılan)
 - **Interaction Prompt**: W tuşu sprite'ı (opsiyonel)
 - **Door Open Sound**: Kapı sesi (opsiyonel)
 
-### DoorSpawn
-- Sadece **isim**: "DoorSpawn" olmalı
+### Spawn Point
+- **İsim**: DoorTrigger'daki Target Spawn Point Name ile aynı
 - **Pozisyon**: Kapının önünde
 - Script gerekmez!
 
+## 🏠 İsimlendirme Örnekleri
+
+### Mantıklı İsimlendirme:
+```
+House → "HouseExit"
+Shop → "ShopExit"  
+Cave → "CaveExit"
+Inn → "InnExit"
+Blacksmith → "BlacksmithExit"
+```
+
+### Sahne Bazlı İsimlendirme:
+```
+MainTown_House → "MainTown_HouseExit"
+Forest_Cave → "Forest_CaveExit"
+```
+
+### ID Bazlı İsimlendirme:
+```
+Building_01 → "Building01_Exit"
+Building_02 → "Building02_Exit"
+```
+
 ## 🔧 Sistem Özellikleri
 
+✅ **Unique İsimlendirme** - Her kapı kendi spawn point adını belirtir  
 ✅ **Otomatik Kamera Takibi** - Spawn sonrası kamera oyuncuyu bulur  
 ✅ **IInteractable Uyumlu** - Mevcut interaction sistemi  
 ✅ **Physics Sıfırlama** - Spawn sonrası velocity temizlenir  
-✅ **Hata Toleransı** - DoorSpawn yoksa varsayılan spawn  
+✅ **Hata Toleransı** - Spawn point yoksa varsayılan spawn  
 ✅ **Debug Bilgileri** - Console'da detaylı loglar  
 
 ## 📁 Dosya Yapısı
 
 ```
-Scene_MainArea/
+Scene_MainTown/
 ├── DoorTrigger_House
 │   ├── Target Scene Index: 2
-│   └── InteractionPrompt
-└── Other objects...
+│   └── Target Spawn Point Name: "HouseExit"
+├── DoorTrigger_Shop
+│   ├── Target Scene Index: 3
+│   └── Target Spawn Point Name: "ShopExit"
+└── HouseExit (kapının önünde)
 
 Scene_HouseInterior/
-├── DoorSpawn (kapının önünde)
-├── PlayerSpawnPoint (varsayılan spawn)
+├── DoorTrigger_Exit
+│   ├── Target Scene Index: 1 (MainTown)
+│   └── Target Spawn Point Name: "HouseExit"
+├── PlayerSpawnPoint (giriş spawn)
 └── Other objects...
 ```
 
 ## 🎯 Örnek Kullanım
 
 ### Ev Sistemi
-1. **Dış Sahne**: DoorTrigger → Target Scene Index: 2
-2. **Ev Sahnesi**: "DoorSpawn" objesi kapının önünde
+1. **Ana Sahne**: 
+   - DoorTrigger → Target Scene: 2, Target Spawn: "HouseExit"
+   - HouseExit objesi kapının önünde
+2. **Ev Sahnesi**: 
+   - DoorTrigger → Target Scene: 1, Target Spawn: "HouseExit"
+   - PlayerSpawnPoint içerde
 
-### Mağara Sistemi  
-1. **Açık Alan**: DoorTrigger → Target Scene Index: 3
-2. **Mağara**: "DoorSpawn" objesi girişte
+### Çoklu Bina Sistemi
+1. **Ana Sahne**:
+   - House: "HouseExit" 
+   - Shop: "ShopExit"
+   - Inn: "InnExit"
+2. **Her bina sahnesinde**:
+   - DoorTrigger → ilgili Exit spawn'ına döner
 
 ## 🔄 Akış Diagramı
 
@@ -81,33 +120,30 @@ Scene_HouseInterior/
     ↓ 
 [W Tuşuna Bas] 
     ↓ 
-[SceneManager: Spawn bilgisi kaydet]
+[SceneManager: "HouseExit" kaydet]
     ↓ 
 [Hedef sahne yüklen]
     ↓ 
-[SceneManager: "DoorSpawn" bul]
+[SceneManager: "HouseExit" bul]
     ↓ 
 [Oyuncuyu spawn et + Kamerayı güncelle]
 ```
 
 ## 🚨 Önemli Notlar
 
-- **Her iç mekanda "DoorSpawn" objesi olmalı**
+- **Her spawn point unique isme sahip olmalı**
+- **DoorTrigger'daki isim ile spawn point ismi aynı olmalı**
 - **Build Settings'te sahneler ekli olmalı**
 - **Player "Player" tag'ine sahip olmalı**
-- **CameraManager sahnede olmalı**
 
 ## 🐛 Sorun Giderme
 
-**Oyuncu görünmüyor?**
-- Console'da "Camera updated to follow player" mesajını kontrol et
-- CameraManager var mı?
-
 **Spawn çalışmıyor?**
-- "DoorSpawn" objesi var mı?
-- Console'da spawn mesajlarını kontrol et
+- Spawn point ismi DoorTrigger'daki ile aynı mı?
+- Console'da "Spawn noktası bulunamadı" mesajı var mı?
 
-**Kamera takip etmiyor?**
-- SceneManager otomatik düzelir, 0.1s bekle
+**Yanlış yerde spawn oluyor?**
+- Doğru spawn point objesini seçtin mi?
+- İsim yazım hatası var mı?
 
-Bu sistem **%100 stabil** ve **minimum setup** gerektirir! 🎮 
+Bu sistem **unique isimlendirme** ile **sınırsız bina** desteği sağlar! 🏠🏪🏨 
