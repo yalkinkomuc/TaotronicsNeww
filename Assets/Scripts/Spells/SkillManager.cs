@@ -104,7 +104,7 @@ public class SkillManager : MonoBehaviour
     
     private void AddDefaultSkills()
     {
-        // Earth Push becerisi
+        // Earth Push becerisi (Level 1 Earth skill)
         skills.Add(new SkillInfo
         {
             skillID = "earth_push",
@@ -112,10 +112,10 @@ public class SkillManager : MonoBehaviour
             skillName = "Earth Push",
             baseCooldown = 3f,
             manaCost = 25f,
-            isUnlocked = true
+            isUnlocked = false // Skill Tree'den açılacak
         });
         
-        // Ice Shard becerisi
+        // Ice Shard becerisi (Level 1 Ice skill)
         skills.Add(new SkillInfo
         {
             skillID = "ice_shard",
@@ -123,10 +123,10 @@ public class SkillManager : MonoBehaviour
             skillName = "Ice Shard",
             baseCooldown = 5f,
             manaCost = 20f,
-            isUnlocked = true
+            isUnlocked = false // Skill Tree'den açılacak
         });
         
-        // Fire Spell becerisi
+        // Fire Spell becerisi (Level 1 Fire skill)
         skills.Add(new SkillInfo
         {
             skillID = "FireSpell",
@@ -134,10 +134,10 @@ public class SkillManager : MonoBehaviour
             skillName = "Fire Spell",
             baseCooldown = 7f,
             manaCost = 5f,
-            isUnlocked = true
+            isUnlocked = false // Skill Tree'den açılacak
         });
         
-        // Void Skill becerisi
+        // Void Skill becerisi (Level 1 Void skill)
         skills.Add(new SkillInfo
         {
             skillID = "void_skill",
@@ -145,10 +145,10 @@ public class SkillManager : MonoBehaviour
             skillName = "Void Disappear",
             baseCooldown = 15f,
             manaCost = 40f,
-            isUnlocked = true
+            isUnlocked = false // Skill Tree'den açılacak
         });
         
-        // Electric Dash becerisi
+        // Electric Dash becerisi (Level 1 Electric skill)
         skills.Add(new SkillInfo
         {
             skillID = "electric_dash",
@@ -156,10 +156,10 @@ public class SkillManager : MonoBehaviour
             skillName = "Electric Dash",
             baseCooldown = 8f,
             manaCost = 30f,
-            isUnlocked = true
+            isUnlocked = false // Skill Tree'den açılacak
         });
         
-        // Air Push becerisi
+        // Air Push becerisi (Level 1 Air skill)
         skills.Add(new SkillInfo
         {
             skillID = "air_push",
@@ -167,10 +167,10 @@ public class SkillManager : MonoBehaviour
             skillName = "Air Push",
             baseCooldown = 2f,
             manaCost = 15f,
-            isUnlocked = true
+            isUnlocked = false // Skill Tree'den açılacak
         });
         
-        // Fireball Spell becerisi
+        // Fireball Spell becerisi (Level 2 Fire skill)
         skills.Add(new SkillInfo
         {
             skillID = "fireball_spell",
@@ -178,7 +178,7 @@ public class SkillManager : MonoBehaviour
             skillName = "Fireball Spell",
             baseCooldown = 4f,
             manaCost = 18f,
-            isUnlocked = true
+            isUnlocked = false // Skill Tree'den açılacak
         });
     }
     
