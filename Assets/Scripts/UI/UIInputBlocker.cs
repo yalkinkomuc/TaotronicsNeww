@@ -12,6 +12,9 @@ public class UIInputBlocker : MonoBehaviour
     [Header("UIBlocker")]
     [SerializeField] private GameObject uiBlockerPanel;
     
+    [Header("Skill System")]
+    [SerializeField] private GameObject skillTreePanel;
+    
     // Active UI panel count
     private int activePanelCount = 0;
     
@@ -31,6 +34,13 @@ public class UIInputBlocker : MonoBehaviour
     
     private void Start()
     {
+        // Add skill tree panel to the list if assigned
+        if (skillTreePanel != null && !uiPanels.Contains(skillTreePanel))
+        {
+            Debug.Log("Adding SkillTreePanel to UIInputBlocker list!");
+            uiPanels.Add(skillTreePanel);
+        }
+        
         // Add tracker to each panel
         foreach (GameObject panel in uiPanels)
         {
