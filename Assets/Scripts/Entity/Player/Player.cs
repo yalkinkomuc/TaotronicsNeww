@@ -1037,17 +1037,44 @@ public class Player : Entity
             // Eğer zaten spell2State'deyse tekrar state değiştirme (charge mechanic için)
             if (stateMachine.currentState != spell2State && canCastNewSpell)
             {
-                // Basit mana kontrolü - SkillManager olmadan
-                if (stats.currentMana >= fireSpellManaDrainPerSecond)
+                if (hasSkillManager)
                 {
-                    stateMachine.ChangeState(spell2State);
+                    // SkillManager üzerinden kontrol et
+                    if (SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
+                    {
+                        stateMachine.ChangeState(spell2State);
+                    }
+                    else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.FireSpell))
+                    {
+                        // Mana yetersiz uyarısı
+                        if (FloatingTextManager.Instance != null)
+                        {
+                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
+                        }
+                    }
+                    else if (!SkillManager.Instance.IsSkillUnlocked("FireSpell"))
+                    {
+                        // Beceri açılmamış uyarısı
+                        if (FloatingTextManager.Instance != null)
+                        {
+                            FloatingTextManager.Instance.ShowCustomText("Skill not unlocked!", transform.position + Vector3.up, Color.red);
+                        }
+                    }
                 }
                 else
                 {
-                    // Mana yetersiz uyarısı
-                    if (FloatingTextManager.Instance != null)
+                    // Eski yöntem - SkillManager olmadan
+                    if (stats.currentMana >= fireSpellManaDrainPerSecond)
                     {
-                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
+                        stateMachine.ChangeState(spell2State);
+                    }
+                    else
+                    {
+                        // Mana yetersiz uyarısı
+                        if (FloatingTextManager.Instance != null)
+                        {
+                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
+                        }
                     }
                 }
             }
@@ -1113,6 +1140,13 @@ public class Player : Entity
 
     private void StartFireSpell()
     {
+        // SkillManager kontrolü - Fire Spell açık mı?
+        if (SkillManager.Instance != null && !SkillManager.Instance.IsSkillUnlocked("FireSpell"))
+        {
+            Debug.Log("Fire Spell not unlocked!");
+            return;
+        }
+        
         if (!isChargingFire && HasEnoughMana(fireSpellManaDrainPerSecond * Time.deltaTime))
         {
             isChargingFire = true;

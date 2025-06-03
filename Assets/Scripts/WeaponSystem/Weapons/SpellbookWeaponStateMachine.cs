@@ -132,7 +132,16 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         }
         else if (player.stateMachine.currentState == player.spell2State)
         {
-            ChangeState(WeaponState.Spell2);
+            // SkillManager kontrolü - Fire Spell açık mı?
+            if (SkillManager.Instance != null && !SkillManager.Instance.IsSkillUnlocked("FireSpell"))
+            {
+                // Fire Spell açık değilse Idle state'ine geç
+                ChangeState(WeaponState.Idle);
+            }
+            else
+            {
+                ChangeState(WeaponState.Spell2);
+            }
         }
         else if (player.stateMachine.currentState == player.moveState)
         {

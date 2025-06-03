@@ -372,6 +372,15 @@ public class PlayerAnimTriggers : MonoBehaviour
    {
       if (player.stateMachine.currentState is PlayerSpell2State spell2State)
       {
+         // SkillManager kontrolü - Fire Spell açık mı?
+         if (SkillManager.Instance != null && !SkillManager.Instance.IsSkillUnlocked("FireSpell"))
+         {
+            // Fire Spell açık değilse animasyonu durdurma ve idle state'ine geç
+            Debug.Log("Fire Spell not unlocked, cancelling animation!");
+            player.stateMachine.ChangeState(player.idleState);
+            return;
+         }
+         
          // Animation'ı durdur
          player.anim.speed = 0;
          

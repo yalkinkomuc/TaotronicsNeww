@@ -129,7 +129,7 @@ public class SkillManager : MonoBehaviour
         // Fire Spell becerisi
         skills.Add(new SkillInfo
         {
-            skillID = "fire_spell",
+            skillID = "FireSpell",
             skillType = SkillType.FireSpell,
             skillName = "Fire Spell",
             baseCooldown = 7f,
@@ -263,6 +263,8 @@ public class SkillManager : MonoBehaviour
         // Önce dictionary'de kontrol et
         if (skillIdDict.TryGetValue(skillID, out SkillInfo skill))
         {
+            // Eğer skill dictionary'de varsa ve isUnlocked true ise, direkt true döndür
+            // HashSet'e de bakmamız gerekiyor çünkü runtime'da açılan skillerin durumu
             return skill.isUnlocked || unlockedSkills.Contains(skillID);
         }
         
@@ -361,6 +363,39 @@ public class SkillManager : MonoBehaviour
         foreach (var skill in skills)
         {
             skill.cooldownTimer = 0f;
+        }
+    }
+    
+    // Debug için skill durumunu kontrol etme metodu
+    public void DebugSkillStatus(string skillID)
+    {
+        Debug.Log($"=== Debugging Skill: {skillID} ===");
+        
+        if (skillIdDict.TryGetValue(skillID, out SkillInfo skill))
+        {
+            Debug.Log($"Found in dictionary: isUnlocked = {skill.isUnlocked}");
+            Debug.Log($"Skill Type: {skill.skillType}");
+            Debug.Log($"Skill Name: {skill.skillName}");
+        }
+        else
+        {
+            Debug.Log($"NOT found in skillIdDict!");
+        }
+        
+        bool inHashSet = unlockedSkills.Contains(skillID);
+        Debug.Log($"Found in unlockedSkills HashSet: {inHashSet}");
+        
+        bool finalResult = IsSkillUnlocked(skillID);
+        Debug.Log($"Final IsSkillUnlocked result: {finalResult}");
+        
+        Debug.Log($"skillIdDict count: {skillIdDict.Count}");
+        Debug.Log($"unlockedSkills count: {unlockedSkills.Count}");
+        
+        // Tüm dictionary keylerini listele
+        Debug.Log("All skillIdDict keys:");
+        foreach (string key in skillIdDict.Keys)
+        {
+            Debug.Log($"  - {key}");
         }
     }
     

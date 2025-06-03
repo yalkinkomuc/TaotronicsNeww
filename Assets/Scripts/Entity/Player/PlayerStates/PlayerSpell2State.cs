@@ -17,6 +17,37 @@ public class PlayerSpell2State : PlayerState
     {
         base.Enter();
         
+        // SkillManager kontrolü - Fire Spell açık mı?
+        if (SkillManager.Instance != null)
+        {
+            // Beceri açık değilse state'den çık
+            if (!SkillManager.Instance.IsSkillUnlocked("FireSpell"))
+            {
+                Debug.Log("Fire Spell is not unlocked!");
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+            
+            // Mana kontrolü
+            float manaCost = SkillManager.Instance.GetSkillManaCost(SkillType.FireSpell);
+            if (player.stats.currentMana < manaCost)
+            {
+                Debug.Log($"Not enough mana for Fire Spell! Required: {manaCost}, Current: {player.stats.currentMana}");
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+        }
+        else
+        {
+            // Eski yöntem - SkillManager yoksa basit mana kontrolü
+            if (player.stats.currentMana < player.fireSpellManaDrainPerSecond)
+            {
+                Debug.Log($"Not enough mana for Fire Spell! Required: {player.fireSpellManaDrainPerSecond}, Current: {player.stats.currentMana}");
+                stateMachine.ChangeState(player.idleState);
+                return;
+            }
+        }
+        
         currentChargeTime = 0f;
         isSpellActive = false;
         
@@ -86,6 +117,13 @@ public class PlayerSpell2State : PlayerState
     {
         if (player.fireSpellPrefab != null && player.fireSpellPoint != null && !isSpellActive)
         {
+            // SkillManager ile skill kullanımını işaretle
+            if (SkillManager.Instance != null)
+            {
+                // Fire Spell'i kullanıldığı olarak işaretle (cooldown başlat)
+                SkillManager.Instance.UseSkill(SkillType.FireSpell);
+            }
+            
             GameObject spellObj = GameObject.Instantiate(player.fireSpellPrefab, 
                 player.fireSpellPoint.position, 
                 player.fireSpellPoint.rotation,
