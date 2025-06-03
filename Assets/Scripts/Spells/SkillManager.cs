@@ -20,6 +20,7 @@ public class SkillInfo
     public string skillID;
     public SkillType skillType;
     public string skillName;
+    public string description;
     public float baseCooldown = 5f;
     public float cooldownTimer = 0f;
     public float manaCost = 10f;
@@ -48,7 +49,7 @@ public class SkillManager : MonoBehaviour
     [SerializeField] private float globalCooldownReduction = 0f;
     
     // Mevcut shard sayısı
-    private int currentShards = 0;
+    private int currentShards = 100; // Başlangıçta 100 shard ver ki ilk skill'leri açabilsin
     
     // Açılmış beceriler
     private HashSet<string> unlockedSkills = new HashSet<string>();
@@ -110,6 +111,7 @@ public class SkillManager : MonoBehaviour
             skillID = "earth_push",
             skillType = SkillType.EarthPush,
             skillName = "Earth Push",
+            description = "Creates a powerful earth wave that pushes enemies away and deals damage.",
             baseCooldown = 3f,
             manaCost = 25f,
             isUnlocked = false // Skill Tree'den açılacak
@@ -121,6 +123,7 @@ public class SkillManager : MonoBehaviour
             skillID = "ice_shard",
             skillType = SkillType.IceShard,
             skillName = "Ice Shard",
+            description = "Summons ice shards from the ground that damage and slow enemies.",
             baseCooldown = 5f,
             manaCost = 20f,
             isUnlocked = false // Skill Tree'den açılacak
@@ -132,6 +135,7 @@ public class SkillManager : MonoBehaviour
             skillID = "FireSpell",
             skillType = SkillType.FireSpell,
             skillName = "Fire Spell",
+            description = "Continuous fire spell that burns enemies over time while held.",
             baseCooldown = 7f,
             manaCost = 5f,
             isUnlocked = false // Skill Tree'den açılacak
@@ -143,6 +147,7 @@ public class SkillManager : MonoBehaviour
             skillID = "void_skill",
             skillType = SkillType.VoidSkill,
             skillName = "Void Disappear",
+            description = "Become invisible and intangible, passing through enemies safely.",
             baseCooldown = 15f,
             manaCost = 40f,
             isUnlocked = false // Skill Tree'den açılacak
@@ -154,6 +159,7 @@ public class SkillManager : MonoBehaviour
             skillID = "electric_dash",
             skillType = SkillType.ElectricDash,
             skillName = "Electric Dash",
+            description = "Lightning-fast dash that damages enemies in your path.",
             baseCooldown = 8f,
             manaCost = 30f,
             isUnlocked = false // Skill Tree'den açılacak
@@ -165,6 +171,7 @@ public class SkillManager : MonoBehaviour
             skillID = "air_push",
             skillType = SkillType.AirPush,
             skillName = "Air Push",
+            description = "Creates a gust of wind that pushes enemies and projectiles away.",
             baseCooldown = 2f,
             manaCost = 15f,
             isUnlocked = false // Skill Tree'den açılacak
@@ -176,6 +183,7 @@ public class SkillManager : MonoBehaviour
             skillID = "fireball_spell",
             skillType = SkillType.FireballSpell,
             skillName = "Fireball Spell",
+            description = "Shoots a powerful fireball projectile that explodes on impact.",
             baseCooldown = 4f,
             manaCost = 18f,
             isUnlocked = false // Skill Tree'den açılacak
@@ -270,6 +278,24 @@ public class SkillManager : MonoBehaviour
         
         // Dictionary'de yoksa HashSet'te kontrol et
         return unlockedSkills.Contains(skillID);
+    }
+    
+    // Skill bilgilerini al (ID ile)
+    public SkillInfo GetSkillInfo(string skillID)
+    {
+        if (skillIdDict.TryGetValue(skillID, out SkillInfo skill))
+        {
+            return skill;
+        }
+        
+        Debug.LogWarning($"Skill not found: {skillID}");
+        return null;
+    }
+    
+    // Tüm skill'leri al (UI için)
+    public List<SkillInfo> GetAllSkills()
+    {
+        return new List<SkillInfo>(skills);
     }
     
     // Beceriyi aç

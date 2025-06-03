@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using System.Collections;
 
 public class SkillTreePanel : MonoBehaviour
 {
@@ -15,8 +17,13 @@ public class SkillTreePanel : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI shardCountText;
-    [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI costText;
+    
+    [Header("Tooltip System")]
+    [SerializeField] private GameObject tooltipPanel; // Tooltip background panel
+    [SerializeField] private TextMeshProUGUI tooltipTitle; // Skill name
+    [SerializeField] private TextMeshProUGUI tooltipDescription; // Skill description
+    [SerializeField] private TextMeshProUGUI tooltipCost; // Skill cost
     
     [Header("Fire Element Skills")]
     [SerializeField] private Button fireSkill1Button; // Fire Spell
@@ -77,6 +84,12 @@ public class SkillTreePanel : MonoBehaviour
                 UIInputBlocker.instance.AddPanel(skillScreenPanel);
         }
         
+        // Setup tooltip (keep it simple for fixed positioning)
+        if (tooltipPanel != null)
+        {
+            tooltipPanel.SetActive(false);
+        }
+        
         InitializeSkillNodes();
     }
     
@@ -88,81 +101,186 @@ public class SkillTreePanel : MonoBehaviour
     
     private void InitializeSkillNodes()
     {
-        // Fire Element Skills
-        skillNodes["FireSpell"] = new SkillNodeData
+        // SkillManager'dan veri alıyoruz
+        if (SkillManager.Instance == null)
         {
-            skillID = "FireSpell",
-            skillName = "Fire Spell",
-            description = "Continuous fire spell that burns enemies over time.",
-            shardCost = 30,
-            prerequisiteSkillID = null, // Level 1 skill, no prerequisite
-            button = fireSkill1Button
+            Debug.LogError("SkillManager instance not found!");
+            return;
+        }
+        
+        Debug.Log("🚀 InitializeSkillNodes - Getting data from SkillManager");
+        
+        // Fire Element Skills - SkillManager'dan veri çek
+        var fireSpellInfo = SkillManager.Instance.GetSkillInfo("FireSpell");
+        if (fireSpellInfo != null)
+        {
+            skillNodes["FireSpell"] = new SkillNodeData
+            {
+                skillID = fireSpellInfo.skillID,
+                skillName = fireSpellInfo.skillName,
+                description = fireSpellInfo.description, // SkillManager'dan description
+                shardCost = 30,
+                prerequisiteSkillID = null, // Level 1 skill
+                button = fireSkill1Button
+            };
+            Debug.Log($"✅ FireSpell loaded: {fireSpellInfo.skillName} - {fireSpellInfo.description}");
+        }
+        else
+        {
+            Debug.LogError("❌ FireSpell not found in SkillManager!");
+        }
+        
+        var fireballInfo = SkillManager.Instance.GetSkillInfo("fireball_spell");
+        if (fireballInfo != null)
+        {
+            skillNodes["fireball_spell"] = new SkillNodeData
+            {
+                skillID = fireballInfo.skillID,
+                skillName = fireballInfo.skillName,
+                description = fireballInfo.description, // SkillManager'dan description
+                shardCost = 80,
+                prerequisiteSkillID = "FireSpell", // Requires Fire Spell
+                button = fireSkill2Button
+            };
+            Debug.Log($"✅ Fireball loaded: {fireballInfo.skillName} - {fireballInfo.description}");
+        }
+        else
+        {
+            Debug.LogError("❌ Fireball not found in SkillManager!");
+        }
+        
+        // Ice Element Skills - SkillManager'dan veri çek
+        var iceShardInfo = SkillManager.Instance.GetSkillInfo("ice_shard");
+        if (iceShardInfo != null)
+        {
+            skillNodes["ice_shard"] = new SkillNodeData
+            {
+                skillID = iceShardInfo.skillID,
+                skillName = iceShardInfo.skillName,
+                description = iceShardInfo.description,
+                shardCost = 25,
+                prerequisiteSkillID = null,
+                button = iceSkill1Button
+            };
+            Debug.Log($"✅ Ice Shard loaded: {iceShardInfo.skillName}");
+        }
+        
+        // Earth Element Skills - SkillManager'dan veri çek
+        var earthPushInfo = SkillManager.Instance.GetSkillInfo("earth_push");
+        if (earthPushInfo != null)
+        {
+            skillNodes["earth_push"] = new SkillNodeData
+            {
+                skillID = earthPushInfo.skillID,
+                skillName = earthPushInfo.skillName,
+                description = earthPushInfo.description,
+                shardCost = 35,
+                prerequisiteSkillID = null,
+                button = earthSkill1Button
+            };
+            Debug.Log($"✅ Earth Push loaded: {earthPushInfo.skillName}");
+        }
+        
+        // Electric Element Skills - SkillManager'dan veri çek
+        var electricDashInfo = SkillManager.Instance.GetSkillInfo("electric_dash");
+        if (electricDashInfo != null)
+        {
+            skillNodes["electric_dash"] = new SkillNodeData
+            {
+                skillID = electricDashInfo.skillID,
+                skillName = electricDashInfo.skillName,
+                description = electricDashInfo.description,
+                shardCost = 40,
+                prerequisiteSkillID = null,
+                button = electricSkill1Button
+            };
+            Debug.Log($"✅ Electric Dash loaded: {electricDashInfo.skillName}");
+        }
+        
+        // Air Element Skills - SkillManager'dan veri çek
+        var airPushInfo = SkillManager.Instance.GetSkillInfo("air_push");
+        if (airPushInfo != null)
+        {
+            skillNodes["air_push"] = new SkillNodeData
+            {
+                skillID = airPushInfo.skillID,
+                skillName = airPushInfo.skillName,
+                description = airPushInfo.description,
+                shardCost = 20,
+                prerequisiteSkillID = null,
+                button = airSkill1Button
+            };
+            Debug.Log($"✅ Air Push loaded: {airPushInfo.skillName}");
+        }
+        
+        // Void Element Skills - SkillManager'dan veri çek
+        var voidSkillInfo = SkillManager.Instance.GetSkillInfo("void_skill");
+        if (voidSkillInfo != null)
+        {
+            skillNodes["void_skill"] = new SkillNodeData
+            {
+                skillID = voidSkillInfo.skillID,
+                skillName = voidSkillInfo.skillName,
+                description = voidSkillInfo.description,
+                shardCost = 60,
+                prerequisiteSkillID = null,
+                button = voidSkill1Button
+            };
+            Debug.Log($"✅ Void Skill loaded: {voidSkillInfo.skillName}");
+        }
+        
+        // Level 2 & 3 placeholder skills (SkillManager'da henüz yok)
+        skillNodes["ice_level2"] = new SkillNodeData
+        {
+            skillID = "ice_level2",
+            skillName = "Ice Spear",
+            description = "Launches piercing ice spears. (Coming Soon)",
+            shardCost = 75,
+            prerequisiteSkillID = "ice_shard",
+            button = iceSkill2Button
         };
         
-        skillNodes["fireball_spell"] = new SkillNodeData
+        skillNodes["earth_level2"] = new SkillNodeData
         {
-            skillID = "fireball_spell", 
-            skillName = "Fireball Spell",
-            description = "Shoots a powerful fireball projectile.",
-            shardCost = 50,
-            prerequisiteSkillID = "FireSpell", // Requires Fire Spell
-            button = fireSkill2Button
+            skillID = "earth_level2",
+            skillName = "Stone Wall",
+            description = "Creates protective stone barriers. (Coming Soon)",
+            shardCost = 85,
+            prerequisiteSkillID = "earth_push",
+            button = earthSkill2Button
         };
         
-        // Ice Element Skills
-        skillNodes["ice_shard"] = new SkillNodeData
+        skillNodes["electric_level2"] = new SkillNodeData
         {
-            skillID = "ice_shard",
-            skillName = "Ice Shard",
-            description = "Creates ice shards that emerge from the ground.",
-            shardCost = 25,
-            prerequisiteSkillID = null,
-            button = iceSkill1Button
+            skillID = "electric_level2",
+            skillName = "Lightning Bolt",
+            description = "Strikes enemies with lightning. (Coming Soon)",
+            shardCost = 90,
+            prerequisiteSkillID = "electric_dash",
+            button = electricSkill2Button
         };
         
-        // Earth Element Skills
-        skillNodes["earth_push"] = new SkillNodeData
+        skillNodes["air_level2"] = new SkillNodeData
         {
-            skillID = "earth_push",
-            skillName = "Earth Push", 
-            description = "Creates an earth wave that pushes enemies.",
-            shardCost = 35,
-            prerequisiteSkillID = null,
-            button = earthSkill1Button
+            skillID = "air_level2",
+            skillName = "Wind Blade",
+            description = "Slices enemies with wind blades. (Coming Soon)",
+            shardCost = 70,
+            prerequisiteSkillID = "air_push",
+            button = airSkill2Button
         };
         
-        // Electric Element Skills
-        skillNodes["electric_dash"] = new SkillNodeData
+        skillNodes["void_level2"] = new SkillNodeData
         {
-            skillID = "electric_dash",
-            skillName = "Electric Dash",
-            description = "Lightning-fast dash that damages enemies.",
-            shardCost = 40,
-            prerequisiteSkillID = null,
-            button = electricSkill1Button
+            skillID = "void_level2",
+            skillName = "Void Slash",
+            description = "Cuts through reality itself. (Coming Soon)",
+            shardCost = 100,
+            prerequisiteSkillID = "void_skill",
+            button = voidSkill2Button
         };
         
-        // Air Element Skills
-        skillNodes["air_push"] = new SkillNodeData
-        {
-            skillID = "air_push",
-            skillName = "Air Push",
-            description = "Creates a gust of wind that pushes enemies.",
-            shardCost = 20,
-            prerequisiteSkillID = null,
-            button = airSkill1Button
-        };
-        
-        // Void Element Skills
-        skillNodes["void_skill"] = new SkillNodeData
-        {
-            skillID = "void_skill",
-            skillName = "Void Disappear",
-            description = "Become invisible and intangible for a short time.",
-            shardCost = 60,
-            prerequisiteSkillID = null,
-            button = voidSkill1Button
-        };
+        Debug.Log($"🚀 Total skill nodes created: {skillNodes.Count}");
     }
     
     private void SetupButtons()
@@ -173,24 +291,255 @@ public class SkillTreePanel : MonoBehaviour
         if (resetButton != null)
             resetButton.onClick.AddListener(ResetSelection);
         
+        // Apply button artık kullanmıyoruz - Hold to unlock sistemi
         if (applyButton != null)
         {
-            applyButton.onClick.AddListener(UnlockSelectedSkill);
-            applyButton.interactable = false;
+            applyButton.gameObject.SetActive(false); // Apply button'u gizle
         }
         
         if (closeButton != null)
             closeButton.onClick.AddListener(ClosePanel);
         
-        // Setup skill buttons
+        // Setup skill buttons with hold-to-unlock events
         foreach (var skillNode in skillNodes.Values)
         {
             if (skillNode.button != null)
             {
                 string skillID = skillNode.skillID; // Local variable for closure
-                skillNode.button.onClick.AddListener(() => SelectSkill(skillID));
+                
+                Debug.Log($"🔧 Setting up button for skill: {skillID} - {skillNode.skillName}");
+                
+                // Normal click için tooltip göster
+                skillNode.button.onClick.AddListener(() => {
+                    Debug.Log($"🔘 Button clicked for skill: {skillID}");
+                    ShowTooltipForSkill(skillID);
+                });
+                
+                // Hold-to-unlock events ekle
+                AddHoldToUnlockEvents(skillNode.button, skillID);
+                
+                // Hover events (eski sistem)
+                AddHoverEvents(skillNode.button, skillID);
+            }
+            else
+            {
+                Debug.LogWarning($"❌ Button is null for skill: {skillNode.skillID}");
             }
         }
+    }
+    
+    private Coroutine currentHoldCoroutine = null;
+    private string currentHoldSkillID = null;
+    
+    private void AddHoldToUnlockEvents(Button button, string skillID)
+    {
+        // EventTrigger ekle
+        EventTrigger trigger = button.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger = button.gameObject.AddComponent<EventTrigger>();
+        }
+        
+        // Mouse/Touch basılı tutma başlangıcı
+        EventTrigger.Entry pointerDown = new EventTrigger.Entry();
+        pointerDown.eventID = EventTriggerType.PointerDown;
+        pointerDown.callback.AddListener((data) => StartHoldToUnlock(skillID));
+        trigger.triggers.Add(pointerDown);
+        
+        // Mouse/Touch bırakma
+        EventTrigger.Entry pointerUp = new EventTrigger.Entry();
+        pointerUp.eventID = EventTriggerType.PointerUp;
+        pointerUp.callback.AddListener((data) => StopHoldToUnlock());
+        trigger.triggers.Add(pointerUp);
+        
+        // Mouse button'dan çıkma (cancel)
+        EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+        pointerExit.eventID = EventTriggerType.PointerExit;
+        pointerExit.callback.AddListener((data) => StopHoldToUnlock());
+        trigger.triggers.Add(pointerExit);
+    }
+    
+    private void StartHoldToUnlock(string skillID)
+    {
+        // Eğer skill unlock edilemiyorsa, hold başlatma
+        if (!skillNodes.ContainsKey(skillID)) return;
+        
+        var skillData = skillNodes[skillID];
+        bool isUnlocked = SkillManager.Instance.IsSkillUnlocked(skillID);
+        bool canUnlock = CanUnlockSkill(skillData);
+        
+        if (isUnlocked || !canUnlock) return;
+        
+        // Önceki hold işlemini durdur
+        StopHoldToUnlock();
+        
+        currentHoldSkillID = skillID;
+        currentHoldCoroutine = StartCoroutine(HoldToUnlockCoroutine(skillID));
+        
+        Debug.Log($"🔥 Started holding to unlock: {skillID}");
+    }
+    
+    private void StopHoldToUnlock()
+    {
+        if (currentHoldCoroutine != null)
+        {
+            StopCoroutine(currentHoldCoroutine);
+            currentHoldCoroutine = null;
+            Debug.Log($"🔥 Stopped holding: {currentHoldSkillID}");
+            currentHoldSkillID = null;
+        }
+    }
+    
+    private System.Collections.IEnumerator HoldToUnlockCoroutine(string skillID)
+    {
+        float holdTime = 1.5f; // 1.5 saniye basılı tut
+        float currentTime = 0f;
+        
+        while (currentTime < holdTime)
+        {
+            currentTime += Time.deltaTime;
+            float progress = currentTime / holdTime;
+            
+            // Progress'i debug'la göster (ileride UI progress bar eklenebilir)
+            if (currentTime % 0.3f < Time.deltaTime) // Her 0.3 saniyede log
+            {
+                Debug.Log($"🔥 Hold progress: {progress:F1} for {skillID}");
+            }
+            
+            yield return null;
+        }
+        
+        // Hold tamamlandı, skill'i unlock et!
+        UnlockSkillDirectly(skillID);
+        currentHoldCoroutine = null;
+        currentHoldSkillID = null;
+    }
+    
+    private void UnlockSkillDirectly(string skillID)
+    {
+        if (!skillNodes.ContainsKey(skillID)) return;
+        
+        var skillData = skillNodes[skillID];
+        Debug.Log($"🔥 HOLD COMPLETED! Unlocking skill: {skillData.skillName}");
+        
+        bool success = SkillManager.Instance.UnlockSkill(skillID, skillData.shardCost);
+        
+        if (success)
+        {
+            Debug.Log($"✅ Skill unlocked via hold: {skillID}");
+            UpdateShardCount();
+            UpdateAllSkillStatus();
+            
+            // Success feedback (ses/efekt eklenebilir)
+            ShowSkillUnlockedFeedback(skillData.skillName);
+        }
+        else
+        {
+            Debug.LogWarning($"❌ Failed to unlock skill via hold: {skillID}");
+        }
+    }
+    
+    private void ShowSkillUnlockedFeedback(string skillName)
+    {
+        // Basit feedback, ileride particle effect vs eklenebilir
+        Debug.Log($"🎉 SKILL UNLOCKED: {skillName}!");
+    }
+    
+    private void ShowTooltipForSkill(string skillID)
+    {
+        // Normal click'te sadece tooltip göster
+        if (!skillNodes.ContainsKey(skillID) || tooltipPanel == null) 
+        {
+            Debug.LogWarning($"❌ ShowTooltipForSkill failed: skillID={skillID}, skillExists={skillNodes.ContainsKey(skillID)}, tooltipPanel={tooltipPanel != null}");
+            return;
+        }
+        
+        var skillData = skillNodes[skillID];
+        
+        Debug.Log($"📝 Showing tooltip for: {skillData.skillName} - {skillData.description}");
+        
+        // Update tooltip content
+        if (tooltipTitle != null)
+            tooltipTitle.text = skillData.skillName;
+            
+        if (tooltipDescription != null)
+            tooltipDescription.text = skillData.description;
+            
+        if (tooltipCost != null)
+        {
+            bool isUnlocked = SkillManager.Instance != null && SkillManager.Instance.IsSkillUnlocked(skillID);
+            if (isUnlocked)
+                tooltipCost.text = "✅ UNLOCKED";
+            else
+                tooltipCost.text = $"Hold to unlock - Cost: {skillData.shardCost} Shards";
+        }
+        
+        tooltipPanel.SetActive(true);
+        Debug.Log($"✅ Tooltip panel activated for: {skillData.skillName}");
+    }
+    
+    private void AddHoverEvents(Button button, string skillID)
+    {
+        // Add EventTrigger component if not exists
+        EventTrigger trigger = button.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger = button.gameObject.AddComponent<EventTrigger>();
+        }
+        
+        // Pointer Enter Event (Hover Start)
+        EventTrigger.Entry pointerEnter = new EventTrigger.Entry();
+        pointerEnter.eventID = EventTriggerType.PointerEnter;
+        pointerEnter.callback.AddListener((data) => ShowTooltip(skillID, (PointerEventData)data));
+        trigger.triggers.Add(pointerEnter);
+        
+        // Pointer Exit Event (Hover End)
+        EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+        pointerExit.eventID = EventTriggerType.PointerExit;
+        pointerExit.callback.AddListener((data) => HideTooltip());
+        trigger.triggers.Add(pointerExit);
+    }
+    
+    private void ShowTooltip(string skillID, PointerEventData eventData)
+    {
+        if (!skillNodes.ContainsKey(skillID) || tooltipPanel == null) return;
+        
+        var skillData = skillNodes[skillID];
+        
+        // Update tooltip content
+        if (tooltipTitle != null)
+            tooltipTitle.text = skillData.skillName;
+            
+        if (tooltipDescription != null)
+            tooltipDescription.text = skillData.description;
+            
+        if (tooltipCost != null)
+        {
+            bool isUnlocked = SkillManager.Instance != null && SkillManager.Instance.IsSkillUnlocked(skillID);
+            if (isUnlocked)
+                tooltipCost.text = "✅ UNLOCKED";
+            else
+                tooltipCost.text = $"Cost: {skillData.shardCost} Shards";
+        }
+        
+        // Show tooltip at fixed position (no dynamic positioning)
+        tooltipPanel.SetActive(true);
+    }
+    
+    private void PositionTooltip(PointerEventData eventData)
+    {
+        // Removed - tooltip now stays at fixed canvas position
+    }
+    
+    private void ClampTooltipToCanvas(Canvas canvas)
+    {
+        // Removed - no longer needed for fixed positioning
+    }
+    
+    private void HideTooltip()
+    {
+        if (tooltipPanel != null)
+            tooltipPanel.SetActive(false);
     }
     
     public void OpenPanel()
@@ -227,93 +576,23 @@ public class SkillTreePanel : MonoBehaviour
                 UIInputBlocker.instance.EnableGameplayInput(true);
             }
         }
+        
+        // Hide tooltip when closing panel
+        HideTooltip();
     }
     
     public void ClosePanel()
     {
         CloseSkillPanel();
         gameObject.SetActive(false);
-    }
-    
-    private void SelectSkill(string skillID)
-    {
-        if (!skillNodes.ContainsKey(skillID))
-            return;
-            
-        selectedSkillID = skillID;
-        var skillData = skillNodes[skillID];
-        
-        // Update UI texts
-        if (titleText != null)
-            titleText.text = $"Acquire {skillData.skillName}";
-            
-        if (descriptionText != null)
-            descriptionText.text = skillData.description;
-            
-        if (costText != null)
-            costText.text = $"Cost: {skillData.shardCost} Shards";
-        
-        // Update button selection outlines
-        UpdateSelectionOutlines();
-        
-        // Update apply button
-        UpdateApplyButton();
-    }
-    
-    private void UpdateSelectionOutlines()
-    {
-        foreach (var skillNode in skillNodes.Values)
-        {
-            if (skillNode.button != null)
-            {
-                Transform outline = skillNode.button.transform.Find("SelectedOutline");
-                if (outline != null)
-                    outline.gameObject.SetActive(skillNode.skillID == selectedSkillID);
-            }
-        }
+        HideTooltip();
     }
     
     private void ResetSelection()
     {
-        selectedSkillID = null;
-        
-        if (titleText != null)
-            titleText.text = "Acquire a new skill.";
-            
-        if (descriptionText != null)
-            descriptionText.text = "Select a skill to see its description.";
-            
-        if (costText != null)
-            costText.text = "";
-        
-        UpdateSelectionOutlines();
-        
-        if (applyButton != null)
-            applyButton.interactable = false;
-    }
-    
-    private void UnlockSelectedSkill()
-    {
-        if (string.IsNullOrEmpty(selectedSkillID) || SkillManager.Instance == null)
-            return;
-            
-        if (!skillNodes.ContainsKey(selectedSkillID))
-            return;
-        
-        var skillData = skillNodes[selectedSkillID];
-        bool success = SkillManager.Instance.UnlockSkill(selectedSkillID, skillData.shardCost);
-        
-        if (success)
-        {
-            Debug.Log($"Skill unlocked: {selectedSkillID}");
-            UpdateShardCount();
-            UpdateAllSkillStatus();
-            UpdateApplyButton();
-        }
-        else
-        {
-            Debug.LogWarning($"Failed to unlock skill: {selectedSkillID}");
-        }
+        // Hold sistem kullandığımız için selection'a gerek yok
+        // Bu metod artık sadece tooltip'i kapatmak için
+        HideTooltip();
     }
     
     private void UpdateShardCount()
@@ -340,35 +619,42 @@ public class SkillTreePanel : MonoBehaviour
     
     private void UpdateSkillButtonStatus(SkillNodeData skillData)
     {
+        if (SkillManager.Instance == null || skillData.button == null) return;
+        
         bool isUnlocked = SkillManager.Instance.IsSkillUnlocked(skillData.skillID);
         bool canUnlock = CanUnlockSkill(skillData);
         
-        // Update locked/unlocked icons
-        Transform lockedIcon = skillData.button.transform.Find("LockedIcon");
-        Transform unlockedIcon = skillData.button.transform.Find("UnlockedIcon");
+        // Hold-to-unlock sisteminde button'lar her zaman tıklanabilir olmalı
+        // Sadece görsel feedback değişir
+        skillData.button.interactable = true;
         
-        if (lockedIcon != null)
-            lockedIcon.gameObject.SetActive(!isUnlocked);
+        // Visual feedback with alpha
+        var buttonImage = skillData.button.GetComponent<Image>();
+        if (buttonImage != null)
+        {
+            Color currentColor = buttonImage.color;
             
-        if (unlockedIcon != null)
-            unlockedIcon.gameObject.SetActive(isUnlocked);
-        
-        // Update button interactability
-        skillData.button.interactable = !isUnlocked && canUnlock;
-        
-        // Optional: Add visual feedback for prerequisite not met
-        if (!isUnlocked && !canUnlock)
-        {
-            // Could add a "prerequisite not met" visual here
-            var image = skillData.button.GetComponent<Image>();
-            if (image != null)
-                image.color = new Color(0.5f, 0.5f, 0.5f, 0.7f); // Greyed out
-        }
-        else if (!isUnlocked)
-        {
-            var image = skillData.button.GetComponent<Image>();
-            if (image != null)
-                image.color = Color.white; // Normal color
+            if (isUnlocked)
+            {
+                // Skill unlocked - full alpha, green tint
+                currentColor.a = 1f;
+                currentColor = Color.green * 0.8f; // Yeşilimsi ton
+                currentColor.a = 1f;
+            }
+            else if (canUnlock)
+            {
+                // Skill can be unlocked - full alpha, normal color
+                currentColor = Color.white;
+                currentColor.a = 1f;
+            }
+            else
+            {
+                // Skill cannot be unlocked - low alpha (still clickable for tooltip)
+                currentColor = Color.white;
+                currentColor.a = 0.4f;
+            }
+            
+            buttonImage.color = currentColor;
         }
     }
     
@@ -385,31 +671,15 @@ public class SkillTreePanel : MonoBehaviour
         return SkillManager.Instance.GetShardCount() >= skillData.shardCost;
     }
     
-    private void UpdateApplyButton()
-    {
-        if (applyButton == null || SkillManager.Instance == null || string.IsNullOrEmpty(selectedSkillID))
-        {
-            if (applyButton != null)
-                applyButton.interactable = false;
-            return;
-        }
-        
-        if (!skillNodes.ContainsKey(selectedSkillID))
-        {
-            applyButton.interactable = false;
-            return;
-        }
-        
-        var skillData = skillNodes[selectedSkillID];
-        bool isUnlocked = SkillManager.Instance.IsSkillUnlocked(selectedSkillID);
-        bool canUnlock = CanUnlockSkill(skillData);
-        
-        applyButton.interactable = !isUnlocked && canUnlock;
-    }
-    
     private void OnEnable()
     {
         UpdateShardCount();
         UpdateAllSkillStatus();
+    }
+    
+    private void OnDisable()
+    {
+        // Hide tooltip when panel is disabled
+        HideTooltip();
     }
 } 
