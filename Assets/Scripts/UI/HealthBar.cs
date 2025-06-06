@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class HealthBar : MonoBehaviour
+public class HealthBar : BaseUIPanel
 {
     [SerializeField] private Image healthBarFill;
     [SerializeField] private float smoothSpeed = 10f;
@@ -17,7 +17,7 @@ public class HealthBar : MonoBehaviour
         InitializeHealthBar();
     }
     
-    private void OnEnable()
+    protected override void OnEnable()
     {
         // Component etkinleştirildiğinde veya yüklendiğinde çalışır
         InitializeHealthBar();

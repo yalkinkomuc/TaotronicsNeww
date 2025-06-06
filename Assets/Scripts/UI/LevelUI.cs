@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class LevelUI : MonoBehaviour
+public class LevelUI : BaseUIPanel
 {
     [Header("References")]
     [SerializeField] private PlayerStats playerStats;

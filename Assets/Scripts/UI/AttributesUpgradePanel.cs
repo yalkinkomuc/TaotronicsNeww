@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class AttributesUpgradePanel : MonoBehaviour
+public class AttributesUpgradePanel : BaseUIPanel
 {
     [Header("UI Elements")]
     [SerializeField] private GameObject attributeUpgradeUI;

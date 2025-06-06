@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class CheckpointSelectionScreen : MonoBehaviour
+public class CheckpointSelectionScreen : BaseUIPanel
 {
     [Header("Buttons")]
     [SerializeField] private Button restButton;
@@ -343,7 +343,7 @@ public class CheckpointSelectionScreen : MonoBehaviour
         }
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
         if (UIInputBlocker.instance != null)
         {

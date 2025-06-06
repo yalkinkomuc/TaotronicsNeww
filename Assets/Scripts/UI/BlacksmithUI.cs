@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class BlacksmithUI : MonoBehaviour
+public class BlacksmithUI : BaseUIPanel
 {
     // Singleton instance
     public static BlacksmithUI Instance;
@@ -46,7 +46,7 @@ public class BlacksmithUI : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            
             Debug.Log("BlacksmithUI singleton oluşturuldu ve sahne geçişlerinde korunacak");
         }
         else if (Instance != this)
@@ -303,7 +303,7 @@ public class BlacksmithUI : MonoBehaviour
             // Button için null kontrolü
             if (button == null)
             {
-                Debug.LogError("Buton bileşeni bulunamadı!");
+                Debug.LogError("Buton bileşenini bulunamadı!");
                 continue;
             }
             

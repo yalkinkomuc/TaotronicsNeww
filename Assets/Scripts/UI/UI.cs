@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class UI: MonoBehaviour
+public class UI : BaseUIPanel
 {
     
     private static UI instance;

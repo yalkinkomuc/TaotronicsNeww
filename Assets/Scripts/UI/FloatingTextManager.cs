@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class FloatingTextManager : MonoBehaviour
+public class FloatingTextManager : BaseUIPanel
 {
     public static FloatingTextManager Instance { get; private set; }
     
@@ -40,7 +40,7 @@ public class FloatingTextManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+           
             
             // Cache the camera reference
             mainCamera = Camera.main;

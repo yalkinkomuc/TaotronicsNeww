@@ -43,7 +43,7 @@ public class ChestManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            
             
             // Verileri yükle
             LoadChestData();

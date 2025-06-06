@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 
-public class UI_ChestInventory : MonoBehaviour
+public class UI_ChestInventory : BaseUIPanel
 {
     public static UI_ChestInventory Instance;
 
@@ -25,7 +25,7 @@ public class UI_ChestInventory : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            
             
             Debug.Log("UI_ChestInventory Singleton oluşturuldu, DontDestroyOnLoad aktif");
             
@@ -49,7 +49,7 @@ public class UI_ChestInventory : MonoBehaviour
     }
     
     // Restart sonrası instance'ı yeniden tanımlamak için OnEnable ekle
-    private void OnEnable()
+    protected override void OnEnable()
     {
         // Eğer Instance farklı bir objeye atanmışsa ve bu obje etkinleştirilirse
         if (Instance != null && Instance != this)

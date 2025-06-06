@@ -15,7 +15,7 @@ public class SceneManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            
             
             // Aktif checkpoint kontrolü
             if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)

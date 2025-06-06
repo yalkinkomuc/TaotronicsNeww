@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class SkillTreePanel : MonoBehaviour
+public class SkillTreePanel : BaseUIPanel
 {
     [Header("Skill Panel References")]
     [SerializeField] private GameObject skillScreenPanel;
@@ -76,7 +76,7 @@ public class SkillTreePanel : MonoBehaviour
         ResetUI();
     }
     
-    private void OnEnable()
+    protected override void OnEnable()
     {
         Debug.Log("SkillTreePanel OnEnable() called!");
         
@@ -420,7 +420,7 @@ public class SkillTreePanel : MonoBehaviour
     public void OpenPanel()
     {
         // Checkpoint UI'ı kapat!
-        CheckpointSelectionScreen checkpointScreen = FindObjectOfType<CheckpointSelectionScreen>();
+        CheckpointSelectionScreen checkpointScreen = FindAnyObjectByType<CheckpointSelectionScreen>();
         if (checkpointScreen != null)
         {
             Debug.Log("Closing CheckpointSelectionScreen!");
@@ -454,7 +454,7 @@ public class SkillTreePanel : MonoBehaviour
         gameObject.SetActive(false);
         
         // Checkpoint UI'ı tekrar aç!
-        CheckpointSelectionScreen checkpointScreen = FindObjectOfType<CheckpointSelectionScreen>();
+        CheckpointSelectionScreen checkpointScreen = FindAnyObjectByType<CheckpointSelectionScreen>();
         if (checkpointScreen != null)
         {
             Debug.Log("Reopening CheckpointSelectionScreen!");
@@ -462,11 +462,7 @@ public class SkillTreePanel : MonoBehaviour
         }
     }
     
-    private void CloseSkillPanel()
-    {
-        // Bu metod artık gerekli değil, ClosePanel() kullan
-        ClosePanel();
-    }
+   
     
     private void UpdateShardCount()
     {

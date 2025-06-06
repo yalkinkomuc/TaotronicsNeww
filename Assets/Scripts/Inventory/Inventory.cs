@@ -35,7 +35,7 @@ public class Inventory : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // Oyun kapatıldığında envanterin kalmasını sağlar
+            
             
             inventoryItems = new List<InventoryItem>();
             inventoryDictionary = new Dictionary<ItemData, InventoryItem>();
