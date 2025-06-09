@@ -1172,6 +1172,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: enemyType
+      value: Quest Bandit2
+      objectReference: {fileID: 0}
+    - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: isQuestEnemy
       value: 1
       objectReference: {fileID: 0}
@@ -1182,6 +1186,10 @@ PrefabInstance:
     - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: m_Name
       value: Quest_Bandit_Enemy (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4092795518509935350, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8558,6 +8566,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 376097668}
   m_CullTransparentMesh: 1
+--- !u!114 &393629132 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+  m_PrefabInstance: {fileID: 448977329}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1579f4ef6e21e54bae559bff0cb2df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &403455985 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2090524759458973294, guid: 1328bc5773bcfe046aef71ed277786bd, type: 3}
@@ -8699,6 +8718,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: enemyType
+      value: Quest Bandit1
+      objectReference: {fileID: 0}
+    - target: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: isQuestEnemy
       value: 1
       objectReference: {fileID: 0}
@@ -8709,6 +8732,10 @@ PrefabInstance:
     - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: m_Name
       value: Quest_Bandit_Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716819673060110429, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4092795518509935350, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15204,6 +15231,57 @@ Transform:
   - {fileID: 843382714}
   m_Father: {fileID: 211813062}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &932167855
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 932167856}
+  - component: {fileID: 932167857}
+  m_Layer: 0
+  m_Name: Helper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &932167856
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932167855}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1683066506}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &932167857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932167855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac8ff6e227b5354f80b9881c19e36b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetObjective: {fileID: 11400000, guid: 73d25056346b7fe449f56c4b4f1390bb, type: 2}
+  targetEnemies:
+  - {fileID: 393629132}
+  - {fileID: 1773225780}
+  generatedIDs:
+  - 'Quest_Bandit_Enemy: 1'
+  - 'Quest_Bandit_Enemy (1): 2'
 --- !u!1001 &952822302
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15854,7 +15932,7 @@ MonoBehaviour:
     baseCooldown: 2
     cooldownTimer: 0
     manaCost: 20
-    isUnlocked: 0
+    isUnlocked: 1
     skillPrefab: {fileID: 3781980674335233421, guid: 35eb45ef5405f1046af3fe7f5e18d141, type: 3}
   - skillID: FireSpell
     skillType: 3
@@ -15863,7 +15941,7 @@ MonoBehaviour:
     baseCooldown: 2
     cooldownTimer: 0
     manaCost: 1
-    isUnlocked: 0
+    isUnlocked: 1
     skillPrefab: {fileID: 32532192634965339, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
   - skillID: earth_push
     skillType: 2
@@ -15872,7 +15950,7 @@ MonoBehaviour:
     baseCooldown: 2
     cooldownTimer: 0
     manaCost: 30
-    isUnlocked: 0
+    isUnlocked: 1
     skillPrefab: {fileID: 5834622055319074674, guid: 8e63c5ab6633e7346950e09a8086c801, type: 3}
   - skillID: VoidSkill
     skillType: 4
@@ -15881,7 +15959,7 @@ MonoBehaviour:
     baseCooldown: 2
     cooldownTimer: 0
     manaCost: 50
-    isUnlocked: 0
+    isUnlocked: 1
     skillPrefab: {fileID: 5834622055319074674, guid: 8e63c5ab6633e7346950e09a8086c801, type: 3}
   - skillID: electric_dash
     skillType: 5
@@ -15890,7 +15968,7 @@ MonoBehaviour:
     baseCooldown: 1
     cooldownTimer: 0
     manaCost: 30
-    isUnlocked: 0
+    isUnlocked: 1
     skillPrefab: {fileID: 2187963067883842217, guid: e934d529a0955f146b7c5e71335d28e1, type: 3}
   - skillID: air_push
     skillType: 6
@@ -15899,7 +15977,7 @@ MonoBehaviour:
     baseCooldown: 1
     cooldownTimer: 0
     manaCost: 30
-    isUnlocked: 0
+    isUnlocked: 1
     skillPrefab: {fileID: 4299426031986039047, guid: 372e5c8f9a5279b4fb20e82049cc53df, type: 3}
   - skillID: fireball_spell
     skillType: 7
@@ -15908,7 +15986,7 @@ MonoBehaviour:
     baseCooldown: 2
     cooldownTimer: 0
     manaCost: 30
-    isUnlocked: 0
+    isUnlocked: 1
     skillPrefab: {fileID: 27853844425704398, guid: 9fb377ec49b33874bb0087bb919fe3d6, type: 3}
   globalCooldownReduction: 0
 --- !u!1 &1033984563
@@ -20345,7 +20423,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   availableQuests:
-  - {fileID: 11400000, guid: bb40d8d0eecee6c4fbe9a936a2067c7e, type: 2}
+  - {fileID: 11400000, guid: 1107005cdc26dff4a906b24977ee4e62, type: 2}
 --- !u!4 &1463584005 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7257855769375441334, guid: 592a7580fd39f854fbe82652596ed5e1, type: 3}
@@ -22430,6 +22508,7 @@ Transform:
   - {fileID: 1025743533}
   - {fileID: 113056709}
   - {fileID: 1904834796}
+  - {fileID: 932167856}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1683066507
@@ -24509,6 +24588,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1762778034}
   m_CullTransparentMesh: 1
+--- !u!114 &1773225780 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+  m_PrefabInstance: {fileID: 99701328}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1579f4ef6e21e54bae559bff0cb2df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1780094784
 GameObject:
   m_ObjectHideFlags: 0
@@ -25423,11 +25513,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6093113223368070934, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.004463
+      value: -16.72
       objectReference: {fileID: 0}
     - target: {fileID: 6093113223368070934, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.38
+      value: -4.44
       objectReference: {fileID: 0}
     - target: {fileID: 6093113223368070934, guid: 83abbbbf41660064da67fc48d0295835, type: 3}
       propertyPath: m_LocalPosition.z
