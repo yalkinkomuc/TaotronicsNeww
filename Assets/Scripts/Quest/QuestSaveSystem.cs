@@ -138,8 +138,11 @@ public static class QuestSaveSystem
         {
             if (quest != null && !string.IsNullOrEmpty(quest.questID))
             {
-                string key = $"QuestGiven_{quest.questID}";
-                PlayerPrefs.DeleteKey(key);
+                string givenKey = $"QuestGiven_{quest.questID}";
+                PlayerPrefs.DeleteKey(givenKey);
+                
+                string completionKey = $"QuestCompletionAction_{quest.questID}";
+                PlayerPrefs.DeleteKey(completionKey);
             }
         }
     }

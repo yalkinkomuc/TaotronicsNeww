@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class QuestGiver : DialogueNPC
 {
@@ -7,6 +8,7 @@ public class QuestGiver : DialogueNPC
     [SerializeField] private DialogueData questInProgressDialogue; // Quest devam ederken gösterilecek diyalog
     [SerializeField] private DialogueData questCompletedDialogue; // Quest tamamlandığında gösterilecek diyalog
     private bool questGiven = false;
+    private bool completionActionExecuted = false;
 
     public override void Interact()
     {
@@ -25,6 +27,12 @@ public class QuestGiver : DialogueNPC
             // Önce quest tamamlanmış mı kontrol et
             if (QuestManager.instance.IsQuestCompleted(questToGive.questID))
             {
+                // Quest tamamlandı, completion action'ı henüz çalışmadıysa çalıştır
+                if (!completionActionExecuted)
+                {
+                    ExecuteCompletionAction();
+                }
+                
                 // Quest tamamlandı, completed diyaloğu göster
                 ShowQuestCompletedDialogue();
                 return;
@@ -97,9 +105,18 @@ public class QuestGiver : DialogueNPC
     // Quest tamamlandığında gösterilecek diyalog
     private void ShowQuestCompletedDialogue()
     {
-        if (questCompletedDialogue != null)
+        DialogueData dialogueToShow = questCompletedDialogue;
+        
+        // Eğer completion behavior'da ChangeDialogue seçilmişse o diyaloğu kullan
+        if (questToGive?.completionBehavior?.action == QuestCompletionAction.ChangeDialogue &&
+            questToGive.completionBehavior.postCompletionDialogue != null)
         {
-            DialogueManager.Instance.StartDialogue(questCompletedDialogue);
+            dialogueToShow = questToGive.completionBehavior.postCompletionDialogue;
+        }
+        
+        if (dialogueToShow != null)
+        {
+            DialogueManager.Instance.StartDialogue(dialogueToShow);
         }
         else
         {
@@ -147,6 +164,7 @@ public class QuestGiver : DialogueNPC
     private void OnEnable()
     {
         LoadQuestGivenState();
+        LoadCompletionActionState();
     }
     
     // Quest verilmiş durumunu kaydet
@@ -171,6 +189,152 @@ public class QuestGiver : DialogueNPC
         else
         {
             questGiven = false;
+        }
+    }
+    
+    // Completion action durumunu yükle
+    private void LoadCompletionActionState()
+    {
+        if (questToGive != null && !string.IsNullOrEmpty(questToGive.questID))
+        {
+            string key = $"QuestCompletionAction_{questToGive.questID}";
+            completionActionExecuted = PlayerPrefs.GetInt(key, 0) == 1;
+            
+            // Eğer quest tamamlanmış ve completion action çalışmışsa, duruma göre objeyi ayarla
+            if (QuestManager.instance.IsQuestCompleted(questToGive.questID) && completionActionExecuted)
+            {
+                ApplyCompletionStateOnLoad();
+            }
+        }
+        else
+        {
+            completionActionExecuted = false;
+        }
+    }
+    
+    // Completion action durumunu kaydet
+    private void SaveCompletionActionState()
+    {
+        if (questToGive != null && !string.IsNullOrEmpty(questToGive.questID))
+        {
+            string key = $"QuestCompletionAction_{questToGive.questID}";
+            PlayerPrefs.SetInt(key, completionActionExecuted ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+    }
+    
+    // Quest completion action'ını çalıştır
+    private void ExecuteCompletionAction()
+    {
+        if (questToGive?.completionBehavior == null) return;
+        
+        completionActionExecuted = true;
+        SaveCompletionActionState();
+        
+        var behavior = questToGive.completionBehavior;
+        
+        if (behavior.delayBeforeAction > 0)
+        {
+            StartCoroutine(ExecuteCompletionActionDelayed(behavior));
+        }
+        else
+        {
+            PerformCompletionAction(behavior);
+        }
+    }
+    
+    // Gecikmeli completion action
+    private IEnumerator ExecuteCompletionActionDelayed(QuestCompletionBehavior behavior)
+    {
+        yield return new WaitForSeconds(behavior.delayBeforeAction);
+        PerformCompletionAction(behavior);
+    }
+    
+    // Completion action'ı gerçekleştir
+    private void PerformCompletionAction(QuestCompletionBehavior behavior)
+    {
+        switch (behavior.action)
+        {
+            case QuestCompletionAction.None:
+                // Hiçbir şey yapma
+                break;
+                
+            case QuestCompletionAction.HideQuestGiver:
+                gameObject.SetActive(false);
+                Debug.Log($"QuestGiver {gameObject.name} hidden after quest completion");
+                break;
+                
+            case QuestCompletionAction.DestroyQuestGiver:
+                // Hemen destroy etme, sadece durumu kaydet
+                // Sahne yeniden yüklendiğinde destroy edilecek
+                Debug.Log($"QuestGiver {gameObject.name} marked for destruction on scene reload");
+                break;
+                
+            case QuestCompletionAction.ChangeDialogue:
+                // Diyalog değişimi ShowQuestCompletedDialogue'da handle ediliyor
+                Debug.Log($"QuestGiver {gameObject.name} dialogue changed after quest completion");
+                break;
+                
+            case QuestCompletionAction.TeleportQuestGiver:
+                transform.position = behavior.teleportPosition;
+                Debug.Log($"QuestGiver {gameObject.name} teleported to {behavior.teleportPosition}");
+                break;
+                
+            case QuestCompletionAction.RunCustomAction:
+                RunCustomAction(behavior.customParameter);
+                break;
+        }
+    }
+    
+    // Oyun yüklendiğinde completion state'i uygula
+    private void ApplyCompletionStateOnLoad()
+    {
+        if (questToGive?.completionBehavior == null) return;
+        
+        var behavior = questToGive.completionBehavior;
+        
+        switch (behavior.action)
+        {
+            case QuestCompletionAction.HideQuestGiver:
+                gameObject.SetActive(false);
+                Debug.Log($"QuestGiver {gameObject.name} hidden on scene load (quest completed)");
+                break;
+                
+            case QuestCompletionAction.DestroyQuestGiver:
+                Debug.Log($"QuestGiver {gameObject.name} destroyed on scene load (quest completed)");
+                Destroy(gameObject);
+                break;
+                
+            case QuestCompletionAction.TeleportQuestGiver:
+                transform.position = behavior.teleportPosition;
+                Debug.Log($"QuestGiver {gameObject.name} teleported to {behavior.teleportPosition} on scene load");
+                break;
+        }
+    }
+    
+    // Custom action çalıştır
+    private void RunCustomAction(string customParameter)
+    {
+        Debug.Log($"Running custom action: {customParameter}");
+        
+        // Custom action'ı burada implement edebilirsin
+        // Örneğin: method name'e göre reflection ile method çağırma
+        // Veya Unity Events kullanma
+        
+        // Örnek: Component'te belirli bir methodu çağır
+        if (!string.IsNullOrEmpty(customParameter))
+        {
+            // customParameter format: "ComponentName.MethodName"
+            string[] parts = customParameter.Split('.');
+            if (parts.Length == 2)
+            {
+                var component = GetComponent(parts[0]);
+                if (component != null)
+                {
+                    var method = component.GetType().GetMethod(parts[1]);
+                    method?.Invoke(component, null);
+                }
+            }
         }
     }
 } 
