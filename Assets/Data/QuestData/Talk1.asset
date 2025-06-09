@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d71cf45ae6b6c4a8cfd2bed810323b, type: 3}
   m_Name: Talk1
   m_EditorClassIdentifier: 
-  description: 
-  isCompleted: 0
-  isInitialized: 0
-  npcID: 
+  description: Test
+  isCompleted: 1
+  isInitialized: 1
+  npcID: Test
+  itemRewards:
+  - item: {fileID: 11400000, guid: ff36dbd30ad2d74489535cd063f126c2, type: 2}
+    quantity: 1

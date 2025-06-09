@@ -10,6 +10,20 @@ public class SpecificEnemyKillObjective : QuestObjective
     public List<string> targetEnemyIDs = new List<string>();
     
     [Space(10)]
+    [Header("Item Rewards")]
+    [Tooltip("Objective tamamlandığında verilecek eşyalar")]
+    public List<ItemReward> itemRewards = new List<ItemReward>();
+    
+    [System.Serializable]
+    public class ItemReward
+    {
+        [Tooltip("Verilecek eşya")]
+        public ItemData item;
+        [Tooltip("Kaç adet verilecek")]
+        public int quantity = 1;
+    }
+    
+    [Space(10)]
     [Header("Info")]
     [TextArea(3, 5)]
     [Tooltip("Bu objective'i nasıl kullanacağınız hakkında bilgi")]
@@ -53,8 +67,32 @@ public class SpecificEnemyKillObjective : QuestObjective
         if (killedEnemyIDs.Count >= targetEnemyIDs.Count)
         {
             isCompleted = true;
+            
+            // Objective tamamlandığında eşyaları ver
+            GiveItemRewards();
+            
             Debug.Log("🎯 All specific target enemies killed!");
         }
+    }
+    
+    private void GiveItemRewards()
+    {
+        if (itemRewards == null || itemRewards.Count == 0) return;
+        
+        foreach (var reward in itemRewards)
+        {
+            if (reward.item == null) continue;
+            
+            // Her quantity için ayrı ayrı ekle
+            for (int i = 0; i < reward.quantity; i++)
+            {
+                Inventory.instance?.AddItem(reward.item);
+            }
+            
+            Debug.Log($"🎁 Rewarded: {reward.quantity}x {reward.item.itemName}");
+        }
+        
+        Debug.Log($"🎉 Total {itemRewards.Count} item types given as enemy kill rewards!");
     }
     
     // Açıklama metnini güncelle

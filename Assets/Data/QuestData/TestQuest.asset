@@ -12,7 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab431f899d0efb48bd691722fcc427e, type: 3}
   m_Name: TestQuest
   m_EditorClassIdentifier: 
-  questID: 
-  title: 
-  description: 
-  objectives: []
+  questID: Test
+  title: Test
+  description: Test
+  objectives:
+  - {fileID: 11400000, guid: baf2ca99019e38f458376f66a54ae095, type: 2}
+  - {fileID: 11400000, guid: 73d25056346b7fe449f56c4b4f1390bb, type: 2}
+  questRewards:
+  - item: {fileID: 11400000, guid: 580eb22ffbdbbd34fa9d21f62764cd4d, type: 2}
+    quantity: 200
+  completionBehavior:
+    action: 2
+    customParameter: 
+    postCompletionDialogue: {fileID: 0}
+    teleportPosition: {x: -20.09, y: 0.57, z: 0}
+    delayBeforeAction: 0

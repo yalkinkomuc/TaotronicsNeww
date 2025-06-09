@@ -137,8 +137,32 @@ public class QuestManager : MonoBehaviour
         {
             completedQuests.Add(quest.Data.questID);
             activeQuests.Remove(quest);
+            
+            // Quest completion rewards ver
+            GiveQuestRewards(quest.Data);
+            
             Debug.Log($"🎉 Quest completed: {quest.Data.title}");
         }
+    }
+    
+    private void GiveQuestRewards(QuestData questData)
+    {
+        if (questData?.questRewards == null || questData.questRewards.Count == 0) return;
+        
+        foreach (var reward in questData.questRewards)
+        {
+            if (reward.item == null) continue;
+            
+            // Her quantity için ayrı ayrı ekle
+            for (int i = 0; i < reward.quantity; i++)
+            {
+                Inventory.instance?.AddItem(reward.item);
+            }
+            
+            Debug.Log($"🎁 Quest Reward: {reward.quantity}x {reward.item.itemName}");
+        }
+        
+        Debug.Log($"🎉 Total {questData.questRewards.Count} quest reward types given for: {questData.title}");
     }
 
     private void ResetObjectiveStates()

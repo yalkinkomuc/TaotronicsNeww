@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 719d4628d5d97e14ca25a226f9eac442, type: 3}
   m_Name: SpecificEnemyKillObjective
   m_EditorClassIdentifier: 
-  description: 
-  isCompleted: 0
-  isInitialized: 0
-  targetEnemies: []
-  targetEnemyIDs: []
+  description: Kill 2 specific enemies
+  isCompleted: 1
+  isInitialized: 1
+  targetEnemyIDs:
+  - 1
+  - 2
+  itemRewards: []
+  usageInfo: "1. Scene'de bir SpecificEnemySelector component'i olu\u015Fturun\n2.
+    Hedef d\xFC\u015Fmanlar\u0131 ona ekleyin\n3. 'Setup Target IDs' butonuna bas\u0131n"
