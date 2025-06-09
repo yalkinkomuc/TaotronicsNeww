@@ -118,8 +118,14 @@ public class Enemy : Entity
        {
            isDefeated = true;
            
-           // Notify quest system
+           // Notify quest system with enemy type
            QuestManager.instance?.RaiseEvent("EnemyKilled", enemyType);
+           
+           // Notify quest system with specific enemy ID (for SpecificEnemyKillObjective)
+           if (!string.IsNullOrEmpty(uniqueEnemyId))
+           {
+               QuestManager.instance?.RaiseEvent("SpecificEnemyKilled", uniqueEnemyId);
+           }
            
            // Trigger enemy defeated event
            GameEvents.EnemyDefeated(this);
@@ -281,5 +287,16 @@ public class Enemy : Entity
        
        // Return true if player is below the enemy by at least the minimum height
        return heightDifference >= minHeightDifference;
+   }
+   
+   // Unique Enemy ID methods for SpecificEnemyKillObjective
+   public string GetUniqueEnemyID()
+   {
+       return uniqueEnemyId;
+   }
+   
+   public void SetUniqueEnemyID(string id)
+   {
+       uniqueEnemyId = id;
    }
 }

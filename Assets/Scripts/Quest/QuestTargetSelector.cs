@@ -26,24 +26,9 @@ public class QuestTargetSelector : MonoBehaviour
             return;
         }
         
-        // Önce quest'te bir TargetedKillObjective var mı bak
-        TargetedKillObjective killObjective = null;
         
-        foreach (var objective in targetQuest.objectives)
-        {
-            if (objective is TargetedKillObjective targetedKill)
-            {
-                killObjective = targetedKill;
-                break;
-            }
-        }
         
-        // Eğer yoksa, yeni bir tane oluştur
-        if (killObjective == null)
-        {
-            Debug.LogError("Bu quest'te bir TargetedKillObjective bulunamadı! Önce bir tane ekleyin.");
-            return;
-        }
+        
         
         // Düşman ID'lerini topla
         List<string> enemyTypes = new List<string>();
@@ -69,25 +54,13 @@ public class QuestTargetSelector : MonoBehaviour
         }
         
         // Objective'e ekle
-        SerializedObject serializedObject = new SerializedObject(killObjective);
-        SerializedProperty targetTypesProp = serializedObject.FindProperty("targetEnemyTypes");
+       
+       
         
-        // Mevcut tipleri sil
-        targetTypesProp.ClearArray();
-        
-        // Yeni tipleri ekle
-        for (int i = 0; i < enemyTypes.Count; i++)
-        {
-            targetTypesProp.InsertArrayElementAtIndex(i);
-            SerializedProperty element = targetTypesProp.GetArrayElementAtIndex(i);
-            element.stringValue = enemyTypes[i];
-        }
+     
         
         // Değişiklikleri kaydet
-        serializedObject.ApplyModifiedProperties();
-        
-        // Asset'i kaydet
-        EditorUtility.SetDirty(killObjective);
+       
         AssetDatabase.SaveAssets();
         
         Debug.Log($"Düşman tipleri quest'e eklendi! ({enemyTypes.Count} tip)");

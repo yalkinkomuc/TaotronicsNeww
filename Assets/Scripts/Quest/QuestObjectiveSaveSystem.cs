@@ -15,7 +15,7 @@ public static class QuestObjectiveSaveSystem
             {
                 string objectiveKey = GetObjectiveKey(quest.Data.questID, i);
                 SaveBaseObjectiveData(objective, objectiveKey);
-                SaveSpecificObjectiveData(objective, objectiveKey);
+                
             }
         }
     }
@@ -42,7 +42,7 @@ public static class QuestObjectiveSaveSystem
         {
             string objectiveKey = GetObjectiveKey(quest.questID, i);
             ClearBaseObjectiveData(objectiveKey);
-            ClearSpecificObjectiveData(quest.objectives[i], objectiveKey);
+           
         }
     }
     
@@ -69,116 +69,27 @@ public static class QuestObjectiveSaveSystem
         PlayerPrefs.DeleteKey($"{key}_Initialized");
     }
     
-    private static void SaveSpecificObjectiveData(QuestObjective objective, string key)
-    {
-        switch (objective)
-        {
-            case KillObjective killObj:
-                SaveKillObjectiveData(killObj, key);
-                break;
-            case TargetedKillObjective targetedKillObj:
-                SaveTargetedKillObjectiveData(targetedKillObj, key);
-                break;
-        }
-    }
+   
     
     private static void LoadSpecificObjectiveData(QuestObjective objective, string key)
     {
         switch (objective)
         {
-            case KillObjective killObj:
-                LoadKillObjectiveData(killObj, key);
-                break;
-            case TargetedKillObjective targetedKillObj:
-                LoadTargetedKillObjectiveData(targetedKillObj, key);
+            case SpecificEnemyKillObjective specificKillObj:
+                LoadSpecificEnemyKillObjectiveData(specificKillObj, key);
                 break;
         }
     }
     
-    private static void ClearSpecificObjectiveData(QuestObjective objective, string key)
-    {
-        switch (objective)
-        {
-            case KillObjective _:
-                PlayerPrefs.DeleteKey($"{key}_CurrentAmount");
-                break;
-            case TargetedKillObjective _:
-                ClearTargetedKillObjectiveData(key);
-                break;
-        }
-    }
+   
     
-    private static void SaveKillObjectiveData(KillObjective killObj, string key)
-    {
-        var currentAmountField = typeof(KillObjective).GetField("currentAmount", 
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        
-        if (currentAmountField != null)
-        {
-            int currentAmount = (int)currentAmountField.GetValue(killObj);
-            PlayerPrefs.SetInt($"{key}_CurrentAmount", currentAmount);
-        }
-    }
     
-    private static void LoadKillObjectiveData(KillObjective killObj, string key)
-    {
-        int currentAmount = PlayerPrefs.GetInt($"{key}_CurrentAmount", 0);
-        
-        var currentAmountField = typeof(KillObjective).GetField("currentAmount", 
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        
-        if (currentAmountField != null)
-        {
-            currentAmountField.SetValue(killObj, currentAmount);
-        }
-    }
     
-    private static void SaveTargetedKillObjectiveData(TargetedKillObjective targetedKillObj, string key)
-    {
-        var killedCountsField = typeof(TargetedKillObjective).GetField("killedCounts", 
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        
-        if (killedCountsField != null)
-        {
-            var killedCounts = killedCountsField.GetValue(targetedKillObj) as Dictionary<string, int>;
-            if (killedCounts != null)
-            {
-                PlayerPrefs.SetInt($"{key}_EnemyTypeCount", killedCounts.Count);
-                
-                int index = 0;
-                foreach (var kvp in killedCounts)
-                {
-                    PlayerPrefs.SetString($"{key}_EnemyType_{index}", kvp.Key);
-                    PlayerPrefs.SetInt($"{key}_KillCount_{kvp.Key}", kvp.Value);
-                    index++;
-                }
-            }
-        }
-    }
     
-    private static void LoadTargetedKillObjectiveData(TargetedKillObjective targetedKillObj, string key)
-    {
-        var killedCountsField = typeof(TargetedKillObjective).GetField("killedCounts", 
-            BindingFlags.NonPublic | BindingFlags.Instance);
-        
-        if (killedCountsField != null)
-        {
-            var killedCounts = new Dictionary<string, int>();
-            int enemyTypeCount = PlayerPrefs.GetInt($"{key}_EnemyTypeCount", 0);
-            
-            for (int i = 0; i < enemyTypeCount; i++)
-            {
-                string enemyType = PlayerPrefs.GetString($"{key}_EnemyType_{i}", "");
-                if (!string.IsNullOrEmpty(enemyType))
-                {
-                    int killCount = PlayerPrefs.GetInt($"{key}_KillCount_{enemyType}", 0);
-                    killedCounts[enemyType] = killCount;
-                }
-            }
-            
-            killedCountsField.SetValue(targetedKillObj, killedCounts);
-        }
-    }
+    
+   
+    
+   
     
     private static void ClearTargetedKillObjectiveData(string key)
     {
@@ -193,5 +104,75 @@ public static class QuestObjectiveSaveSystem
             PlayerPrefs.DeleteKey($"{key}_EnemyType_{j}");
         }
         PlayerPrefs.DeleteKey($"{key}_EnemyTypeCount");
+    }
+    
+    private static void SaveSpecificEnemyKillObjectiveData(SpecificEnemyKillObjective specificKillObj, string key)
+    {
+        var killedEnemyIDs = specificKillObj.GetKilledEnemyIDs();
+        var targetEnemyIDs = specificKillObj.GetTargetEnemyIDs();
+        
+        // Save killed enemy IDs
+        PlayerPrefs.SetInt($"{key}_KilledCount", killedEnemyIDs.Count);
+        int index = 0;
+        foreach (var killedID in killedEnemyIDs)
+        {
+            PlayerPrefs.SetString($"{key}_KilledID_{index}", killedID);
+            index++;
+        }
+        
+        // Save target enemy IDs
+        PlayerPrefs.SetInt($"{key}_TargetCount", targetEnemyIDs.Count);
+        for (int i = 0; i < targetEnemyIDs.Count; i++)
+        {
+            PlayerPrefs.SetString($"{key}_TargetID_{i}", targetEnemyIDs[i]);
+        }
+    }
+    
+    private static void LoadSpecificEnemyKillObjectiveData(SpecificEnemyKillObjective specificKillObj, string key)
+    {
+        // Load killed enemy IDs
+        var killedEnemyIDs = new HashSet<string>();
+        int killedCount = PlayerPrefs.GetInt($"{key}_KilledCount", 0);
+        for (int i = 0; i < killedCount; i++)
+        {
+            string killedID = PlayerPrefs.GetString($"{key}_KilledID_{i}", "");
+            if (!string.IsNullOrEmpty(killedID))
+            {
+                killedEnemyIDs.Add(killedID);
+            }
+        }
+        specificKillObj.SetKilledEnemyIDs(killedEnemyIDs);
+        
+        // Load target enemy IDs
+        var targetEnemyIDs = new List<string>();
+        int targetCount = PlayerPrefs.GetInt($"{key}_TargetCount", 0);
+        for (int i = 0; i < targetCount; i++)
+        {
+            string targetID = PlayerPrefs.GetString($"{key}_TargetID_{i}", "");
+            if (!string.IsNullOrEmpty(targetID))
+            {
+                targetEnemyIDs.Add(targetID);
+            }
+        }
+        specificKillObj.SetTargetEnemyIDs(targetEnemyIDs);
+    }
+    
+    private static void ClearSpecificEnemyKillObjectiveData(string key)
+    {
+        // Clear killed enemy IDs
+        int killedCount = PlayerPrefs.GetInt($"{key}_KilledCount", 0);
+        for (int i = 0; i < killedCount; i++)
+        {
+            PlayerPrefs.DeleteKey($"{key}_KilledID_{i}");
+        }
+        PlayerPrefs.DeleteKey($"{key}_KilledCount");
+        
+        // Clear target enemy IDs
+        int targetCount = PlayerPrefs.GetInt($"{key}_TargetCount", 0);
+        for (int i = 0; i < targetCount; i++)
+        {
+            PlayerPrefs.DeleteKey($"{key}_TargetID_{i}");
+        }
+        PlayerPrefs.DeleteKey($"{key}_TargetCount");
     }
 } 
