@@ -105,7 +105,7 @@ public class UIInputBlocker : MonoBehaviour
             }
         }
         
-        Debug.Log($"Panel visibility changed: {(isVisible ? "Shown" : "Hidden")}. Active panel count: {activePanelCount}");
+      //  Debug.Log($"Panel visibility changed: {(isVisible ? "Shown" : "Hidden")}. Active panel count: {activePanelCount}");
     }
     
     // Add panel to the list
@@ -147,7 +147,7 @@ public class UIInputBlocker : MonoBehaviour
             
             uiPanels.Remove(panel);
             
-            Debug.Log($"Panel removed. Remaining active panel count: {activePanelCount}");
+           // Debug.Log($"Panel removed. Remaining active panel count: {activePanelCount}");
         }
     }
     
@@ -202,7 +202,7 @@ public class UIInputBlocker : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Still {activePanelCount} active panels, input remains disabled");
+           // Debug.Log($"Still {activePanelCount} active panels, input remains disabled");
         }
     }
     

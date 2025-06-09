@@ -9,12 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8734ec9c3aec46f479cae5b49f9cd072, type: 3}
-  m_Name: KillBandits
+  m_Script: {fileID: 11500000, guid: a2d71cf45ae6b6c4a8cfd2bed810323b, type: 3}
+  m_Name: Talk1
   m_EditorClassIdentifier: 
-  description: "2 adet Quest Bandit \xF6ld\xFCr"
+  description: 
   isCompleted: 0
   isInitialized: 0
-  targetEnemyTypes:
-  - Quest Bandit
-  requiredAmount: 2
+  npcID: 

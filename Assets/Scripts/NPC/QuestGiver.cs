@@ -22,23 +22,21 @@ public class QuestGiver : DialogueNPC
         // Quest durumunu kontrol et
         if (questToGive != null)
         {
+            // Önce quest tamamlanmış mı kontrol et
+            if (QuestManager.instance.IsQuestCompleted(questToGive.questID))
+            {
+                // Quest tamamlandı, completed diyaloğu göster
+                ShowQuestCompletedDialogue();
+                return;
+            }
+            
             QuestInstance activeQuest = FindActiveQuest();
             
             if (activeQuest != null)
             {
-                // Quest devam ediyor, güncel durumu kontrol et
-                if (activeQuest.IsCompleted)
-                {
-                    // Quest tamamlandı
-                    ShowQuestCompletedDialogue();
-                    return;
-                }
-                else
-                {
-                    // Quest devam ediyor
-                    ShowQuestInProgressDialogue(activeQuest);
-                    return;
-                }
+                // Quest devam ediyor
+                ShowQuestInProgressDialogue(activeQuest);
+                return;
             }
         }
         
@@ -135,6 +133,9 @@ public class QuestGiver : DialogueNPC
             QuestManager.instance.StartQuest(questToGive);
             questGiven = true;
             
+            // Quest verilmiş durumunu kaydet
+            SaveQuestGivenState();
+            
             // Görevin verildiğini TalkedToNPC event'i ile bildir
             QuestManager.instance.RaiseEvent("TalkedToNPC", npcID);
             
@@ -142,9 +143,34 @@ public class QuestGiver : DialogueNPC
         }
     }
 
-    // Oyun başladığında quest'in verilmiş durumunu sıfırla
+    // Oyun başladığında quest'in verilmiş durumunu yükle
     private void OnEnable()
     {
-        questGiven = false;
+        LoadQuestGivenState();
+    }
+    
+    // Quest verilmiş durumunu kaydet
+    private void SaveQuestGivenState()
+    {
+        if (questToGive != null && !string.IsNullOrEmpty(questToGive.questID))
+        {
+            string key = $"QuestGiven_{questToGive.questID}";
+            PlayerPrefs.SetInt(key, questGiven ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+    }
+    
+    // Quest verilmiş durumunu yükle
+    private void LoadQuestGivenState()
+    {
+        if (questToGive != null && !string.IsNullOrEmpty(questToGive.questID))
+        {
+            string key = $"QuestGiven_{questToGive.questID}";
+            questGiven = PlayerPrefs.GetInt(key, 0) == 1;
+        }
+        else
+        {
+            questGiven = false;
+        }
     }
 } 
