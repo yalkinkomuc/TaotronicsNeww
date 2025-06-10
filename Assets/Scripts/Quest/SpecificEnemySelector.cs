@@ -6,53 +6,84 @@ using UnityEditor;
 
 public class SpecificEnemySelector : MonoBehaviour
 {
-    [Header("Configuration")]
-    [Tooltip("Target quest objective to setup")]
-    public SpecificEnemyKillObjective targetObjective;
+    [System.Serializable]
+    public class ObjectiveEnemyPair
+    {
+        [Header("Objective Info")] [Tooltip("Hangi objective için düşman ekliyorsun")]
+        public SpecificEnemyKillObjective objective;
+
+        [Space(5)]
+        [Header("Target Enemies for this Objective")]
+        [Tooltip("Bu objective için öldürülmesi gereken düşmanlar")]
+        public List<Enemy> targetEnemies = new List<Enemy>();
+
+        [Space(5)] [Header("Generated IDs for this Objective")] [SerializeField, ReadOnly]
+        public List<string> generatedIDs = new List<string>();
+
+        
     
-    [Space(10)]
-    [Header("Target Enemies")]
-    [Tooltip("Drag specific enemies from the scene here")]
-    public List<Enemy> targetEnemies = new List<Enemy>();
+}
+    
+    [Header("Multiple Objectives Configuration")]
+    [Tooltip("Her objective için ayrı düşman listesi ekleyebilirsin")]
+    public List<ObjectiveEnemyPair> objectiveEnemyPairs = new List<ObjectiveEnemyPair>();
     
     [Space(10)]
     [Header("Debug Info")]
-    [SerializeField, ReadOnly] private List<string> generatedIDs = new List<string>();
+    [SerializeField, ReadOnly] private int totalObjectives = 0;
+    [SerializeField, ReadOnly] private int totalEnemies = 0;
 
     [ContextMenu("Setup Target IDs")]
     public void SetupTargetIDs()
     {
-        if (targetObjective == null)
+        if (objectiveEnemyPairs == null || objectiveEnemyPairs.Count == 0)
         {
-            Debug.LogError("Target objective is not assigned!");
+            Debug.LogError("No objective-enemy pairs found! Add some objectives first.");
             return;
         }
 
-        var enemyIDs = new List<string>();
-        generatedIDs.Clear();
+        int totalSetup = 0;
+        int totalEnemiesProcessed = 0;
 
-        foreach (var enemy in targetEnemies)
+        foreach (var pair in objectiveEnemyPairs)
         {
-            if (enemy == null) continue;
-
-            // Enemy'nin unique ID'sini al veya oluştur
-            string enemyID = GetOrCreateEnemyID(enemy);
-            if (!string.IsNullOrEmpty(enemyID))
+            if (pair.objective == null)
             {
-                enemyIDs.Add(enemyID);
-                generatedIDs.Add($"{enemy.name}: {enemyID}");
+                Debug.LogWarning("Objective is null in one of the pairs, skipping...");
+                continue;
             }
-        }
 
-        // Target objective'e ID'leri ata
-        targetObjective.SetTargetEnemyIDs(enemyIDs);
+            var enemyIDs = new List<string>();
+            pair.generatedIDs.Clear();
+
+            foreach (var enemy in pair.targetEnemies)
+            {
+                if (enemy == null) continue;
+
+                // Enemy'nin unique ID'sini al veya oluştur
+                string enemyID = GetOrCreateEnemyID(enemy);
+                if (!string.IsNullOrEmpty(enemyID))
+                {
+                    enemyIDs.Add(enemyID);
+                    pair.generatedIDs.Add($"{enemy.name}: {enemyID}");
+                    totalEnemiesProcessed++;
+                }
+            }
+
+            // Target objective'e ID'leri ata
+            pair.objective.SetTargetEnemyIDs(enemyIDs);
 
 #if UNITY_EDITOR
-        // Editor'da değişiklikleri kaydet
-        EditorUtility.SetDirty(targetObjective);
+            // Editor'da değişiklikleri kaydet
+            EditorUtility.SetDirty(pair.objective);
 #endif
 
-        Debug.Log($"Setup complete! {enemyIDs.Count} enemy IDs assigned to objective.");
+            Debug.Log($"✅ {pair.objective.name}: {enemyIDs.Count} enemy IDs assigned");
+            totalSetup++;
+        }
+
+        UpdateDebugInfo();
+        Debug.Log($"🎯 Setup complete! {totalSetup} objectives configured with {totalEnemiesProcessed} total enemies.");
     }
 
     private string GetOrCreateEnemyID(Enemy enemy)
@@ -74,36 +105,70 @@ public class SpecificEnemySelector : MonoBehaviour
     [ContextMenu("Clear Target IDs")]
     public void ClearTargetIDs()
     {
-        if (targetObjective != null)
+        if (objectiveEnemyPairs == null || objectiveEnemyPairs.Count == 0)
         {
-            targetObjective.SetTargetEnemyIDs(new List<string>());
-            
+            Debug.LogWarning("No objectives to clear.");
+            return;
+        }
+
+        int clearedCount = 0;
+        foreach (var pair in objectiveEnemyPairs)
+        {
+            if (pair.objective != null)
+            {
+                pair.objective.SetTargetEnemyIDs(new List<string>());
+                
 #if UNITY_EDITOR
-            EditorUtility.SetDirty(targetObjective);
+                EditorUtility.SetDirty(pair.objective);
 #endif
+                clearedCount++;
+            }
+            
+            pair.generatedIDs.Clear();
         }
         
-        generatedIDs.Clear();
-        Debug.Log("Target IDs cleared.");
+        UpdateDebugInfo();
+        Debug.Log($"🧹 Target IDs cleared for {clearedCount} objectives.");
     }
 
     [ContextMenu("Refresh Generated IDs Display")]
     public void RefreshGeneratedIDsDisplay()
     {
-        generatedIDs.Clear();
-        
-        foreach (var enemy in targetEnemies)
+        if (objectiveEnemyPairs == null) return;
+
+        foreach (var pair in objectiveEnemyPairs)
         {
-            if (enemy == null) continue;
+            pair.generatedIDs.Clear();
             
-            string enemyID = enemy.GetUniqueEnemyID();
-            if (!string.IsNullOrEmpty(enemyID))
+            foreach (var enemy in pair.targetEnemies)
             {
-                generatedIDs.Add($"{enemy.name}: {enemyID}");
+                if (enemy == null) continue;
+                
+                string enemyID = enemy.GetUniqueEnemyID();
+                if (!string.IsNullOrEmpty(enemyID))
+                {
+                    pair.generatedIDs.Add($"{enemy.name}: {enemyID}");
+                }
+                else
+                {
+                    pair.generatedIDs.Add($"{enemy.name}: [No ID yet]");
+                }
             }
-            else
+        }
+        
+        UpdateDebugInfo();
+    }
+
+    private void UpdateDebugInfo()
+    {
+        totalObjectives = objectiveEnemyPairs?.Count ?? 0;
+        totalEnemies = 0;
+        
+        if (objectiveEnemyPairs != null)
+        {
+            foreach (var pair in objectiveEnemyPairs)
             {
-                generatedIDs.Add($"{enemy.name}: [No ID yet]");
+                totalEnemies += pair.targetEnemies?.Count ?? 0;
             }
         }
     }
@@ -112,6 +177,31 @@ public class SpecificEnemySelector : MonoBehaviour
     {
         // Inspector'da değişiklik olduğunda refresh et
         RefreshGeneratedIDsDisplay();
+    }
+
+    [ContextMenu("Add New Objective")]
+    public void AddNewObjective()
+    {
+        if (objectiveEnemyPairs == null)
+            objectiveEnemyPairs = new List<ObjectiveEnemyPair>();
+            
+        objectiveEnemyPairs.Add(new ObjectiveEnemyPair());
+        UpdateDebugInfo();
+        Debug.Log("➕ New objective pair added!");
+    }
+    
+    [ContextMenu("Remove Empty Objectives")]
+    public void RemoveEmptyObjectives()
+    {
+        if (objectiveEnemyPairs == null) return;
+        
+        int removedCount = objectiveEnemyPairs.RemoveAll(pair => pair.objective == null);
+        UpdateDebugInfo();
+        
+        if (removedCount > 0)
+            Debug.Log($"🗑️ Removed {removedCount} empty objective pairs.");
+        else
+            Debug.Log("No empty objectives found.");
     }
 
     // Sadece Editor'da çalışır

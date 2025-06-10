@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d71cf45ae6b6c4a8cfd2bed810323b, type: 3}
   m_Name: TalkToBlacksmithOBJ
   m_EditorClassIdentifier: 
-  description: 
+  description: Talk with Blacksmith
   isCompleted: 0
   isInitialized: 0
-  npcID: 
-  itemRewards: []
+  npcID: Digger
+  itemRewards:
+  - item: {fileID: 11400000, guid: 9f844d67e35a65a498e37b09b67e4942, type: 2}
+    quantity: 1

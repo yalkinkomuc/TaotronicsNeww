@@ -12,14 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ab431f899d0efb48bd691722fcc427e, type: 3}
   m_Name: BlacksmithQuest
   m_EditorClassIdentifier: 
-  questID: 
+  questID: Kill Skeletons
   title: 
   description: 
-  objectives: []
+  objectives:
+  - {fileID: 11400000, guid: f556c90af853ce444a25f761d0a68dd6, type: 2}
+  - {fileID: 11400000, guid: 4178d677539f3a543994e2c0278d4521, type: 2}
   questRewards: []
   completionBehavior:
-    action: 0
+    action: 3
     customParameter: 
-    postCompletionDialogue: {fileID: 0}
+    postCompletionDialogue: {fileID: 11400000, guid: a5d738c80e208a74b9a3f5426bb11cf8, type: 2}
     teleportPosition: {x: 0, y: 0, z: 0}
     delayBeforeAction: 0
