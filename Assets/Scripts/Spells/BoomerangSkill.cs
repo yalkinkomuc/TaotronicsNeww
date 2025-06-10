@@ -135,10 +135,31 @@ public class BoomerangSkill : MonoBehaviour
         // Düşmana çarpınca hasar ver ve geri dön
         if (other.TryGetComponent<Enemy>(out Enemy enemy))
         {
-            //enemy.Damage();
-            if (enemy.TryGetComponent<CharacterStats>(out CharacterStats enemyStats))
+            // Yeni knockback sistemi ile düşmana hasar ver
+            if (player != null)
             {
-                enemyStats.TakeDamage(0, CharacterStats.DamageType.Physical, ((PlayerStats)player.stats).boomerangDamage);
+                // Hit effect'i göster
+                if (enemy.entityFX != null)
+                {
+                    enemy.entityFX.StartCoroutine("HitFX");
+                }
+                
+                // Knockback uygula (boomerang'ın geldiği yönden)
+                enemy.ApplyKnockback(transform.position);
+                
+                // Hasar ver
+                if (enemy.TryGetComponent<CharacterStats>(out CharacterStats enemyStats))
+                {
+                    enemyStats.TakeDamage(0, CharacterStats.DamageType.Physical, ((PlayerStats)player.stats).boomerangDamage);
+                }
+                
+                // Hasar metni göster
+                if (FloatingTextManager.Instance != null)
+                {
+                    float damage = ((PlayerStats)player.stats).boomerangDamage.GetValue();
+                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                    FloatingTextManager.Instance.ShowDamageText(damage, textPosition);
+                }
             }
             
             StartReturning();
