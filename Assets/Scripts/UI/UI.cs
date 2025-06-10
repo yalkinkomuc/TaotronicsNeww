@@ -18,7 +18,7 @@ public class UI : BaseUIPanel
         }
         else
         {
-            Debug.LogWarning("More than one instance of UI");
+
             Destroy(gameObject);
         }
     }

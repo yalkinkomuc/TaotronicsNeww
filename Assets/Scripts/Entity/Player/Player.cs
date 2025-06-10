@@ -247,6 +247,8 @@ public class Player : Entity
         CheckForGroundDashInput();
         CheckForElectricDashInput();
         
+      
+        
         // Stun durumunu kontrol et
         bool isStunned = stateMachine.currentState == stunnedState;
         

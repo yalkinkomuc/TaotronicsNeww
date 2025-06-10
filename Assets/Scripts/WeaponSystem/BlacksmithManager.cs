@@ -38,7 +38,7 @@ public class BlacksmithManager : MonoBehaviour
         // Kaydedilmiş verileri yükle
         LoadWeaponData();
         
-        Debug.Log($"BlacksmithManager initialized with {weaponDatabase.Count} weapons");
+
     }
     
     private void InitializeDefaultWeapons()
@@ -61,7 +61,7 @@ public class BlacksmithManager : MonoBehaviour
         spellbook.upgradeDamageIncrement = 3f;
         weaponDatabase.Add(spellbook);
         
-        Debug.Log("Default weapons added: " + weaponDatabase.Count);
+
     }
     
     private void AddWeaponWithIcon(string id, string name, WeaponType type, float baseDamage, int cost)
@@ -75,11 +75,6 @@ public class BlacksmithManager : MonoBehaviour
         if (icon != null)
         {
             weapon.weaponIcon = icon;
-            Debug.Log($"{name} ikonu yüklendi: {iconPath}");
-        }
-        else
-        {
-            Debug.LogWarning($"{name} için ikon bulunamadı: {iconPath}");
         }
         
         weaponDatabase.Add(weapon);
@@ -91,7 +86,6 @@ public class BlacksmithManager : MonoBehaviour
         // weaponDatabase null kontrolü
         if (weaponDatabase == null)
         {
-            Debug.LogError("weaponDatabase null, new List<WeaponData>() dönüyorum");
             return new List<WeaponData>();
         }
         
@@ -215,7 +209,7 @@ public class BlacksmithManager : MonoBehaviour
             playerStats.spellbookDamage.AddModifier(spellbookDamageBonus, StatModifierType.Equipment);
         }
         
-        Debug.Log($"Applied weapon upgrades: +{totalDamageBonus} base damage, +{boomerangDamageBonus} boomerang damage, +{spellbookDamageBonus} spellbook damage");
+
     }
     
     // Save weapon data to PlayerPrefs
@@ -227,17 +221,14 @@ public class BlacksmithManager : MonoBehaviour
         }
         PlayerPrefs.Save();
         
-        Debug.Log("Weapon upgrades saved");
+
     }
     
     // Load weapon data from PlayerPrefs
     private void LoadWeaponData()
     {
-        Debug.Log("LoadWeaponData başladı");
-        
         if (weaponDatabase == null || weaponDatabase.Count == 0)
         {
-            Debug.LogError("weaponDatabase boş, önce InitializeDefaultWeapons çağrılmalı");
             return;
         }
         
@@ -247,7 +238,6 @@ public class BlacksmithManager : MonoBehaviour
         {
             if (weapon == null)
             {
-                Debug.LogError("Null weapon in weaponDatabase!");
                 continue;
             }
             
@@ -289,9 +279,6 @@ public class BlacksmithManager : MonoBehaviour
             
             // Add to active weapons dictionary
             activeWeapons.Add(weaponCopy.weaponId, weaponCopy);
-            Debug.Log($"Loaded weapon: {weaponCopy.weaponName}, ID: {weaponCopy.weaponId}");
         }
-        
-        Debug.Log($"Loaded {activeWeapons.Count} weapon upgrades");
     }
 } 

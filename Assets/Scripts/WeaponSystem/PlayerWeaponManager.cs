@@ -14,7 +14,7 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         if (weapons.Length < 2)
         {
-            Debug.LogError("En az 2 silah (kılıç ve ikincil silah) atanmalı!");
+
             return;
         }
         

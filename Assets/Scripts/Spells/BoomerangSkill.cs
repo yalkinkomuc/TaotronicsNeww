@@ -31,7 +31,6 @@ public class BoomerangSkill : MonoBehaviour
         
         if (rb == null)
         {
-            Debug.LogError("Bumerang objesinde Rigidbody2D bulunamadı!");
             return;
         }
         
@@ -46,7 +45,6 @@ public class BoomerangSkill : MonoBehaviour
         player = PlayerManager.instance.player;
         if (player == null)
         {
-            Debug.LogError("Sahnede Player objesi bulunamadı!");
             return;
         }
         

@@ -40,12 +40,12 @@ public class ManaBar : BaseUIPanel
 
         if (stats == null)
         {
-            Debug.LogError("ManaBar: CharacterStats component'i bulunamadı!");
+
         }
 
         if (manaBarFill == null)
         {
-            Debug.LogError("ManaBar: Mana Bar Fill referansı atanmamış!");
+
         }
     }
 

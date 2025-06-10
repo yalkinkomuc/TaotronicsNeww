@@ -24,7 +24,7 @@ public abstract class WeaponStateMachine : MonoBehaviour
     {
         if (animator == null)
         {
-            Debug.LogWarning("No animator attached");
+
         }
     }
 

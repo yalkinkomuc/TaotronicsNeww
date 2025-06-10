@@ -46,7 +46,7 @@ public class FloatingTextManager : BaseUIPanel
             mainCamera = Camera.main;
             if (mainCamera == null)
             {
-                Debug.LogWarning("FloatingTextManager: Ana kamera bulunamadı!");
+    
             }
         }
         else
@@ -70,7 +70,7 @@ public class FloatingTextManager : BaseUIPanel
             else
             {
                 // No canvas found, create one
-                Debug.LogWarning("FloatingTextManager: Canvas bulunamadı, yeni bir canvas oluşturuluyor.");
+    
                 GameObject canvasObj = new GameObject("FloatingTextCanvas");
                 Canvas newCanvas = canvasObj.AddComponent<Canvas>();
                 newCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -92,7 +92,7 @@ public class FloatingTextManager : BaseUIPanel
             FloatingText testComponent = floatingTextPrefab.GetComponent<FloatingText>();
             if (testComponent == null)
             {
-                Debug.LogError("FloatingTextManager: Prefab'da FloatingText bileşeni bulunamadı!");
+    
             }
             
             TextMeshProUGUI tmpComponent = floatingTextPrefab.GetComponent<TextMeshProUGUI>();
@@ -101,7 +101,7 @@ public class FloatingTextManager : BaseUIPanel
                 tmpComponent = floatingTextPrefab.GetComponentInChildren<TextMeshProUGUI>();
                 if (tmpComponent == null)
                 {
-                    Debug.LogError("FloatingTextManager: Prefab'da TextMeshProUGUI bileşeni bulunamadı!");
+        
                 }
             }
         }
@@ -122,7 +122,6 @@ public class FloatingTextManager : BaseUIPanel
     {
         if (floatingTextPrefab == null)
         {
-            Debug.LogError("FloatingTextManager: floatingTextPrefab atanmamış!");
             return;
         }
         
@@ -206,7 +205,7 @@ public class FloatingTextManager : BaseUIPanel
             }
             else
             {
-                Debug.LogError("FloatingTextManager: Oluşturulan nesne FloatingText bileşenine sahip değil!");
+
             }
             
             // Son metin pozisyonunu kaydet

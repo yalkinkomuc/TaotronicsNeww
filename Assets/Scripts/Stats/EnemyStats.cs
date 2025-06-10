@@ -48,8 +48,7 @@ public class EnemyStats : CharacterStats
         // Create the damage stat with the base value
         enemyDamage = new Stat(baseDamageValue);
         
-        // Log initial value for debugging
-        Debug.Log($"Enemy {gameObject.name} initialized with base damage: {baseDamageValue}");
+
     }
 
     protected override void Start()
@@ -295,8 +294,7 @@ public class EnemyStats : CharacterStats
         // Apply the calculated damage bonus
         enemyDamage.AddModifier(damageBonus, StatModifierType.Attribute);
         
-        // Debug final value
-        Debug.Log($"Enemy {gameObject.name} final damage value: {enemyDamage.GetValue()}");
+
         
         // ÖNEMLİ: Defense değerini doğrudan attribute'dan alma
         // Bunun yerine defenseStat'ı doğrudan defense attribute'una eşitliyoruz

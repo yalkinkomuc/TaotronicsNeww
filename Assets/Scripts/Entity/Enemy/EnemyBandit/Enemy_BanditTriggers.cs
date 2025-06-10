@@ -26,7 +26,7 @@ public class Enemy_BanditTriggers : EnemyAnimationTriggers
         if (banditEnemy != null)
         {
             banditEnemy.isParryWindowOpen = true;
-            Debug.Log("Parry window opened!");
+            //Debug.Log("Parry window opened!");
         }
     }
     
@@ -36,7 +36,7 @@ public class Enemy_BanditTriggers : EnemyAnimationTriggers
         if (banditEnemy != null)
         {
             banditEnemy.isParryWindowOpen = false;
-            Debug.Log("Parry window closed!");
+            //Debug.Log("Parry window closed!");
         }
     }
 
@@ -74,7 +74,7 @@ public class Enemy_BanditTriggers : EnemyAnimationTriggers
                     player.TakePlayerDamage(enemyStats.enemyDamage, CharacterStats.DamageType.Physical);
                 else
                     player.TakePlayerDamage(null, CharacterStats.DamageType.Physical);
-                Debug.Log("Bandit attacked player!");
+                //Debug.Log("Bandit attacked player!");
             }
         }
     }

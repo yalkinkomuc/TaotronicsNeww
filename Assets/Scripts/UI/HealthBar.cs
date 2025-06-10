@@ -36,13 +36,13 @@ public class HealthBar : BaseUIPanel
 
         if (stats == null)
         {
-            Debug.LogError("HealthBar: CharacterStats component'i bulunamadı!");
+
             return;
         }
 
         if (healthBarFill == null)
         {
-            Debug.LogError("HealthBar: Health Bar Fill referansı atanmamış!");
+
             return;
         }
 
