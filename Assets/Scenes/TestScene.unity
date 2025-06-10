@@ -8566,6 +8566,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 376097668}
   m_CullTransparentMesh: 1
+--- !u!114 &393629132 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+  m_PrefabInstance: {fileID: 448977329}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1579f4ef6e21e54bae559bff0cb2df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &403455985 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2090524759458973294, guid: 1328bc5773bcfe046aef71ed277786bd, type: 3}
@@ -12334,10 +12345,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneBoundary
       objectReference: {fileID: 0}
-    - target: {fileID: 578106660111293629, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7005369960958320381, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -15231,7 +15238,7 @@ GameObject:
   - component: {fileID: 932167856}
   - component: {fileID: 932167857}
   m_Layer: 0
-  m_Name: Helper
+  m_Name: SpecificEnemySelector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15264,9 +15271,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ac8ff6e227b5354f80b9881c19e36b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectiveEnemyPairs: []
-  totalObjectives: 0
-  totalEnemies: 0
+  objectiveEnemyPairs:
+  - objective: {fileID: 11400000, guid: 4178d677539f3a543994e2c0278d4521, type: 2}
+    targetEnemies:
+    - {fileID: 393629132}
+    - {fileID: 1773225780}
+    generatedIDs:
+    - 'Quest_Bandit_Enemy: 1'
+    - 'Quest_Bandit_Enemy (1): 2'
+  - objective: {fileID: 11400000, guid: 4178d677539f3a543994e2c0278d4521, type: 2}
+    targetEnemies:
+    - {fileID: 2037950114}
+    generatedIDs:
+    - 'Skeleton_Enemy: Skeleton1'
+  - objective: {fileID: 11400000, guid: 6ff63a6d8741d9144835253afb48fc78, type: 2}
+    targetEnemies:
+    - {fileID: 6869598775475667402, guid: 567d12e32f0b92c4db2c28072f018998, type: 3}
+    generatedIDs:
+    - 'Spider_Enemy: [No ID yet]'
+  totalObjectives: 3
+  totalEnemies: 4
 --- !u!1001 &952822302
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24611,6 +24635,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1762778034}
   m_CullTransparentMesh: 1
+--- !u!114 &1773225780 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 137624994784788934, guid: 76bb4acdf041e2748a622bcd4d325266, type: 3}
+  m_PrefabInstance: {fileID: 99701328}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1579f4ef6e21e54bae559bff0cb2df9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1780094784
 GameObject:
   m_ObjectHideFlags: 0
@@ -27381,6 +27416,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2029430017}
   m_CullTransparentMesh: 1
+--- !u!114 &2037950114 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7147003873205506811, guid: 504a2022e8007534aa22658e01218e40, type: 3}
+  m_PrefabInstance: {fileID: 7685267033618204106}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf122c7a7f9e12143b8e900b310a2e84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2044795575
 GameObject:
   m_ObjectHideFlags: 0
@@ -30668,7 +30714,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2187963067883842217, guid: e934d529a0955f146b7c5e71335d28e1, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab431f899d0efb48bd691722fcc427e, type: 3}
+  m_Name: DiggerQuest
+  m_EditorClassIdentifier: 
+  questID: Kill Spider
+  title: Kill Spider
+  description: Spider
+  objectives:
+  - {fileID: 11400000, guid: 003ae41c9bf1fc6489baccc4c7c5ae1e, type: 2}
+  - {fileID: 11400000, guid: 6ff63a6d8741d9144835253afb48fc78, type: 2}
+  questRewards:
+  - item: {fileID: 11400000, guid: 580eb22ffbdbbd34fa9d21f62764cd4d, type: 2}
+    quantity: 100
+  completionBehavior:
+    action: 2
+    customParameter: 
+    postCompletionDialogue: {fileID: 0}
+    teleportPosition: {x: 0, y: 0, z: 0}
+    delayBeforeAction: 0

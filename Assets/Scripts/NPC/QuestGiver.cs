@@ -22,7 +22,7 @@ public class QuestGiver : DialogueNPC
         Debug.Log("QuestGiver Interact");
         
         // Quest durumunu kontrol et
-        if (questToGive != null)
+        if (questToGive != null && QuestManager.instance != null)
         {
             // Önce quest tamamlanmış mı kontrol et
             if (QuestManager.instance.IsQuestCompleted(questToGive.questID))
@@ -145,7 +145,7 @@ public class QuestGiver : DialogueNPC
 
     private void GiveQuest()
     {
-        if (questToGive != null && !questGiven)
+        if (questToGive != null && !questGiven && QuestManager.instance != null)
         {
             QuestManager.instance.StartQuest(questToGive);
             questGiven = true;
@@ -158,12 +158,37 @@ public class QuestGiver : DialogueNPC
             
             Debug.Log($"Quest verildi: {questToGive.title}");
         }
+        else if (QuestManager.instance == null)
+        {
+            Debug.LogWarning("QuestManager instance is null! Cannot give quest.");
+        }
     }
 
     // Oyun başladığında quest'in verilmiş durumunu yükle
     private void OnEnable()
     {
         LoadQuestGivenState();
+        
+        // QuestManager hazır olana kadar bekle
+        if (QuestManager.instance != null)
+        {
+            LoadCompletionActionState();
+        }
+        else
+        {
+            // QuestManager henüz hazır değilse, biraz bekleyip tekrar dene
+            StartCoroutine(DelayedLoadCompletionState());
+        }
+    }
+    
+    private IEnumerator DelayedLoadCompletionState()
+    {
+        // QuestManager instance'ın hazır olmasını bekle
+        while (QuestManager.instance == null)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+        
         LoadCompletionActionState();
     }
     
@@ -200,8 +225,10 @@ public class QuestGiver : DialogueNPC
             string key = $"QuestCompletionAction_{questToGive.questID}";
             completionActionExecuted = PlayerPrefs.GetInt(key, 0) == 1;
             
-            // Eğer quest tamamlanmış ve completion action çalışmışsa, duruma göre objeyi ayarla
-            if (QuestManager.instance.IsQuestCompleted(questToGive.questID) && completionActionExecuted)
+            // QuestManager null check ekle - scene değişiminde null olabiliyor
+            if (QuestManager.instance != null && 
+                QuestManager.instance.IsQuestCompleted(questToGive.questID) && 
+                completionActionExecuted)
             {
                 ApplyCompletionStateOnLoad();
             }
