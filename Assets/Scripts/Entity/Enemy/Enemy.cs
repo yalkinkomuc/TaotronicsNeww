@@ -244,7 +244,12 @@ public class Enemy : Entity
        SetVelocity(patrolDirection * patrolSpeed, rb.linearVelocity.y);
    }
 
-   public override void Damage(Stat attackerDamageStat = null)
+   /// <summary>
+   /// Updated damage method that uses new knockback system
+   /// </summary>
+   /// <param name="attackerDamageStat">Damage stat of the attacker</param>
+   /// <param name="attackerPosition">Position of the attacker for knockback calculation</param>
+   public virtual void Damage(Stat attackerDamageStat = null, Vector2? attackerPosition = null)
    {
        if (stats.isInvincible)
        {
@@ -253,11 +258,11 @@ public class Enemy : Entity
        
        entityFX.StartCoroutine("HitFX");
        
-       // Knocked back in the opposite direction the enemy is facing
-       Vector2 knockbackDir = new Vector2(knockbackDirection.x * -facingdir, knockbackDirection.y);
-       
-       // Apply knockback
-       StartCoroutine(HitKnockback(knockbackDir));
+       // Apply new knockback system if attacker position is provided
+       if (attackerPosition.HasValue)
+       {
+           ApplyKnockback(attackerPosition.Value);
+       }
        
        // Use enemyDamage if available
        Stat damageStat = attackerDamageStat;
@@ -270,6 +275,12 @@ public class Enemy : Entity
        }
        if (damageStat != null)
            stats.TakeDamage(damageStat.GetValue(), CharacterStats.DamageType.Physical);
+   }
+   
+   // Keep original method for backward compatibility
+   public override void Damage(Stat attackerDamageStat = null)
+   {
+       Damage(attackerDamageStat, null);
    }
 
    /// <summary>

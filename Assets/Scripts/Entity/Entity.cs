@@ -64,7 +64,13 @@ public class Entity : MonoBehaviour
         }
         
         entityFX.StartCoroutine("HitFX");
-        StartCoroutine("HitKnockback", knockbackDirection);
+        
+        // Only apply old knockback system if this is not a Player (backward compatibility)
+        if (!(this is Player))
+        {
+            StartCoroutine("HitKnockback", knockbackDirection);
+        }
+        
         Stat damageStat = attackerDamageStat;
         if (damageStat == null)
         {
@@ -98,14 +104,69 @@ public class Entity : MonoBehaviour
         stats.TakeDamage(0, CharacterStats.DamageType.Physical, damageStat);
     }
     
+    /// <summary>
+    /// New knockback system that calculates direction based on attacker position
+    /// </summary>
+    /// <param name="attackerPosition">Position of the entity dealing damage</param>
+    /// <param name="knockbackForce">Force of the knockback (default uses knockbackDirection.x)</param>
+    /// <param name="knockbackHeight">Vertical force of knockback (default uses knockbackDirection.y)</param>
+    public virtual void ApplyKnockback(Vector2 attackerPosition, float knockbackForce = 0f, float knockbackHeight = 0f)
+    {
+        // Players don't get knocked back
+        if (this is Player)
+            return;
+            
+        // Use default values if not specified
+        if (knockbackForce == 0f)
+            knockbackForce = knockbackDirection.x;
+        if (knockbackHeight == 0f)
+            knockbackHeight = knockbackDirection.y;
+            
+        // Calculate knockback direction from attacker to this entity
+        Vector2 knockbackDir = (transform.position - (Vector3)attackerPosition).normalized;
+        
+        // Apply horizontal knockback force
+        knockbackDir.x = knockbackDir.x > 0 ? knockbackForce : -knockbackForce;
+        // Apply vertical knockback force
+        knockbackDir.y = knockbackHeight;
+        
+        StartCoroutine(HitKnockback(knockbackDir));
+    }
+    
+    /// <summary>
+    /// Enhanced knockback system with combo multipliers
+    /// </summary>
+    /// <param name="attackerPosition">Position of the entity dealing damage</param>
+    /// <param name="comboCounter">Current combo count (0 = first hit, 1 = second hit, 2 = third hit)</param>
+    public virtual void ApplyComboKnockback(Vector2 attackerPosition, int comboCounter = 0)
+    {
+        // Players don't get knocked back
+        if (this is Player)
+            return;
+            
+        float knockbackForce = knockbackDirection.x;
+        float knockbackHeight = knockbackDirection.y;
+        
+        // Apply combo multipliers
+        switch (comboCounter)
+        {
+            case 1: // Second hit
+                knockbackForce *= secondComboKnockbackXMultiplier;
+                break;
+            case 2: // Third hit
+                knockbackForce *= thirdComboKnockbackXMultiplier;
+                break;
+        }
+        
+        ApplyKnockback(attackerPosition, knockbackForce, knockbackHeight);
+    }
+    
     public virtual IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
     {
         isKnocked = true;
-        knockbackDirectionParam = knockbackDirection;
-        Vector2 calculatedKnockback = knockbackDirectionParam * -facingdir;
 
         // Apply knockback force directly
-        rb.linearVelocity = calculatedKnockback;
+        rb.linearVelocity = knockbackDirectionParam;
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
         

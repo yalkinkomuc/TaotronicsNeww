@@ -24,7 +24,6 @@ public class Player : Entity
     
     [SerializeField] private GameObject boomerangPrefab;
     [SerializeField] private Transform boomerangLaunchPoint;
-    [SerializeField] public Vector2 boomerangCatchForce;
     
     [FormerlySerializedAs("boxCollider")] [Header("Collider")]
     [HideInInspector]
@@ -84,7 +83,6 @@ public class Player : Entity
 
     [Header("Damage Control")]
     [SerializeField] private float invulnerabilityDuration = 1f; // Hasar alamama süresi
-    [SerializeField] private Vector2 stunKnocback; // Hasar alamama süresi
     private bool isInvulnerable = false;
 
     #region States
@@ -648,10 +646,7 @@ public class Player : Entity
         return SkillManager.Instance.IsSkillReady(SkillType.EarthPush, stats.currentMana);
     }
     
-    public void StartBoomerangKnockbackCoroutine()
-    {
-        StartCoroutine(HitKnockback(boomerangCatchForce));
-    }
+    // Removed boomerang knockback - players don't get knocked back anymore
     
     public void ThrowBoomerang()
     {
@@ -809,12 +804,7 @@ public class Player : Entity
         // Show visual feedback
         entityFX.StartCoroutine("HitFX");
         
-        // Apply knockback if not in specific states
-        if (stateMachine.currentState != parryState && 
-            stateMachine.currentState != succesfulParryState)
-        {
-            StartCoroutine(HitKnockback(knockbackDirection));
-        }
+        // Players don't get knocked back anymore - removed knockback application
         
         // Apply damage with type
         var playerStats = stats as PlayerStats;
@@ -870,23 +860,8 @@ public class Player : Entity
 
     public override void DamageWithoutKnockback(Stat attackerDamageStat = null)
     {
-        if (!isInvulnerable)
-        {
-            // Show visual feedback
-            entityFX.StartCoroutine("HitFX");
-            
-            // Apply damage with physical type by default
-            stats.TakeDamage(0, CharacterStats.DamageType.Physical, attackerDamageStat);
-            
-            // Update UI
-            if (healthBar != null)
-            {
-                healthBar.UpdateHealthBar(stats.currentHealth, stats.maxHealth.GetValue());
-            }
-            
-            // Start invulnerability period
-            StartCoroutine(InvulnerabilityCoroutine());
-        }
+        // Since players don't get knocked back anymore, this method is identical to regular damage
+        TakePlayerDamage(attackerDamageStat, CharacterStats.DamageType.Physical);
     }
 
     #endregion
@@ -1455,10 +1430,7 @@ public class Player : Entity
         }
     }
     
-    public void StartStunnedKnockbackCoroutine()
-    {
-        StartCoroutine(HitKnockback(stunKnocback));
-    }
+    // Removed stunned knockback - players don't get knocked back anymore
     
     public override bool IsGroundDetected()
     {
@@ -1662,5 +1634,23 @@ public class Player : Entity
         // Use SkillManager to check if skill is ready and mana is sufficient
         return SkillManager.Instance.IsSkillReady(SkillType.AirPush, stats.currentMana);
     }
+
+    #region Flip Override
+    
+    public override void FlipController(float _x)
+    {
+        // Saldırı, parry veya crouch attack stateleri sırasında flip yapma
+        if (stateMachine.currentState == attackState || 
+            stateMachine.currentState == crouchAttackState ||
+            stateMachine.currentState == parryState ||
+            stateMachine.currentState == succesfulParryState)
+        {
+            return;
+        }
+        
+        base.FlipController(_x);
+    }
+    
+    #endregion
 }
 

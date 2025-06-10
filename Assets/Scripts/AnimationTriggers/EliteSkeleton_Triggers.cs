@@ -31,7 +31,7 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
         if (enemyEliteSkeleton != null)
         {
             enemyEliteSkeleton.isParryWindowOpen = true;
-            Debug.Log("Parry window opened!");
+            //Debug.Log("Parry window opened!");
         }
     }
     
@@ -41,7 +41,7 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
         if (enemyEliteSkeleton != null)
         {
             enemyEliteSkeleton.isParryWindowOpen = false;
-            Debug.Log("Parry window closed!");
+            //Debug.Log("Parry window closed!");
         }
     }
 
@@ -77,7 +77,7 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
                 // Log damage values for debugging
                 if (enemyStats != null)
                 {
-                    Debug.Log($"EliteSkeleton attacking with damage: {enemyStats.enemyDamage.GetValue()}");
+                   // Debug.Log($"EliteSkeleton attacking with damage: {enemyStats.enemyDamage.GetValue()}");
                 }
                 
                 // Parry durumunda değilse normal hasar ver
@@ -86,7 +86,7 @@ public class EliteSkeleton_Triggers : EnemyAnimationTriggers
                 else
                     player.TakePlayerDamage(null, CharacterStats.DamageType.Physical);
                 
-                Debug.Log("Elite Skeleton attacked player!");
+                //Debug.Log("Elite Skeleton attacked player!");
             }
         }
     }

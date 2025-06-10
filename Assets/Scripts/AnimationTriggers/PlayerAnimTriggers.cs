@@ -124,37 +124,30 @@ public class PlayerAnimTriggers : MonoBehaviour
    {
       int comboCounter = attackState.GetComboCounter();
       float damage = baseDamage;
-      Vector2 knockbackForce;
       
-      // Combo sayısına göre hasarı ve knockback'i ayarla
+      // Combo sayısına göre hasarı ayarla
       switch (comboCounter)
       {
          case 0:
             // İlk saldırı için standart hasar
-            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
             break;
          case 1:
             // İkinci saldırı için arttırılmış hasar
             damage *= player.stats.secondComboDamageMultiplier.GetValue();
-            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.secondComboKnockbackXMultiplier, enemy.knockbackDirection.y);
             break;
          case 2:
             // Üçüncü saldırı için en yüksek hasar
             damage *= player.stats.thirdComboDamageMultiplier.GetValue();
-            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir * enemy.thirdComboKnockbackXMultiplier, enemy.knockbackDirection.y);
-            break;
-         default:
-            knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
             break;
       }
       
       // Hasarı uygula
       DealDamageToEnemy(enemy, damage, comboCounter, isCritical);
       
-      // Static olmayan düşmanlara knockback uygula
+      // Static olmayan düşmanlara yeni knockback sistemi ile knockback uygula
       if (enemy.rb.bodyType != RigidbodyType2D.Static)
       {
-         StartCoroutine(enemy.HitKnockback(knockbackForce));
+         enemy.ApplyComboKnockback(player.transform.position, comboCounter);
       }
    }
 
@@ -167,11 +160,10 @@ public class PlayerAnimTriggers : MonoBehaviour
       // Hasarı uygula
       DealDamageToEnemy(enemy, damage, 0, isCritical);
       
-      // Static olmayan düşmanlara knockback uygula
+      // Static olmayan düşmanlara yeni knockback sistemi ile knockback uygula
       if (enemy.rb.bodyType != RigidbodyType2D.Static)
       {
-         Vector2 knockbackForce = new Vector2(enemy.knockbackDirection.x * -enemy.facingdir, enemy.knockbackDirection.y);
-         StartCoroutine(enemy.HitKnockback(knockbackForce));
+         enemy.ApplyKnockback(player.transform.position);
       }
    }
 

@@ -10,8 +10,7 @@ public class PlayerCatchBoomerangState : PlayerState
     {
         base.Enter();
         // Yakalama animasyonunu başlat
-        
-        player.StartBoomerangKnockbackCoroutine();
+        // Removed knockback - players don't get knocked back anymore
         
     }
 

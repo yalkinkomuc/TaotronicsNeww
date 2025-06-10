@@ -22,6 +22,9 @@ public class PlayerAttackState : PlayerState
             comboCounter = 0;
         }
         
+        // Saldırı başlamadan önce yakındaki düşmana doğru bak
+        FaceNearestEnemy();
+        
         player.anim.SetInteger("comboCounter", comboCounter);
         stateTimer = .1f;
         
@@ -58,5 +61,50 @@ public class PlayerAttackState : PlayerState
         }
         
        
+    }
+    
+    /// <summary>
+    /// Saldırı alanında düşman varsa, en yakın düşmana doğru yüzü çevir
+    /// </summary>
+    private void FaceNearestEnemy()
+    {
+        // Saldırı alanında düşmanları kontrol et
+        Vector2 attackPosition = player.attackCheck.position;
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(attackPosition, player.attackSize, 0, player.passableEnemiesLayerMask);
+        
+        Enemy nearestEnemy = null;
+        float nearestDistance = float.MaxValue;
+        
+        // En yakın düşmanı bul
+        foreach (var hit in colliders)
+        {
+            Enemy enemy = hit.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                float distance = Vector2.Distance(player.transform.position, enemy.transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestEnemy = enemy;
+                }
+            }
+        }
+        
+        // En yakın düşman bulunduysa ona doğru bak
+        if (nearestEnemy != null)
+        {
+            float directionToEnemy = nearestEnemy.transform.position.x - player.transform.position.x;
+            
+            // Düşman sağdaysa ve oyuncu sola bakıyorsa, sağa dön
+            if (directionToEnemy > 0 && player.facingdir == -1)
+            {
+                player.Flip();
+            }
+            // Düşman soldaysa ve oyuncu sağa bakıyorsa, sola dön
+            else if (directionToEnemy < 0 && player.facingdir == 1)
+            {
+                player.Flip();
+            }
+        }
     }
 }
