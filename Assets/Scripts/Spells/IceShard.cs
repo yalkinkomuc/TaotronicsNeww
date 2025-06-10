@@ -139,6 +139,13 @@ public class IceShard : MonoBehaviour
                 }
 
                 enemy.ApplyIceEffect();
+                
+                // Ice visual effect'i başlat
+                if (enemy.entityFX != null)
+                {
+                    enemy.entityFX.StartCoroutine("IceFX");
+                }
+                
                 DestroyIceShard();
             }
         }

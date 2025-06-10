@@ -174,12 +174,14 @@ MonoBehaviour:
   idleTime: 2
   moveSpeed: 2.7
   chaseSpeed: 3.5
-  tooCloseDistance: 3
+  tooCloseRadius: 3
   detectDistance: 15
   patrolDistance: 5
   patrolSpeed: 2
   fightBegun: 0
   isDefeated: 0
+  isQuestEnemy: 0
+  uniqueEnemyId: 
   attackDistance: 0.7
   attackCooldown: 0.2
   battleTime: 4
@@ -200,8 +202,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696e681ce93ee644784651941034bea4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseDamage:
-    baseValue: 20
   secondComboDamageMultiplier:
     baseValue: 0
   thirdComboDamageMultiplier:
@@ -215,10 +215,29 @@ MonoBehaviour:
   level: 1
   levelHealthMultiplier: 0.1
   levelDamageMultiplier: 0.05
+  fireResistance: 0
+  iceResistance: 0
+  voidResistance: 0
+  earthResistance: 0
+  electricResistance: 0
+  airResistance: 0
+  _vitality: 0
+  _might: 0
+  _defense: 0
+  _luck: 0
+  _mind: 0
   baseExperienceReward: 10
   experienceLevelMultiplier: 0.5
+  baseGoldReward: 5
+  goldLevelMultiplier: 0.3
+  goldRandomVariance: 0.2
   scaleWithPlayerLevel: 0
   levelOffset: 0
+  attributeFocus: 0
+  attributePointsPerLevel: 1.5
+  baseDamageValue: 10
+  enemyDamage:
+    baseValue: 0
 --- !u!114 &5506712778804653218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,7 +258,13 @@ MonoBehaviour:
   - BloodVFX2
   vfxSpawnPoint: {fileID: 7819917547682160099}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
-  deathVFXIds: []
+  burnDuration: 1
+  burnFlashInterval: 0.1
+  iceMat: {fileID: 2100000, guid: 066fa3013b7e6364898411e07f33a868, type: 2}
+  electricMat: {fileID: 2100000, guid: 6395b9930a6409247abdd97eaa15abc2, type: 2}
+  deathEffectSpawnPoint: {fileID: 7819917547682160099}
+  explosionEffectPrefab: {fileID: 3757604410375930725, guid: 32a758ed4273e5648947b2b9fb0b7d90, type: 3}
+  explosionCount: 5
 --- !u!114 &3875249770328949753
 MonoBehaviour:
   m_ObjectHideFlags: 0

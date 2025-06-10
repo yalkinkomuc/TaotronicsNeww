@@ -105,9 +105,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 100
   lifeTime: 0.5
+  checkFrequency: 0.05
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  useTriggerDetection: 1
 --- !u!95 &8790880030902375351
 Animator:
   serializedVersion: 7

@@ -178,7 +178,9 @@ MonoBehaviour:
   - BloodVFX2
   vfxSpawnPoint: {fileID: 9006221038226458939}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
-  iceMat: {fileID: 0}
+  burnDuration: 1
+  burnFlashInterval: 0.1
+  iceMat: {fileID: 2100000, guid: 066fa3013b7e6364898411e07f33a868, type: 2}
   electricMat: {fileID: 2100000, guid: 6395b9930a6409247abdd97eaa15abc2, type: 2}
   deathEffectSpawnPoint: {fileID: 2110183045649664079}
   explosionEffectPrefab: {fileID: 3757604410375930725, guid: a939f66dbb65cca459ad14554f9ec9f5, type: 3}
@@ -213,6 +215,7 @@ MonoBehaviour:
   voidResistance: 0
   earthResistance: 0
   electricResistance: 0
+  airResistance: 0
   _vitality: 0
   _might: 0
   _defense: 0
