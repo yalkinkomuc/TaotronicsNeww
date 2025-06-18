@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 20
-  knockbackForce: {x: 0, y: 0}
+  knockbackForce: {x: 10, y: 4}
   damageCollider: {fileID: 8157872550203761763}
   enemyLayer:
     serializedVersion: 2

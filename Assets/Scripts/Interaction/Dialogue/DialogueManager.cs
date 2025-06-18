@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -27,6 +28,9 @@ public class DialogueManager : MonoBehaviour
     private bool isTyping;
     private string currentLine;
     private Coroutine typingCoroutine;
+    
+    // Okunmuş diyalogları takip etmek için
+    private HashSet<string> readDialogues = new HashSet<string>();
     
     // Diyalog sona erdiğinde tetiklenecek event
     public event Action OnDialogueEnd;
@@ -135,6 +139,13 @@ public class DialogueManager : MonoBehaviour
         if (this == null) return;
         if (dialogueData == null) return;
 
+        // Eğer diyalog sadece bir kez okunabilirse ve daha önce okunmuşsa, başlatma
+        if (dialogueData.canOnlyBeReadOnce && IsDialogueRead(dialogueData))
+        {
+            Debug.Log($"Bu diyalog daha önce okunmuş: {dialogueData.characterName}");
+            return;
+        }
+
         SetupDialogueUI();
         
         currentDialogue = dialogueData;
@@ -198,7 +209,30 @@ public class DialogueManager : MonoBehaviour
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
             
+        // Eğer diyalog sadece bir kez okunabilirse, okunmuş olarak işaretle
+        if (currentDialogue != null && currentDialogue.canOnlyBeReadOnce)
+        {
+            MarkDialogueAsRead(currentDialogue);
+        }
+            
         // Diyalog sona erdiğinde event'i tetikle
         OnDialogueEnd?.Invoke();
+    }
+    
+    // Diyalogun okunup okunmadığını kontrol et
+    public bool IsDialogueRead(DialogueData dialogueData)
+    {
+        if (dialogueData == null) return false;
+        return readDialogues.Contains(dialogueData.name);
+    }
+    
+    // Diyalogu okunmuş olarak işaretle
+    private void MarkDialogueAsRead(DialogueData dialogueData)
+    {
+        if (dialogueData != null)
+        {
+            readDialogues.Add(dialogueData.name);
+            Debug.Log($"Diyalog okunmuş olarak işaretlendi: {dialogueData.characterName}");
+        }
     }
 } 
