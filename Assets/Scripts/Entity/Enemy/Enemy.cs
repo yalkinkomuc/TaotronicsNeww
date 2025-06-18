@@ -32,6 +32,9 @@ public class Enemy : Entity
    [Header("Quest Related")]
    [SerializeField] public bool isQuestEnemy = false; // Kalıcı olarak öldürülecek düşman
    [SerializeField] private string uniqueEnemyId = ""; // Benzersiz düşman kimliği (elle girilecek)
+   
+   [Header("Quest Spawn")]
+   [SerializeField] private bool shouldSpawnOnObjective = false; // Objective başladığında spawn ol
 
    protected override void Awake()
    {
@@ -55,6 +58,13 @@ public class Enemy : Entity
    {
       base.Start();
       player = PlayerManager.instance.player;
+      
+      // Eğer objective spawn düşmanıysa, başlangıçta deaktif ol
+      if (shouldSpawnOnObjective)
+      {
+          gameObject.SetActive(false);
+          return;
+      }
       
       // Eğer quest düşmanıysa ve öldürülmüşse, tamamen yok et
       if (isQuestEnemy && IsQuestEnemyDefeated())
@@ -309,5 +319,26 @@ public class Enemy : Entity
    public void SetUniqueEnemyID(string id)
    {
        uniqueEnemyId = id;
+   }
+   
+   // Quest spawn kontrolü için public method
+   public bool ShouldSpawnOnObjective()
+   {
+       return shouldSpawnOnObjective;
+   }
+
+   private void OnEnable()
+   {
+       // QuestManager event'lerini dinle
+       if (QuestManager.instance != null)
+       {
+           // Quest started event'ini dinlemek için gerekirse burada subscription yapılabilir
+           // Şimdilik QuestManager.RaiseEvent üzerinden handle ediyoruz
+       }
+   }
+   
+   private void OnDisable()
+   {
+       // Event subscription'ları temizle
    }
 }

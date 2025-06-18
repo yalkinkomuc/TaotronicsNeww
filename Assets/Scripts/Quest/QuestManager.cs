@@ -28,6 +28,9 @@ public class QuestManager : MonoBehaviour
         var quest = new QuestInstance { Data = questData };
         activeQuests.Add(quest);
         
+        // Quest başladığında ilk objective'i initialize et
+        InitializeFirstObjective(quest);
+        
         Debug.Log($"Started quest: {questData.title}");
         SaveQuestProgress();
     }
@@ -45,6 +48,12 @@ public class QuestManager : MonoBehaviour
     public bool IsQuestCompleted(string questID)
     {
         return !string.IsNullOrEmpty(questID) && completedQuests.Contains(questID);
+    }
+
+    public bool IsQuestActive(string questID)
+    {
+        if (string.IsNullOrEmpty(questID)) return false;
+        return activeQuests.Any(q => q.Data != null && q.Data.questID == questID);
     }
 
     public List<QuestInstance> GetActiveQuests()
@@ -221,6 +230,23 @@ public class QuestManager : MonoBehaviour
             var questData = availableQuests.FirstOrDefault(q => q?.questID == completedQuestID);
             string questTitle = questData?.title ?? "Unknown Quest";
             Debug.Log($"Completed: {questTitle} (ID: {completedQuestID})");
+        }
+    }
+
+    // Quest başladığında ilk objective'i initialize et
+    private void InitializeFirstObjective(QuestInstance quest)
+    {
+        if (quest?.Data?.objectives == null || quest.Data.objectives.Length == 0)
+        {
+            Debug.LogWarning($"Quest '{quest?.Data?.title}' has no objectives!");
+            return;
+        }
+
+        var firstObjective = quest.CurrentObjective;
+        if (firstObjective != null && !firstObjective.isInitialized)
+        {
+            Debug.Log($"Initializing first objective: {firstObjective.GetType().Name}");
+            firstObjective.Initialize();
         }
     }
 

@@ -46,7 +46,15 @@ public class QuestInstance
                 else
                 {
                     // Bir sonraki objective için log ekleyelim
-                    Debug.Log($"Yeni objective başlatıldı: {CurrentObjective.GetType().Name}");
+                    var nextObjective = CurrentObjective;
+                    Debug.Log($"Yeni objective başlatıldı: {nextObjective.GetType().Name}");
+                    
+                    // Yeni objective'i initialize et
+                    if (nextObjective != null && !nextObjective.isInitialized)
+                    {
+                        Debug.Log($"Initializing next objective: {nextObjective.GetType().Name}");
+                        nextObjective.Initialize();
+                    }
                 }
             }
         }
