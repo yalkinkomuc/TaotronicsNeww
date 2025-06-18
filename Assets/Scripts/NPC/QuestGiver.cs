@@ -124,11 +124,15 @@ public class QuestGiver : DialogueNPC
         
         if (dialogueToShow != null)
         {
+            // Quest completed dialogue bittiğinde prompt'u kalıcı olarak kapat
+            DialogueManager.Instance.OnDialogueEnd += HidePromptPermanently;
             DialogueManager.Instance.StartDialogue(dialogueToShow);
         }
         else
         {
             DialogueData tempDialogue = CreateTempDialogue("Görevi başarıyla tamamladın! Teşekkürler.");
+            // Temp dialogue bittiğinde de prompt'u kapat
+            DialogueManager.Instance.OnDialogueEnd += HidePromptPermanently;
             DialogueManager.Instance.StartDialogue(tempDialogue);
         }
     }
@@ -186,6 +190,15 @@ public class QuestGiver : DialogueNPC
         {
             // QuestManager henüz hazır değilse, biraz bekleyip tekrar dene
             StartCoroutine(DelayedLoadCompletionState());
+        }
+    }
+    
+    private void OnDisable()
+    {
+        // Event cleanup'ları
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnDialogueEnd -= HidePromptPermanently;
         }
     }
     
@@ -373,18 +386,53 @@ public class QuestGiver : DialogueNPC
         }
     }
 
+    // Quest completed dialogue bittiğinde prompt'u kalıcı olarak kapat
+    private void HidePromptPermanently()
+    {
+        // Event'i dinlemeyi bırak
+        if (DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.OnDialogueEnd -= HidePromptPermanently;
+        }
+        
+        // Prompt'u kalıcı olarak kapat
+        HideInteractionPrompt();
+        
+        // Bu state'i kaydet ki scene reload'da da hatırlansın
+        SaveQuestCompletedPromptState();
+        
+        Debug.Log($"Quest completed dialogue bitti, interaction prompt kalıcı olarak kapatıldı: {questToGive?.questID}");
+    }
+    
+    // Quest completed prompt state'ini kaydet
+    private void SaveQuestCompletedPromptState()
+    {
+        if (questToGive != null && !string.IsNullOrEmpty(questToGive.questID))
+        {
+            string key = $"QuestCompleted_PromptHidden_{questToGive.questID}";
+            PlayerPrefs.SetInt(key, 1);
+            PlayerPrefs.Save();
+        }
+    }
+
     // Override ShowInteractionPrompt to hide prompt when quest is completed
     public override void ShowInteractionPrompt()
     {
-        // Eğer quest tamamlandıysa prompt gösterme
-        if (questToGive != null && QuestManager.instance != null && 
-            QuestManager.instance.IsQuestCompleted(questToGive.questID))
+        // Eğer quest tamamlandı ve completed dialogue okunmuşsa prompt gösterme
+        if (questToGive != null && !string.IsNullOrEmpty(questToGive.questID))
         {
-            Debug.Log($"Quest tamamlandı, interaction prompt gösterilmiyor: {questToGive.questID}");
-            return;
+            // Quest completed prompt hidden state'ini kontrol et
+            string key = $"QuestCompleted_PromptHidden_{questToGive.questID}";
+            bool promptHidden = PlayerPrefs.GetInt(key, 0) == 1;
+            
+            if (promptHidden)
+            {
+                Debug.Log($"Quest completed dialogue okunmuş, interaction prompt gösterilmiyor: {questToGive.questID}");
+                return;
+            }
         }
         
-        // Quest tamamlanmamışsa normal prompt'u göster
+        // Normal durumda parent method'u çağır
         base.ShowInteractionPrompt();
     }
 } 

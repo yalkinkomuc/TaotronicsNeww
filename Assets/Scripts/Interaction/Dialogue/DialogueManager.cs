@@ -42,6 +42,9 @@ public class DialogueManager : MonoBehaviour
         {
             Instance = this;
            // DontDestroyOnLoad(gameObject);
+           
+           // Okunmuş diyalogları yükle
+           LoadReadDialogues();
         }
         else
         {
@@ -213,6 +216,7 @@ public class DialogueManager : MonoBehaviour
         if (currentDialogue != null && currentDialogue.canOnlyBeReadOnce)
         {
             MarkDialogueAsRead(currentDialogue);
+            SaveReadDialogues(); // Kaydet!
         }
             
         // Diyalog sona erdiğinde event'i tetikle
@@ -226,7 +230,7 @@ public class DialogueManager : MonoBehaviour
         return readDialogues.Contains(dialogueData.name);
     }
     
-    // Diyalogu okunmuş olarak işaretle
+    // Diyalogu okunmuş olarak işaretler
     private void MarkDialogueAsRead(DialogueData dialogueData)
     {
         if (dialogueData != null)
@@ -235,4 +239,76 @@ public class DialogueManager : MonoBehaviour
             Debug.Log($"Diyalog okunmuş olarak işaretlendi: {dialogueData.characterName}");
         }
     }
+    
+    /// <summary>
+    /// Okunmuş diyalogları PlayerPrefs'e kaydet
+    /// </summary>
+    private void SaveReadDialogues()
+    {
+        if (readDialogues.Count == 0)
+        {
+            PlayerPrefs.DeleteKey("ReadDialogues");
+        }
+        else
+        {
+            // HashSet'i string array'e çevir ve JSON ile kaydet
+            string[] dialogueArray = new string[readDialogues.Count];
+            readDialogues.CopyTo(dialogueArray);
+            
+            var saveData = new ReadDialoguesSaveData { readDialogueNames = dialogueArray };
+            string json = JsonUtility.ToJson(saveData);
+            
+            PlayerPrefs.SetString("ReadDialogues", json);
+        }
+        
+        PlayerPrefs.Save();
+        Debug.Log($"Okunmuş diyaloglar kaydedildi: {readDialogues.Count} adet");
+    }
+    
+    /// <summary>
+    /// Okunmuş diyalogları PlayerPrefs'ten yükle
+    /// </summary>
+    private void LoadReadDialogues()
+    {
+        readDialogues.Clear();
+        
+        if (PlayerPrefs.HasKey("ReadDialogues"))
+        {
+            string json = PlayerPrefs.GetString("ReadDialogues");
+            try
+            {
+                var saveData = JsonUtility.FromJson<ReadDialoguesSaveData>(json);
+                if (saveData?.readDialogueNames != null)
+                {
+                    foreach (string dialogueName in saveData.readDialogueNames)
+                    {
+                        readDialogues.Add(dialogueName);
+                    }
+                }
+                Debug.Log($"Okunmuş diyaloglar yüklendi: {readDialogues.Count} adet");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"Read dialogues yüklenirken hata: {e.Message}");
+                readDialogues.Clear();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Okunmuş diyalogları temizler (debug/test amaçlı)
+    /// </summary>
+    public void ClearReadDialogues()
+    {
+        readDialogues.Clear();
+        PlayerPrefs.DeleteKey("ReadDialogues");
+        PlayerPrefs.Save();
+        Debug.Log("Tüm okunmuş diyaloglar temizlendi ve kaydedildi.");
+    }
+}
+
+[System.Serializable]
+public class ReadDialoguesSaveData
+{
+    public string[] readDialogueNames;
 } 

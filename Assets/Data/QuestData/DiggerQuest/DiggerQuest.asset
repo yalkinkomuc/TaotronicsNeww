@@ -16,14 +16,13 @@ MonoBehaviour:
   title: Kill Spider
   description: Spider
   objectives:
-  - {fileID: 11400000, guid: 003ae41c9bf1fc6489baccc4c7c5ae1e, type: 2}
   - {fileID: 11400000, guid: 6ff63a6d8741d9144835253afb48fc78, type: 2}
   questRewards:
   - item: {fileID: 11400000, guid: 580eb22ffbdbbd34fa9d21f62764cd4d, type: 2}
     quantity: 100
   completionBehavior:
-    action: 2
+    action: 3
     customParameter: 
-    postCompletionDialogue: {fileID: 0}
+    postCompletionDialogue: {fileID: 11400000, guid: 172fa6423f81bbb43a75ad722e4d8749, type: 2}
     teleportPosition: {x: 0, y: 0, z: 0}
     delayBeforeAction: 0
