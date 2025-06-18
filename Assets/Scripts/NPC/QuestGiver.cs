@@ -427,7 +427,7 @@ public class QuestGiver : DialogueNPC
             
             if (promptHidden)
             {
-                Debug.Log($"Quest completed dialogue okunmuş, interaction prompt gösterilmiyor: {questToGive.questID}");
+               // Debug.Log($"Quest completed dialogue okunmuş, interaction prompt gösterilmiyor: {questToGive.questID}");
                 return;
             }
         }
