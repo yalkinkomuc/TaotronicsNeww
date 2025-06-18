@@ -33,6 +33,14 @@ public class QuestGiver : DialogueNPC
                     ExecuteCompletionAction();
                 }
                 
+                // Eğer completion behavior DestroyQuestGiver veya HideQuestGiver ise,
+                // interaction prompt zaten gizlenmiş olmalı, ama ekstra kontrol için:
+                if (questToGive.completionBehavior?.action == QuestCompletionAction.DestroyQuestGiver ||
+                    questToGive.completionBehavior?.action == QuestCompletionAction.HideQuestGiver)
+                {
+                    return; // Hiçbir etkileşim yapma
+                }
+                
                 // Quest tamamlandı, completed diyaloğu göster
                 ShowQuestCompletedDialogue();
                 return;
@@ -363,5 +371,20 @@ public class QuestGiver : DialogueNPC
                 }
             }
         }
+    }
+
+    // Override ShowInteractionPrompt to hide prompt when quest is completed
+    public override void ShowInteractionPrompt()
+    {
+        // Eğer quest tamamlandıysa prompt gösterme
+        if (questToGive != null && QuestManager.instance != null && 
+            QuestManager.instance.IsQuestCompleted(questToGive.questID))
+        {
+            Debug.Log($"Quest tamamlandı, interaction prompt gösterilmiyor: {questToGive.questID}");
+            return;
+        }
+        
+        // Quest tamamlanmamışsa normal prompt'u göster
+        base.ShowInteractionPrompt();
     }
 } 

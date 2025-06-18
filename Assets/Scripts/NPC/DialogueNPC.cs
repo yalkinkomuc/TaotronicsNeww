@@ -52,7 +52,7 @@ public class DialogueNPC : MonoBehaviour, IInteractable
          }
     }
 
-    public void ShowInteractionPrompt()
+    public virtual void ShowInteractionPrompt()
     {
         // Eğer diyalog sadece bir kez okunabilirse ve daha önce okunmuşsa prompt gösterme
         if (dialogueData != null && dialogueData.canOnlyBeReadOnce && 
@@ -64,7 +64,7 @@ public class DialogueNPC : MonoBehaviour, IInteractable
         interactionPrompt.ShowPrompt();
     }
 
-    public void HideInteractionPrompt()
+    public virtual void HideInteractionPrompt()
     {
         interactionPrompt.HidePrompt();
     }
