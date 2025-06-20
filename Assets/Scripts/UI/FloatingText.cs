@@ -3,7 +3,7 @@ using TMPro;
 using System.Collections;
 using UnityEngine.UI;
 
-public class FloatingText : BaseUIPanel
+public class FloatingText : MonoBehaviour
 {
     [SerializeField] private float destroyTime = 1.0f;
     [SerializeField] private Vector3 offset = new Vector3(0, 1.5f, 0);

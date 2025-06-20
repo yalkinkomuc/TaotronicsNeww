@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class FloatingTextManager : BaseUIPanel
+public class FloatingTextManager : MonoBehaviour
 {
     public static FloatingTextManager Instance { get; private set; }
     

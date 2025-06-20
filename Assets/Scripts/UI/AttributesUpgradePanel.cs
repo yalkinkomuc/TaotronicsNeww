@@ -162,6 +162,11 @@ public class AttributesUpgradePanel : BaseUIPanel
         {
             inputBlocker.AddPanel(gameObject);
             inputBlocker.EnableGameplayInput(false);
+            Debug.Log("AttributesUpgradePanel: Gameplay input DISABLED");
+        }
+        else
+        {
+            Debug.LogError("AttributesUpgradePanel: UIInputBlocker not found! Gameplay input NOT disabled!");
         }
         
         // Default selection
@@ -476,6 +481,11 @@ public class AttributesUpgradePanel : BaseUIPanel
         {
             inputBlocker.RemovePanel(gameObject);
             inputBlocker.EnableGameplayInput(true);
+            Debug.Log("AttributesUpgradePanel: Gameplay input ENABLED");
+        }
+        else
+        {
+            Debug.LogError("AttributesUpgradePanel: UIInputBlocker not found! Gameplay input NOT enabled!");
         }
     }
     

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class CheckpointSelectionScreen : BaseUIPanel
 {
@@ -144,16 +145,46 @@ public class CheckpointSelectionScreen : BaseUIPanel
         if (canvas != null)
             canvas.sortingOrder = 100;
         
-        if (UIInputBlocker.instance != null)
-            UIInputBlocker.instance.AddPanel(gameObject);
+        Debug.Log("CheckpointSelectionScreen: ShowPanel called");
         
+        // Panel'i göster
         gameObject.SetActive(true);
+        
+        // Input blocking'i manuel olarak yap (BaseUIPanel otomatik yapmayabilir Player hazır değilse)
+        StartCoroutine(EnsureInputBlocking());
         
         // Butonların erişilebilirliğini kontrol et
         if (restButton != null) restButton.interactable = true;
         if (upgradeButton != null) upgradeButton.interactable = true;
         if (closeButton != null) closeButton.interactable = true;
         if (upgradeSkillsButton != null) upgradeSkillsButton.interactable = true;
+    }
+    
+    // Input blocking'in çalıştığından emin ol
+    private System.Collections.IEnumerator EnsureInputBlocking()
+    {
+        int retryCount = 0;
+        
+        while (retryCount < 10) // 1 saniye boyunca deneyeceğiz
+        {
+            if (UIInputBlocker.instance != null)
+            {
+                Player player = PlayerManager.instance?.player;
+                if (player != null && player.playerInput != null)
+                {
+                    Debug.Log("CheckpointSelectionScreen: Player ready, ensuring input blocking");
+                    UIInputBlocker.instance.AddPanel(gameObject);
+                    UIInputBlocker.instance.DisableGameplayInput();
+                    yield break; // Success, exit
+                }
+            }
+            
+            yield return new WaitForSeconds(0.1f);
+            retryCount++;
+            Debug.Log($"CheckpointSelectionScreen: Waiting for Player to be ready... Attempt {retryCount}");
+        }
+        
+        Debug.LogError("CheckpointSelectionScreen: Failed to setup input blocking - Player not ready!");
     }
     
     public void ClosePanel()
@@ -164,6 +195,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
             UIInputBlocker.instance.EnableGameplayInput(true);
+            Debug.Log("CheckpointSelectionScreen: Panel closed, gameplay input enabled");
         }
     }
     
@@ -340,15 +372,6 @@ public class CheckpointSelectionScreen : BaseUIPanel
         {
             // Unity'nin SceneManager'ını kullan
             UnityEngine.SceneManagement.SceneManager.LoadScene(currentSceneIndex);
-        }
-    }
-
-    protected override void OnDisable()
-    {
-        if (UIInputBlocker.instance != null)
-        {
-            UIInputBlocker.instance.RemovePanel(gameObject);
-            UIInputBlocker.instance.EnableGameplayInput(true);
         }
     }
 } 

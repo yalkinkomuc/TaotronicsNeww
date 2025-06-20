@@ -803,6 +803,9 @@ public class Player : Entity
         if (isInvulnerable)
             return;
             
+        // Debug log for damage tracking
+        Debug.Log($"Player taking damage! isKnocked: {isKnocked}");
+            
         // Show visual feedback
         entityFX.StartCoroutine("HitFX");
         
@@ -1651,6 +1654,29 @@ public class Player : Entity
         }
         
         base.FlipController(_x);
+    }
+    
+    #endregion
+    
+    #region Velocity Override
+    
+    // Player için isKnocked kontrolünü kaldırıyoruz - Player'lar knockback almaz
+    public override void SetVelocity(float xVelocity, float yVelocity)
+    {
+        rb.linearVelocity = new Vector2(xVelocity, yVelocity);
+        FlipController(xVelocity);
+    }
+   
+    public override void SetZeroVelocity()
+    {
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+    }
+    
+    // Player'lar knockback almazlar - bu metodu override edip hiçbir şey yapmayız
+    public override IEnumerator HitKnockback(Vector2 knockbackDirectionParam)
+    {
+        // Player'lar knockback almazlar, bu yüzden hiçbir şey yapmayız
+        yield break;
     }
     
     #endregion

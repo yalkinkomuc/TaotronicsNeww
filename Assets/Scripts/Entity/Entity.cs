@@ -189,7 +189,7 @@ public class Entity : MonoBehaviour
     
     #region Velocity
     
-    public void SetVelocity(float xVelocity, float yVelocity)
+    public virtual void SetVelocity(float xVelocity, float yVelocity)
     {
         if (isKnocked)
         {
@@ -200,7 +200,7 @@ public class Entity : MonoBehaviour
         FlipController(xVelocity);
     }
    
-    public void SetZeroVelocity()
+    public virtual void SetZeroVelocity()
     {
         if (isKnocked)
         {

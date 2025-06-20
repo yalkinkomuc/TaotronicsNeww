@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class UIInputBlocker : MonoBehaviour
 {
@@ -24,10 +25,12 @@ public class UIInputBlocker : MonoBehaviour
         if (instance == null)
         {
             instance = this;
+            Debug.Log("UIInputBlocker: Singleton instance created");
             //DontDestroyOnLoad(gameObject);
         }
         else
         {
+            Debug.LogWarning("UIInputBlocker: Duplicate instance destroyed");
             Destroy(gameObject);
         }
     }
@@ -163,20 +166,58 @@ public class UIInputBlocker : MonoBehaviour
     // ONLY disable GAMEPLAY INPUTS, do NOT affect UI inputs
     public void DisableGameplayInput()
     {
+        Debug.Log("UIInputBlocker: DisableGameplayInput called");
+        
         // Disable player inputs
-        Player player = PlayerManager.instance.player;
+        Player player = PlayerManager.instance?.player;
         if (player != null)
         {
+            Debug.Log($"UIInputBlocker: Player found: {player.name}");
             IPlayerInput playerInput = player.playerInput;
             if (playerInput != null)
             {
+                Debug.Log("UIInputBlocker: PlayerInput found, disabling gameplay input");
                 // Only disable gameplay inputs
                 playerInput.DisableGameplayInput();
             }
+            else
+            {
+                Debug.LogError("UIInputBlocker: PlayerInput is NULL!");
+                // Try to retry after a delay
+                StartCoroutine(RetryDisableGameplayInput());
+            }
+        }
+        else
+        {
+            Debug.LogError("UIInputBlocker: Player is NULL!");
+            // Try to retry after a delay
+            StartCoroutine(RetryDisableGameplayInput());
         }
         
         // Show UI Blocker
         SetUIBlockerVisibility(true);
+    }
+    
+    // Player henüz hazır değilse tekrar dene
+    private System.Collections.IEnumerator RetryDisableGameplayInput()
+    {
+        int retryCount = 0;
+        while (retryCount < 5)
+        {
+            yield return new WaitForSeconds(0.1f);
+            retryCount++;
+            Debug.Log($"UIInputBlocker: Retrying DisableGameplayInput... Attempt {retryCount}");
+            
+            Player player = PlayerManager.instance?.player;
+            if (player != null && player.playerInput != null)
+            {
+                Debug.Log("UIInputBlocker: Player and PlayerInput found on retry, disabling gameplay input");
+                player.playerInput.DisableGameplayInput();
+                yield break; // Success, exit coroutine
+            }
+        }
+        
+        Debug.LogError("UIInputBlocker: Failed to disable gameplay input after retries!");
     }
     
     // ONLY enable GAMEPLAY INPUTS
