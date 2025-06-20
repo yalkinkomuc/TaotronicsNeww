@@ -5,7 +5,7 @@ public class PlayerWeaponManager : MonoBehaviour
     public WeaponStateMachine[] weapons;
     private int currentSecondaryWeaponIndex = 1; // 1'den başlıyoruz çünkü 0 kılıç
     
-    [SerializeField] private KeyCode weaponSwitchKey = KeyCode.Q; // Silah değiştirme tuşu
+    [SerializeField] private KeyCode weaponSwitchKey = KeyCode.Tab; // Silah değiştirme tuşu
     
     private Player player;
     private PlayerStats playerStats;
@@ -37,8 +37,14 @@ public class PlayerWeaponManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(weaponSwitchKey) && weapons.Length > 2)
+                if (Input.GetKeyDown(weaponSwitchKey) && weapons.Length > 2)
         {
+            // Boomerang havadayken silah değişimine izin verme
+            if (player != null && player.isBoomerangInAir)
+            {
+                return;
+            }
+            
             // Sadece ikincil silahlar arasında geçiş yap (1. indeksten başlayarak)
             currentSecondaryWeaponIndex++;
             if (currentSecondaryWeaponIndex >= weapons.Length)
@@ -79,6 +85,8 @@ public class PlayerWeaponManager : MonoBehaviour
     // Method to restore weapon visibility - called after HideWeapons/ShowWeapons
     public void RefreshWeaponVisibility()
     {
+        
+        
         // Refresh the secondary weapons visibility
         EquipSecondaryWeapon(currentSecondaryWeaponIndex);
     }

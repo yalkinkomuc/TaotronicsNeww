@@ -130,6 +130,8 @@ public class Player : Entity
     [Header("Boomerang Settings")]
     [SerializeField] private float boomerangCooldown = 2f;
     private float boomerangCooldownTimer;
+    
+    [HideInInspector] public bool isBoomerangInAir = false; // Boomerang havada mı kontrol etmek için
 
     #region Spell Section
 
@@ -282,6 +284,9 @@ public class Player : Entity
         
         // State machine güncellemesi
         stateMachine.currentState.Update();
+        
+        // Boomerang havadayken secondary silahları gizle
+        ManageWeaponVisibilityBasedOnBoomerang();
         
         // Silah referanslarını güncelle
         if (weaponsHidden == false)
@@ -667,7 +672,9 @@ public class Player : Entity
             boomerangWeapon.gameObject.SetActive(false);
         }
         
-        
+        // Boomerang havada olduğunu işaretle
+        isBoomerangInAir = true;
+        // Debug.Log("Boomerang thrown! isBoomerangInAir = true");
     }
     
     public void CatchBoomerang()
@@ -678,6 +685,10 @@ public class Player : Entity
         {
             boomerangWeapon.gameObject.SetActive(true);
         }
+        
+        // Boomerang artık havada değil
+        isBoomerangInAir = false;
+        // Debug.Log("Boomerang caught! isBoomerangInAir = false");
         
         stateMachine.ChangeState(catchBoomerangState);
     }
@@ -1211,6 +1222,8 @@ public class Player : Entity
         }
         else
         {
+            
+            
             // Fallback if no weapon manager found - we need to manually activate the weapons
             if (swordWeapon != null) 
                 swordWeapon.gameObject.SetActive(true);
@@ -1254,6 +1267,41 @@ public class Player : Entity
     public void UpdateLastActiveWeapon(WeaponState weaponState)
     {
         lastActiveWeaponState = weaponState;
+    }
+    
+    // Her frame silah görünürlüğünü kontrol et
+    private void ManageWeaponVisibilityBasedOnBoomerang()
+    {
+        if (isBoomerangInAir)
+        {
+            // Boomerang havadayken: Sadece sword görünür, diğerleri gizli
+            PlayerWeaponManager weaponManager = GetComponent<PlayerWeaponManager>();
+            if (weaponManager != null && weaponManager.weapons != null)
+            {
+                // Sword'u aktif tut (0. index)
+                if (weaponManager.weapons.Length > 0 && weaponManager.weapons[0] != null)
+                {
+                    weaponManager.weapons[0].gameObject.SetActive(true);
+                }
+                
+                // Tüm secondary silahları gizle (1. index ve sonrası)
+                for (int i = 1; i < weaponManager.weapons.Length; i++)
+                {
+                    if (weaponManager.weapons[i] != null)
+                    {
+                        weaponManager.weapons[i].gameObject.SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                // Fallback: Manuel kontrol
+                if (swordWeapon != null) swordWeapon.gameObject.SetActive(true);
+                if (boomerangWeapon != null) boomerangWeapon.gameObject.SetActive(false);
+                if (spellbookWeapon != null) spellbookWeapon.gameObject.SetActive(false);
+            }
+        }
+        // Boomerang havada değilse normal silah sistemine müdahale etme
     }
 
     #endregion

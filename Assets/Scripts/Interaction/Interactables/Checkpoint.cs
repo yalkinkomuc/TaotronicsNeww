@@ -258,6 +258,8 @@ public class Checkpoint : MonoBehaviour, IInteractable
     {
         if (player == null) return;
 
+        
+
         // Bumerang durumunu yükle
         if (player.boomerangWeapon != null)
         {

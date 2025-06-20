@@ -66,17 +66,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: 25
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 707eb0c08acd6de4aa119a12e2757ccf, type: 2}
+  m_sharedMaterial: {fileID: 4127558330274630808, guid: 707eb0c08acd6de4aa119a12e2757ccf, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190335
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -99,7 +99,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -153,10 +153,10 @@ MonoBehaviour:
   offset: {x: 3, y: 3, z: 0}
   randomizeIntensity: {x: 0.5, y: 0, z: 0}
   moveUpSpeed: 3
-  minSizeVariation: 0.8
-  maxSizeVariation: 1.2
-  colorVariation: 0.2
-  minFontSize: 30
+  minSizeVariation: 1
+  maxSizeVariation: 1.5
+  colorVariation: 0
+  minFontSize: 55
   maxFontSize: 90
   minDamageForMaxSize: 40
   magicMinFontSize: 30

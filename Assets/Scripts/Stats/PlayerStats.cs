@@ -151,6 +151,9 @@ public class PlayerStats : CharacterStats
         float mindMultiplier = Mathf.Pow(1 + SPEED_GROWTH, _mind) - 1;
         base.speedStat = _baseSpeedValue * (1 + mindMultiplier);
         
+        // Set defense stat - this was missing!
+        base.defenseStat = _defense;
+        
         // Calculate derived stats for UI display
         base.attackPower = baseDamage.GetValue();
         
@@ -557,6 +560,10 @@ public class PlayerStats : CharacterStats
         return base.IsCriticalHit();
     }
 
-    // Fix override to ensure this is correct
+    // Override all attribute properties to use the private fields
+    protected override int vitality { get => _vitality; set => _vitality = value; }
+    protected override int might { get => _might; set => _might = value; }
+    protected override int defense { get => _defense; set => _defense = value; }
+    protected override int luck { get => _luck; set => _luck = value; }
     protected override int mind { get => _mind; set => _mind = value; }
 }

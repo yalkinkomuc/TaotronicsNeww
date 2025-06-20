@@ -12,6 +12,8 @@ public class PlayerCatchBoomerangState : PlayerState
         // Yakalama animasyonunu başlat
         // Removed knockback - players don't get knocked back anymore
         
+        // Boomerang yakalandığını işaretle
+        player.isBoomerangInAir = false;
     }
 
     public override void Update()
