@@ -8,7 +8,7 @@ public class PlayerSpell1State : PlayerState
 
     public PlayerSpell1State(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
-        calculatedPositions = new Vector3[3];
+        calculatedPositions = new Vector3[4];
     }
 
     public override void Enter()
@@ -60,11 +60,11 @@ public class PlayerSpell1State : PlayerState
 
     private void CalculateSpawnPositions()
     {
-        float xOffset = 1f * player.facingdir;
+        float xOffset = .75f * player.facingdir; // TEST
         float startX = player.transform.position.x + xOffset;
         float spawnY = player.transform.position.y + 0.3f;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
             calculatedPositions[i] = new Vector3(
                 startX + (player.spellSpacing * i * player.facingdir),

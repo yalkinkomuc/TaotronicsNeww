@@ -912,7 +912,7 @@ public class Player : Entity
         float startX = transform.position.x + xOffset;
         float spawnY = transform.position.y + 0.3f;
         
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
             Vector3 position = new Vector3(
                 startX + (spellSpacing * i * facingdir),
