@@ -55,18 +55,12 @@ public class SkillTreePanel : BaseUIPanel
     
     private void Awake()
     {
-        if (UIInputBlocker.instance != null)
-        {
-            UIInputBlocker.instance.AddPanel(gameObject);
-            if (skillScreenPanel != null)
-                UIInputBlocker.instance.AddPanel(skillScreenPanel);
-        }
+        // Panel'i önce kapat
+        gameObject.SetActive(false);
         
+        // Mapping'i initialize et
         InitializeSkillMapping();
         // Button setup'ı OnEnable()'da yapacağız
-        
-        // Tüm paneli başlangıçta kapat
-        gameObject.SetActive(false);
     }
     
     private void Start()
@@ -79,6 +73,14 @@ public class SkillTreePanel : BaseUIPanel
     protected override void OnEnable()
     {
         Debug.Log("SkillTreePanel OnEnable() called!");
+        
+        // UIInputBlocker'a ekle (sadece aktif olduğunda)
+        if (UIInputBlocker.instance != null)
+        {
+            UIInputBlocker.instance.AddPanel(gameObject);
+            if (skillScreenPanel != null)
+                UIInputBlocker.instance.AddPanel(skillScreenPanel);
+        }
         
         // Canvas debug bilgileri
         Canvas canvas = GetComponentInParent<Canvas>();

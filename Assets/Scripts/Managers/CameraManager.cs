@@ -18,10 +18,10 @@ public class CameraManager : MonoBehaviour
     [Header("Camera Settings")]
     [SerializeField] private float xDamping = 1f;
     [SerializeField] private float yDamping = 1f;
-    [SerializeField] private float screenY = 0.6f;
-    [SerializeField] private float screenYMin = 0.4f; // Minimum screenY değeri (yukarıda)
-    [SerializeField] private float screenYMax = 0.7f; // Maximum screenY değeri (aşağıda)  
-    [SerializeField] private float screenYTransitionSpeed = 2f; // Y geçiş hızı
+    [SerializeField] private float screenY = 0.7f;
+    [SerializeField] private float screenYMin = 0.5f;
+    [SerializeField] private float screenYMax = 0.8f;
+    [SerializeField] private float screenYTransitionSpeed = 2f;
     
     [Header("Player Following")]
     private Vector3 lastPlayerPos;

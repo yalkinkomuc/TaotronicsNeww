@@ -54,9 +54,9 @@ MonoBehaviour:
   - {fileID: 141262140006117331, guid: 5b93feea319ff464b8195f21a8babb1d, type: 3}
   xDamping: 1
   yDamping: 1
-  screenY: 0.6
-  screenYMin: 0.4
-  screenYMax: 0.7
+  screenY: 0.7
+  screenYMin: 0.5
+  screenYMax: 0.8
   screenYTransitionSpeed: 5
   screenXTransitionSpeed: 5
 --- !u!1 &7339666878853165440
@@ -102,6 +102,10 @@ PrefabInstance:
     - target: {fileID: 923471480114499985, guid: 6c1eae2b1cc4bb7439edd377b3aebebc, type: 3}
       propertyPath: m_Name
       value: Virtual Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 2416300345275386370, guid: 6c1eae2b1cc4bb7439edd377b3aebebc, type: 3}
+      propertyPath: m_ScreenY
+      value: -0.23
       objectReference: {fileID: 0}
     - target: {fileID: 6271858926565724879, guid: 6c1eae2b1cc4bb7439edd377b3aebebc, type: 3}
       propertyPath: m_LocalPosition.x

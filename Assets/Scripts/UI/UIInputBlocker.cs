@@ -26,7 +26,7 @@ public class UIInputBlocker : MonoBehaviour
         {
             instance = this;
             Debug.Log("UIInputBlocker: Singleton instance created");
-            //DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -37,12 +37,23 @@ public class UIInputBlocker : MonoBehaviour
     
     private void Start()
     {
-        // Add skill tree panel to the list if assigned
-        if (skillTreePanel != null && !uiPanels.Contains(skillTreePanel))
+        // Clean up null/missing references from previous scenes
+        CleanupNullReferences();
+        
+        // Add skill tree panel to the list if assigned and valid
+        if (skillTreePanel != null && IsValidGameObject(skillTreePanel) && !uiPanels.Contains(skillTreePanel))
         {
             Debug.Log("Adding SkillTreePanel to UIInputBlocker list!");
             uiPanels.Add(skillTreePanel);
         }
+        else if (skillTreePanel != null && !IsValidGameObject(skillTreePanel))
+        {
+            Debug.LogWarning("SkillTreePanel reference is destroyed, clearing it");
+            skillTreePanel = null;
+        }
+        
+        // Find and add all UI panels in current scene
+        FindAndAddCurrentScenePanels();
         
         // Add tracker to each panel
         foreach (GameObject panel in uiPanels)
@@ -53,36 +64,154 @@ public class UIInputBlocker : MonoBehaviour
             }
         }
         
-        // Reset input state
+        // Reset input state on every scene load
         activePanelCount = 0;
-        EnableGameplayInput(true);
         
-        // Check initial state
-        CheckActivePanels();
+        // Force enable gameplay input after a short delay to ensure Player is ready
+        StartCoroutine(RestoreInputAfterSceneLoad());
+        
+        // Don't check initial state immediately - do it in coroutine after Player is ready
     }
+    
+    // Null/Missing referansları temizle
+    private void CleanupNullReferences()
+    {
+        Debug.Log($"UIInputBlocker: Cleaning up null references. List count before: {uiPanels.Count}");
+        
+        // Geriye doğru iterate et ki remove işlemi güvenli olsun
+        for (int i = uiPanels.Count - 1; i >= 0; i--)
+        {
+            GameObject panel = uiPanels[i];
+            
+            // Unity'de destroyed object kontrolü
+            if (panel == null || !IsValidGameObject(panel))
+            {
+                Debug.Log($"UIInputBlocker: Removing null/destroyed reference at index {i}");
+                uiPanels.RemoveAt(i);
+            }
+        }
+        
+        Debug.Log($"UIInputBlocker: List count after cleanup: {uiPanels.Count}");
+    }
+    
+    // GameObject'in gerçekten valid olup olmadığını kontrol et
+    private bool IsValidGameObject(GameObject obj)
+    {
+        if (obj == null) return false;
+        
+        try
+        {
+            // Eğer object destroyed ise bu işlemler exception fırlatır veya false döner
+            return obj.gameObject != null && obj.name != null;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+    
+    // Mevcut sahnedeki UI panellerini bul ve ekle
+    private void FindAndAddCurrentScenePanels()
+    {
+        Debug.Log("UIInputBlocker: Searching for UI panels in current scene...");
+        
+        // Yaygın UI panel isimlerini ara
+        string[] commonPanelNames = {
+            "AttributesUpgradePanel", "SkillTreePanel", "InventoryPanel", 
+            "ChestUI", "DialoguePanel", "PauseMenu", "SettingsPanel"
+        };
+        
+        foreach (string panelName in commonPanelNames)
+        {
+            GameObject panel = GameObject.Find(panelName);
+            if (panel != null && IsValidGameObject(panel) && !uiPanels.Contains(panel))
+            {
+                Debug.Log($"UIInputBlocker: Adding panel from current scene: {panelName}");
+                uiPanels.Add(panel);
+            }
+        }
+        
+        // Tüm BaseUIPanel componentlerini bul
+        BaseUIPanel[] allPanels = FindObjectsOfType<BaseUIPanel>();
+        foreach (BaseUIPanel panelComponent in allPanels)
+        {
+            GameObject panelObj = panelComponent.gameObject;
+            if (panelObj != null && IsValidGameObject(panelObj) && !uiPanels.Contains(panelObj))
+            {
+                Debug.Log($"UIInputBlocker: Adding BaseUIPanel: {panelObj.name}");
+                uiPanels.Add(panelObj);
+            }
+        }
+        
+        Debug.Log($"UIInputBlocker: Found {uiPanels.Count} total panels after scene search");
+    }
+    
+    // Sahne yüklendikten sonra input'u restore et
+    private System.Collections.IEnumerator RestoreInputAfterSceneLoad()
+    {
+        // Player'ın sahne değişimi sonrası hazır olmasını bekle
+        float waitTime = 0f;
+        while (waitTime < 1f && (PlayerManager.instance?.player?.playerInput == null))
+        {
+            yield return new WaitForSeconds(0.1f);
+            waitTime += 0.1f;
+        }
+        
+        // Player hazır olduğunda panel kontrolünü yap
+        CheckActivePanels();
+        
+        Debug.Log("UIInputBlocker: Input restored after scene load");
+    }
+    
+
     
     // Check UI panels
     private void CheckActivePanels()
     {
         activePanelCount = 0;
         
+        Debug.Log("UIInputBlocker: Checking active panels...");
+        
         // Check active/inactive state for each panel
-        foreach (GameObject panel in uiPanels)
+        for (int i = uiPanels.Count - 1; i >= 0; i--)
         {
-            if (panel != null && panel.activeInHierarchy)
+            GameObject panel = uiPanels[i];
+            
+            // Null/destroyed kontrolü - eğer null veya destroyed ise listeden çıkar
+            if (panel == null || !IsValidGameObject(panel))
+            {
+                Debug.LogWarning($"UIInputBlocker: Removing null/destroyed panel at index {i}");
+                uiPanels.RemoveAt(i);
+                continue;
+            }
+            
+            if (panel.activeInHierarchy)
             {
                 activePanelCount++;
+                Debug.Log($"UIInputBlocker: Active panel found: {panel.name}");
             }
         }
+        
+        Debug.Log($"UIInputBlocker: Total active panels: {activePanelCount}");
         
         // If there are panels, disable input
         if (activePanelCount > 0)
         {
+            Debug.Log("UIInputBlocker: Disabling input due to active panels");
             DisableGameplayInput();
         }
         else
         {
-            EnableGameplayInput(true);
+            // Only enable input if Player is ready
+            if (PlayerManager.instance?.player?.playerInput != null)
+            {
+                Debug.Log("UIInputBlocker: No active panels, enabling input");
+                EnableGameplayInput(true);
+            }
+            else
+            {
+                Debug.Log("UIInputBlocker: Player not ready yet, postponing input enable");
+            }
         }
     }
     
@@ -223,19 +352,37 @@ public class UIInputBlocker : MonoBehaviour
     // ONLY enable GAMEPLAY INPUTS
     public void EnableGameplayInput(bool forceEnable = false)
     {
+        Debug.Log($"UIInputBlocker: EnableGameplayInput called - forceEnable: {forceEnable}, activePanelCount: {activePanelCount}");
+        
         // If force enable is requested or there are no active panels
         if (forceEnable || activePanelCount <= 0)
         {
-            // Enable player inputs
-            Player player = PlayerManager.instance.player;
-            if (player != null)
+            // Enable player inputs with proper null checks
+            if (PlayerManager.instance == null)
             {
-                IPlayerInput playerInput = player.playerInput;
-                if (playerInput != null)
-                {
-                    // Enable all inputs
-                    playerInput.EnableAllInput();
-                }
+                Debug.LogWarning("UIInputBlocker: PlayerManager.instance is NULL - skipping input enable");
+                return;
+            }
+            
+            Player player = PlayerManager.instance.player;
+            if (player == null)
+            {
+                Debug.LogWarning("UIInputBlocker: Player is NULL - skipping input enable");
+                return;
+            }
+            
+            Debug.Log($"UIInputBlocker: Player found: {player.name}");
+            IPlayerInput playerInput = player.playerInput;
+            if (playerInput != null)
+            {
+                Debug.Log("UIInputBlocker: PlayerInput found, enabling all input");
+                // Enable all inputs
+                playerInput.EnableAllInput();
+            }
+            else
+            {
+                Debug.LogWarning("UIInputBlocker: PlayerInput is NULL - Player may not be fully initialized yet");
+                return;
             }
             
             // Hide UI Blocker
@@ -243,7 +390,7 @@ public class UIInputBlocker : MonoBehaviour
         }
         else
         {
-           // Debug.Log($"Still {activePanelCount} active panels, input remains disabled");
+            Debug.Log($"UIInputBlocker: Still {activePanelCount} active panels, input remains disabled");
         }
     }
     
@@ -270,5 +417,15 @@ public class UIInputBlocker : MonoBehaviour
         {
             panel.SetActive(false);
         }
+    }
+    
+    // Manuel olarak tüm listeyi temizle (debug için)
+    public void ClearAllPanels()
+    {
+        Debug.Log("UIInputBlocker: Manually clearing all panels");
+        uiPanels.Clear();
+        skillTreePanel = null;
+        activePanelCount = 0;
+        EnableGameplayInput(true);
     }
 } 

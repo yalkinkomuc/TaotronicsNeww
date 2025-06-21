@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 362947386842009576}
   - component: {fileID: 5740306049287514607}
   - component: {fileID: 8582955807987132753}
+  - component: {fileID: 8115279772366534566}
   m_Layer: 5
   m_Name: Chest_UI
   m_TagString: ChestInventoryUI
@@ -243,6 +244,18 @@ MonoBehaviour:
   closeButton: {fileID: 5023322447568366749}
   takeAllButton: {fileID: 774127067344968609}
   debugMode: 0
+--- !u!114 &8115279772366534566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5264814957411390564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6244e775b62103d4fa02ad9daa13db7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5456165649101265946
 GameObject:
   m_ObjectHideFlags: 0

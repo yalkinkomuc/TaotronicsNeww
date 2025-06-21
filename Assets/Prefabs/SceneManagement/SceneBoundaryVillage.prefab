@@ -48,7 +48,7 @@ MonoBehaviour:
   leftBoundary: -90
   rightBoundary: 75
   topBoundary: 2
-  bottomBoundary: -9.8
+  bottomBoundary: -16.83
   hasLeftExit: 1
   hasRightExit: 1
   hasTopExit: 0
@@ -109,6 +109,6 @@ PolygonCollider2D:
     m_Paths:
     - - {x: 75, y: 1.5}
       - {x: -90, y: 1.5}
-      - {x: -89.96572, y: -9.822656}
-      - {x: 75.00886, y: -9.779319}
+      - {x: -90.08469, y: -16.960695}
+      - {x: 74.889885, y: -17.27426}
   m_UseDelaunayMesh: 0
