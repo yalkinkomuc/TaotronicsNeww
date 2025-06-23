@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f844eaaa8b7b6d64eb9b30c50553e35e, type: 3}
+  m_Name: RedRune
+  m_EditorClassIdentifier: 
+  itemName: 
+  description: 
+  icon: {fileID: 1856912378, guid: 069a00c4a21d8654bbe27600f3ba7103, type: 3}
+  itemType: 5
+  dropChance: 0
+  sellValue: 0
+  rarity: 0
+  isStackable: 1
+  maxStackSize: 999
+  resourcePath: 
+  runeType: 0
+  runeLevel: 1
+  statModifier:
+    statType: 0
+    baseValue: 100
+    percentageBonus: 0.2
+  canCombineWithOthers: 1
+  combinationResult: []
+  enhancementLevel: 0
+  maxEnhancementLevel: 10

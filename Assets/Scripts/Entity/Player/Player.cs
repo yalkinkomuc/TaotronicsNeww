@@ -282,6 +282,9 @@ public class Player : Entity
             }
         }
         
+        // UI kontrolü (stunned durumunda bile çalışmalı)
+        CheckForUIInput();
+        
         // State machine güncellemesi
         stateMachine.currentState.Update();
         
@@ -1688,6 +1691,48 @@ public class Player : Entity
         return SkillManager.Instance.IsSkillReady(SkillType.AirPush, stats.currentMana);
     }
 
+    #region UI Input Methods
+    
+    private void CheckForUIInput()
+    {
+        // Inventory toggle
+        if (playerInput.inventoryInput)
+        {
+            ToggleInventory();
+        }
+    }
+    
+    private void ToggleInventory()
+    {
+        // First try Instance, then fallback to FindFirstObjectByType
+        AdvancedInventoryUI inventoryUI = AdvancedInventoryUI.Instance;
+        
+        if (inventoryUI == null)
+        {
+            inventoryUI = FindFirstObjectByType<AdvancedInventoryUI>();
+        }
+        
+        if (inventoryUI != null)
+        {
+            if (inventoryUI.gameObject.activeInHierarchy)
+            {
+                inventoryUI.CloseInventory();
+                Debug.Log("Inventory closed via I key");
+            }
+            else
+            {
+                inventoryUI.OpenInventory();
+                Debug.Log("Inventory opened via I key");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("AdvancedInventoryUI not found in scene! Make sure the UI is present.");
+        }
+    }
+    
+    #endregion
+    
     #region Flip Override
     
     public override void FlipController(float _x)

@@ -25,6 +25,9 @@ public class PCInput : IPlayerInput
     public bool airPushInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.V);
     public bool fireballInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.G);
     
+    // UI Inputs (always active when inputEnabled, not affected by gameplayInputEnabled)
+    public bool inventoryInput => inputEnabled && Input.GetKeyDown(KeyCode.I);
+    
     // Disables all input (including UI)
     public void DisableAllInput()
     {

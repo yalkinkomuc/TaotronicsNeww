@@ -20,6 +20,7 @@ public interface IPlayerInput
      bool electricDashInput { get; }
      bool airPushInput { get; }
      bool fireballInput { get; }
+     bool inventoryInput { get; }
      
      void DisableAllInput();
      void EnableAllInput();

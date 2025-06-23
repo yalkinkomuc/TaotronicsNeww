@@ -113,19 +113,40 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(ItemData _item)
     {
-        if (inventoryDictionary.TryGetValue(_item, out InventoryItem value))
+        if (_item == null) return;
+        
+        // Check if item is stackable
+        if (_item.isStackable && inventoryDictionary.TryGetValue(_item, out InventoryItem value))
         {
-            value.AddStack();
+            // Add to existing stack if within limits
+            if (value.stackSize < _item.maxStackSize)
+            {
+                value.AddStack();
+            }
+            else
+            {
+                // Create new stack if current is at max
+                InventoryItem newItem = new InventoryItem(_item);
+                inventoryItems.Add(newItem);
+                inventoryDictionary.Add(_item, newItem);
+            }
         }
         else
         {
+            // Create new item entry
             InventoryItem newItem = new InventoryItem(_item);
             inventoryItems.Add(newItem);
-            inventoryDictionary.Add(_item, newItem);
+            
+            if (_item.isStackable)
+            {
+                inventoryDictionary.Add(_item, newItem);
+            }
         }
         
         UpdateSlotUI();
         SaveInventory(); // Envanteri güncellediğimizde kaydet
+        
+        Debug.Log($"Added {_item.itemName} to inventory. Type: {_item.itemType}");
     }
 
     public void RemoveItem(ItemData _item)

@@ -28,6 +28,9 @@ public class GamepadInput : IPlayerInput
     public bool airPushInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.Joystick1Button12);
     public bool fireballInput => inputEnabled && gameplayInputEnabled && Input.GetKeyDown(KeyCode.Joystick1Button0);
     
+    // UI Inputs (always active when inputEnabled, not affected by gameplayInputEnabled)
+    public bool inventoryInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton6); // Back/Select button for inventory
+    
     // Disables all input (including UI)
     public void DisableAllInput()
     {
