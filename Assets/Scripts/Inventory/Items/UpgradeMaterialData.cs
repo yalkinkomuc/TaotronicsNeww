@@ -76,16 +76,18 @@ public enum MaterialType
 {
     Leather = 0,
     Iron = 1,
-    Steel = 2,
-    Mithril = 3,
-    Adamantine = 4,
-    Crystal = 5,
-    Gem = 6,
-    Essence = 7,
-    Rune_Fragment = 8,
-    Dragon_Scale = 9,
-    Phoenix_Feather = 10,
-    Void_Shard = 11
+    Rock = 2,
+    Diamond = 3,
+    Crystal = 4,
+    Gem = 5,
+    Steel = 6,
+    Mithril = 7,
+    Adamantine = 8,
+    Essence = 9,
+    Rune_Fragment = 10,
+    Dragon_Scale = 11,
+    Phoenix_Feather = 12,
+    Void_Shard = 13
 }
 
 public enum MaterialRarity

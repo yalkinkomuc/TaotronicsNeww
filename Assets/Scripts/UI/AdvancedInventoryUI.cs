@@ -21,11 +21,6 @@ public class AdvancedInventoryUI : BaseUIPanel
     [Header("Rune Slots (Right Side)")]
     [SerializeField] private UI_RuneSlot[] runeSlots = new UI_RuneSlot[6];
     
-    [Header("Inventory Grid (Center)")]
-    [SerializeField] private Transform inventoryGridParent;
-    [SerializeField] private GameObject itemSlotPrefab;
-    [SerializeField] private int inventorySlotCount = 40;
-    
     [Header("Equipment Selection Panel")]
     [SerializeField] private UI_EquipmentSelectionPanel equipmentSelectionPanel;
     
@@ -51,7 +46,6 @@ public class AdvancedInventoryUI : BaseUIPanel
     [SerializeField] private TextMeshProUGUI gearCapacityText;
     
     // Private fields
-    private List<UI_ItemSlot> inventorySlots = new List<UI_ItemSlot>();
     private List<UI_MaterialDisplay> materialDisplays = new List<UI_MaterialDisplay>();
     private bool isCollectiblesPage = false;
     
@@ -88,15 +82,14 @@ public class AdvancedInventoryUI : BaseUIPanel
         ShowInventoryPage();
         
         // Create UI elements
-        CreateInventorySlots();
         CreateMaterialDisplays();
         InitializeEquipmentSlots();
         InitializeRuneSlots();
         
         // Initial display update
-        RefreshInventoryDisplay();
         UpdateMaterialDisplays();
         UpdateStatsDisplay();
+        UpdateGearCapacity();
     }
     
     private void SetupEventListeners()
@@ -127,45 +120,22 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     #region Initialization
     
-    private void CreateInventorySlots()
-    {
-        inventorySlots.Clear();
-        
-        // Clear existing slots
-        foreach (Transform child in inventoryGridParent)
-        {
-            Destroy(child.gameObject);
-        }
-        
-        // Create new slots
-        for (int i = 0; i < inventorySlotCount; i++)
-        {
-            GameObject slotObj = Instantiate(itemSlotPrefab, inventoryGridParent);
-            UI_ItemSlot slot = slotObj.GetComponent<UI_ItemSlot>();
-            
-            if (slot != null)
-            {
-                inventorySlots.Add(slot);
-                
-                // Add click listener with slot index
-                int slotIndex = i;
-                Button slotButton = slotObj.GetComponent<Button>();
-                if (slotButton != null)
-                {
-                    slotButton.onClick.AddListener(() => OnInventorySlotClicked(slotIndex));
-                }
-            }
-        }
-    }
-    
     private void CreateMaterialDisplays()
     {
         materialDisplays.Clear();
         
-        // Get all upgrade material types and create displays
-        var materialTypes = System.Enum.GetValues(typeof(MaterialType));
+        // Fixed 6 materials that will always be displayed
+        MaterialType[] fixedMaterials = new MaterialType[]
+        {
+            MaterialType.Leather,
+            MaterialType.Iron,
+            MaterialType.Rock,
+            MaterialType.Diamond,
+            MaterialType.Crystal,
+            MaterialType.Gem
+        };
         
-        foreach (MaterialType materialType in materialTypes)
+        foreach (MaterialType materialType in fixedMaterials)
         {
             GameObject displayObj = Instantiate(materialDisplayPrefab, materialsParent);
             UI_MaterialDisplay display = displayObj.GetComponent<UI_MaterialDisplay>();
@@ -204,9 +174,9 @@ public class AdvancedInventoryUI : BaseUIPanel
     public void OpenInventory()
     {
         gameObject.SetActive(true);
-        RefreshInventoryDisplay();
         UpdateMaterialDisplays();
         UpdateStatsDisplay();
+        UpdateGearCapacity();
         
         if (UIInputBlocker.instance != null)
         {
@@ -229,7 +199,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         isCollectiblesPage = false;
         inventoryPanel.SetActive(true);
         collectiblesPanel.SetActive(false);
-        RefreshInventoryDisplay();
+        UpdateGearCapacity();
     }
     
     public void ShowCollectiblesPage()
@@ -244,32 +214,6 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     #region Display Updates
     
-    private void RefreshInventoryDisplay()
-    {
-        if (Inventory.instance == null || isCollectiblesPage) return;
-        
-        // Clear all slots first
-        foreach (var slot in inventorySlots)
-        {
-            slot.UpdateSlot(null);
-        }
-        
-        // Get filtered items
-        List<InventoryItem> filteredItems = GetFilteredItems();
-        
-        // Update capacity display (only show runes and materials now)
-        if (gearCapacityText != null)
-        {
-            gearCapacityText.text = $"{filteredItems.Count} / {inventorySlotCount}";
-        }
-        
-        // Fill slots with filtered items
-        for (int i = 0; i < filteredItems.Count && i < inventorySlots.Count; i++)
-        {
-            inventorySlots[i].UpdateSlot(filteredItems[i]);
-        }
-    }
-    
     private void RefreshCollectiblesDisplay()
     {
         if (Inventory.instance == null || !isCollectiblesPage) return;
@@ -279,23 +223,8 @@ public class AdvancedInventoryUI : BaseUIPanel
             .Where(item => item.data.itemType == ItemType.Collectible)
             .ToList();
         
-        // TODO: Implement collectibles display
+        // TODO: Implement collectibles display with UI_CollectiblesPanel
         Debug.Log($"Displaying {collectibles.Count} collectibles");
-    }
-    
-    private List<InventoryItem> GetFilteredItems()
-    {
-        if (Inventory.instance == null) return new List<InventoryItem>();
-        
-        // Show all items except collectibles (they have their own page)
-        // and equipment items (they are selected via equipment slots now)
-        return Inventory.instance.inventoryItems
-            .Where(item => item.data.itemType != ItemType.Collectible &&
-                          item.data.itemType != ItemType.Weapon &&
-                          item.data.itemType != ItemType.Armor &&
-                          item.data.itemType != ItemType.SecondaryWeapon &&
-                          item.data.itemType != ItemType.Accessory)
-            .ToList();
     }
     
     private void UpdateMaterialDisplays()
@@ -309,98 +238,66 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
     }
     
+    private void UpdateGearCapacity()
+    {
+        if (Inventory.instance == null || gearCapacityText == null) return;
+        
+        // Count total inventory items
+        int totalItems = Inventory.instance.inventoryItems.Count;
+        int maxCapacity = 999; // Or whatever your max inventory size is
+        
+        gearCapacityText.text = $"{totalItems} / {maxCapacity}";
+    }
+    
     private void UpdateStatsDisplay()
     {
-        // Find PlayerStats component
+        // Find PlayerStats directly
         PlayerStats playerStats = FindFirstObjectByType<PlayerStats>();
         if (playerStats == null) return;
-        
-        // 5 stat gösterimi - AttributesUpgradePanel'deki gibi hesaplama
-        
-        // 1. Health (from Vitality)
+
         if (healthText != null)
             healthText.text = Mathf.RoundToInt(playerStats.maxHealth.GetValue()).ToString();
-        
-        // 2. Attack Damage (from Might)
+
         if (attackDamageText != null)
             attackDamageText.text = Mathf.RoundToInt(playerStats.baseDamage.GetValue()).ToString();
-        
-        // 3. Ability Power (from Mind) - elemental damage multiplier
+
         if (abilityPowerText != null)
         {
             float elementalMultiplier = playerStats.GetTotalElementalDamageMultiplier();
-            int abilityPowerPercent = Mathf.RoundToInt((elementalMultiplier - 1f) * 100f);
-            abilityPowerText.text = abilityPowerPercent.ToString() + "%";
+            float percentage = (elementalMultiplier - 1f) * 100f;
+            abilityPowerText.text = $"{Mathf.RoundToInt(percentage)}%";
         }
-        
-        // 4. Defense (from Defense stat) - damage reduction percentage
+
         if (defenseText != null)
         {
-            int defenseReduction = Mathf.Min(Mathf.RoundToInt(playerStats.defenseStat), 80); // max 80% reduction
-            defenseText.text = defenseReduction.ToString() + "%";
+            // Defense shows damage reduction percentage
+            float defenseReduction = Mathf.Clamp(playerStats.defenseStat, 0f, 80f);
+            defenseText.text = $"{Mathf.RoundToInt(defenseReduction)}%";
         }
-        
-        // 5. Critical Chance (from Luck)
+
         if (criticalChanceText != null)
-            criticalChanceText.text = (playerStats.criticalChance * 100f).ToString("F1") + "%";
-        
-        // Hide unused fields
-        if (unusedText1 != null)
-            unusedText1.text = "";
-        if (unusedText2 != null)
-            unusedText2.text = "";
-        
-        Debug.Log("Character stats updated - 5 main stats displayed");
+        {
+            float critPercentage = playerStats.criticalChance * 100f;
+            criticalChanceText.text = $"{Mathf.RoundToInt(critPercentage)}%";
+        }
     }
     
     #endregion
     
     #region Event Handlers
     
-    private void OnInventorySlotClicked(int slotIndex)
-    {
-        if (slotIndex >= inventorySlots.Count) return;
-        
-        var slot = inventorySlots[slotIndex];
-        if (slot.item?.data == null) return;
-        
-        // Try to equip runes or use items
-        var itemData = slot.item.data;
-        
-        if (itemData is RuneData rune)
-        {
-            // Try to equip rune to first available slot
-            if (EquipmentManager.Instance != null)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    if (EquipmentManager.Instance.IsRuneSlotEmpty(i))
-                    {
-                        bool equipped = EquipmentManager.Instance.EquipRune(rune, i);
-                        if (equipped)
-                        {
-                            // Remove from inventory
-                            Inventory.instance.RemoveItem(itemData);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        RefreshInventoryDisplay();
-    }
-    
     private void OnEquipmentChanged(EquipmentSlot slot, EquipmentData equipment)
     {
         // Equipment display is handled by individual equipment slots
         UpdateStatsDisplay();
+        UpdateGearCapacity();
     }
     
     private void OnRuneChanged(int slotIndex, RuneData rune)
     {
         // Rune display is handled by individual rune slots
         UpdateStatsDisplay();
+        UpdateGearCapacity();
     }
     
     #endregion

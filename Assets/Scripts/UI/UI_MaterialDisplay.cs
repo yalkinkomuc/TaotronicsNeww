@@ -105,23 +105,8 @@ public class UI_MaterialDisplay : MonoBehaviour
     
     private Color GetMaterialTypeColor()
     {
-        // Return color based on material type
-        return materialType switch
-        {
-            MaterialType.Leather => new Color(0.6f, 0.4f, 0.2f),        // Brown
-            MaterialType.Iron => Color.gray,                             // Gray
-            MaterialType.Steel => new Color(0.7f, 0.7f, 0.8f),         // Light gray
-            MaterialType.Mithril => new Color(0.8f, 0.9f, 1f),         // Light blue
-            MaterialType.Adamantine => new Color(0.2f, 0.2f, 0.3f),    // Dark blue
-            MaterialType.Crystal => new Color(1f, 0.9f, 1f),           // Light pink
-            MaterialType.Gem => new Color(1f, 0.2f, 0.6f),             // Pink
-            MaterialType.Essence => new Color(0.6f, 0.3f, 0.9f),       // Purple
-            MaterialType.Rune_Fragment => new Color(0.3f, 0.6f, 0.9f), // Blue
-            MaterialType.Dragon_Scale => new Color(0.9f, 0.1f, 0.1f),  // Red
-            MaterialType.Phoenix_Feather => new Color(1f, 0.5f, 0f),   // Orange
-            MaterialType.Void_Shard => new Color(0.1f, 0.1f, 0.1f),    // Almost black
-            _ => Color.gray
-        };
+        // Single color for all material types
+        return Color.gray;
     }
     
     public MaterialType GetMaterialType()

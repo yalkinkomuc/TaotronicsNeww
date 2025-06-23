@@ -11,11 +11,6 @@ public class Inventory : MonoBehaviour
     public List<InventoryItem> inventoryItems;
     public Dictionary<ItemData, InventoryItem> inventoryDictionary;
 
-    [Header("Inventory UI")] 
-    
-    [SerializeField] private Transform inventorySlotParent;
-    private UI_ItemSlot[] itemSlot;
-
     // Serileştirme için
     [Serializable]
     private class SavedItem
@@ -36,7 +31,6 @@ public class Inventory : MonoBehaviour
         {
             instance = this;
             
-            
             inventoryItems = new List<InventoryItem>();
             inventoryDictionary = new Dictionary<ItemData, InventoryItem>();
             
@@ -49,66 +43,10 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        // Unity'nin modern event sistemini kullan
-        UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnActiveSceneChanged;
-    }
-
-    private void OnDisable()
-    {
-        // Oyun kapatılırken envanteri kaydet
-        SaveInventory();
-        UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnActiveSceneChanged;
-    }
-
     private void Start()
     {
-        RefreshUI();
-    }
-
-    // Yeni sahne değişim event handler'ı
-    private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
-    {
-        RefreshUI();
-    }
-
-    private void RefreshUI()
-    {
-        if (inventorySlotParent == null)
-        {
-            // UI referansını bul
-            GameObject invUI = GameObject.FindGameObjectWithTag("InventoryUI");
-            if (invUI != null)
-            {
-                inventorySlotParent = invUI.transform;
-            }
-        }
-
-        if (inventorySlotParent != null)
-        {
-            itemSlot = inventorySlotParent.GetComponentsInChildren<UI_ItemSlot>();
-            UpdateSlotUI();
-        }
-    }
-
-    private void UpdateSlotUI()
-    {
-        if (itemSlot == null) return;
-
-        // Önce tüm slotları temizle
-        foreach (var slot in itemSlot)
-        {
-            if (slot != null)
-                slot.UpdateSlot(null);
-        }
-
-        // Mevcut itemları UI'a yerleştir
-        for (int i = 0; i < inventoryItems.Count && i < itemSlot.Length; i++)
-        {
-            if (itemSlot[i] != null)
-                itemSlot[i].UpdateSlot(inventoryItems[i]);
-        }
+        // UI updates are now handled by AdvancedInventoryUI and other specialized systems
+        Debug.Log("Inventory system initialized with specialized UI");
     }
 
     public void AddItem(ItemData _item)
@@ -143,7 +81,8 @@ public class Inventory : MonoBehaviour
             }
         }
         
-        UpdateSlotUI();
+        // Notify UI systems about inventory changes
+        NotifyInventoryChanged();
         SaveInventory(); // Envanteri güncellediğimizde kaydet
         
         Debug.Log($"Added {_item.itemName} to inventory. Type: {_item.itemType}");
@@ -164,8 +103,20 @@ public class Inventory : MonoBehaviour
             }
         }
         
-        UpdateSlotUI();
+        // Notify UI systems about inventory changes
+        NotifyInventoryChanged();
         SaveInventory(); // Envanteri güncellediğimizde kaydet
+    }
+
+    private void NotifyInventoryChanged()
+    {
+        // Update AdvancedInventoryUI if it exists and is active
+        if (AdvancedInventoryUI.Instance != null && AdvancedInventoryUI.Instance.gameObject.activeInHierarchy)
+        {
+            // Material displays will update automatically when inventory changes
+            // Equipment selection panels will update when opened
+            // Rune displays are handled by the rune system
+        }
     }
 
     private void Update()
@@ -238,8 +189,8 @@ public class Inventory : MonoBehaviour
                 }
             }
             
-            // UI'ı güncelle
-            UpdateSlotUI();
+            // Notify UI systems about loaded inventory
+            NotifyInventoryChanged();
         }
     }
 
@@ -295,7 +246,7 @@ public class Inventory : MonoBehaviour
     public void ReloadInventoryAfterDeath()
     {
         LoadInventory();
-        UpdateSlotUI();
+        NotifyInventoryChanged();
     }
 
     // Oyun kapatıldığında çağrılır
