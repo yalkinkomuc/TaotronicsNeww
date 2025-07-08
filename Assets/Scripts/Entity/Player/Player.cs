@@ -1717,12 +1717,10 @@ public class Player : Entity
             if (inventoryUI.gameObject.activeInHierarchy)
             {
                 inventoryUI.CloseInventory();
-                Debug.Log("Inventory closed via I key");
             }
             else
             {
                 inventoryUI.OpenInventory();
-                Debug.Log("Inventory opened via I key");
             }
         }
         else

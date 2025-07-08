@@ -24,9 +24,13 @@ public class AdvancedInventoryUI : BaseUIPanel
     [Header("Equipment Selection Panel")]
     [SerializeField] private UI_EquipmentSelectionPanel equipmentSelectionPanel;
     
-    [Header("Upgrade Materials Display (Top)")]
-    [SerializeField] private Transform materialsParent;
-    [SerializeField] private GameObject materialDisplayPrefab;
+    [Header("Upgrade Materials Display (Top) - Static UI Elements")]
+    [SerializeField] private UI_MaterialDisplay leatherDisplay;
+    [SerializeField] private UI_MaterialDisplay ironDisplay;
+    [SerializeField] private UI_MaterialDisplay rockDisplay;
+    [SerializeField] private UI_MaterialDisplay diamondDisplay;
+    [SerializeField] private UI_MaterialDisplay crystalDisplay;
+    [SerializeField] private UI_MaterialDisplay gemDisplay;
     
     [Header("Character Stats (Bottom)")]
     [SerializeField] private TextMeshProUGUI healthText;
@@ -45,7 +49,7 @@ public class AdvancedInventoryUI : BaseUIPanel
     [SerializeField] private TextMeshProUGUI gearCapacityText;
     
     // Private fields
-    private List<UI_MaterialDisplay> materialDisplays = new List<UI_MaterialDisplay>();
+    private UI_MaterialDisplay[] materialDisplays;
     private bool isCollectiblesPage = false;
     
     private void Awake()
@@ -81,7 +85,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         ShowInventoryPage();
         
         // Create UI elements
-        CreateMaterialDisplays();
+        InitializeMaterialDisplays();
         InitializeEquipmentSlots();
         InitializeRuneSlots();
         
@@ -119,12 +123,21 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     #region Initialization
     
-    private void CreateMaterialDisplays()
+    private void InitializeMaterialDisplays()
     {
-        materialDisplays.Clear();
+        // Initialize static material displays with their types
+        materialDisplays = new UI_MaterialDisplay[]
+        {
+            leatherDisplay,
+            ironDisplay,
+            rockDisplay,
+            diamondDisplay,
+            crystalDisplay,
+            gemDisplay
+        };
         
-        // Fixed 6 materials that will always be displayed
-        MaterialType[] fixedMaterials = new MaterialType[]
+        // Set material types for each display
+        MaterialType[] materialTypes = new MaterialType[]
         {
             MaterialType.Leather,
             MaterialType.Iron,
@@ -134,15 +147,15 @@ public class AdvancedInventoryUI : BaseUIPanel
             MaterialType.Gem
         };
         
-        foreach (MaterialType materialType in fixedMaterials)
+        for (int i = 0; i < materialDisplays.Length; i++)
         {
-            GameObject displayObj = Instantiate(materialDisplayPrefab, materialsParent);
-            UI_MaterialDisplay display = displayObj.GetComponent<UI_MaterialDisplay>();
-            
-            if (display != null)
+            if (materialDisplays[i] != null && i < materialTypes.Length)
             {
-                display.SetMaterialType(materialType);
-                materialDisplays.Add(display);
+                materialDisplays[i].SetMaterialType(materialTypes[i]);
+            }
+            else if (materialDisplays[i] == null)
+            {
+                Debug.LogWarning($"Material display {i} ({materialTypes[i]}) is not assigned in AdvancedInventoryUI!");
             }
         }
     }
@@ -230,10 +243,22 @@ public class AdvancedInventoryUI : BaseUIPanel
     {
         if (Inventory.instance == null) return;
         
-        // Update each material display with current count
-        foreach (var display in materialDisplays)
+        // Ensure material displays are initialized
+        if (materialDisplays == null)
         {
-            display.UpdateCount();
+            InitializeMaterialDisplays();
+        }
+        
+        // Update each material display with current count
+        if (materialDisplays != null)
+        {
+            foreach (var display in materialDisplays)
+            {
+                if (display != null)
+                {
+                    display.UpdateCount();
+                }
+            }
         }
     }
     

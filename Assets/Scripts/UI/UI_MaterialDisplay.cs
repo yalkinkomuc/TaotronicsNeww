@@ -8,7 +8,6 @@ public class UI_MaterialDisplay : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Image materialIcon;
     [SerializeField] private TextMeshProUGUI countText;
-    [SerializeField] private Image backgroundImage;
     
     [Header("Configuration")]
     [SerializeField] private Sprite defaultMaterialSprite;
@@ -17,10 +16,16 @@ public class UI_MaterialDisplay : MonoBehaviour
     
     private MaterialType materialType;
     private int currentCount = 0;
+    private Sprite cachedMaterialSprite;
     
     public void SetMaterialType(MaterialType type)
     {
         materialType = type;
+        
+        // Cache the material sprite at initialization
+        cachedMaterialSprite = LoadMaterialSprite();
+        
+        // Set initial display with 0 count
         UpdateDisplay();
     }
     
@@ -59,12 +64,10 @@ public class UI_MaterialDisplay : MonoBehaviour
         // Update material icon
         if (materialIcon != null)
         {
-            // Try to find a material of this type to get its icon
-            Sprite materialSprite = GetMaterialSprite();
-            
-            if (materialSprite != null)
+            // Use cached sprite
+            if (cachedMaterialSprite != null)
             {
-                materialIcon.sprite = materialSprite;
+                materialIcon.sprite = cachedMaterialSprite;
             }
             else
             {
@@ -75,39 +78,19 @@ public class UI_MaterialDisplay : MonoBehaviour
             materialIcon.color = currentCount > 0 ? hasItemsColor : noItemsColor;
         }
         
-        // Update background based on material rarity/type
-        if (backgroundImage != null)
-        {
-            backgroundImage.color = GetMaterialTypeColor();
-        }
+
     }
     
-    private Sprite GetMaterialSprite()
+    private Sprite LoadMaterialSprite()
     {
-        if (Inventory.instance == null) return null;
-        
-        // Find the first material of this type and get its icon
-        foreach (var inventoryItem in Inventory.instance.inventoryItems)
-        {
-            if (inventoryItem.data is UpgradeMaterialData material && 
-                material.materialType == materialType)
-            {
-                return material.icon;
-            }
-        }
-        
-        // If not found in inventory, try to load from Resources
+        // Load material sprite from Resources at initialization
         var allMaterials = Resources.LoadAll<UpgradeMaterialData>("Items");
         var foundMaterial = allMaterials.FirstOrDefault(m => m.materialType == materialType);
         
         return foundMaterial?.icon;
     }
     
-    private Color GetMaterialTypeColor()
-    {
-        // Single color for all material types
-        return Color.gray;
-    }
+
     
     public MaterialType GetMaterialType()
     {
