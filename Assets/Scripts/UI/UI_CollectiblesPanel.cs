@@ -51,6 +51,8 @@ public class UI_CollectiblesPanel : MonoBehaviour
         // Create UI only for owned collectibles
         foreach (var collectible in ownedCollectibles)
         {
+            Debug.Log($"Creating UI for collectible: {(collectible != null ? collectible.itemName : "NULL COLLECTIBLE")}");
+            
             GameObject itemObj = Instantiate(collectibleItemPrefab, collectibleListParent);
             UI_CollectibleDetail collectibleDetail = itemObj.GetComponent<UI_CollectibleDetail>();
             
@@ -58,6 +60,10 @@ public class UI_CollectiblesPanel : MonoBehaviour
             {
                 collectibleDetail.Initialize(collectible);
                 collectibleItems.Add(collectibleDetail);
+            }
+            else
+            {
+                Debug.LogError("UI_CollectibleDetail component NOT FOUND on prefab!");
             }
         }
         
