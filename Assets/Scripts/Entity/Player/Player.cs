@@ -1700,6 +1700,29 @@ public class Player : Entity
         {
             ToggleInventory();
         }
+        
+        // Test collectible (geçici - daha sonra kaldır)
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            AddTestCollectible();
+        }
+    }
+    
+    // Test için collectible ekleme (geçici metod)
+    private void AddTestCollectible()
+    {
+        // Collectible'ı Resources'tan yükle
+        CollectibleData testCollectible = Resources.Load<CollectibleData>("Items/YourCollectibleName");
+        
+        if (testCollectible != null && Inventory.instance != null)
+        {
+            Inventory.instance.AddItem(testCollectible);
+            Debug.Log($"Test collectible added: {testCollectible.itemName}");
+        }
+        else
+        {
+            Debug.LogWarning("Test collectible not found! Make sure it's in Resources/Items/");
+        }
     }
     
     private void ToggleInventory()

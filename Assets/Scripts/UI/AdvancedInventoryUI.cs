@@ -9,8 +9,12 @@ public class AdvancedInventoryUI : BaseUIPanel
     public static AdvancedInventoryUI Instance { get; private set; }
     
     [Header("Main UI References")]
-    [SerializeField] private GameObject inventoryPanel;
+    [SerializeField] private GameObject inventoryPanel;  // Ana parent panel - hep açık kalacak
     [SerializeField] private GameObject collectiblesPanel;
+    
+    [Header("Inventory Sub-Panels")]
+    [SerializeField] private GameObject equipmentItemsPanel;  // Equipment kısmı
+    [SerializeField] private GameObject equipmentRunesPanel;  // Runes kısmı
     
     [Header("Equipment Slots (Left Side)")]
     [SerializeField] private UI_EquipmentSlot weaponSlot;
@@ -51,6 +55,9 @@ public class AdvancedInventoryUI : BaseUIPanel
     // Private fields
     private UI_MaterialDisplay[] materialDisplays;
     private bool isCollectiblesPage = false;
+    
+    // Public accessor for other systems
+    public bool IsCollectiblesPage => isCollectiblesPage;
     
     private void Awake()
     {
@@ -186,6 +193,10 @@ public class AdvancedInventoryUI : BaseUIPanel
     public void OpenInventory()
     {
         gameObject.SetActive(true);
+        
+        // Always start with inventory page when opening
+        ShowInventoryPage();
+        
         UpdateMaterialDisplays();
         UpdateStatsDisplay();
         UpdateGearCapacity();
@@ -206,19 +217,38 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
     }
     
-    public void ShowInventoryPage()
+        public void ShowInventoryPage()
     {
         isCollectiblesPage = false;
-        inventoryPanel.SetActive(true);
-        collectiblesPanel.SetActive(false);
+        
+        // Ana inventory panel zaten açık - sadece alt panelleri kontrol et
+        if (equipmentItemsPanel != null)
+            equipmentItemsPanel.SetActive(true);
+            
+        if (equipmentRunesPanel != null)
+            equipmentRunesPanel.SetActive(true);
+            
+        if (collectiblesPanel != null)
+            collectiblesPanel.SetActive(false);
+        
         UpdateGearCapacity();
     }
     
-    public void ShowCollectiblesPage()
+        public void ShowCollectiblesPage()
     {
         isCollectiblesPage = true;
-        inventoryPanel.SetActive(false);
-        collectiblesPanel.SetActive(true);
+        
+        // Ana inventory panel açık kalır - sadece alt panelleri kapat
+        if (equipmentItemsPanel != null)
+            equipmentItemsPanel.SetActive(false);
+            
+        if (equipmentRunesPanel != null)
+            equipmentRunesPanel.SetActive(false);
+            
+        if (collectiblesPanel != null)
+            collectiblesPanel.SetActive(true);
+        
+        // Page açıldığında mevcut collectible'ları göster
         RefreshCollectiblesDisplay();
     }
     
@@ -226,20 +256,31 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     #region Display Updates
     
-    private void RefreshCollectiblesDisplay()
+    public void RefreshCollectiblesDisplay()
     {
-        if (Inventory.instance == null || !isCollectiblesPage) return;
+        if (Inventory.instance == null) return;
         
-        // Get collectible items
-        var collectibles = Inventory.instance.inventoryItems
-            .Where(item => item.data.itemType == ItemType.Collectible)
-            .ToList();
-        
-        // TODO: Implement collectibles display with UI_CollectiblesPanel
-        Debug.Log($"Displaying {collectibles.Count} collectibles");
+        // Get UI_CollectiblesPanel component from collectiblesPanel
+        if (collectiblesPanel != null)
+        {
+            UI_CollectiblesPanel collectiblesUI = collectiblesPanel.GetComponent<UI_CollectiblesPanel>();
+            if (collectiblesUI != null)
+            {
+                collectiblesUI.RefreshCollectiblesDisplay();
+                Debug.Log("Collectibles display refreshed - new collectible added!");
+            }
+            else
+            {
+                Debug.LogWarning("UI_CollectiblesPanel component not found on collectiblesPanel! Please add the component.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Collectibles panel reference is not set in AdvancedInventoryUI!");
+        }
     }
     
-    private void UpdateMaterialDisplays()
+    public void UpdateMaterialDisplays()
     {
         if (Inventory.instance == null) return;
         
@@ -305,6 +346,8 @@ public class AdvancedInventoryUI : BaseUIPanel
             criticalChanceText.text = $"{Mathf.RoundToInt(critPercentage)}%";
         }
     }
+    
+    
     
     #endregion
     

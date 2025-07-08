@@ -7,9 +7,7 @@ public class CollectibleData : ItemData
     public CollectibleType collectibleType;
     public CollectibleCategory category;
     
-    [Header("Collection Info")]
-    public string setName; // Which collection set this belongs to
-    public int setID; // Unique ID for the collection set
+    [Header("Collectible Info")]
     public bool isRareCollectible;
     
     [Header("Rewards")]
@@ -35,10 +33,7 @@ public class CollectibleData : ItemData
         string tooltip = $"<b>{itemName}</b>\n";
         tooltip += $"<color=grey>{category} Collectible</color>\n";
         
-        if (!string.IsNullOrEmpty(setName))
-        {
-            tooltip += $"<color=cyan>Set: {setName}</color>\n";
-        }
+
         
         if (isRareCollectible)
         {

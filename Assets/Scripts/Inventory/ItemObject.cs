@@ -189,6 +189,12 @@ public class ItemObject : MonoBehaviour
                 }
             }
             
+            // Eğer bu bir Collectible ise, özel mesaj göster
+            if (itemData is CollectibleData collectible)
+            {
+                ShowCollectibleFoundMessage(collectible);
+            }
+            
             // Item'ı toplanan olarak işaretle
             if (ItemCollectionManager.Instance != null)
             {
@@ -230,5 +236,25 @@ public class ItemObject : MonoBehaviour
         {
             PickupItem();
         }
+    }
+    
+    private void ShowCollectibleFoundMessage(CollectibleData collectible)
+    {
+        string message = $"✨ Collectible Found! ✨\n{collectible.itemName}";
+        
+        if (!string.IsNullOrEmpty(collectible.discoveryLocation))
+        {
+            message += $"\nDiscovered in: {collectible.discoveryLocation}";
+        }
+        
+        if (collectible.isRareCollectible)
+        {
+            message = $"🌟 RARE {message} 🌟";
+        }
+        
+        Debug.Log(message);
+        
+        // TODO: FloatingTextManager ile güzel bir UI mesajı gösterilebilir
+        // FloatingTextManager.CreateText(transform.position, message, Color.gold);
     }
 }

@@ -113,9 +113,15 @@ public class Inventory : MonoBehaviour
         // Update AdvancedInventoryUI if it exists and is active
         if (AdvancedInventoryUI.Instance != null && AdvancedInventoryUI.Instance.gameObject.activeInHierarchy)
         {
-            // Material displays will update automatically when inventory changes
-            // Equipment selection panels will update when opened
-            // Rune displays are handled by the rune system
+            // Update material displays
+            AdvancedInventoryUI.Instance.UpdateMaterialDisplays();
+            
+            // Check if a collectible was added and refresh if needed
+            var hasCollectibles = inventoryItems.Any(item => item.data is CollectibleData);
+            if (hasCollectibles)
+            {
+                AdvancedInventoryUI.Instance.RefreshCollectiblesDisplay();
+            }
         }
     }
 
