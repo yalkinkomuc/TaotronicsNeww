@@ -34,8 +34,7 @@ public class AdvancedInventoryUI : BaseUIPanel
     [SerializeField] private TextMeshProUGUI abilityPowerText;
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI criticalChanceText;
-    [SerializeField] private TextMeshProUGUI unusedText1;
-    [SerializeField] private TextMeshProUGUI unusedText2;
+    
     
     [Header("Page Buttons")]
     [SerializeField] private Button inventoryPageButton;
