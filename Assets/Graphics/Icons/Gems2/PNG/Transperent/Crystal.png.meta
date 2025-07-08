@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 6e155d556b29bc84690daf673679a942
+guid: fc7322cfef9b314409a85dfc195b6a0a
 AssetOrigin:
   serializedVersion: 1
   productId: 186427
   packageName: 4416 RPG Icons Pixel Art
   packageVersion: 1.7
-  assetPath: Assets/RPG Icons Pixel Art/Gems1/PNG/Transperent/Icon45.png
+  assetPath: Assets/RPG Icons Pixel Art/Gems2/PNG/Transperent/Icon26.png
   uploadId: 644653
 TextureImporter:
   internalIDToNameTable: []
@@ -79,7 +79,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -89,6 +89,19 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
