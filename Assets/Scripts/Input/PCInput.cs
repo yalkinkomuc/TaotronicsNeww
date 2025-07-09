@@ -29,8 +29,8 @@ public class PCInput : IPlayerInput
     public bool inventoryInput => inputEnabled && Input.GetKeyDown(KeyCode.I);
     
     // Tab switching inputs (UI only - Q/E keys reused for UI navigation when gameplay is disabled)
-    public bool tabLeftInput => inputEnabled && Input.GetKeyDown(KeyCode.Q);
-    public bool tabRightInput => inputEnabled && Input.GetKeyDown(KeyCode.E);
+    public bool tabLeftInput => inputEnabled && !gameplayInputEnabled && Input.GetKeyDown(KeyCode.Q);
+    public bool tabRightInput => inputEnabled && !gameplayInputEnabled && Input.GetKeyDown(KeyCode.E);
     
     // Disables all input (including UI)
     public void DisableAllInput()
