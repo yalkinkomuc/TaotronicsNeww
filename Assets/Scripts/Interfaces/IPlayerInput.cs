@@ -26,6 +26,9 @@ public interface IPlayerInput
      bool tabLeftInput { get; }
      bool tabRightInput { get; }
      
+     // Menu close input (UI only)
+     bool escapeInput { get; }
+     
      void DisableAllInput();
      void EnableAllInput();
      

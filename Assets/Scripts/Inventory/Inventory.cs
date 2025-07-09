@@ -293,4 +293,20 @@ public class Inventory : MonoBehaviour
             SaveInventory();
         }
     }
+    
+    // Get all collectibles from inventory
+    public List<CollectibleData> GetCollectibles()
+    {
+        List<CollectibleData> collectibles = new List<CollectibleData>();
+        
+        foreach (var item in inventoryItems)
+        {
+            if (item.data is CollectibleData collectible)
+            {
+                collectibles.Add(collectible);
+            }
+        }
+        
+        return collectibles;
+    }
 }

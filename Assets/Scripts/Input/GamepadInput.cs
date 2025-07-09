@@ -32,8 +32,11 @@ public class GamepadInput : IPlayerInput
     public bool inventoryInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton6); // Back/Select button for inventory
     
     // Tab switching inputs (UI only - LB/RB for tab navigation)
-    public bool tabLeftInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton4); // LB (Left Bumper)
-    public bool tabRightInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton5); // RB (Right Bumper)
+    public bool tabLeftInput => inputEnabled && !gameplayInputEnabled&& Input.GetKeyDown(KeyCode.JoystickButton4); // LB (Left Bumper)
+    public bool tabRightInput => inputEnabled && !gameplayInputEnabled && Input.GetKeyDown(KeyCode.JoystickButton5); // RB (Right Bumper)
+    
+    // Menu close input (Start button)
+    public bool escapeInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton7); // Start button
     
     // Disables all input (including UI)
     public void DisableAllInput()

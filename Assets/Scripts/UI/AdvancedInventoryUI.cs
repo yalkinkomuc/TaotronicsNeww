@@ -70,12 +70,24 @@ public class AdvancedInventoryUI : BaseUIPanel
             
             // Instance atandıktan sonra başlangıçta kapat
             gameObject.SetActive(false);
+            
+            // Also ensure all panels are closed
+            EnsureAllPanelsClosed();
         }
         else if (Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+    }
+    
+    private void EnsureAllPanelsClosed()
+    {
+        // Force close all sub-panels
+        if (inventoryPanel != null) inventoryPanel.SetActive(false);
+        if (collectiblesPanel != null) collectiblesPanel.SetActive(false);
+        if (equipmentItemsPanel != null) equipmentItemsPanel.SetActive(false);
+        if (equipmentRunesPanel != null) equipmentRunesPanel.SetActive(false);
     }
     
     private void Start()
@@ -89,10 +101,12 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
     }
     
+
+    
     private void InitializeUI()
     {
         // Start with inventory page active
-        ShowInventoryPage();
+        //ShowInventoryPage();
         
         // Create UI elements
         InitializeMaterialDisplays();
@@ -129,7 +143,8 @@ public class AdvancedInventoryUI : BaseUIPanel
             return;
         }
         
-        // Configure tabs programmatically
+        // Don't initialize tabs here - they will be initialized when inventory opens
+        // This prevents tabs from being activated during startup
         SetupTabs();
     }
     
@@ -247,10 +262,14 @@ public class AdvancedInventoryUI : BaseUIPanel
     {
         gameObject.SetActive(true);
         
-        // Always start with inventory page when opening
+        // Initialize tab system when opening inventory
         if (tabManager != null)
         {
-            tabManager.SelectTab(0); // Start with inventory tab
+            // Ensure tabs are initialized first
+            tabManager.InitializeTabs();
+            
+            // Then select the first tab (inventory tab)
+            tabManager.SelectTab(0);
         }
         else
         {

@@ -12,20 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba424d5e1056774448ea68cb8320da37, type: 3}
   m_Name: Artifact
   m_EditorClassIdentifier: 
-  itemName: 
-  description: 
-  icon: {fileID: 0}
+  itemName: Artifact
+  description: Artifact
+  icon: {fileID: 21300000, guid: 114c28ef96dbb8e4c82986dfba3d50af, type: 3}
   itemType: 6
-  dropChance: 0
+  dropChance: 100
   sellValue: 0
   rarity: 0
   isStackable: 0
   maxStackSize: 1
-  resourcePath: 
+  resourcePath: Items/a
   collectibleType: 0
   category: 0
-  setName: 
-  setID: 0
   isRareCollectible: 0
   grantsReward: 0
   rewardDescription: 

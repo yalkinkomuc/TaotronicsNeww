@@ -52,13 +52,18 @@ public class TabManager : MonoBehaviour
     
     private void Start()
     {
-        InitializeTabs();
+        // Don't auto-initialize tabs on Start
+        // Let the parent UI call InitializeTabs() when it opens
     }
     
     private void Update()
     {
-        // Only handle input when this UI is active
+        // Only handle input when this UI is active AND its parent is active
         if (!gameObject.activeInHierarchy || !isInitialized) return;
+        
+        // Extra check: Only handle tab switching when parent UI is also active
+        Transform parent = transform.parent;
+        if (parent != null && !parent.gameObject.activeInHierarchy) return;
         
         HandleTabSwitching();
     }
@@ -129,15 +134,25 @@ public class TabManager : MonoBehaviour
     
     #region Tab Navigation
     
-    private void HandleTabSwitching()
+        private void HandleTabSwitching()
     {
         // Get player input
         IPlayerInput playerInput = GetPlayerInput();
         if (playerInput == null) return;
-        
+
+        // Handle ESC input to close the entire tab UI system
+        if (playerInput.escapeInput)
+        {
+            CloseParentUI();
+            return; // Exit early since we're closing the UI
+        }
+
+        // Only handle tab switching if we have multiple tabs
+        if (tabs.Count <= 1) return;
+
         bool leftPressed = playerInput.tabLeftInput;
         bool rightPressed = playerInput.tabRightInput;
-        
+
         if (leftPressed)
         {
             SwitchToPreviousTab();
@@ -146,6 +161,39 @@ public class TabManager : MonoBehaviour
         {
             SwitchToNextTab();
         }
+    }
+    
+    private void CloseParentUI()
+    {
+        Debug.Log("TabManager: ESC input detected! Attempting to close parent UI...");
+        
+        // Method 1: Try to find AdvancedInventoryUI specifically (for backward compatibility)
+        AdvancedInventoryUI inventoryUI = GetComponentInParent<AdvancedInventoryUI>();
+        if (inventoryUI != null)
+        {
+            Debug.Log("TabManager: Found AdvancedInventoryUI, closing inventory...");
+            inventoryUI.CloseInventory();
+            return;
+        }
+        
+        // Method 2: Try to find any BaseUIPanel component in parent hierarchy
+        BaseUIPanel baseUI = GetComponentInParent<BaseUIPanel>();
+        if (baseUI != null)
+        {
+            Debug.Log($"TabManager: Found BaseUIPanel ({baseUI.GetType().Name}), closing it...");
+            baseUI.gameObject.SetActive(false);
+            return;
+        }
+        
+        // Method 3: Fallback - close the direct parent GameObject
+        if (transform.parent != null)
+        {
+            Debug.Log($"TabManager: Fallback - closing parent GameObject: {transform.parent.name}");
+            transform.parent.gameObject.SetActive(false);
+            return;
+        }
+        
+        Debug.LogWarning("TabManager: No parent UI found to close!");
     }
     
     public void SwitchToNextTab()

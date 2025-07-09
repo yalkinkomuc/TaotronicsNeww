@@ -149,9 +149,12 @@ public class UIInputBlocker : MonoBehaviour
     // Sahne yüklendikten sonra input'u restore et
     private System.Collections.IEnumerator RestoreInputAfterSceneLoad()
     {
+        // Wait for all systems to initialize first
+        yield return new WaitForSeconds(0.5f);
+        
         // Player'ın sahne değişimi sonrası hazır olmasını bekle
         float waitTime = 0f;
-        while (waitTime < 1f && (PlayerManager.instance?.player?.playerInput == null))
+        while (waitTime < 2f && (PlayerManager.instance?.player?.playerInput == null))
         {
             yield return new WaitForSeconds(0.1f);
             waitTime += 0.1f;
@@ -194,11 +197,18 @@ public class UIInputBlocker : MonoBehaviour
         
         Debug.Log($"UIInputBlocker: Total active panels: {activePanelCount}");
         
-        // If there are panels, disable input
+        // If there are panels, disable input (but only if Player is ready)
         if (activePanelCount > 0)
         {
-            Debug.Log("UIInputBlocker: Disabling input due to active panels");
-            DisableGameplayInput();
+            if (PlayerManager.instance?.player?.playerInput != null)
+            {
+                Debug.Log("UIInputBlocker: Disabling input due to active panels");
+                DisableGameplayInput();
+            }
+            else
+            {
+                Debug.Log("UIInputBlocker: Active panels found but Player not ready, skipping input disable");
+            }
         }
         else
         {
@@ -211,22 +221,47 @@ public class UIInputBlocker : MonoBehaviour
             else
             {
                 Debug.Log("UIInputBlocker: Player not ready yet, postponing input enable");
+                // Force enable after delay if no Player found
+                StartCoroutine(ForceEnableInputAfterDelay());
             }
         }
     }
     
-    // Called when a panel's visibility changes
+    private System.Collections.IEnumerator ForceEnableInputAfterDelay()
+    {
+        yield return new WaitForSeconds(2f);
+        
+        // If still no active panels and Player still not ready, force enable
+        if (activePanelCount == 0 && PlayerManager.instance?.player?.playerInput == null)
+        {
+            Debug.Log("UIInputBlocker: Force enabling input after delay (Player still not ready)");
+            SetUIBlockerVisibility(false);
+        }
+    }
+    
+        // Called when a panel's visibility changes
     public void OnPanelVisibilityChanged(GameObject panel, bool isVisible)
     {
-        if (isVisible)
+        // Double check the actual visibility state to prevent false triggers
+        bool actuallyVisible = panel != null && panel.activeInHierarchy;
+        
+        if (isVisible && actuallyVisible)
         {
             activePanelCount++;
             if (activePanelCount == 1) // When first panel activates
             {
-                DisableGameplayInput();
+                // Only disable input if Player is ready
+                if (PlayerManager.instance?.player?.playerInput != null)
+                {
+                    DisableGameplayInput();
+                }
+                else
+                {
+                    Debug.Log("UIInputBlocker: Panel activated but Player not ready, skipping input disable");
+                }
             }
         }
-        else
+        else if (!isVisible || !actuallyVisible)
         {
             if (activePanelCount > 0)
                 activePanelCount--;
@@ -236,7 +271,7 @@ public class UIInputBlocker : MonoBehaviour
                 EnableGameplayInput(true); // Force enable
             }
         }
-        
+
       //  Debug.Log($"Panel visibility changed: {(isVisible ? "Shown" : "Hidden")}. Active panel count: {activePanelCount}");
     }
     
@@ -311,14 +346,16 @@ public class UIInputBlocker : MonoBehaviour
             }
             else
             {
-                Debug.LogError("UIInputBlocker: PlayerInput is NULL!");
+                // Use warning instead of error since this might happen during game initialization
+                Debug.LogWarning("UIInputBlocker: PlayerInput is not yet initialized, will retry...");
                 // Try to retry after a delay
                 StartCoroutine(RetryDisableGameplayInput());
             }
         }
         else
         {
-            Debug.LogError("UIInputBlocker: Player is NULL!");
+            // Use warning instead of error since this might happen during game initialization
+            Debug.LogWarning("UIInputBlocker: Player is not yet initialized, will retry...");
             // Try to retry after a delay
             StartCoroutine(RetryDisableGameplayInput());
         }
@@ -335,7 +372,12 @@ public class UIInputBlocker : MonoBehaviour
         {
             yield return new WaitForSeconds(0.1f);
             retryCount++;
-            Debug.Log($"UIInputBlocker: Retrying DisableGameplayInput... Attempt {retryCount}");
+            
+            // Only log on first and last attempts to reduce log spam
+            if (retryCount == 1 || retryCount == 5)
+            {
+                Debug.Log($"UIInputBlocker: Retrying DisableGameplayInput... Attempt {retryCount}/5");
+            }
             
             Player player = PlayerManager.instance?.player;
             if (player != null && player.playerInput != null)
@@ -346,7 +388,8 @@ public class UIInputBlocker : MonoBehaviour
             }
         }
         
-        Debug.LogError("UIInputBlocker: Failed to disable gameplay input after retries!");
+        // Only log as warning since this might be expected during initialization
+        Debug.LogWarning("UIInputBlocker: Could not disable gameplay input after 5 attempts - this might be normal during scene loading");
     }
     
     // ONLY enable GAMEPLAY INPUTS

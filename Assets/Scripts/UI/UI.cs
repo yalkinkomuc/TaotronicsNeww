@@ -21,5 +21,16 @@ public class UI : BaseUIPanel
 
             Destroy(gameObject);
         }
+        
+        
+        
+    }
+
+    private void Start()
+    {
+        foreach (var panels in uiPanels)
+        {
+            panels.SetActive(false);
+        }
     }
 }
