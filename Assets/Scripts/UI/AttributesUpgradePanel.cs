@@ -122,6 +122,7 @@ public class AttributesUpgradePanel : BaseUIPanel
         {
             ApplyChanges();
             ClosePanel();
+            
         }
         else if (Input.GetKeyDown(KeyCode.R))
         {

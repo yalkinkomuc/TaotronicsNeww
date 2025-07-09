@@ -165,35 +165,10 @@ public class TabManager : MonoBehaviour
     
     private void CloseParentUI()
     {
-        Debug.Log("TabManager: ESC input detected! Attempting to close parent UI...");
-        
-        // Method 1: Try to find AdvancedInventoryUI specifically (for backward compatibility)
-        AdvancedInventoryUI inventoryUI = GetComponentInParent<AdvancedInventoryUI>();
-        if (inventoryUI != null)
+        foreach (var tab in tabs)
         {
-            Debug.Log("TabManager: Found AdvancedInventoryUI, closing inventory...");
-            inventoryUI.CloseInventory();
-            return;
+            tab.tabPanel.SetActive(false);
         }
-        
-        // Method 2: Try to find any BaseUIPanel component in parent hierarchy
-        BaseUIPanel baseUI = GetComponentInParent<BaseUIPanel>();
-        if (baseUI != null)
-        {
-            Debug.Log($"TabManager: Found BaseUIPanel ({baseUI.GetType().Name}), closing it...");
-            baseUI.gameObject.SetActive(false);
-            return;
-        }
-        
-        // Method 3: Fallback - close the direct parent GameObject
-        if (transform.parent != null)
-        {
-            Debug.Log($"TabManager: Fallback - closing parent GameObject: {transform.parent.name}");
-            transform.parent.gameObject.SetActive(false);
-            return;
-        }
-        
-        Debug.LogWarning("TabManager: No parent UI found to close!");
     }
     
     public void SwitchToNextTab()

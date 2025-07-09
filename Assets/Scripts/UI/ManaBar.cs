@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ManaBar : BaseUIPanel
+public class ManaBar : MonoBehaviour
 {
     [SerializeField] private Image manaBarFill;
     [SerializeField] private float smoothSpeed = 10f;

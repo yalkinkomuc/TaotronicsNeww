@@ -131,12 +131,27 @@ public class UIInputBlocker : MonoBehaviour
             }
         }
         
-        // Tüm BaseUIPanel componentlerini bul
+        // Tüm BaseUIPanel componentlerini bul (InGameUI elementlerini hariç tut)
+        string[] excludedInGameUINames = { "HealthBar", "ManaBar", "BossHealthBar" };
+        
         BaseUIPanel[] allPanels = FindObjectsOfType<BaseUIPanel>();
         foreach (BaseUIPanel panelComponent in allPanels)
         {
             GameObject panelObj = panelComponent.gameObject;
-            if (panelObj != null && IsValidGameObject(panelObj) && !uiPanels.Contains(panelObj))
+            
+            // InGameUI elementlerini exclude et
+            bool isExcluded = false;
+            foreach (string excludedName in excludedInGameUINames)
+            {
+                if (panelObj.name.Contains(excludedName))
+                {
+                    isExcluded = true;
+                    Debug.Log($"UIInputBlocker: Excluding InGameUI element: {panelObj.name}");
+                    break;
+                }
+            }
+            
+            if (!isExcluded && panelObj != null && IsValidGameObject(panelObj) && !uiPanels.Contains(panelObj))
             {
                 Debug.Log($"UIInputBlocker: Adding BaseUIPanel: {panelObj.name}");
                 uiPanels.Add(panelObj);
