@@ -12455,8 +12455,8 @@ GameObject:
   m_Component:
   - component: {fileID: 142924202}
   - component: {fileID: 142924204}
-  - component: {fileID: 142924205}
   - component: {fileID: 142924206}
+  - component: {fileID: 142924205}
   m_Layer: 5
   m_Name: Collectibles_UI
   m_TagString: Untagged
@@ -21415,7 +21415,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiPanels: []
   uiBlockerPanel: {fileID: 695513329}
-  skillTreePanel: {fileID: 531149589}
+  skillTreePanel: {fileID: 0}
 --- !u!1 &704877438
 GameObject:
   m_ObjectHideFlags: 0
