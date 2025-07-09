@@ -287,17 +287,35 @@ public class CheckpointSelectionScreen : BaseUIPanel
             // Health Bar'ı güncelle
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+            else
+            {
+                // Force reinitialize health bar if reference is lost
+                HealthBar healthBar = player.GetComponent<HealthBar>();
+                if (healthBar != null)
+                {
+                    healthBar.ForceReinitialize();
+                }
+            }
+            
+            // Force mana bar update as well
+            ManaBar manaBar = player.GetComponent<ManaBar>();
+            if (manaBar != null)
+            {
+                manaBar.UpdateManaBar(playerStats.currentMana, playerStats.maxMana.GetValue());
+            }
                 
             // Rest açık bir şekilde logla
             Debug.Log($"<color=green>OYUNCU REST YAPTI!</color> Can: {playerStats.currentHealth:F0}/{maxHealthValue:F0} (FULL CAN)");
             Debug.Log($"<color=blue>Önceki Max Health: {oldMaxHealth:F0}, Yeni Max Health: {maxHealthValue:F0}</color>");
             
             // UI'ı güncelle
-            System.Type playerStatsType = playerStats.GetType();
-            var updateLevelUIMethod = playerStatsType.GetMethod("UpdateLevelUI", System.Reflection.BindingFlags.Instance | 
-                                                  System.Reflection.BindingFlags.NonPublic);
-            if (updateLevelUIMethod != null)
-                updateLevelUIMethod.Invoke(playerStats, null);
+            playerStats.UpdateLevelUI();
+            
+            // Force UI reference refresh after rest
+            if (InGameUI.instance != null)
+            {
+                InGameUI.instance.ForceRefreshReferences();
+            }
             
             // Değişiklikleri kaydet
             SavePlayerPosition();

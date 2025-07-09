@@ -168,6 +168,28 @@ public class Checkpoint : MonoBehaviour, IInteractable
             // Health bar'ı güncelle
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(playerStats.currentHealth, playerStats.maxHealth.GetValue());
+            else
+            {
+                // Force reinitialize health bar if reference is lost
+                HealthBar healthBar = player.GetComponent<HealthBar>();
+                if (healthBar != null)
+                {
+                    healthBar.ForceReinitialize();
+                }
+            }
+            
+            // Force mana bar update as well
+            ManaBar manaBar = player.GetComponent<ManaBar>();
+            if (manaBar != null)
+            {
+                manaBar.UpdateManaBar(playerStats.currentMana, playerStats.maxMana.GetValue());
+            }
+            
+            // Force UI reference refresh after healing
+            if (InGameUI.instance != null)
+            {
+                InGameUI.instance.ForceRefreshReferences();
+            }
                 
            
         }

@@ -42,6 +42,7 @@ public class AdvancedInventoryUI : BaseUIPanel
     [SerializeField] private TextMeshProUGUI abilityPowerText;
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI criticalChanceText;
+    [SerializeField] private TextMeshProUGUI goldText;
     
     [Header("Tab System")]
     [SerializeField] private TabManager tabManager;
@@ -412,6 +413,20 @@ public class AdvancedInventoryUI : BaseUIPanel
             
         if (criticalChanceText != null)
             criticalChanceText.text = stats.ContainsKey(StatType.CriticalChance) ? $"{stats[StatType.CriticalChance]}%" : "0%";
+            
+        // Update gold display from PlayerStats
+        if (goldText != null)
+        {
+            PlayerStats playerStats = PlayerManager.instance?.player?.GetComponent<PlayerStats>();
+            if (playerStats != null)
+            {
+                goldText.text = playerStats.gold.ToString() + " G";
+            }
+            else
+            {
+                goldText.text = "0 G";
+            }
+        }
     }
     
     #endregion

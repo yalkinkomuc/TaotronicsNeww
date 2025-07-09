@@ -228,7 +228,7 @@ public class PlayerStats : CharacterStats
         }
     }
     
-    private void UpdateLevelUI()
+    public void UpdateLevelUI()
     {
         // Update level text if assigned
         if (levelText != null)
@@ -240,6 +240,11 @@ public class PlayerStats : CharacterStats
             {
                 levelText.text += " (SP: " + availableSkillPoints + ")";
             }
+        }
+        else
+        {
+            // Try to find level text if it's null
+            RefreshUIReferences();
         }
         
         // Update experience bar if assigned
@@ -253,6 +258,11 @@ public class PlayerStats : CharacterStats
         if (goldText != null)
         {
             goldText.text = gold.ToString() + " G";
+        }
+        else
+        {
+            // Try to find gold text if it's null
+            RefreshUIReferences();
         }
     }
     
@@ -285,6 +295,47 @@ public class PlayerStats : CharacterStats
     {
         PlayerPrefs.SetInt("PlayerGold", gold);
         PlayerPrefs.Save();
+    }
+    
+    // Refresh UI references if they are lost after scene loading
+    private void RefreshUIReferences()
+    {
+        // Try to find UI components by name if they're null
+        if (levelText == null)
+        {
+            GameObject levelObj = GameObject.Find("LevelText");
+            if (levelObj == null) levelObj = GameObject.Find("Level_Text");
+            if (levelObj == null) levelObj = GameObject.Find("PlayerLevel");
+            if (levelObj != null)
+            {
+                levelText = levelObj.GetComponent<TextMeshProUGUI>();
+                Debug.Log("PlayerStats: Found levelText reference");
+            }
+        }
+        
+        if (goldText == null)
+        {
+            GameObject goldObj = GameObject.Find("GoldText");
+            if (goldObj == null) goldObj = GameObject.Find("Gold_Text");
+            if (goldObj == null) goldObj = GameObject.Find("PlayerGold");
+            if (goldObj != null)
+            {
+                goldText = goldObj.GetComponent<TextMeshProUGUI>();
+                Debug.Log("PlayerStats: Found goldText reference");
+            }
+        }
+        
+        if (experienceBar == null)
+        {
+            GameObject expObj = GameObject.Find("ExperienceBar");
+            if (expObj == null) expObj = GameObject.Find("ExpBar");
+            if (expObj == null) expObj = GameObject.Find("Experience_Fill");
+            if (expObj != null)
+            {
+                experienceBar = expObj.GetComponent<Image>();
+                Debug.Log("PlayerStats: Found experienceBar reference");
+            }
+        }
     }
     
     // Save player experience and level data to PlayerPrefs
