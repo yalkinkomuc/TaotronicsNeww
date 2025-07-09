@@ -90,20 +90,17 @@ public class UI_ChestInventory : BaseUIPanel
     
     private void PrintDebugInfo()
     {
+        if (!debugMode) return;
+        
         Debug.Log("--- UI_ChestInventory Debug Info ---");
         Debug.Log("Container: " + (itemSlotsContainer != null ? itemSlotsContainer.name : "NULL"));
         Debug.Log("Prefab: " + (itemSlotPrefab != null ? itemSlotPrefab.name : "NULL"));
-        Debug.Log("Slot sayısı: " + itemSlots.Count);
+        Debug.Log("Slot count: " + itemSlots.Count);
         
         if (currentChest != null)
         {
             Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
-            Debug.Log("Chest unique item sayısı: " + stackedItems.Count);
-            
-            foreach (var pair in stackedItems)
-            {
-                Debug.Log($"Item: {pair.Key}, Count: {pair.Value}");
-            }
+            Debug.Log("Chest unique item count: " + stackedItems.Count);
         }
         else
         {
@@ -111,82 +108,72 @@ public class UI_ChestInventory : BaseUIPanel
         }
     }
 
-    // Sandığı aç
+    // Open chest
     public void OpenChest(Chest chest)
     {
         if (chest == null)
         {
-            Debug.LogError("OpenChest: chest parametresi null!");
+            Debug.LogError("OpenChest: chest parameter is null!");
             return;
         }
         
-        // Debug.Log - Sandık açılırken
-        Dictionary<string, int> stackedItems = chest.GetStackedItems();
-        Debug.Log($"Chest açılıyor... Unique item sayısı: {stackedItems.Count}");
-        
-        // Sandık referansını kaydet
+        // Store chest reference
         currentChest = chest;
         
-        // UI Input Blocker'a ekle - Gameplay inputları devre dışı bırakmak için
+        // Add to UI Input Blocker to disable gameplay inputs
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
         }
         
-        // UI'ı göster
+        // Show UI
         gameObject.SetActive(true);
         
-        // DAHA SONRA slotları oluştur (UI aktif olduktan sonra)
+        // Create slots after UI is active
         RefreshItemSlots();
     }
 
-    // Slotları güncelle/oluştur
+    // Update/create slots
     private void RefreshItemSlots()
     {
-        if (debugMode)
-        {
-            Debug.Log("RefreshItemSlots çağrıldı");
-        }
-        
-        // Mevcut slotları temizle
+        // Clear existing slots
         ClearItemSlots();
         
-        // Sandığın içeriğini kontrol et
+        // Check chest contents
         if (currentChest == null)
         {
-            Debug.LogWarning("Chest null!");
+            Debug.LogWarning("Chest is null!");
             return;
         }
         
-        // Stacked items bilgisini al
+        // Get stacked items information
         Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
         if (stackedItems.Count == 0)
         {
-            Debug.Log("Sandıkta hiç item kalmamış.");
-            return;
+            return; // No items left in chest
         }
         
-        // UI CONTAINER KONTROL
+        // UI container check
         if (itemSlotsContainer == null)
         {
-            Debug.LogError("itemSlotsContainer NULL! Slotlar oluşturulamıyor.");
+            Debug.LogError("itemSlotsContainer is NULL! Cannot create slots.");
             return;
         }
         
-        // PREFAB KONTROL
+        // Prefab check
         if (itemSlotPrefab == null)
         {
-            Debug.LogError("itemSlotPrefab NULL! Slotlar oluşturulamıyor.");
+            Debug.LogError("itemSlotPrefab is NULL! Cannot create slots.");
             return;
         }
         
-        // Her stack için tek bir slot oluştur
+        // Create one slot for each stack
         foreach (var pair in stackedItems)
         {
             string itemName = pair.Key;
             int count = pair.Value;
             
-            // Item referansını al
+            // Get item reference
             GameObject itemObj = currentChest.GetItemReference(itemName);
             if (itemObj == null) continue;
             
@@ -195,67 +182,55 @@ public class UI_ChestInventory : BaseUIPanel
             
             ItemData itemData = itemComponent.GetItemData();
             
-            // Slot oluştur
+            // Create slot
             GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotsContainer);
             UI_ItemSlot slot = slotObj.GetComponent<UI_ItemSlot>();
             
             if (slot != null)
             {
-                // InventoryItem oluştur ve stack sayısını ayarla
+                // Create InventoryItem and set stack count
                 InventoryItem invItem = new InventoryItem(itemData);
-                // Stack sayısını manuel ayarla
+                // Manually set stack count (starts with 1, so start from 1)
                 for (int i = 1; i < count; i++)
                 {
-                    invItem.AddStack(); // Başlangıçta zaten 1, o yüzden 1'den başla
+                    invItem.AddStack();
                 }
                 
                 slot.UpdateSlot(invItem);
                 itemSlots.Add(slot);
                 
-                // Slot'a tıklama eventi ekle
+                // Add click event to slot
                 Button slotButton = slotObj.GetComponent<Button>();
                 if (slotButton != null)
                 {
-                    // Bu değişkeni Final olarak tanımla
+                    // Define this variable as final
                     GameObject finalItemObj = itemObj;
                     slotButton.onClick.AddListener(() => TakeItem(finalItemObj));
                 }
                 else
                 {
-                    Debug.LogError("Slot'ta button bileşeni bulunamadı!");
+                    Debug.LogError("Button component not found on slot!");
                 }
             }
             else
             {
-                Debug.LogError("Slot objesinde UI_ItemSlot bileşeni bulunamadı!");
+                Debug.LogError("UI_ItemSlot component not found on slot object!");
             }
         }
-        
-        Debug.Log($"Toplam {stackedItems.Count} farklı item türü gösteriliyor.");
     }
     
-    // Tekil item stack'ını al
+    // Take individual item stack
     private void TakeItem(GameObject item)
     {
         if (currentChest != null && item != null)
         {
-            ItemObject itemObj = item.GetComponent<ItemObject>();
-            if (itemObj != null && itemObj.GetItemData() != null)
-            {
-                Debug.Log($"TakeItem çağrıldı: {itemObj.GetItemData().itemName}");
-            }
-            else
-            {
-                Debug.Log("TakeItem çağrıldı: " + item.name);
-            }
-            
-            // Sandıktan itemı al
+            // Remove item from chest
             currentChest.RemoveItem(item);
             
-            // Slotları güncelle
+            // Update slots
             RefreshItemSlots();
             
-            // Eğer sandıktaki tüm itemlar bittiyse UI'ı kapat
+            // Close UI if no items left in chest
             Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
             if (stackedItems.Count == 0)
             {
@@ -264,21 +239,18 @@ public class UI_ChestInventory : BaseUIPanel
         }
     }
     
-    // Tüm itemleri al
+    // Take all items
     private void TakeAllItems()
     {
         if (currentChest != null)
         {
-            Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
-            Debug.Log($"Take All çağrıldı, unique item sayısı: {stackedItems.Count}");
-            
-            // Tüm itemları sandıktan al
+            // Take all items from chest
             currentChest.TakeAllItems();
             
-            // Slotları güncelle
+            // Update slots
             RefreshItemSlots();
             
-            // Eğer sandık boşsa UI'ı kapat
+            // Close UI if chest is empty
             if (currentChest.GetStackedItems().Count == 0)
             {
                 CloseChest();
@@ -286,7 +258,7 @@ public class UI_ChestInventory : BaseUIPanel
         }
     }
     
-    // Tüm slotları temizle
+    // Clear all slots
     private void ClearItemSlots()
     {
         foreach (UI_ItemSlot slot in itemSlots)
@@ -300,38 +272,35 @@ public class UI_ChestInventory : BaseUIPanel
         itemSlots.Clear();
     }
 
-    // Sandığı kapat
+    // Close chest
     public void CloseChest()
     {
-        // Sandık referansını sakla
+        // Store chest reference
         Chest tempChest = currentChest;
         currentChest = null;
         
-        // ÖNEMLİ: Önce Input Blocker'dan kaldır - Gameplay inputları etkinleştir
+        // IMPORTANT: First remove from Input Blocker - Enable gameplay inputs
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
         }
         
-        // Zorla input'u etkinleştir
+        // Force enable input
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.EnableGameplayInput(true);
         }
         
-        // Slotları temizle
+        // Clear slots
         ClearItemSlots();
         
-        // UI'ı gizle - SONRA yap
+        // Hide UI - Do this after
         gameObject.SetActive(false);
         
-        // Sandık hala varsa, kapatma işlemini yap
+        // If chest still exists, perform close operation
         if (tempChest != null)
         {
             tempChest.CloseChest();
         }
-        
-        // Debug.Log ile input durumunu kontrol et
-        Debug.Log("Chest UI kapandı, input etkinleştirildi!");
     }
 } 

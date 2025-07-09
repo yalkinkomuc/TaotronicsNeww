@@ -43,6 +43,8 @@ public class AdvancedInventoryUI : BaseUIPanel
     [SerializeField] private TextMeshProUGUI defenseText;
     [SerializeField] private TextMeshProUGUI criticalChanceText;
     
+    [Header("Tab System")]
+    [SerializeField] private TabManager tabManager;
     
     [Header("Page Buttons")]
     [SerializeField] private Button inventoryPageButton;
@@ -83,6 +85,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         {
             InitializeUI();
             SetupEventListeners();
+            InitializeTabSystem();
         }
     }
     
@@ -109,10 +112,59 @@ public class AdvancedInventoryUI : BaseUIPanel
         EquipmentManager.OnRuneChanged += OnRuneChanged;
         EquipmentManager.OnStatsUpdated += UpdateStatsDisplay;
         
-        // Button events
-        inventoryPageButton?.onClick.AddListener(ShowInventoryPage);
-        collectiblesPageButton?.onClick.AddListener(ShowCollectiblesPage);
+        // Button events (fallback for manual clicking)
+        inventoryPageButton?.onClick.AddListener(() => tabManager?.SelectTab(0));
+        collectiblesPageButton?.onClick.AddListener(() => tabManager?.SelectTab(1));
         closeButton?.onClick.AddListener(CloseInventory);
+        
+        // Tab system event
+        TabManager.OnTabChanged += OnTabChanged;
+    }
+    
+    private void InitializeTabSystem()
+    {
+        if (tabManager == null)
+        {
+            Debug.LogWarning("AdvancedInventoryUI: TabManager is not assigned!");
+            return;
+        }
+        
+        // Configure tabs programmatically
+        SetupTabs();
+    }
+    
+    private void SetupTabs()
+    {
+        // Create inventory tab
+        TabData inventoryTab = new TabData
+        {
+            tabName = "Inventory",
+            tabPanel = inventoryPanel,
+            tabButton = inventoryPageButton,
+            onTabSelected = () => ShowInventoryPage()
+        };
+        
+        // Create collectibles tab
+        TabData collectiblesTab = new TabData
+        {
+            tabName = "Collectibles", 
+            tabPanel = collectiblesPanel,
+            tabButton = collectiblesPageButton,
+            onTabSelected = () => ShowCollectiblesPage()
+        };
+        
+        // Note: We would add these tabs programmatically, but since TabManager 
+        // uses SerializeField tabs list, we'll configure them in the inspector instead
+        // This setup is more for future expansion where tabs might be added dynamically
+    }
+    
+    private void OnTabChanged(int tabIndex, string tabName)
+    {
+        // Update our internal state based on tab change
+        isCollectiblesPage = (tabIndex == 1);
+        
+        // Update UI elements that depend on current tab
+        UpdateGearCapacity();
     }
     
     private void OnDestroy()
@@ -121,6 +173,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         EquipmentManager.OnEquipmentChanged -= OnEquipmentChanged;
         EquipmentManager.OnRuneChanged -= OnRuneChanged;
         EquipmentManager.OnStatsUpdated -= UpdateStatsDisplay;
+        TabManager.OnTabChanged -= OnTabChanged;
         
         if (Instance == this)
         {
@@ -195,7 +248,14 @@ public class AdvancedInventoryUI : BaseUIPanel
         gameObject.SetActive(true);
         
         // Always start with inventory page when opening
-        ShowInventoryPage();
+        if (tabManager != null)
+        {
+            tabManager.SelectTab(0); // Start with inventory tab
+        }
+        else
+        {
+            ShowInventoryPage(); // Fallback
+        }
         
         UpdateMaterialDisplays();
         UpdateStatsDisplay();
@@ -217,7 +277,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
     }
     
-        public void ShowInventoryPage()
+    public void ShowInventoryPage()
     {
         isCollectiblesPage = false;
         
@@ -234,7 +294,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         UpdateGearCapacity();
     }
     
-        public void ShowCollectiblesPage()
+    public void ShowCollectiblesPage()
     {
         isCollectiblesPage = true;
         
@@ -267,7 +327,6 @@ public class AdvancedInventoryUI : BaseUIPanel
             if (collectiblesUI != null)
             {
                 collectiblesUI.RefreshCollectiblesDisplay();
-                Debug.Log("Collectibles display refreshed - new collectible added!");
             }
             else
             {
@@ -316,55 +375,38 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     private void UpdateStatsDisplay()
     {
-        // Find PlayerStats directly
-        PlayerStats playerStats = FindFirstObjectByType<PlayerStats>();
-        if (playerStats == null) return;
-
+        if (EquipmentManager.Instance == null) return;
+        
+        var stats = EquipmentManager.Instance.GetAllStats();
+        
         if (healthText != null)
-            healthText.text = Mathf.RoundToInt(playerStats.maxHealth.GetValue()).ToString();
-
+            healthText.text = stats.ContainsKey(StatType.Health) ? stats[StatType.Health].ToString() : "0";
+            
         if (attackDamageText != null)
-            attackDamageText.text = Mathf.RoundToInt(playerStats.baseDamage.GetValue()).ToString();
-
+            attackDamageText.text = stats.ContainsKey(StatType.Might) ? stats[StatType.Might].ToString() : "0";
+            
         if (abilityPowerText != null)
-        {
-            float elementalMultiplier = playerStats.GetTotalElementalDamageMultiplier();
-            float percentage = (elementalMultiplier - 1f) * 100f;
-            abilityPowerText.text = $"{Mathf.RoundToInt(percentage)}%";
-        }
-
+            abilityPowerText.text = "0"; // Placeholder
+            
         if (defenseText != null)
-        {
-            // Defense shows damage reduction percentage
-            float defenseReduction = Mathf.Clamp(playerStats.defenseStat, 0f, 80f);
-            defenseText.text = $"{Mathf.RoundToInt(defenseReduction)}%";
-        }
-
+            defenseText.text = stats.ContainsKey(StatType.Armor) ? stats[StatType.Armor].ToString() : "0";
+            
         if (criticalChanceText != null)
-        {
-            float critPercentage = playerStats.criticalChance * 100f;
-            criticalChanceText.text = $"{Mathf.RoundToInt(critPercentage)}%";
-        }
+            criticalChanceText.text = stats.ContainsKey(StatType.CriticalChance) ? $"{stats[StatType.CriticalChance]}%" : "0%";
     }
-    
-    
     
     #endregion
     
-    #region Event Handlers
+    #region Equipment Events
     
     private void OnEquipmentChanged(EquipmentSlot slot, EquipmentData equipment)
     {
-        // Equipment display is handled by individual equipment slots
         UpdateStatsDisplay();
-        UpdateGearCapacity();
     }
     
     private void OnRuneChanged(int slotIndex, RuneData rune)
     {
-        // Rune display is handled by individual rune slots
         UpdateStatsDisplay();
-        UpdateGearCapacity();
     }
     
     #endregion

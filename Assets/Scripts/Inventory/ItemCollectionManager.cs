@@ -6,7 +6,7 @@ public class ItemCollectionManager : MonoBehaviour
 {
     public static ItemCollectionManager Instance { get; private set; }
     
-    // Toplanan eşyaların ID'lerini tut
+    // Store IDs of collected items
     private HashSet<string> collectedItems = new HashSet<string>();
     
     private void Awake()
@@ -14,9 +14,9 @@ public class ItemCollectionManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // Parent objesi (Managers) zaten DontDestroyOnLoad
+            // Parent object (Managers) already has DontDestroyOnLoad
             
-            // Toplanan eşyaları yükle
+            // Load collected items
             LoadCollectedItems();
         }
         else
@@ -27,16 +27,15 @@ public class ItemCollectionManager : MonoBehaviour
     
     private void OnDisable()
     {
-        // Oyun kapatılırken toplanan eşyaları kaydet
+        // Save collected items when game is closing
         SaveCollectedItems();
     }
 
-    // Oyun kapatıldığında çağrılır
+    // Called when application quits
     private void OnApplicationQuit()
     {
-        // Oyun kapatılırken toplanan eşyaları kesin olarak kaydet
+        // Ensure collected items are saved when game closes
         SaveCollectedItems();
-        Debug.Log("Oyun kapatılıyor, toplanan eşyalar kaydedildi!");
     }
 
     public void MarkItemAsCollected(string itemID)
@@ -50,7 +49,7 @@ public class ItemCollectionManager : MonoBehaviour
         return collectedItems.Contains(itemID);
     }
     
-    // Toplanan eşyaları kaydet
+    // Save collected items
     private void SaveCollectedItems()
     {
         string[] itemArray = collectedItems.ToArray();
@@ -59,7 +58,7 @@ public class ItemCollectionManager : MonoBehaviour
         PlayerPrefs.Save();
     }
     
-    // Toplanan eşyaları yükle
+    // Load collected items
     private void LoadCollectedItems()
     {
         if (PlayerPrefs.HasKey("CollectedItems"))
@@ -71,7 +70,7 @@ public class ItemCollectionManager : MonoBehaviour
         }
     }
     
-    // String dizisini serileştirmek için yardımcı sınıf
+    // Helper class for serializing string arrays
     [System.Serializable]
     private class SerializableStringArray
     {

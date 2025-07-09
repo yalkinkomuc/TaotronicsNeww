@@ -22,6 +22,10 @@ public interface IPlayerInput
      bool fireballInput { get; }
      bool inventoryInput { get; }
      
+     // Tab switching inputs (UI only)
+     bool tabLeftInput { get; }
+     bool tabRightInput { get; }
+     
      void DisableAllInput();
      void EnableAllInput();
      

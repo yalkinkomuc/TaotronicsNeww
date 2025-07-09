@@ -61,21 +61,17 @@ public class ItemObject : MonoBehaviour
     {
         if (string.IsNullOrEmpty(uniqueID))
         {
-            // Editörde benzersiz ID oluştur
+            // Generate unique ID in editor
             uniqueID = "item_" + System.Guid.NewGuid().ToString();
         }
         
-        // Editor'da ItemData değiştirildiğinde görselleri güncelle
+        // Update visuals when ItemData changes in editor
         SetupVisuals();
     }
 
     private void SetupVisuals()
     {
-        if (itemData == null)
-        {
-            Debug.LogWarning("SetupVisuals: itemData null!");
-            return;
-        }
+        if (itemData == null) return;
         
         if (spriteRenderer == null)
         {
@@ -85,69 +81,47 @@ public class ItemObject : MonoBehaviour
         if (spriteRenderer != null && itemData.icon != null)
         {
             spriteRenderer.sprite = itemData.icon;
-            Debug.Log("Sprite ayarlandı: " + itemData.itemName);
-        }
-        else if (spriteRenderer != null)
-        {
-            Debug.LogWarning("ItemData.icon null: " + itemData.name);
-        }
-        else
-        {
-            Debug.LogWarning("SpriteRenderer bulunamadı");
-        }
-        
-        gameObject.name = "Item Object - " + itemData.itemName;
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            if (rb != null)
-            {
-                rb.linearVelocity = velocity;
-            }
+            gameObject.name = "Item Object - " + itemData.itemName;
         }
     }
 
-    // UniqueID döndür
+    // Get unique ID
     public string GetUniqueID()
     {
         return uniqueID;
     }
     
-    // UniqueID ayarla
+    // Set unique ID
     public void SetUniqueID(string id)
     {
         if (string.IsNullOrEmpty(id))
         {
-            Debug.LogError("SetUniqueID: Geçersiz ID!");
+            Debug.LogError("SetUniqueID: Invalid ID provided!");
             return;
         }
         
         uniqueID = id;
     }
 
-    // ItemData'yı ayarla
+    // Set ItemData
     public void SetItemData(ItemData data)
     {
         if (data == null)
         {
-            Debug.LogError("SetItemData: null data verildi!");
+            Debug.LogError("SetItemData: null data provided!");
             return;
         }
         
         itemData = data;
-        Debug.Log("ItemData ayarlandı: " + data.itemName);
         SetupVisuals();
     }
 
-    // ItemData'yı döndür
+    // Get ItemData
     public ItemData GetItemData()
     {
         if (itemData == null)
         {
-            Debug.LogError("GetItemData: itemData null! " + gameObject.name);
+            Debug.LogError("GetItemData: itemData is null! " + gameObject.name);
         }
         return itemData;
     }
@@ -156,7 +130,7 @@ public class ItemObject : MonoBehaviour
     {
         if (_itemData == null)
         {
-            Debug.LogError("SetupItem: null itemData verildi!");
+            Debug.LogError("SetupItem: null itemData provided!");
             return;
         }
         
@@ -167,35 +141,32 @@ public class ItemObject : MonoBehaviour
             rb.linearVelocity = _velocity;
         }
         
-        Debug.Log("Item setup edildi: " + _itemData.itemName);
         SetupVisuals();
     }
 
     public void PickupItem()
     {
-        // Inventory'e ekle
+        // Add to inventory
         if (Inventory.instance != null && itemData != null)
         {
             Inventory.instance.AddItem(itemData);
             
-            // Eğer bu bir Skill Shard ise, SkillManager'a ekle
-            if (itemData is SkillShard)
+            // If this is a Skill Shard, add to SkillManager
+            if (itemData is SkillShard shard)
             {
-                SkillShard shard = itemData as SkillShard;
                 if (SkillManager.Instance != null)
                 {
                     SkillManager.Instance.AddShards(shard.GetShardValue());
-                    Debug.Log("Collected skill shard: +" + shard.GetShardValue() + " shards");
                 }
             }
             
-            // Eğer bu bir Collectible ise, özel mesaj göster
+            // If this is a Collectible, show special message
             if (itemData is CollectibleData collectible)
             {
                 ShowCollectibleFoundMessage(collectible);
             }
             
-            // Item'ı toplanan olarak işaretle
+            // Mark item as collected
             if (ItemCollectionManager.Instance != null)
             {
                 ItemCollectionManager.Instance.MarkItemAsCollected(uniqueID);
@@ -205,7 +176,7 @@ public class ItemObject : MonoBehaviour
         }
         else
         {
-            Debug.LogError("PickupItem: Inventory.instance veya itemData null!");
+            Debug.LogError("PickupItem: Inventory.instance or itemData is null!");
         }
     }
 
@@ -252,9 +223,7 @@ public class ItemObject : MonoBehaviour
             message = $"🌟 RARE {message} 🌟";
         }
         
-        Debug.Log(message);
-        
-        // TODO: FloatingTextManager ile güzel bir UI mesajı gösterilebilir
+        // TODO: Show beautiful UI message with FloatingTextManager
         // FloatingTextManager.CreateText(transform.position, message, Color.gold);
     }
 }

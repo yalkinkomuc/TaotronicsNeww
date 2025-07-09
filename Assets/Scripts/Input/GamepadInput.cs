@@ -31,6 +31,10 @@ public class GamepadInput : IPlayerInput
     // UI Inputs (always active when inputEnabled, not affected by gameplayInputEnabled)
     public bool inventoryInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton6); // Back/Select button for inventory
     
+    // Tab switching inputs (UI only - LB/RB for tab navigation)
+    public bool tabLeftInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton4); // LB (Left Bumper)
+    public bool tabRightInput => inputEnabled && Input.GetKeyDown(KeyCode.JoystickButton5); // RB (Right Bumper)
+    
     // Disables all input (including UI)
     public void DisableAllInput()
     {

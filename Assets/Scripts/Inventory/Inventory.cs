@@ -11,7 +11,13 @@ public class Inventory : MonoBehaviour
     public List<InventoryItem> inventoryItems;
     public Dictionary<ItemData, InventoryItem> inventoryDictionary;
 
-    // Serileştirme için
+    // Auto-save settings
+    [Header("Save Settings")]
+    [SerializeField] private bool autoSaveEnabled = true;
+    [SerializeField] private float autoSaveInterval = 30f; // Save every 30 seconds
+    private float lastSaveTime;
+
+    // Serialization classes
     [Serializable]
     private class SavedItem
     {
@@ -34,7 +40,7 @@ public class Inventory : MonoBehaviour
             inventoryItems = new List<InventoryItem>();
             inventoryDictionary = new Dictionary<ItemData, InventoryItem>();
             
-            // Envanter verilerini yükle
+            // Load inventory data
             LoadInventory();
         }
         else
@@ -46,46 +52,60 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         // UI updates are now handled by AdvancedInventoryUI and other specialized systems
-        Debug.Log("Inventory system initialized with specialized UI");
+        lastSaveTime = Time.time;
+    }
+
+    private void Update()
+    {
+        // Auto-save system
+        if (autoSaveEnabled && Time.time - lastSaveTime >= autoSaveInterval)
+        {
+            SaveInventory();
+            lastSaveTime = Time.time;
+        }
     }
 
     public void AddItem(ItemData _item)
     {
         if (_item == null) return;
         
-        // Check if item is stackable
-        if (_item.isStackable && inventoryDictionary.TryGetValue(_item, out InventoryItem value))
+        // Check if item is stackable and already exists
+        if (_item.isStackable && inventoryDictionary.TryGetValue(_item, out InventoryItem existingItem))
         {
             // Add to existing stack if within limits
-            if (value.stackSize < _item.maxStackSize)
+            if (existingItem.stackSize < _item.maxStackSize)
             {
-                value.AddStack();
+                existingItem.AddStack();
             }
             else
             {
                 // Create new stack if current is at max
-                InventoryItem newItem = new InventoryItem(_item);
-                inventoryItems.Add(newItem);
-                inventoryDictionary.Add(_item, newItem);
+                CreateNewItemEntry(_item);
             }
         }
         else
         {
             // Create new item entry
-            InventoryItem newItem = new InventoryItem(_item);
-            inventoryItems.Add(newItem);
-            
-            if (_item.isStackable)
-            {
-                inventoryDictionary.Add(_item, newItem);
-            }
+            CreateNewItemEntry(_item);
         }
         
         // Notify UI systems about inventory changes
         NotifyInventoryChanged();
-        SaveInventory(); // Envanteri güncellediğimizde kaydet
         
-        Debug.Log($"Added {_item.itemName} to inventory. Type: {_item.itemType}");
+        // Mark inventory as dirty for next auto-save
+        MarkInventoryDirty();
+    }
+
+    private void CreateNewItemEntry(ItemData _item)
+    {
+        InventoryItem newItem = new InventoryItem(_item);
+        inventoryItems.Add(newItem);
+        
+        // Only add to dictionary if stackable to prevent duplicates
+        if (_item.isStackable && !inventoryDictionary.ContainsKey(_item))
+        {
+            inventoryDictionary.Add(_item, newItem);
+        }
     }
 
     public void RemoveItem(ItemData _item)
@@ -101,11 +121,13 @@ public class Inventory : MonoBehaviour
             {
                 value.RemoveStack();
             }
+            
+            // Notify UI systems about inventory changes
+            NotifyInventoryChanged();
+            
+            // Mark inventory as dirty for next auto-save
+            MarkInventoryDirty();
         }
-        
-        // Notify UI systems about inventory changes
-        NotifyInventoryChanged();
-        SaveInventory(); // Envanteri güncellediğimizde kaydet
     }
 
     private void NotifyInventoryChanged()
@@ -125,18 +147,18 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void Update()
+    private bool inventoryDirty = false;
+    
+    private void MarkInventoryDirty()
     {
-        if (Input.GetKeyDown(KeyCode.G) && inventoryItems.Count > 0)
-        {
-            ItemData newItem = inventoryItems[inventoryItems.Count - 1].data;
-            RemoveItem(newItem);
-        }
+        inventoryDirty = true;
     }
     
-    // Envanteri kaydetme fonksiyonu
+    // Manual save function
     public void SaveInventory()
     {
+        if (!inventoryDirty && !autoSaveEnabled) return; // Don't save if nothing changed
+        
         InventorySaveData saveData = new InventorySaveData();
         
         foreach (var item in inventoryItems)
@@ -151,9 +173,11 @@ public class Inventory : MonoBehaviour
         string jsonData = JsonUtility.ToJson(saveData);
         PlayerPrefs.SetString("PlayerInventory", jsonData);
         PlayerPrefs.Save();
+        
+        inventoryDirty = false;
     }
     
-    // Envanteri yükleme fonksiyonu
+    // Load inventory function
     public void LoadInventory()
     {
         if (PlayerPrefs.HasKey("PlayerInventory"))
@@ -161,36 +185,41 @@ public class Inventory : MonoBehaviour
             string jsonData = PlayerPrefs.GetString("PlayerInventory");
             InventorySaveData saveData = JsonUtility.FromJson<InventorySaveData>(jsonData);
             
-            // Mevcut envanteri temizle
+            // Clear current inventory
             inventoryItems.Clear();
             inventoryDictionary.Clear();
             
-            // Kaydedilen öğeleri yükle
+            // Load saved items
             if (saveData != null && saveData.items != null)
             {
                 foreach (var savedItem in saveData.items)
                 {
-                    // Item'ı Resources klasöründen yüklemeyi dene
+                    // Try to load item from Resources folder
                     ItemData itemData = LoadItemFromResources(savedItem.itemName);
                     
-                    // Eğer Resources'dan yüklenemezse, sahne içindeki tüm ItemData'ları tara
+                    // Fallback to scene search if not found in Resources
                     if (itemData == null)
                     {
-                        // Not: Bu yöntem hala kullanılabilir ama tercihen Resources kullanılmalı
+                        // Note: This method is still available but Resources should be preferred
                         itemData = FindItemDataInScene(savedItem.itemName);
                     }
                     
                     if (itemData != null)
                     {
                         InventoryItem newItem = new InventoryItem(itemData);
-                        // Stack sayısını ayarla (zaten 1 eklenmiş olacak, o yüzden -1 yapıp istediğimiz kadar ekliyoruz)
+                        // Set stack size (already has 1, so add the remainder)
                         for (int i = 0; i < savedItem.stackSize - 1; i++)
                         {
                             newItem.AddStack();
                         }
                         
                         inventoryItems.Add(newItem);
-                        inventoryDictionary.Add(itemData, newItem);
+                        
+                        // Add to dictionary only for stackable items
+                        if (itemData.isStackable && !inventoryDictionary.ContainsKey(itemData))
+                        {
+                            inventoryDictionary.Add(itemData, newItem);
+                        }
                     }
                 }
             }
@@ -200,42 +229,35 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    // Resources klasöründen ItemData'yı yükle
+    // Load ItemData from Resources folder
     private ItemData LoadItemFromResources(string itemName)
     {
-        // Resources/Items klasöründe doğrudan ara
-        Debug.Log($"Resources'tan yükleniyor: '{itemName}'");
-        
-        // Önce doğrudan Resources/Items/itemName yolunu dene
+        // Search directly in Resources/Items folder
         ItemData directItem = Resources.Load<ItemData>($"Items/{itemName}");
         if (directItem != null)
         {
-            Debug.Log($"Resources'tan doğrudan yüklendi: Items/{itemName}");
             return directItem;
         }
         
-        // Tüm ItemData'ları tara
+        // Search through all ItemData in Resources
         ItemData[] allItems = Resources.LoadAll<ItemData>("Items");
-        Debug.Log($"Resources/Items klasöründe {allItems.Length} ItemData bulundu.");
         
         foreach (var item in allItems)
         {
-            Debug.Log($"Bulunan item: {item.itemName}");
             if (item.itemName == itemName)
             {
-                Debug.Log($"Resources'tan item yüklendi: {itemName}");
                 return item;
             }
         }
         
-        Debug.LogWarning($"Resources/Items klasöründe {itemName} adlı item bulunamadı!");
+        Debug.LogWarning($"Item '{itemName}' not found in Resources/Items folder!");
         return null;
     }
 
-    // Sahnedeki ItemData'ları bul (yedek yöntem)
+    // Find ItemData in scene (fallback method)
     private ItemData FindItemDataInScene(string itemName)
     {
-        // Sadece yedek olarak kullanılmalı, bunun yerine Resources kullanmak tercih edilmeli
+        // Should only be used as fallback, prefer Resources
         ItemData[] sceneItems = FindObjectsByType<ItemData>(FindObjectsSortMode.None);
         foreach (var item in sceneItems)
         {
@@ -248,18 +270,27 @@ public class Inventory : MonoBehaviour
         return null;
     }
     
-    // Player'ın ölümünden sonra açıkça çağrılabilecek yükleme metodu
+    // Explicitly callable reload method after player death
     public void ReloadInventoryAfterDeath()
     {
         LoadInventory();
         NotifyInventoryChanged();
     }
 
-    // Oyun kapatıldığında çağrılır
+    // Called when application quits
     private void OnApplicationQuit()
     {
-        // Oyun kapatılırken envanteri kesin olarak kaydet
+        // Ensure inventory is saved when game closes
         SaveInventory();
-        Debug.Log("Oyun kapatılıyor, envanter kaydedildi!");
+    }
+    
+    // Called when object is destroyed
+    private void OnDestroy()
+    {
+        // Save inventory when inventory manager is destroyed
+        if (instance == this)
+        {
+            SaveInventory();
+        }
     }
 }

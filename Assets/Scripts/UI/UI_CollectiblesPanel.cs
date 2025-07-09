@@ -51,8 +51,6 @@ public class UI_CollectiblesPanel : MonoBehaviour
         // Create UI only for owned collectibles
         foreach (var collectible in ownedCollectibles)
         {
-            Debug.Log($"Creating UI for collectible: {(collectible != null ? collectible.itemName : "NULL COLLECTIBLE")}");
-            
             GameObject itemObj = Instantiate(collectibleItemPrefab, collectibleListParent);
             UI_CollectibleDetail collectibleDetail = itemObj.GetComponent<UI_CollectibleDetail>();
             
@@ -66,8 +64,6 @@ public class UI_CollectiblesPanel : MonoBehaviour
                 Debug.LogError("UI_CollectibleDetail component NOT FOUND on prefab!");
             }
         }
-        
-        Debug.Log($"Created UI for {ownedCollectibles.Count} owned collectibles");
     }
     
     private void UpdateOverallProgress()
@@ -93,7 +89,5 @@ public class UI_CollectiblesPanel : MonoBehaviour
         {
             overallProgressSlider.value = totalAvailable > 0 ? (float)ownedCollectibles / totalAvailable : 0f;
         }
-        
-        Debug.Log($"Progress updated: {ownedCollectibles}/{totalAvailable} collectibles");
     }
 } 
