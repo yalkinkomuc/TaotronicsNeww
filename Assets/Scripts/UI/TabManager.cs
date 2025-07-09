@@ -218,7 +218,16 @@ public class TabManager : MonoBehaviour
     {
         foreach (var tab in tabs)
         {
-            tab.tabPanel.SetActive(false);
+            if (tab.tabPanel != null)
+            {
+                tab.tabPanel.SetActive(false);
+                
+                // Remove all tab panels from UIInputBlocker when closing
+                if (UIInputBlocker.instance != null)
+                {
+                    UIInputBlocker.instance.RemovePanel(tab.tabPanel);
+                }
+            }
         }
     }
     
@@ -274,6 +283,24 @@ public class TabManager : MonoBehaviour
         if (tab.tabPanel != null)
         {
             tab.tabPanel.SetActive(active);
+            
+            // Handle UIInputBlocker management for tab panels
+            if (UIInputBlocker.instance != null)
+            {
+                if (active)
+                {
+                    // Add active tab panel to UIInputBlocker (if it's not the main inventory)
+                    if (!tab.tabPanel.name.Contains("AdvancedInventoryUI"))
+                    {
+                        UIInputBlocker.instance.AddPanel(tab.tabPanel);
+                    }
+                }
+                else
+                {
+                    // Remove inactive tab panel from UIInputBlocker
+                    UIInputBlocker.instance.RemovePanel(tab.tabPanel);
+                }
+            }
         }
         
         // Set button visual state
@@ -287,6 +314,25 @@ public class TabManager : MonoBehaviour
             
             // Update button interactable state (active tab is not clickable)
             tab.tabButton.interactable = !active;
+        }
+    }
+    
+    #endregion
+    
+    #region Cleanup
+    
+    private void OnDestroy()
+    {
+        // Clean up UIInputBlocker when TabManager is destroyed
+        if (UIInputBlocker.instance != null)
+        {
+            foreach (var tab in tabs)
+            {
+                if (tab.tabPanel != null)
+                {
+                    UIInputBlocker.instance.RemovePanel(tab.tabPanel);
+                }
+            }
         }
     }
     

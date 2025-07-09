@@ -118,7 +118,8 @@ public class UIInputBlocker : MonoBehaviour
         // Yaygın UI panel isimlerini ara
         string[] commonPanelNames = {
             "AttributesUpgradePanel", "SkillTreePanel", "InventoryPanel", 
-            "ChestUI", "DialoguePanel", "PauseMenu", "SettingsPanel"
+            "ChestUI", "DialoguePanel", "PauseMenu", "SettingsPanel",
+            "CollectiblesPanel", "UI_CollectiblesPanel"
         };
         
         foreach (string panelName in commonPanelNames)
@@ -132,7 +133,10 @@ public class UIInputBlocker : MonoBehaviour
         }
         
         // Tüm BaseUIPanel componentlerini bul (InGameUI elementlerini hariç tut)
-        string[] excludedInGameUINames = { "HealthBar", "ManaBar", "BossHealthBar" };
+        string[] excludedInGameUINames = { 
+            "HealthBar", "ManaBar", "BossHealthBar", 
+            "SkillScreenPanel", "TabManager", "InGameUI"
+        };
         
         BaseUIPanel[] allPanels = FindObjectsOfType<BaseUIPanel>();
         foreach (BaseUIPanel panelComponent in allPanels)
@@ -293,8 +297,32 @@ public class UIInputBlocker : MonoBehaviour
     // Add panel to the list
     public void AddPanel(GameObject panel)
     {
+        if (panel == null)
+        {
+            Debug.LogWarning("UIInputBlocker: Trying to add null panel");
+            return;
+        }
+        
+        // Check if panel should be excluded
+        string[] excludedNames = { 
+            "SkillScreenPanel", "TabManager", "InGameUI", 
+            "HealthBar", "ManaBar", "BossHealthBar"
+        };
+        
+        foreach (string excludedName in excludedNames)
+        {
+            if (panel.name.Contains(excludedName))
+            {
+                Debug.Log($"UIInputBlocker: Excluding panel from input blocking: {panel.name}");
+                return;
+            }
+        }
+        
+        // Allow collectibles panel to be added normally now
+        
         if (!uiPanels.Contains(panel))
         {
+            Debug.Log($"UIInputBlocker: Adding panel to input blocking list: {panel.name}");
             uiPanels.Add(panel);
             
             if (panel.GetComponent<UIObjectTracker>() == null)
@@ -307,6 +335,10 @@ public class UIInputBlocker : MonoBehaviour
             {
                 OnPanelVisibilityChanged(panel, true);
             }
+        }
+        else
+        {
+            Debug.Log($"UIInputBlocker: Panel already in list, skipping: {panel.name}");
         }
     }
     
