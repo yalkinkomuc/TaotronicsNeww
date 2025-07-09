@@ -57,34 +57,10 @@ public class TabManager : MonoBehaviour
     
     private void Update()
     {
-        // Only handle input when this UI is active AND parent menu is open
-        if (!gameObject.activeInHierarchy || !isInitialized || !IsParentMenuOpen()) return;
+        // Only handle input when this UI is active
+        if (!gameObject.activeInHierarchy || !isInitialized) return;
         
         HandleTabSwitching();
-    }
-    
-    private bool IsParentMenuOpen()
-    {
-        // Check if AdvancedInventoryUI is open
-        if (AdvancedInventoryUI.Instance != null)
-        {
-            return AdvancedInventoryUI.Instance.gameObject.activeInHierarchy;
-        }
-        
-        // Fallback: check if any UI panel parent is active
-        Transform parent = transform.parent;
-        while (parent != null)
-        {
-            // If we find a BaseUIPanel parent, check if it's active
-            BaseUIPanel uiPanel = parent.GetComponent<BaseUIPanel>();
-            if (uiPanel != null)
-            {
-                return parent.gameObject.activeInHierarchy;
-            }
-            parent = parent.parent;
-        }
-        
-        return false;
     }
     
     #region Initialization
