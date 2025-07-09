@@ -303,6 +303,8 @@ public class UIInputBlocker : MonoBehaviour
             return;
         }
         
+
+        
         // Check if panel should be excluded
         string[] excludedNames = { 
             "SkillScreenPanel", "TabManager", "InGameUI", 
@@ -317,8 +319,6 @@ public class UIInputBlocker : MonoBehaviour
                 return;
             }
         }
-        
-        // Allow collectibles panel to be added normally now
         
         if (!uiPanels.Contains(panel))
         {

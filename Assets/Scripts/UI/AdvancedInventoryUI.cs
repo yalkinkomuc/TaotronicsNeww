@@ -61,6 +61,7 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     // Public accessor for other systems
     public bool IsCollectiblesPage => isCollectiblesPage;
+    public bool IsInventoryOpen => gameObject.activeInHierarchy;
     
     private void Awake()
     {
@@ -261,6 +262,13 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     public void OpenInventory()
     {
+        // DOĞRU MANTIK: Başka blocking paneller açıksa inventory açılamaz!
+        if (IsAnyBlockingPanelOpen())
+        {
+            Debug.Log("AdvancedInventoryUI: BLOCKED! Cannot open inventory while other panels are active");
+            return;
+        }
+        
         gameObject.SetActive(true);
         
         // Initialize tab system when opening inventory
@@ -285,6 +293,58 @@ public class AdvancedInventoryUI : BaseUIPanel
         {
             UIInputBlocker.instance.AddPanel(gameObject);
         }
+    }
+    
+    private bool IsAnyBlockingPanelOpen()
+    {
+        // Checkpoint Selection Screen
+        CheckpointSelectionScreen checkpointScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
+        if (checkpointScreen != null && checkpointScreen.gameObject.activeInHierarchy)
+        {
+            Debug.Log("AdvancedInventoryUI: CheckpointSelectionScreen is open - blocking inventory");
+            return true;
+        }
+        
+        // Skill Tree Panel
+        SkillTreePanel skillTreePanel = FindFirstObjectByType<SkillTreePanel>();
+        if (skillTreePanel != null && skillTreePanel.gameObject.activeInHierarchy)
+        {
+            Debug.Log("AdvancedInventoryUI: SkillTreePanel is open - blocking inventory");
+            return true;
+        }
+        
+        // Attributes Upgrade Panel
+        AttributesUpgradePanel upgradePanel = FindFirstObjectByType<AttributesUpgradePanel>();
+        if (upgradePanel != null && upgradePanel.gameObject.activeInHierarchy)
+        {
+            Debug.Log("AdvancedInventoryUI: AttributesUpgradePanel is open - blocking inventory");
+            return true;
+        }
+        
+        // Equipment Selection Panel
+        UI_EquipmentSelectionPanel equipmentSelection = FindFirstObjectByType<UI_EquipmentSelectionPanel>();
+        if (equipmentSelection != null && equipmentSelection.gameObject.activeInHierarchy)
+        {
+            Debug.Log("AdvancedInventoryUI: UI_EquipmentSelectionPanel is open - blocking inventory");
+            return true;
+        }
+        
+        // Chest UI
+        UI_ChestInventory chestUI = FindFirstObjectByType<UI_ChestInventory>();
+        if (chestUI != null && chestUI.gameObject.activeInHierarchy)
+        {
+            Debug.Log("AdvancedInventoryUI: UI_ChestInventory is open - blocking inventory");
+            return true;
+        }
+        
+        // Dialogue System
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+        {
+            Debug.Log("AdvancedInventoryUI: DialogueManager is active - blocking inventory");
+            return true;
+        }
+        
+        return false; // Hiçbir blocking panel yok
     }
     
     public void CloseInventory()
