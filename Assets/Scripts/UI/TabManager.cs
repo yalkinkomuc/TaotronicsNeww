@@ -150,6 +150,9 @@ public class TabManager : MonoBehaviour
         // Only handle tab switching if we have multiple tabs
         if (tabs.Count <= 1) return;
 
+        // IMPORTANT: Only allow tab switching if AdvancedInventoryUI is open and no other blocking panels are active
+        if (!IsTabSwitchingAllowed()) return;
+
         bool leftPressed = playerInput.tabLeftInput;
         bool rightPressed = playerInput.tabRightInput;
 
@@ -161,6 +164,54 @@ public class TabManager : MonoBehaviour
         {
             SwitchToNextTab();
         }
+    }
+    
+    private bool IsTabSwitchingAllowed()
+    {
+        // Check if AdvancedInventoryUI is open (this TabManager should only work within inventory)
+        if (AdvancedInventoryUI.Instance == null || !AdvancedInventoryUI.Instance.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+        
+        // Check for blocking panels that should prevent tab switching
+        
+        // Checkpoint Selection Screen
+        CheckpointSelectionScreen checkpointScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
+        if (checkpointScreen != null && checkpointScreen.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+        
+        // Skill Tree Panel (usually named SkillTreePanel)
+        GameObject skillTreePanel = GameObject.Find("SkillTreePanel");
+        if (skillTreePanel != null && skillTreePanel.activeInHierarchy)
+        {
+            return false;
+        }
+        
+        // Attributes Upgrade Panel
+        AttributesUpgradePanel upgradePanel = FindFirstObjectByType<AttributesUpgradePanel>();
+        if (upgradePanel != null && upgradePanel.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+        
+        // Equipment Selection Panel (within inventory)
+        UI_EquipmentSelectionPanel equipmentSelection = FindFirstObjectByType<UI_EquipmentSelectionPanel>();
+        if (equipmentSelection != null && equipmentSelection.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+        
+        // Dialogue System
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+        {
+            return false;
+        }
+        
+        // All checks passed - tab switching is allowed
+        return true;
     }
     
     private void CloseParentUI()
