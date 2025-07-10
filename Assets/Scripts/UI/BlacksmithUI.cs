@@ -46,13 +46,9 @@ public class BlacksmithUI : BaseUIPanel
         if (Instance == null)
         {
             Instance = this;
-            
-            Debug.Log("BlacksmithUI singleton oluşturuldu ve sahne geçişlerinde korunacak");
         }
         else if (Instance != this)
         {
-            // Eğer zaten bir instance varsa ve bu o değilse, bu objeyi yok et
-            Debug.Log("Fazladan BlacksmithUI bulundu, kaldırılıyor");
             Destroy(gameObject);
             return;
         }
@@ -69,93 +65,15 @@ public class BlacksmithUI : BaseUIPanel
         {
             closeButton.onClick.RemoveAllListeners();
             closeButton.onClick.AddListener(CloseBlacksmith);
-            Debug.Log("Kapatma butonuna tıklama olayı eklendi");
-        }
-        else
-        {
-            Debug.LogWarning("Kapatma butonu referansı atanmamış!");
         }
         
-        // UI referanslarını kontrol et
-        if (blacksmithPanel == null)
-        {
-            Debug.LogError("BlacksmithPanel referansı atanmamış!");
-        }
-        
-        if (weaponButtonContainer == null)
-        {
-            Debug.LogError("WeaponButtonContainer referansı atanmamış!");
-        }
-        
-        if (weaponButtonPrefab == null)
-        {
-            Debug.LogError("WeaponButtonPrefab referansı atanmamış!");
-        }
-        
-        if (weaponIcon == null)
-        {
-            Debug.LogError("WeaponIcon referansı atanmamış!");
-        }
-        
-        if (levelIndicators == null || levelIndicators.Length == 0)
-        {
-            Debug.LogError("LevelIndicators referansları atanmamış veya boş!");
-        }
-        
-        // Text referanslarını kontrol et
-        if (titleText == null)
-        {
-            Debug.LogWarning("TitleText referansı atanmamış!");
-        }
-        
-        if (descriptionText == null)
-        {
-            Debug.LogWarning("DescriptionText referansı atanmamış!");
-        }
-        
-        if (goldText == null)
-        {
-            Debug.LogWarning("GoldText referansı atanmamış!");
-        }
-        
-        if (weaponNameText == null)
-        {
-            Debug.LogWarning("WeaponNameText referansı atanmamış!");
-        }
-        
-        if (currentLevelText == null)
-        {
-            Debug.LogWarning("CurrentLevelText referansı atanmamış!");
-        }
-        
-        if (currentDamageText == null)
-        {
-            Debug.LogWarning("CurrentDamageText referansı atanmamış!");
-        }
-        
-        if (nextLevelDamageText == null)
-        {
-            Debug.LogWarning("NextLevelDamageText referansı atanmamış!");
-        }
-        
-        if (upgradeCostText == null)
-        {
-            Debug.LogWarning("UpgradeCostText referansı atanmamış!");
-        }
-        
-        if (upgradeButton == null)
-        {
-            Debug.LogWarning("UpgradeButton referansı atanmamış!");
-        }
+
         
         // Initially hide the panel
         if (blacksmithPanel != null)
         {
             blacksmithPanel.SetActive(false);
         }
-        
-        // Log başarılı init
-        Debug.Log("BlacksmithUI başlatıldı");
     }
     
     public void OpenBlacksmith(PlayerStats stats)
@@ -324,7 +242,6 @@ public class BlacksmithUI : BaseUIPanel
             if (weapon.weaponIcon != null && buttonImage != null)
             {
                 buttonImage.sprite = weapon.weaponIcon;
-                Debug.Log($"{weapon.weaponName} ikonu atandı");
             }
             
             // Add click event

@@ -6,7 +6,6 @@ public class GameManager : MonoBehaviour
 
     [Header("Managers")]
     public PlayerManager playerManager;
-    public SceneManager sceneManager;
     public DialogueManager dialogueManager;
     public VFXManager vfxManager;
     public CameraManager cameraManager;

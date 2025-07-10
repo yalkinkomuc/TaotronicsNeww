@@ -29,9 +29,6 @@ public class Player : Entity
     [HideInInspector]
     public CapsuleCollider2D capsuleCollider;
     
-    private float xInput;
-    private float yInput;
-    
     
     [Header("Movement")]
     public float moveSpeed;
@@ -1567,14 +1564,7 @@ public class Player : Entity
         return SkillManager.Instance.IsSkillReady(SkillType.VoidSkill, stats.currentMana);
     }
     
-    // XXX becerisi için özel kontrol (beceri açık değilse kullanılamaz)
-    public bool CanUseXXXSkill()
-    {
-        // XXX becerisi açık mı, mana yeterli mi kontrol et
-        return SkillManager.Instance != null && 
-               SkillManager.Instance.IsSkillUnlocked("xxx_skill") && 
-               HasEnoughMana(40f); // XXX becerisi için mana maliyeti
-    }
+
     
     // Diğer beceriler için genel kontrol metodu
     public bool CanUseSkill(string skillID)
@@ -1699,29 +1689,6 @@ public class Player : Entity
         if (playerInput.inventoryInput)
         {
             ToggleInventory();
-        }
-        
-        // Test collectible (geçici - daha sonra kaldır)
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            AddTestCollectible();
-        }
-    }
-    
-    // Test için collectible ekleme (geçici metod)
-    private void AddTestCollectible()
-    {
-        // Collectible'ı Resources'tan yükle
-        CollectibleData testCollectible = Resources.Load<CollectibleData>("Items/YourCollectibleName");
-        
-        if (testCollectible != null && Inventory.instance != null)
-        {
-            Inventory.instance.AddItem(testCollectible);
-            Debug.Log($"Test collectible added: {testCollectible.itemName}");
-        }
-        else
-        {
-            Debug.LogWarning("Test collectible not found! Make sure it's in Resources/Items/");
         }
     }
     

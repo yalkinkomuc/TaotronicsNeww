@@ -81,36 +81,7 @@ public class SkillTreePanel : BaseUIPanel
                 UIInputBlocker.instance.AddPanel(skillScreenPanel);
         }
         
-        // Canvas debug bilgileri
-        Canvas canvas = GetComponentInParent<Canvas>();
-        if (canvas != null)
-        {
-            
-            // GraphicRaycaster kontrolü
-            var raycaster = canvas.GetComponent<GraphicRaycaster>();
-            if (raycaster != null)
-            {
-                Debug.Log($"GraphicRaycaster found: enabled = {raycaster.enabled}");
-            }
-            else
-            {
-                Debug.LogWarning("GraphicRaycaster NOT found on Canvas!");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Canvas NOT found!");
-        }
-        
-        // EventSystem kontrolü
-        if (UnityEngine.EventSystems.EventSystem.current != null)
-        {
-            Debug.Log($"EventSystem found: {UnityEngine.EventSystems.EventSystem.current.name}");
-        }
-        else
-        {
-            Debug.LogError("EventSystem NOT found! This is probably the problem!");
-        }
+
         
         SetupButtons(); // HER AÇILIŞTA BUTTON'LARI SETUP ET!
         UpdateShardCount();
@@ -165,16 +136,6 @@ public class SkillTreePanel : BaseUIPanel
     
     private void SetupButtons()
     {
-        Debug.Log("SetupButtons() called!");
-        
-        // FİRESKİLL1 BUTTON'A ÖZEL DEBUG!
-        Debug.Log($"fireSkill1Button is null: {fireSkill1Button == null}");
-        if (fireSkill1Button != null)
-        {
-            Debug.Log($"fireSkill1Button name: {fireSkill1Button.name}");
-            Debug.Log($"fireSkill1Button gameObject active: {fireSkill1Button.gameObject.activeInHierarchy}");
-            Debug.Log($"fireSkill1Button component enabled: {fireSkill1Button.enabled}");
-        }
         
         if (unlockSkillButton != null)
         {
