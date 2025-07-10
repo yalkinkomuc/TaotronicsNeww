@@ -144,7 +144,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6665926709327994058
 Transform:
   m_ObjectHideFlags: 0
@@ -275,6 +275,7 @@ MonoBehaviour:
   isDefeated: 0
   isQuestEnemy: 0
   uniqueEnemyId: 
+  shouldSpawnOnObjective: 0
   detectionRange: 5
   attackDistance: 0.77
   attackCooldown: 2

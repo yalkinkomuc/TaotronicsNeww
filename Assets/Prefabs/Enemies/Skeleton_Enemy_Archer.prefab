@@ -205,7 +205,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7877003868482642406
 Transform:
   m_ObjectHideFlags: 0
@@ -364,6 +364,7 @@ MonoBehaviour:
   isDefeated: 0
   isQuestEnemy: 0
   uniqueEnemyId: 
+  shouldSpawnOnObjective: 0
   arrowSpawnPoint: {fileID: 771119517957317904}
   arrowPrefab: {fileID: 4551660470442196087, guid: bb43e13666e1e2448bcd249521cc6c56, type: 3}
   attackCooldown: 0.5

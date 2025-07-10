@@ -205,7 +205,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6353669383580540762
 Transform:
   m_ObjectHideFlags: 0
@@ -335,6 +335,7 @@ MonoBehaviour:
   isDefeated: 0
   isQuestEnemy: 0
   uniqueEnemyId: 
+  shouldSpawnOnObjective: 0
   battleTime: 4
 --- !u!114 &8727858786155169172
 MonoBehaviour:
