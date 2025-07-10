@@ -17,8 +17,9 @@ public class NewInputSystem : IPlayerInput
     
     // Basic action inputs
     public bool jumpInput => playerInputActions.Gameplay.Jump.WasPressedThisFrame();
-    
-    //Spell Section
+
+    #region MyRegion
+
     public bool spell1Input => Mouse.current.rightButton.isPressed && playerInputActions.Gameplay.Spell1.WasPressedThisFrame();
     public bool spell2Input => Mouse.current.rightButton.isPressed && playerInputActions.Gameplay.Spell2.IsPressed();
     public bool spell3Input => Mouse.current.rightButton.isPressed && playerInputActions.Gameplay.Spell3.WasPressedThisFrame();
@@ -26,6 +27,9 @@ public class NewInputSystem : IPlayerInput
     public bool spell5Input =>  playerInputActions.Gameplay.Spell5.WasPressedThisFrame();
     public bool spell6Input => Mouse.current.rightButton.isPressed && playerInputActions.Gameplay.Spell6.WasPressedThisFrame();
     public bool spell7Input => Mouse.current.rightButton.isPressed && playerInputActions.Gameplay.Spell7.WasPressedThisFrame();
+
+    #endregion
+   
     
     //Spell Section
     public bool dashInput => playerInputActions.Gameplay.Dash.WasPressedThisFrame(); // Sprint action'ını kullanıyor

@@ -18,8 +18,7 @@ public class TabNavigationHints : MonoBehaviour
     [SerializeField] private Sprite gamepadIcon_RB;
     
     [Header("Settings")]
-    [SerializeField] private bool showIcons = true;
-    [SerializeField] private bool showText = true;
+    
     [SerializeField] private float fadeInDuration = 0.3f;
     [SerializeField] private float fadeOutDuration = 0.2f;
     
@@ -45,8 +44,7 @@ public class TabNavigationHints : MonoBehaviour
         // Subscribe to tab events
         TabManager.OnTabChanged += OnTabChanged;
         
-        // Initial update
-        UpdateHints();
+      
     }
     
     private void OnDestroy()
@@ -57,52 +55,13 @@ public class TabNavigationHints : MonoBehaviour
     
     private void OnTabChanged(int tabIndex, string tabName)
     {
-        // Update hints when tab changes
-        UpdateHints();
+        
         
         // Show hints briefly when tab changes
         ShowHintsBriefly();
     }
     
-    public void UpdateHints()
-    {
-        // Determine platform
-        IPlayerInput playerInput = GetPlayerInput();
-        bool isGamepad = playerInput is GamepadInput;
-        
-        // Update left hint
-        if (leftHintText != null && showText)
-        {
-            leftHintText.text = isGamepad ? "LB" : "Q";
-        }
-        
-        if (leftHintIcon != null && showIcons)
-        {
-            leftHintIcon.sprite = isGamepad ? gamepadIcon_LB : pcIcon_Q;
-            leftHintIcon.gameObject.SetActive(leftHintIcon.sprite != null);
-        }
-        
-        // Update right hint
-        if (rightHintText != null && showText)
-        {
-            rightHintText.text = isGamepad ? "RB" : "E";
-        }
-        
-        if (rightHintIcon != null && showIcons)
-        {
-            rightHintIcon.sprite = isGamepad ? gamepadIcon_RB : pcIcon_E;
-            rightHintIcon.gameObject.SetActive(rightHintIcon.sprite != null);
-        }
-        
-        // Show/hide based on tab count
-        TabManager tabManager = FindFirstObjectByType<TabManager>();
-        bool shouldShow = tabManager != null && tabManager.TabCount > 1;
-        
-        if (hintsPanel != null)
-        {
-            hintsPanel.SetActive(shouldShow);
-        }
-    }
+   
     
     public void SetVisibility(bool visible, bool immediate = false)
     {
@@ -186,17 +145,7 @@ public class TabNavigationHints : MonoBehaviour
     
     #region Public API
     
-    public void SetShowIcons(bool show)
-    {
-        showIcons = show;
-        UpdateHints();
-    }
-    
-    public void SetShowText(bool show)
-    {
-        showText = show;
-        UpdateHints();
-    }
+  
     
     public void SetFadeDurations(float fadeIn, float fadeOut)
     {

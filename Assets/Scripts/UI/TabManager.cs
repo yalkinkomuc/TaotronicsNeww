@@ -28,7 +28,7 @@ public class TabManager : MonoBehaviour
     [SerializeField] private GameObject navigationHintPanel;
     [SerializeField] private TextMeshProUGUI leftHintText;
     [SerializeField] private TextMeshProUGUI rightHintText;
-    [SerializeField] private bool showNavigationHints = true;
+    
     
     [Header("Audio")]
     [SerializeField] private AudioClip tabSwitchSound;
@@ -90,7 +90,7 @@ public class TabManager : MonoBehaviour
         
         // Initialize with first tab
         SelectTab(currentTabIndex);
-        UpdateNavigationHints();
+        
         
         isInitialized = true;
     }
@@ -106,7 +106,7 @@ public class TabManager : MonoBehaviour
             newTab.tabButton.onClick.AddListener(() => SelectTab(tabIndex));
         }
         
-        UpdateNavigationHints();
+        
     }
     
     public void RemoveTab(int index)
@@ -126,7 +126,7 @@ public class TabManager : MonoBehaviour
                 SelectTab(currentTabIndex);
             }
             
-            UpdateNavigationHints();
+          
         }
     }
     
@@ -306,8 +306,7 @@ public class TabManager : MonoBehaviour
         // Execute tab's callback
         tabs[currentTabIndex].onTabSelected?.Invoke();
         
-        // Update navigation hints
-        UpdateNavigationHints();
+       
         
         // Fire event
         OnTabChanged?.Invoke(currentTabIndex, tabs[currentTabIndex].tabName);
@@ -380,36 +379,9 @@ public class TabManager : MonoBehaviour
     
     #region Navigation Hints
     
-    private void UpdateNavigationHints()
-    {
-        if (!showNavigationHints || navigationHintPanel == null) return;
-        
-        // Show hints only if there are multiple tabs
-        bool shouldShowHints = tabs.Count > 1;
-        navigationHintPanel.SetActive(shouldShowHints);
-        
-        if (!shouldShowHints) return;
-        
-        // Update hint texts based on platform
-        IPlayerInput playerInput = GetPlayerInput();
-        bool isGamepad = playerInput is GamepadInput;
-        
-        if (leftHintText != null)
-        {
-            leftHintText.text = isGamepad ? "LB" : "Q";
-        }
-        
-        if (rightHintText != null)
-        {
-            rightHintText.text = isGamepad ? "RB" : "E";
-        }
-    }
+   
     
-    public void SetNavigationHintsVisible(bool visible)
-    {
-        showNavigationHints = visible;
-        UpdateNavigationHints();
-    }
+    
     
     #endregion
     

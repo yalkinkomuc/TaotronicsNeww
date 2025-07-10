@@ -52,10 +52,7 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(ValidatePlayerReference());
         
         // Force UI reference refresh if InGameUI exists
-        if (InGameUI.instance != null)
-        {
-            InGameUI.instance.ForceRefreshReferences();
-        }
+       
     }
     
     // Coroutine to validate and restore player reference after scene loading

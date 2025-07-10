@@ -311,11 +311,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
             // UI'ı güncelle
             playerStats.UpdateLevelUI();
             
-            // Force UI reference refresh after rest
-            if (InGameUI.instance != null)
-            {
-                InGameUI.instance.ForceRefreshReferences();
-            }
+           
             
             // Değişiklikleri kaydet
             SavePlayerPosition();

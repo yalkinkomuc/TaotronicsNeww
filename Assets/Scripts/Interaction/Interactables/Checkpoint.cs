@@ -185,11 +185,7 @@ public class Checkpoint : MonoBehaviour, IInteractable
                 manaBar.UpdateManaBar(playerStats.currentMana, playerStats.maxMana.GetValue());
             }
             
-            // Force UI reference refresh after healing
-            if (InGameUI.instance != null)
-            {
-                InGameUI.instance.ForceRefreshReferences();
-            }
+          
                 
            
         }
