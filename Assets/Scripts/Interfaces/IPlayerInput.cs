@@ -12,14 +12,7 @@ public interface IPlayerInput
      bool interactionInput { get; }
      
      bool parryInput { get; }
-     bool spell1Input { get; }
-     bool spell2Input { get; }
-     bool earthPushInput { get; }
-     bool boomerangInput { get; }
-     bool voidSkillInput { get; }
-     bool electricDashInput { get; }
-     bool airPushInput { get; }
-     bool fireballInput { get; }
+     
      bool inventoryInput { get; }
      
      // Tab switching inputs (UI only)
@@ -29,8 +22,5 @@ public interface IPlayerInput
      // Menu close input (UI only)
      bool escapeInput { get; }
      
-     void DisableAllInput();
-     void EnableAllInput();
      
-     void DisableGameplayInput();
 }

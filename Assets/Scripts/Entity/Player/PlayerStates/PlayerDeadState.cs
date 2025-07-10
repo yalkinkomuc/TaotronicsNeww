@@ -18,7 +18,7 @@ public class PlayerDeadState : PlayerState
         
         rb.linearVelocity = Vector2.zero;
         
-        player.playerInput.DisableAllInput();
+        
         
         hasTriggeredRespawn = false;
         
@@ -43,7 +43,7 @@ public class PlayerDeadState : PlayerState
          CapsuleCollider.enabled = true;
          rb.bodyType = RigidbodyType2D.Dynamic;
         
-        player.playerInput.EnableAllInput();
+        
     }
     
     

@@ -389,7 +389,7 @@ public class UIInputBlocker : MonoBehaviour
             {
                 Debug.Log("UIInputBlocker: PlayerInput found, disabling gameplay input");
                 // Only disable gameplay inputs
-                playerInput.DisableGameplayInput();
+               
             }
             else
             {
@@ -430,7 +430,7 @@ public class UIInputBlocker : MonoBehaviour
             if (player != null && player.playerInput != null)
             {
                 Debug.Log("UIInputBlocker: Player and PlayerInput found on retry, disabling gameplay input");
-                player.playerInput.DisableGameplayInput();
+               
                 yield break; // Success, exit coroutine
             }
         }
@@ -467,7 +467,7 @@ public class UIInputBlocker : MonoBehaviour
             {
                 Debug.Log("UIInputBlocker: PlayerInput found, enabling all input");
                 // Enable all inputs
-                playerInput.EnableAllInput();
+                
             }
             else
             {

@@ -9,7 +9,7 @@ public class Player : Entity
 {
    
     
-    public IPlayerInput playerInput {get;private set;}
+    public NewInputSystem playerInput {get;private set;}
     
     [HideInInspector]
     public HealthBar healthBar;
@@ -213,7 +213,7 @@ public class Player : Entity
     protected override void Awake()
     {
         base.Awake();
-        playerInput = new PCInput(); // PCInputa çevirebilirsin********************
+        playerInput = new NewInputSystem(); // PCInputa çevirebilirsin********************
         stateMachine = new PlayerStateMachine();
         
         
@@ -1075,7 +1075,7 @@ public class Player : Entity
         }
         
         // Earth Push
-        if (playerInput.earthPushInput && canCastNewSpell)
+        if (playerInput.spell3Input && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1097,7 +1097,7 @@ public class Player : Entity
         }
         
         // Air Push
-        if (playerInput.airPushInput && canCastNewSpell)
+        if (playerInput.spell4Input && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1119,7 +1119,7 @@ public class Player : Entity
         }
         
         // Fireball Spell
-        if (playerInput.fireballInput && canCastNewSpell)
+        if (playerInput.spell7Input && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1631,7 +1631,7 @@ public class Player : Entity
         }
         
         // Check for the electric dash input
-        if (playerInput.electricDashInput && CanUseElectricDash())
+        if (playerInput.spell5Input && CanUseElectricDash())
         {
             // Set direction
             dashDirection = playerInput.xInput;
@@ -1665,7 +1665,7 @@ public class Player : Entity
     private void CheckForAirPushInput()
     {
         // Check if player can use Air Push
-        if (playerInput.airPushInput && CanUseAirPush() && CanCastSpells())
+        if (playerInput.spell6Input && CanUseAirPush() && CanCastSpells())
         {
             // Change to AirPush state
             stateMachine.ChangeState(airPushState);
