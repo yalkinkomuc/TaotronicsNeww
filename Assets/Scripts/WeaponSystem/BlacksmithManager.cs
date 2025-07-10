@@ -43,20 +43,27 @@ public class BlacksmithManager : MonoBehaviour
     
     private void InitializeDefaultWeapons()
     {
-        // Önce listeyi temizle
+        // Eğer weaponDatabase zaten dolu ise (inspector'dan ayarlanmışsa), temizleme
+        if (weaponDatabase != null && weaponDatabase.Count > 0)
+        {
+            // Inspector'dan ayarlanmış silahlar varsa onları koru
+            return;
+        }
+        
+        // Sadece boş ise default silahları oluştur
         weaponDatabase.Clear();
         
-        // Kılıç
+        // Kılıç - Material gereksinimlerini inspector'dan ayarlayabilirsin
         WeaponData sword = new WeaponData("sword", "Kılıç", WeaponType.Sword, 10f, 100);
-        sword.upgradeDamageIncrement = 5f; 
+        sword.upgradeDamageIncrement = 5f;
         weaponDatabase.Add(sword);
         
-        // Bumerang
+        // Bumerang - Material gereksinimlerini inspector'dan ayarlayabilirsin
         WeaponData boomerang = new WeaponData("boomerang", "Bumerang", WeaponType.Boomerang, 8f, 120);
-        boomerang.upgradeDamageIncrement = 4f; 
+        boomerang.upgradeDamageIncrement = 4f;
         weaponDatabase.Add(boomerang);
         
-        // Büyü Kitabı
+        // Büyü Kitabı - Material gereksinimlerini inspector'dan ayarlayabilirsin
         WeaponData spellbook = new WeaponData("spellbook", "Büyü Kitabı", WeaponType.Spellbook, 6f, 150);
         spellbook.upgradeDamageIncrement = 3f;
         weaponDatabase.Add(spellbook);
@@ -142,8 +149,18 @@ public class BlacksmithManager : MonoBehaviour
         if (playerStats.gold < upgradeCost)
             return false;
             
+        // Check upgrade materials requirement
+        if (!CheckUpgradeMaterials(weapon))
+        {
+            Debug.Log($"Yeterli upgrade material yok! {weapon.weaponName} için gerekli materyaller eksik.");
+            return false;
+        }
+            
         // Deduct gold
         playerStats.SpendGold(upgradeCost);
+        
+        // Consume upgrade materials
+        ConsumeUpgradeMaterials(weapon);
         
         // Upgrade the weapon
         weapon.level++;
@@ -255,6 +272,9 @@ public class BlacksmithManager : MonoBehaviour
             weaponCopy.upgradeDamageIncrement = weapon.upgradeDamageIncrement;
             weaponCopy.upgradeCostMultiplier = weapon.upgradeCostMultiplier;
             
+            // Copy material requirements
+            weaponCopy.requiredMaterials = new System.Collections.Generic.List<RequiredMaterial>(weapon.requiredMaterials);
+            
             // Ikon ataması
             if (weapon.weaponIcon != null)
             {
@@ -280,5 +300,110 @@ public class BlacksmithManager : MonoBehaviour
             // Add to active weapons dictionary
             activeWeapons.Add(weaponCopy.weaponId, weaponCopy);
         }
+    }
+
+    // Check if player has required upgrade materials
+    private bool CheckUpgradeMaterials(WeaponData weapon)
+    {
+        if (Inventory.instance == null)
+            return false;
+            
+        // Get required materials based on weapon type and level
+        var requiredMaterials = GetRequiredMaterials(weapon);
+        
+        foreach (var requirement in requiredMaterials)
+        {
+            int availableCount = GetMaterialCount(requirement.Key);
+            if (availableCount < requirement.Value)
+            {
+                Debug.Log($"Eksik material: {requirement.Key} - Gerekli: {requirement.Value}, Mevcut: {availableCount}");
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    // Consume required upgrade materials from inventory
+    private void ConsumeUpgradeMaterials(WeaponData weapon)
+    {
+        if (Inventory.instance == null)
+            return;
+            
+        var requiredMaterials = GetRequiredMaterials(weapon);
+        
+        foreach (var requirement in requiredMaterials)
+        {
+            RemoveMaterialFromInventory(requirement.Key, requirement.Value);
+        }
+    }
+    
+    // Get required materials for weapon upgrade
+    private Dictionary<MaterialType, int> GetRequiredMaterials(WeaponData weapon)
+    {
+        // Use the new inspector-configurable system
+        return weapon.GetRequiredMaterialsForUpgrade();
+    }
+    
+    // Get count of specific material type in inventory
+    private int GetMaterialCount(MaterialType materialType)
+    {
+        if (Inventory.instance == null)
+            return 0;
+            
+        int totalCount = 0;
+        
+        foreach (var inventoryItem in Inventory.instance.inventoryItems)
+        {
+            if (inventoryItem.data is UpgradeMaterialData material && 
+                material.materialType == materialType)
+            {
+                totalCount += inventoryItem.stackSize;
+            }
+        }
+        
+        return totalCount;
+    }
+    
+    // Remove specific amount of material from inventory
+    private void RemoveMaterialFromInventory(MaterialType materialType, int amount)
+    {
+        if (Inventory.instance == null)
+            return;
+            
+        int remainingToRemove = amount;
+        
+        // Find items to remove (iterate through a copy to avoid modification during iteration)
+        var itemsToCheck = new List<InventoryItem>(Inventory.instance.inventoryItems);
+        
+        foreach (var inventoryItem in itemsToCheck)
+        {
+            if (remainingToRemove <= 0)
+                break;
+                
+            if (inventoryItem.data is UpgradeMaterialData material && 
+                material.materialType == materialType)
+            {
+                int removeFromThisStack = Mathf.Min(remainingToRemove, inventoryItem.stackSize);
+                
+                for (int i = 0; i < removeFromThisStack; i++)
+                {
+                    Inventory.instance.RemoveItem(inventoryItem.data);
+                }
+                
+                remainingToRemove -= removeFromThisStack;
+            }
+        }
+        
+        Debug.Log($"{amount} adet {materialType} materyali tüketildi. Kalan: {GetMaterialCount(materialType)}");
+    }
+    
+    // Get required materials info for UI display (public method for BlacksmithUI)
+    public Dictionary<MaterialType, int> GetRequiredMaterialsForDisplay(string weaponId)
+    {
+        if (!activeWeapons.ContainsKey(weaponId))
+            return new Dictionary<MaterialType, int>();
+            
+        return GetRequiredMaterials(activeWeapons[weaponId]);
     }
 } 

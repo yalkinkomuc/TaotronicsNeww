@@ -420,18 +420,40 @@ public class BlacksmithUI : BaseUIPanel
                     nextLevelDamageText.text = $" {totalNextLevelDamage}";
                 }
                 
-                // Set upgrade cost
+                // Set upgrade cost and materials
                 int upgradeCost = selectedWeapon.GetNextUpgradeCost();
+                
+                // Get required materials
+                var requiredMaterials = BlacksmithManager.Instance.GetRequiredMaterialsForDisplay(selectedWeapon.weaponId);
                 
                 if (upgradeCostText != null)
                 {
-                    upgradeCostText.text = $" {upgradeCost} Altın";
+                    string costText = $" {upgradeCost} Altın";
+                    
+                    // Add required materials to the text
+                    if (requiredMaterials.Count > 0)
+                    {
+                        costText += "\nMateryaller:";
+                        foreach (var material in requiredMaterials)
+                        {
+                            int available = GetMaterialCountInInventory(material.Key);
+                            bool hasEnough = available >= material.Value;
+                            string color = hasEnough ? "white" : "red";
+                            
+                            costText += $"\n<color={color}>{GetMaterialDisplayName(material.Key)}: {available}/{material.Value}</color>";
+                        }
+                    }
+                    
+                    upgradeCostText.text = costText;
                 }
                 
-                // Enable or disable upgrade button based on player's gold
+                // Enable or disable upgrade button based on player's gold and materials
                 if (upgradeButton != null && playerStats != null)
                 {
-                    upgradeButton.interactable = playerStats.gold >= upgradeCost;
+                    bool hasEnoughGold = playerStats.gold >= upgradeCost;
+                    bool hasEnoughMaterials = CheckHasRequiredMaterials(requiredMaterials);
+                    
+                    upgradeButton.interactable = hasEnoughGold && hasEnoughMaterials;
                 }
             }
             else
@@ -519,10 +541,38 @@ public class BlacksmithUI : BaseUIPanel
             }
             else
             {
-                // Show error message
+                // Show detailed error message
                 if (descriptionText != null)
                 {
-                    descriptionText.text = "Geliştirme başarısız. Yeterli altın yok veya maksimum seviyeye ulaşıldı.";
+                    string errorMessage = "Geliştirme başarısız. ";
+                    
+                    // Check specific reasons for failure
+                    if (selectedWeapon.level >= selectedWeapon.maxLevel)
+                    {
+                        errorMessage += "Maksimum seviyeye ulaşıldı.";
+                    }
+                    else
+                    {
+                        int upgradeCost = selectedWeapon.GetNextUpgradeCost();
+                        bool hasEnoughGold = playerStats.gold >= upgradeCost;
+                        var requiredMaterials = BlacksmithManager.Instance.GetRequiredMaterialsForDisplay(selectedWeapon.weaponId);
+                        bool hasEnoughMaterials = CheckHasRequiredMaterials(requiredMaterials);
+                        
+                        if (!hasEnoughGold && !hasEnoughMaterials)
+                        {
+                            errorMessage += "Yeterli altın ve materyal yok.";
+                        }
+                        else if (!hasEnoughGold)
+                        {
+                            errorMessage += "Yeterli altın yok.";
+                        }
+                        else if (!hasEnoughMaterials)
+                        {
+                            errorMessage += "Yeterli materyal yok.";
+                        }
+                    }
+                    
+                    descriptionText.text = errorMessage;
                 }
             }
         }
@@ -538,5 +588,55 @@ public class BlacksmithUI : BaseUIPanel
         {
             goldText.text = $"{playerStats.gold} Altın";
         }
+    }
+    
+    // Helper method to get material count in inventory
+    private int GetMaterialCountInInventory(MaterialType materialType)
+    {
+        if (Inventory.instance == null)
+            return 0;
+            
+        int totalCount = 0;
+        
+        foreach (var inventoryItem in Inventory.instance.inventoryItems)
+        {
+            if (inventoryItem.data is UpgradeMaterialData material && 
+                material.materialType == materialType)
+            {
+                totalCount += inventoryItem.stackSize;
+            }
+        }
+        
+        return totalCount;
+    }
+    
+    // Helper method to get display name for materials
+    private string GetMaterialDisplayName(MaterialType materialType)
+    {
+        switch (materialType)
+        {
+            case MaterialType.Leather: return "Deri";
+            case MaterialType.Iron: return "Demir";
+            case MaterialType.Rock: return "Taş";
+            case MaterialType.Diamond: return "Elmas";
+            case MaterialType.Crystal: return "Kristal";
+            case MaterialType.Gem: return "Mücevher";
+            default: return materialType.ToString();
+        }
+    }
+    
+    // Helper method to check if player has required materials
+    private bool CheckHasRequiredMaterials(Dictionary<MaterialType, int> requiredMaterials)
+    {
+        foreach (var requirement in requiredMaterials)
+        {
+            int availableCount = GetMaterialCountInInventory(requirement.Key);
+            if (availableCount < requirement.Value)
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
 } 

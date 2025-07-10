@@ -165,6 +165,9 @@ public class FloatingTextManager : MonoBehaviour
                 return;
             }
             
+            // UI frustum hatasını önlemek için güvenli pozisyon kontrolü
+            screenPos = EnsureSafeFloatingTextPosition(screenPos);
+            
             // Create the floating text object
             GameObject textObj;
             
@@ -241,6 +244,27 @@ public class FloatingTextManager : MonoBehaviour
         return lastTextPosition + (directionFromLast * minTextSpacing);
     }
     
+    // UI frustum hatasını önlemek için floating text pozisyonunu güvenli hale getir
+    private Vector3 EnsureSafeFloatingTextPosition(Vector3 screenPosition)
+    {
+        // Ekran sınırları içinde mi kontrol et
+        if (UISystemManager.IsPositionSafeForUI(screenPosition))
+        {
+            return screenPosition;
+        }
+        
+        // Güvenli pozisyona taşı
+        Vector3 safePosition = screenPosition;
+        
+        // Ekran dışındaysa ekran sınırları içine al, ama biraz margin bırak
+        float margin = 50f; // 50 piksel margin
+        
+        safePosition.x = Mathf.Clamp(safePosition.x, margin, Screen.width - margin);
+        safePosition.y = Mathf.Clamp(safePosition.y, margin, Screen.height - margin);
+        
+        return safePosition;
+    }
+    
     // Normal hasar metni - Standart renk kullanır
     public void ShowDamageText(float damage, Vector3 position)
     {
@@ -315,6 +339,9 @@ public class FloatingTextManager : MonoBehaviour
             {
                 return;
             }
+            
+            // UI frustum hatasını önlemek için güvenli pozisyon kontrolü
+            screenPos = EnsureSafeFloatingTextPosition(screenPos);
             
             // Create the floating text object
             GameObject textObj;

@@ -12,22 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba424d5e1056774448ea68cb8320da37, type: 3}
   m_Name: DragonTooth
   m_EditorClassIdentifier: 
-  itemName: 
-  description: 
-  icon: {fileID: 0}
+  itemName: Dragon Tooth
+  description: Dragon Tooth
+  icon: {fileID: 21300000, guid: 41ccb7d5f2106454ba213fd79375ff11, type: 3}
   itemType: 6
   dropChance: 0
   sellValue: 0
   rarity: 0
   isStackable: 0
   maxStackSize: 1
-  resourcePath: 
-  collectibleType: 0
+  resourcePath: Items/D
+  collectibleType: 6
   category: 0
   isRareCollectible: 0
   grantsReward: 0
   rewardDescription: 
   goldReward: 0
   experienceReward: 0
-  loreText: 
-  discoveryLocation: 
+  loreText: "Dragon tooth ornek lore\t"
+  discoveryLocation: Forest

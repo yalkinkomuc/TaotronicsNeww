@@ -47,17 +47,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   virtualCamera: {fileID: 8724261302690409186}
   sceneBoundsCollider2D:
+  - {fileID: 0}
   - {fileID: 1631495604372568928, guid: 4df76ec9c9499f4498fc1275983cd4c2, type: 3}
   - {fileID: 1631495604372568928, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
-  - {fileID: 1631495604372568928, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
+  - {fileID: 0}
   - {fileID: 141262140006117331, guid: 5b93feea319ff464b8195f21a8babb1d, type: 3}
-  - {fileID: 141262140006117331, guid: 5b93feea319ff464b8195f21a8babb1d, type: 3}
+  - {fileID: 6927370450936928131, guid: 3e8488bd3c978274692baa21f5e2fabf, type: 3}
+  - {fileID: 4594642030209605112, guid: 792ec4aff6e625748bf94aae532534b7, type: 3}
   xDamping: 1
   yDamping: 1
-  screenY: 0.7
-  screenYMin: 0.5
-  screenYMax: 0.8
-  screenYTransitionSpeed: 5
+  screenY: 0.85
+  screenYMin: 0.6
+  screenYMax: 0.9
+  screenYTransitionSpeed: 3.5
   screenXTransitionSpeed: 5
 --- !u!1 &7339666878853165440
 GameObject:

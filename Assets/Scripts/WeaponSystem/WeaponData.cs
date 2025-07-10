@@ -1,4 +1,29 @@
 using UnityEngine;
+using System.Collections.Generic;
+
+[System.Serializable]
+public class RequiredMaterial
+{
+    public MaterialType materialType;
+    public int baseAmount = 1;              // Base amount needed at level 1
+    public bool scalesWithLevel = true;     // Whether amount increases with weapon level
+    public int levelScaleRate = 2;          // Every X levels, add 1 more material
+    public int minimumLevel = 1;            // At which level this material is required
+    
+    // Get the actual required amount for a specific weapon level
+    public int GetRequiredAmount(int weaponLevel)
+    {
+        if (weaponLevel < minimumLevel)
+            return 0;
+            
+        if (!scalesWithLevel)
+            return baseAmount;
+            
+        // Calculate scaling: baseAmount + (level / levelScaleRate)
+        int additionalAmount = weaponLevel / levelScaleRate;
+        return baseAmount + additionalAmount;
+    }
+}
 
 [System.Serializable]
 public class WeaponData
@@ -15,6 +40,9 @@ public class WeaponData
     public int baseUpgradeCost = 100;         // Base cost for first upgrade
     public float upgradeCostMultiplier = 1.1f; // Cost multiplier per level
     
+    [Header("Required Materials")]
+    public List<RequiredMaterial> requiredMaterials = new List<RequiredMaterial>();
+    
     [Header("UI")]
     public Sprite weaponIcon;      // Icon for the weapon in UI
     
@@ -27,6 +55,7 @@ public class WeaponData
         level = 0;
         baseDamageBonus = baseDamage;
         baseUpgradeCost = cost;
+        requiredMaterials = new List<RequiredMaterial>();
     }
     
     // Get the current damage bonus for this weapon
@@ -47,6 +76,23 @@ public class WeaponData
     public bool CanUpgrade()
     {
         return level < maxLevel;
+    }
+    
+    // Get required materials for next upgrade (NEW METHOD)
+    public Dictionary<MaterialType, int> GetRequiredMaterialsForUpgrade()
+    {
+        var requirements = new Dictionary<MaterialType, int>();
+        
+        foreach (var material in requiredMaterials)
+        {
+            int requiredAmount = material.GetRequiredAmount(level + 1); // Next level
+            if (requiredAmount > 0)
+            {
+                requirements[material.materialType] = requiredAmount;
+            }
+        }
+        
+        return requirements;
     }
 }
 

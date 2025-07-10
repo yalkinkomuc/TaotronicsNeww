@@ -22,20 +22,20 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: 6264702771334405849, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.1
+    - time: 0.11111111
       value: {fileID: -3040037442959293093, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.2
+    - time: 0.22222222
       value: {fileID: -7280169968747061212, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.3
+    - time: 0.33333334
       value: {fileID: 595027048417109253, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
-    - time: 0.4
+    - time: 0.44444445
       value: {fileID: 2318872509614352771, guid: cf17d08926d663f499a8bd88e4510283, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 10
+  m_SampleRate: 9
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -62,7 +62,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.5
+    m_StopTime: 0.5555556
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -89,35 +89,35 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.1
+  - time: 0.11111111
     functionName: AttackTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.2
+  - time: 0.22222222
     functionName: AttackTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.3
+  - time: 0.33333334
     functionName: AttackTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.4
+  - time: 0.44444445
     functionName: AnimationTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.4
+  - time: 0.44444445
     functionName: DisableAttackCollider
     data: 
     objectReferenceParameter: {fileID: 0}

@@ -161,7 +161,7 @@ public class PlayerVoidState : PlayerState
         RaycastHit2D hit = Physics2D.Raycast(
             new Vector2(newPosition.x, newPosition.y + 5f), // Yeterince yüksekten başla
             Vector2.down,
-            10f, // Zemin bulmak için yeterli mesafe
+                10f, // Zemin bulmak için yeterli mesafe
             player.whatIsGround
         );
         
