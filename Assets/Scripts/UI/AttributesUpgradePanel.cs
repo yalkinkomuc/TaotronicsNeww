@@ -141,7 +141,6 @@ public class AttributesUpgradePanel : BaseUIPanel
         
         if (playerStats == null)
         {
-            Debug.LogError("PlayerStats is null in AttributesUpgradePanel.Show()");
             return;
         }
         

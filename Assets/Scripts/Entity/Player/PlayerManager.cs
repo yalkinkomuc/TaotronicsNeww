@@ -18,7 +18,7 @@ public class PlayerManager : MonoBehaviour
             if (player != null)
             {
                 DontDestroyOnLoad(player.gameObject);
-                Debug.Log("PlayerManager: Player marked as DontDestroyOnLoad");
+                
             }
             else
             {
@@ -46,7 +46,7 @@ public class PlayerManager : MonoBehaviour
     // Called when a scene is loaded
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
-        Debug.Log($"PlayerManager: Scene loaded - {scene.name}");
+        
         
         // Ensure player reference is maintained
         StartCoroutine(ValidatePlayerReference());
@@ -67,7 +67,7 @@ public class PlayerManager : MonoBehaviour
             Debug.LogWarning("PlayerManager: Player reference lost, attempting to find player...");
             
             // Try to find player in scene
-            Player foundPlayer = FindObjectOfType<Player>();
+            Player foundPlayer = FindFirstObjectByType<Player>();
             if (foundPlayer != null)
             {
                 player = foundPlayer;

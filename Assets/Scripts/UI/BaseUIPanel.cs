@@ -12,7 +12,6 @@ public class BaseUIPanel : MonoBehaviour
         else if (UIInputBlocker.instance != null)
         {
             // Player henüz hazır değil, manuel olarak input blocking yapmayı bekle
-            Debug.Log($"BaseUIPanel ({gameObject.name}): Player not ready, skipping auto input blocking");
         }
     }
 

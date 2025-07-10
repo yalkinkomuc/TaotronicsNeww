@@ -44,20 +44,15 @@ public class HealthBar : MonoBehaviour
                 yield return new WaitForSeconds(0.2f);
             }
             
-            Debug.Log($"HealthBar: Initialization attempt {attempts}/{maxAttempts}");
             
             if (InitializeHealthBar())
             {
                 isInitialized = true;
-                Debug.Log("HealthBar: Successfully initialized");
                 break;
             }
         }
         
-        if (!isInitialized)
-        {
-            Debug.LogWarning("HealthBar: Failed to initialize after maximum attempts");
-        }
+      
     }
     
     private bool InitializeHealthBar()

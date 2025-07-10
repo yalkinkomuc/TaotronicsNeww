@@ -55,12 +55,12 @@ public class ManaBar : MonoBehaviour
                 yield return new WaitForSeconds(0.2f);
             }
             
-            Debug.Log($"ManaBar: Initialization attempt {attempts}/{maxAttempts}");
+           // Debug.Log($"ManaBar: Initialization attempt {attempts}/{maxAttempts}");
             
             if (InitializeComponents())
             {
                 isInitialized = true;
-                Debug.Log("ManaBar: Successfully initialized");
+               // Debug.Log("ManaBar: Successfully initialized");
                 break;
             }
         }
@@ -136,7 +136,7 @@ public class ManaBar : MonoBehaviour
                 Image img = obj.GetComponent<Image>();
                 if (img != null)
                 {
-                    Debug.Log($"ManaBar: Found fill image by name: {name}");
+                    //Debug.Log($"ManaBar: Found fill image by name: {name}");
                     return img;
                 }
             }
@@ -148,7 +148,7 @@ public class ManaBar : MonoBehaviour
         {
             if (img.name.ToLower().Contains("fill") || img.name.ToLower().Contains("mana"))
             {
-                Debug.Log($"ManaBar: Found fill image in children: {img.name}");
+                //Debug.Log($"ManaBar: Found fill image in children: {img.name}");
                 return img;
             }
         }
@@ -161,7 +161,7 @@ public class ManaBar : MonoBehaviour
             {
                 if (img.name.ToLower().Contains("fill") && img.name.ToLower().Contains("mana"))
                 {
-                    Debug.Log($"ManaBar: Found fill image in parent: {img.name}");
+                   // Debug.Log($"ManaBar: Found fill image in parent: {img.name}");
                     return img;
                 }
             }
@@ -191,7 +191,7 @@ public class ManaBar : MonoBehaviour
     {
         if (manaBarFill == null) 
         {
-            Debug.LogWarning("ManaBar: Trying to update but manaBarFill is null. Attempting to find it...");
+           // Debug.LogWarning("ManaBar: Trying to update but manaBarFill is null. Attempting to find it...");
             manaBarFill = FindManaBarFill();
             if (manaBarFill == null) return;
         }
@@ -207,7 +207,7 @@ public class ManaBar : MonoBehaviour
     {
         manaBarFill = fill;
         isInitialized = true; // Mark as initialized since references are explicitly set
-        Debug.Log($"ManaBar: References set externally - Fill: {fill != null}");
+       // Debug.Log($"ManaBar: References set externally - Fill: {fill != null}");
         
         // Hemen güncelle
         if (stats != null && manaBarFill != null)

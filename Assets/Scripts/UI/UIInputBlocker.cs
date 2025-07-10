@@ -25,12 +25,12 @@ public class UIInputBlocker : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            Debug.Log("UIInputBlocker: Singleton instance created");
+            
             DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Debug.LogWarning("UIInputBlocker: Duplicate instance destroyed");
+            
             Destroy(gameObject);
         }
     }
@@ -43,12 +43,12 @@ public class UIInputBlocker : MonoBehaviour
         // Add skill tree panel to the list if assigned and valid
         if (skillTreePanel != null && IsValidGameObject(skillTreePanel) && !uiPanels.Contains(skillTreePanel))
         {
-            Debug.Log("Adding SkillTreePanel to UIInputBlocker list!");
+          
             uiPanels.Add(skillTreePanel);
         }
         else if (skillTreePanel != null && !IsValidGameObject(skillTreePanel))
         {
-            Debug.LogWarning("SkillTreePanel reference is destroyed, clearing it");
+            
             skillTreePanel = null;
         }
         
@@ -76,7 +76,7 @@ public class UIInputBlocker : MonoBehaviour
     // Null/Missing referansları temizle
     private void CleanupNullReferences()
     {
-        Debug.Log($"UIInputBlocker: Cleaning up null references. List count before: {uiPanels.Count}");
+       
         
         // Geriye doğru iterate et ki remove işlemi güvenli olsun
         for (int i = uiPanels.Count - 1; i >= 0; i--)
@@ -86,12 +86,12 @@ public class UIInputBlocker : MonoBehaviour
             // Unity'de destroyed object kontrolü
             if (panel == null || !IsValidGameObject(panel))
             {
-                Debug.Log($"UIInputBlocker: Removing null/destroyed reference at index {i}");
+               
                 uiPanels.RemoveAt(i);
             }
         }
         
-        Debug.Log($"UIInputBlocker: List count after cleanup: {uiPanels.Count}");
+        
     }
     
     // GameObject'in gerçekten valid olup olmadığını kontrol et
@@ -113,7 +113,7 @@ public class UIInputBlocker : MonoBehaviour
     // Mevcut sahnedeki UI panellerini bul ve ekle
     private void FindAndAddCurrentScenePanels()
     {
-        Debug.Log("UIInputBlocker: Searching for UI panels in current scene...");
+        
         
         // Yaygın UI panel isimlerini ara
         string[] commonPanelNames = {
@@ -127,7 +127,7 @@ public class UIInputBlocker : MonoBehaviour
             GameObject panel = GameObject.Find(panelName);
             if (panel != null && IsValidGameObject(panel) && !uiPanels.Contains(panel))
             {
-                Debug.Log($"UIInputBlocker: Adding panel from current scene: {panelName}");
+                
                 uiPanels.Add(panel);
             }
         }
@@ -150,23 +150,23 @@ public class UIInputBlocker : MonoBehaviour
                 if (panelObj.name.Contains(excludedName))
                 {
                     isExcluded = true;
-                    Debug.Log($"UIInputBlocker: Excluding InGameUI element: {panelObj.name}");
+                    
                     break;
                 }
             }
             
             if (!isExcluded && panelObj != null && IsValidGameObject(panelObj) && !uiPanels.Contains(panelObj))
             {
-                Debug.Log($"UIInputBlocker: Adding BaseUIPanel: {panelObj.name}");
+                
                 uiPanels.Add(panelObj);
             }
         }
         
-        Debug.Log($"UIInputBlocker: Found {uiPanels.Count} total panels after scene search");
+        
     }
     
     // Sahne yüklendikten sonra input'u restore et
-    private System.Collections.IEnumerator RestoreInputAfterSceneLoad()
+    private IEnumerator RestoreInputAfterSceneLoad()
     {
         // Wait for all systems to initialize first
         yield return new WaitForSeconds(0.5f);
@@ -182,7 +182,7 @@ public class UIInputBlocker : MonoBehaviour
         // Player hazır olduğunda panel kontrolünü yap
         CheckActivePanels();
         
-        Debug.Log("UIInputBlocker: Input restored after scene load");
+       
     }
     
 
@@ -192,7 +192,7 @@ public class UIInputBlocker : MonoBehaviour
     {
         activePanelCount = 0;
         
-        Debug.Log("UIInputBlocker: Checking active panels...");
+        
         
         // Check active/inactive state for each panel
         for (int i = uiPanels.Count - 1; i >= 0; i--)
@@ -202,7 +202,7 @@ public class UIInputBlocker : MonoBehaviour
             // Null/destroyed kontrolü - eğer null veya destroyed ise listeden çıkar
             if (panel == null || !IsValidGameObject(panel))
             {
-                Debug.LogWarning($"UIInputBlocker: Removing null/destroyed panel at index {i}");
+               
                 uiPanels.RemoveAt(i);
                 continue;
             }
@@ -210,18 +210,18 @@ public class UIInputBlocker : MonoBehaviour
             if (panel.activeInHierarchy)
             {
                 activePanelCount++;
-                Debug.Log($"UIInputBlocker: Active panel found: {panel.name}");
+              
             }
         }
         
-        Debug.Log($"UIInputBlocker: Total active panels: {activePanelCount}");
+        
         
         // If there are panels, disable input (but only if Player is ready)
         if (activePanelCount > 0)
         {
             if (PlayerManager.instance?.player?.playerInput != null)
             {
-                Debug.Log("UIInputBlocker: Disabling input due to active panels");
+                
                 DisableGameplayInput();
             }
             else
@@ -234,26 +234,26 @@ public class UIInputBlocker : MonoBehaviour
             // Only enable input if Player is ready
             if (PlayerManager.instance?.player?.playerInput != null)
             {
-                Debug.Log("UIInputBlocker: No active panels, enabling input");
+               
                 EnableGameplayInput(true);
             }
             else
             {
-                Debug.Log("UIInputBlocker: Player not ready yet, postponing input enable");
+                
                 // Force enable after delay if no Player found
                 StartCoroutine(ForceEnableInputAfterDelay());
             }
         }
     }
     
-    private System.Collections.IEnumerator ForceEnableInputAfterDelay()
+    private IEnumerator ForceEnableInputAfterDelay()
     {
         yield return new WaitForSeconds(2f);
         
         // If still no active panels and Player still not ready, force enable
         if (activePanelCount == 0 && PlayerManager.instance?.player?.playerInput == null)
         {
-            Debug.Log("UIInputBlocker: Force enabling input after delay (Player still not ready)");
+            
             SetUIBlockerVisibility(false);
         }
     }
@@ -299,7 +299,7 @@ public class UIInputBlocker : MonoBehaviour
     {
         if (panel == null)
         {
-            Debug.LogWarning("UIInputBlocker: Trying to add null panel");
+            
             return;
         }
         
@@ -315,14 +315,14 @@ public class UIInputBlocker : MonoBehaviour
         {
             if (panel.name.Contains(excludedName))
             {
-                Debug.Log($"UIInputBlocker: Excluding panel from input blocking: {panel.name}");
+               
                 return;
             }
         }
         
         if (!uiPanels.Contains(panel))
         {
-            Debug.Log($"UIInputBlocker: Adding panel to input blocking list: {panel.name}");
+           
             uiPanels.Add(panel);
             
             if (panel.GetComponent<UIObjectTracker>() == null)
@@ -377,7 +377,7 @@ public class UIInputBlocker : MonoBehaviour
     // ONLY disable GAMEPLAY INPUTS, do NOT affect UI inputs
     public void DisableGameplayInput()
     {
-        Debug.Log("UIInputBlocker: DisableGameplayInput called");
+        
         
         // Disable player inputs
         Player player = PlayerManager.instance?.player;
@@ -393,17 +393,12 @@ public class UIInputBlocker : MonoBehaviour
             }
             else
             {
-                // Use warning instead of error since this might happen during game initialization
-                Debug.LogWarning("UIInputBlocker: PlayerInput is not yet initialized, will retry...");
-                // Try to retry after a delay
+               
                 StartCoroutine(RetryDisableGameplayInput());
             }
         }
         else
         {
-            // Use warning instead of error since this might happen during game initialization
-            Debug.LogWarning("UIInputBlocker: Player is not yet initialized, will retry...");
-            // Try to retry after a delay
             StartCoroutine(RetryDisableGameplayInput());
         }
         
@@ -412,7 +407,7 @@ public class UIInputBlocker : MonoBehaviour
     }
     
     // Player henüz hazır değilse tekrar dene
-    private System.Collections.IEnumerator RetryDisableGameplayInput()
+    private IEnumerator RetryDisableGameplayInput()
     {
         int retryCount = 0;
         while (retryCount < 5)
@@ -429,20 +424,20 @@ public class UIInputBlocker : MonoBehaviour
             Player player = PlayerManager.instance?.player;
             if (player != null && player.playerInput != null)
             {
-                Debug.Log("UIInputBlocker: Player and PlayerInput found on retry, disabling gameplay input");
+               
                
                 yield break; // Success, exit coroutine
             }
         }
         
         // Only log as warning since this might be expected during initialization
-        Debug.LogWarning("UIInputBlocker: Could not disable gameplay input after 5 attempts - this might be normal during scene loading");
+        
     }
     
     // ONLY enable GAMEPLAY INPUTS
     public void EnableGameplayInput(bool forceEnable = false)
     {
-        Debug.Log($"UIInputBlocker: EnableGameplayInput called - forceEnable: {forceEnable}, activePanelCount: {activePanelCount}");
+       
         
         // If force enable is requested or there are no active panels
         if (forceEnable || activePanelCount <= 0)
@@ -450,18 +445,16 @@ public class UIInputBlocker : MonoBehaviour
             // Enable player inputs with proper null checks
             if (PlayerManager.instance == null)
             {
-                Debug.LogWarning("UIInputBlocker: PlayerManager.instance is NULL - skipping input enable");
                 return;
             }
             
             Player player = PlayerManager.instance.player;
             if (player == null)
             {
-                Debug.LogWarning("UIInputBlocker: Player is NULL - skipping input enable");
                 return;
             }
             
-            Debug.Log($"UIInputBlocker: Player found: {player.name}");
+            
             IPlayerInput playerInput = player.playerInput;
             if (playerInput != null)
             {
@@ -471,7 +464,6 @@ public class UIInputBlocker : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("UIInputBlocker: PlayerInput is NULL - Player may not be fully initialized yet");
                 return;
             }
             
@@ -484,38 +476,6 @@ public class UIInputBlocker : MonoBehaviour
         }
     }
     
-    // Activate panel
-    public void ShowPanel(GameObject panel)
-    {
-        if (panel != null)
-        {
-            // Add to list if not present
-            if (!uiPanels.Contains(panel))
-            {
-                AddPanel(panel);
-            }
-            
-            // Activate panel
-            panel.SetActive(true);
-        }
-    }
-    
-    // Deactivate panel
-    public void HidePanel(GameObject panel)
-    {
-        if (panel != null)
-        {
-            panel.SetActive(false);
-        }
-    }
-    
-    // Manuel olarak tüm listeyi temizle (debug için)
-    public void ClearAllPanels()
-    {
-        Debug.Log("UIInputBlocker: Manually clearing all panels");
-        uiPanels.Clear();
-        skillTreePanel = null;
-        activePanelCount = 0;
-        EnableGameplayInput(true);
-    }
+  
+   
 } 

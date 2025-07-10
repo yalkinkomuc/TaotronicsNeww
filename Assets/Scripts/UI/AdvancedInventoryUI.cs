@@ -141,7 +141,6 @@ public class AdvancedInventoryUI : BaseUIPanel
     {
         if (tabManager == null)
         {
-            Debug.LogWarning("AdvancedInventoryUI: TabManager is not assigned!");
             return;
         }
         

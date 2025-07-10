@@ -72,7 +72,6 @@ public class SkillTreePanel : BaseUIPanel
     
     protected override void OnEnable()
     {
-        Debug.Log("SkillTreePanel OnEnable() called!");
         
         // UIInputBlocker'a ekle (sadece aktif olduğunda)
         if (UIInputBlocker.instance != null)
@@ -86,7 +85,6 @@ public class SkillTreePanel : BaseUIPanel
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas != null)
         {
-            Debug.Log($"Canvas found: {canvas.name}, renderMode: {canvas.renderMode}, sortingOrder: {canvas.sortingOrder}");
             
             // GraphicRaycaster kontrolü
             var raycaster = canvas.GetComponent<GraphicRaycaster>();

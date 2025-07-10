@@ -32,15 +32,15 @@ public class ItemObject : MonoBehaviour
         }
         else
         {
-            Debug.Log("ItemObject: " + itemData.itemName + " oluşturuldu");
+            //Debug.Log("ItemObject: " + itemData.itemName + " oluşturuldu");
             SetupVisuals();
         }
         
         // Benzersiz ID kontrolü
         if (string.IsNullOrEmpty(uniqueID))
         {
-            uniqueID = "item_" + System.Guid.NewGuid().ToString();
-            Debug.Log("Yeni item ID oluşturuldu: " + uniqueID);
+            uniqueID = "item_" + Guid.NewGuid();
+            //Debug.Log("Yeni item ID oluşturuldu: " + uniqueID);
         }
     }
 
@@ -96,7 +96,7 @@ public class ItemObject : MonoBehaviour
     {
         if (string.IsNullOrEmpty(id))
         {
-            Debug.LogError("SetUniqueID: Invalid ID provided!");
+            
             return;
         }
         
@@ -108,7 +108,6 @@ public class ItemObject : MonoBehaviour
     {
         if (data == null)
         {
-            Debug.LogError("SetItemData: null data provided!");
             return;
         }
         
