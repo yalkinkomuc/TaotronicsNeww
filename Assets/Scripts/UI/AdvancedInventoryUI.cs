@@ -492,48 +492,48 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     private void UpdateStatsDisplay()
     {
-        if (EquipmentManager.Instance == null) return;
+        PlayerStats playerStats = PlayerManager.instance?.player?.GetComponent<PlayerStats>();
+        if (playerStats == null) return;
         
-        var stats = EquipmentManager.Instance.GetAllStats();
-        
+        // Health - show current max health
         if (healthText != null)
-            healthText.text = stats.ContainsKey(StatType.Health) ? stats[StatType.Health].ToString() : "0";
-            
-        // Update attack damage to show min-max range (including critical potential)
-        if (attackDamageText != null)
         {
-            PlayerStats playerStats = PlayerManager.instance?.player?.GetComponent<PlayerStats>();
-            if (playerStats != null)
-            {
-                attackDamageText.text = playerStats.GetDamageRangeWithCriticalString();
-            }
-            else
-            {
-                attackDamageText.text = "0";
-            }
+            float maxHealth = playerStats.maxHealth.GetValue();
+            healthText.text = Mathf.RoundToInt(maxHealth).ToString();
         }
             
+        // Attack damage - show min-max range (including critical potential)
+        if (attackDamageText != null)
+        {
+            attackDamageText.text = playerStats.GetDamageRangeWithCriticalString();
+        }
+            
+        // Ability Power - show Mind attribute value and spellbook damage
         if (abilityPowerText != null)
-            abilityPowerText.text = "0"; // Placeholder
+        {
+            int mindValue = playerStats.Mind;
+            float spellDamage = playerStats.spellbookDamage.GetValue();
+            abilityPowerText.text = $"{mindValue} ({Mathf.RoundToInt(spellDamage)})";
+        }
             
+        // Defense - show defense stat from attributes
         if (defenseText != null)
-            defenseText.text = stats.ContainsKey(StatType.Armor) ? stats[StatType.Armor].ToString() : "0";
+        {
+            int defenseValue = playerStats.Defense;
+            defenseText.text = defenseValue.ToString();
+        }
             
+        // Critical Chance - show calculated critical chance percentage
         if (criticalChanceText != null)
-            criticalChanceText.text = stats.ContainsKey(StatType.CriticalChance) ? $"{stats[StatType.CriticalChance]}%" : "0%";
+        {
+            float critChance = playerStats.criticalChance;
+            criticalChanceText.text = $"{critChance:F1}%";
+        }
             
-        // Update gold display from PlayerStats
+        // Gold - show current gold amount
         if (goldText != null)
         {
-            PlayerStats playerStats = PlayerManager.instance?.player?.GetComponent<PlayerStats>();
-            if (playerStats != null)
-            {
-                goldText.text = playerStats.gold.ToString() + " G";
-            }
-            else
-            {
-                goldText.text = "0 G";
-            }
+            goldText.text = playerStats.gold.ToString() + " G";
         }
     }
     
