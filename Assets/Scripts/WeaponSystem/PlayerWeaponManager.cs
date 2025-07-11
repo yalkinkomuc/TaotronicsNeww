@@ -1,9 +1,16 @@
 using UnityEngine;
+using System;
 
 public class PlayerWeaponManager : MonoBehaviour
 {
+    // Static event for weapon switching
+    public static event Action<int, WeaponStateMachine> OnSecondaryWeaponChanged;
+    
     public WeaponStateMachine[] weapons;
     private int currentSecondaryWeaponIndex = 1; // 1'den başlıyoruz çünkü 0 kılıç
+    
+    // Public getter for UI access
+    public int GetCurrentSecondaryWeaponIndex() => currentSecondaryWeaponIndex;
     
     [SerializeField] private KeyCode weaponSwitchKey = KeyCode.Tab; // Silah değiştirme tuşu
     
@@ -32,6 +39,12 @@ public class PlayerWeaponManager : MonoBehaviour
         if (BlacksmithManager.Instance != null && playerStats != null)
         {
             BlacksmithManager.Instance.ApplyWeaponUpgrades(playerStats);
+        }
+        
+        // Fire initial event for UI
+        if (weapons.Length > currentSecondaryWeaponIndex)
+        {
+            OnSecondaryWeaponChanged?.Invoke(currentSecondaryWeaponIndex, weapons[currentSecondaryWeaponIndex]);
         }
     }
 
@@ -80,7 +93,23 @@ public class PlayerWeaponManager : MonoBehaviour
         }
         
         //Debug.Log($"Equipped secondary weapon: {weapons[index].name}");
+        
+        // Update UI when weapon changes
+        UpdateUISlots();
     }
+    
+    private void UpdateUISlots()
+    {
+        if (AdvancedInventoryUI.Instance != null)
+        {
+            AdvancedInventoryUI.Instance.UpdateEquipmentSlots();
+        }
+        
+        // Fire event for UI updates
+        OnSecondaryWeaponChanged?.Invoke(currentSecondaryWeaponIndex, weapons[currentSecondaryWeaponIndex]);
+    }
+    
+
     
     // Method to restore weapon visibility - called after HideWeapons/ShowWeapons
     public void RefreshWeaponVisibility()

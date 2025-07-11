@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Linq;
 
 public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
 {
@@ -16,6 +17,9 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Sprite emptySlotSprite;
     [SerializeField] private Color equippedColor = Color.white;
     [SerializeField] private Color emptyColor = new Color(1, 1, 1, 0.3f);
+    
+    // Public property for external access
+    public EquipmentSlot SlotType => slotType;
     
     private EquipmentData currentEquipment;
     
@@ -33,6 +37,11 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     public void UpdateSlotDisplay()
     {
         currentEquipment = GetEquippedItem();
+        
+        if (slotType == EquipmentSlot.SecondaryWeapon)
+        {
+            Debug.Log($"[SecondaryWeapon] UpdateSlotDisplay - Equipment: {currentEquipment?.itemName ?? "null"}");
+        }
         
         if (currentEquipment != null)
         {
@@ -116,21 +125,45 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         return null;
     }
     
-    private SecondaryWeaponData GetEquippedSecondaryWeapon()
+    private WeaponData GetEquippedSecondaryWeapon()
     {
-        // TODO: Get from EquipmentManager when implemented
-        // For now, try to find one in inventory for testing
-        if (Inventory.instance != null)
+        // Get active secondary weapon from PlayerWeaponManager
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        
+        if (weaponManager != null && weaponManager.weapons != null && weaponManager.weapons.Length > 1)
         {
-            foreach (var item in Inventory.instance.inventoryItems)
+            // Get current secondary weapon index
+            int currentIndex = weaponManager.GetCurrentSecondaryWeaponIndex();
+            
+            if (currentIndex > 0 && currentIndex < weaponManager.weapons.Length)
             {
-                if (item.data is SecondaryWeaponData secondaryWeapon)
+                var activeWeapon = weaponManager.weapons[currentIndex];
+                Debug.Log($"[SecondaryWeapon] Active weapon: {activeWeapon?.name}, Active: {activeWeapon?.gameObject.activeInHierarchy}");
+                
+                if (activeWeapon != null && activeWeapon.gameObject.activeInHierarchy)
                 {
-                    return secondaryWeapon; // Return first found secondary weapon
+                    // Check weapon type and get from BlacksmithManager
+                    if (activeWeapon.name.Contains("Boomerang"))
+                    {
+                        var boomerang = BlacksmithManager.Instance?.GetAllWeapons()?.FirstOrDefault(w => w.weaponType == WeaponType.Boomerang);
+                        Debug.Log($"[SecondaryWeapon] Returning Boomerang: {boomerang?.itemName}");
+                        return boomerang;
+                    }
+                    else if (activeWeapon.name.Contains("Spellbook"))
+                    {
+                        var spellbook = BlacksmithManager.Instance?.GetAllWeapons()?.FirstOrDefault(w => w.weaponType == WeaponType.Spellbook);
+                        Debug.Log($"[SecondaryWeapon] Returning Spellbook: {spellbook?.itemName}");
+                        return spellbook;
+                    }
+                    else
+                    {
+                        Debug.Log($"[SecondaryWeapon] Unknown weapon: {activeWeapon.name}");
+                    }
                 }
             }
         }
-        return null; // No secondary weapon found
+        
+        return null; // No secondary weapon active
     }
     
     private ArmorData GetEquippedArmor()

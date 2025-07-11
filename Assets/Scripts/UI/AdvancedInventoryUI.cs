@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -70,6 +71,9 @@ public class AdvancedInventoryUI : BaseUIPanel
             Instance = this;
             DontDestroyOnLoad(gameObject);
             
+            // Setup critical event listeners that need to work even when inventory is closed
+            SetupCriticalEventListeners();
+            
             // Instance atandıktan sonra başlangıçta kapat
             gameObject.SetActive(false);
             
@@ -119,6 +123,12 @@ public class AdvancedInventoryUI : BaseUIPanel
         UpdateMaterialDisplays();
         UpdateStatsDisplay();
         UpdateGearCapacity();
+    }
+    
+    private void SetupCriticalEventListeners()
+    {
+        // Critical events are now handled by EquipmentUIManager
+        // No need to handle weapon switching here anymore
     }
     
     private void SetupEventListeners()
@@ -191,6 +201,8 @@ public class AdvancedInventoryUI : BaseUIPanel
         EquipmentManager.OnStatsUpdated -= UpdateStatsDisplay;
         TabManager.OnTabChanged -= OnTabChanged;
         
+        // Note: PlayerWeaponManager.OnSecondaryWeaponChanged is now handled by EquipmentUIManager
+        
         if (Instance == this)
         {
             Instance = null;
@@ -247,13 +259,21 @@ public class AdvancedInventoryUI : BaseUIPanel
         UpdateEquipmentSlots();
     }
     
-    private void UpdateEquipmentSlots()
+    public void UpdateEquipmentSlots()
     {
-        // Update all equipment slots to show current equipment
-        weaponSlot?.UpdateSlotDisplay();
-        armorSlot?.UpdateSlotDisplay();
-        secondaryWeaponSlot?.UpdateSlotDisplay();
-        accessorySlot?.UpdateSlotDisplay();
+        // Delegate to EquipmentUIManager for equipment slot updates
+        if (EquipmentUIManager.Instance != null)
+        {
+            EquipmentUIManager.Instance.UpdateAllEquipmentSlots();
+        }
+        else
+        {
+            // Fallback: Update slots directly if EquipmentUIManager is not available
+            weaponSlot?.UpdateSlotDisplay();
+            armorSlot?.UpdateSlotDisplay();
+            secondaryWeaponSlot?.UpdateSlotDisplay();
+            accessorySlot?.UpdateSlotDisplay();
+        }
     }
     
     private void InitializeRuneSlots()
@@ -303,6 +323,8 @@ public class AdvancedInventoryUI : BaseUIPanel
         UpdateStatsDisplay();
         UpdateEquipmentSlots();
         UpdateGearCapacity();
+        
+        // Equipment slot updates are now handled by EquipmentUIManager automatically
         
         if (UIInputBlocker.instance != null)
         {
@@ -518,6 +540,15 @@ public class AdvancedInventoryUI : BaseUIPanel
     {
         UpdateStatsDisplay();
     }
+    
+    private void OnSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)
+    {
+        // This method is no longer needed as EquipmentUIManager handles weapon switching
+        // Keep for compatibility but delegate to the new system
+        UpdateEquipmentSlots();
+    }
+    
+    // DelayedEquipmentUpdate is no longer needed - EquipmentUIManager handles timing
     
     #endregion
 } 
