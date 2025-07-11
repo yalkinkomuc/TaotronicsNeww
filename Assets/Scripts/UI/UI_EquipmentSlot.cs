@@ -8,122 +8,177 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     [Header("UI References")]
     [SerializeField] private Image equipmentIcon;
     [SerializeField] private Image backgroundImage;
-    [SerializeField] private TextMeshProUGUI enhancementText;
+    [SerializeField] private TextMeshProUGUI equipmentNameText;
     [SerializeField] private GameObject emptySlotIndicator;
     
     [Header("Slot Configuration")]
+    [SerializeField] private EquipmentSlot slotType;
     [SerializeField] private Sprite emptySlotSprite;
     [SerializeField] private Color equippedColor = Color.white;
     [SerializeField] private Color emptyColor = new Color(1, 1, 1, 0.3f);
     
-    private EquipmentSlot slotType;
     private EquipmentData currentEquipment;
+    
+    private void Start()
+    {
+        UpdateSlotDisplay();
+    }
     
     public void Initialize(EquipmentSlot equipmentSlot)
     {
         slotType = equipmentSlot;
-        UpdateEquipment(null);
+        UpdateSlotDisplay();
     }
     
-    public void UpdateEquipment(EquipmentData equipment)
+    public void UpdateSlotDisplay()
     {
-        currentEquipment = equipment;
+        currentEquipment = GetEquippedItem();
         
-        if (equipment != null)
+        if (currentEquipment != null)
         {
-            // Show equipped item
-            equipmentIcon.sprite = equipment.icon;
-            equipmentIcon.color = equippedColor;
-            
-            // Show enhancement level if enhanced
-            if (enhancementText != null)
-            {
-                if (equipment.enhancementLevel > 0)
-                {
-                    enhancementText.text = $"+{equipment.enhancementLevel}";
-                    enhancementText.gameObject.SetActive(true);
-                }
-                else
-                {
-                    enhancementText.gameObject.SetActive(false);
-                }
-            }
-            
-            // Hide empty slot indicator
-            if (emptySlotIndicator != null)
-            {
-                emptySlotIndicator.SetActive(false);
-            }
+            ShowEquippedItem();
         }
         else
         {
-            // Show empty slot
-            equipmentIcon.sprite = emptySlotSprite;
-            equipmentIcon.color = emptyColor;
-            
-            // Hide enhancement text
-            if (enhancementText != null)
-            {
-                enhancementText.gameObject.SetActive(false);
-            }
-            
-            // Show empty slot indicator
-            if (emptySlotIndicator != null)
-            {
-                emptySlotIndicator.SetActive(true);
-            }
+            ShowEmptySlot();
+        }
+    }
+    
+    private void ShowEquippedItem()
+    {
+        // Show item icon
+        if (equipmentIcon != null)
+        {
+            equipmentIcon.sprite = currentEquipment.icon;
+            equipmentIcon.color = equippedColor;
+            equipmentIcon.gameObject.SetActive(true);
         }
         
-        UpdateSlotVisuals();
-    }
-    
-    private void UpdateSlotVisuals()
-    {
-        // Update background based on slot type and equipment rarity
-        if (backgroundImage != null)
+        // Show item name
+        if (equipmentNameText != null)
         {
-            if (currentEquipment != null)
-            {
-                // Set background color based on item rarity
-                backgroundImage.color = GetRarityColor(currentEquipment.rarity);
-            }
-            else
-            {
-                // Default background for empty slot
-                backgroundImage.color = Color.gray;
-            }
+            equipmentNameText.text = currentEquipment.itemName;
+            equipmentNameText.gameObject.SetActive(true);
+        }
+        
+        // Hide empty indicator
+        if (emptySlotIndicator != null)
+        {
+            emptySlotIndicator.SetActive(false);
         }
     }
     
-    private Color GetRarityColor(ItemRarity rarity)
+    private void ShowEmptySlot()
     {
-        return rarity switch
+        // Show empty slot visual
+        if (equipmentIcon != null)
         {
-            ItemRarity.Common => Color.white,
-            ItemRarity.Uncommon => Color.green,
-            ItemRarity.Rare => Color.blue,
-            ItemRarity.Epic => new Color(0.6f, 0.2f, 0.8f), // Purple
-            ItemRarity.Legendary => Color.yellow,
-            ItemRarity.Mythic => Color.red,
-            _ => Color.white
+            equipmentIcon.sprite = emptySlotSprite;
+            equipmentIcon.color = emptyColor;
+            equipmentIcon.gameObject.SetActive(true);
+        }
+        
+        // Show slot type name
+        if (equipmentNameText != null)
+        {
+            equipmentNameText.text = GetSlotTypeName();
+            equipmentNameText.gameObject.SetActive(true);
+        }
+        
+        // Show empty indicator
+        if (emptySlotIndicator != null)
+        {
+            emptySlotIndicator.SetActive(true);
+        }
+    }
+    
+    private EquipmentData GetEquippedItem()
+    {
+        // Get equipped item based on slot type
+        return slotType switch
+        {
+            EquipmentSlot.MainWeapon => GetEquippedWeapon(),
+            EquipmentSlot.SecondaryWeapon => GetEquippedSecondaryWeapon(),
+            EquipmentSlot.Armor => GetEquippedArmor(),
+            EquipmentSlot.Accessory => GetEquippedAccessory(),
+            _ => null
+        };
+    }
+    
+    private WeaponData GetEquippedWeapon()
+    {
+        // Currently equipped weapon from inventory or blacksmith system
+        if (BlacksmithManager.Instance != null)
+        {
+            var weapons = BlacksmithManager.Instance.GetAllWeapons();
+            return weapons?.Count > 0 ? weapons[0] : null; // For now, return first weapon
+        }
+        return null;
+    }
+    
+    private SecondaryWeaponData GetEquippedSecondaryWeapon()
+    {
+        // TODO: Get from EquipmentManager when implemented
+        // For now, try to find one in inventory for testing
+        if (Inventory.instance != null)
+        {
+            foreach (var item in Inventory.instance.inventoryItems)
+            {
+                if (item.data is SecondaryWeaponData secondaryWeapon)
+                {
+                    return secondaryWeapon; // Return first found secondary weapon
+                }
+            }
+        }
+        return null; // No secondary weapon found
+    }
+    
+    private ArmorData GetEquippedArmor()
+    {
+        // TODO: Get from EquipmentManager when implemented
+        // For now return null (empty slot)
+        return null;
+    }
+    
+    private AccessoryData GetEquippedAccessory()
+    {
+        // TODO: Get from EquipmentManager when implemented
+        // For now return null (empty slot)
+        return null;
+    }
+    
+    private string GetSlotTypeName()
+    {
+        return slotType switch
+        {
+            EquipmentSlot.MainWeapon => "Weapon",
+            EquipmentSlot.SecondaryWeapon => "Secondary",
+            EquipmentSlot.Armor => "Armor",
+            EquipmentSlot.Accessory => "Accessory",
+            _ => "Empty"
         };
     }
     
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
+        // Handle slot click - open equipment selection or show details
+        Debug.Log($"Clicked on {slotType} slot");
+        
+        if (currentEquipment != null)
         {
-            // Left click: Show equipment selection panel
-            ShowEquipmentSelectionPanel();
+            // Show equipment details or context menu
+            Debug.Log($"Equipped: {currentEquipment.itemName}");
+            // TODO: Show tooltip or context menu
         }
-        else if (eventData.button == PointerEventData.InputButton.Right && currentEquipment != null)
+        else
         {
-            // Right click: Unequip current item
-            UnequipCurrentItem();
+            // Open equipment selection for this slot type
+            Debug.Log($"Open equipment selection for {slotType}");
+            OpenEquipmentSelectionPanel();
         }
     }
     
-    private void ShowEquipmentSelectionPanel()
+    private void OpenEquipmentSelectionPanel()
     {
         if (UI_EquipmentSelectionPanel.Instance != null)
         {
@@ -134,47 +189,19 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
                 OnEquipmentSelected
             );
         }
+        else
+        {
+            Debug.LogWarning("UI_EquipmentSelectionPanel.Instance not found!");
+        }
     }
     
     private void OnEquipmentSelected(EquipmentData selectedEquipment)
     {
-        if (EquipmentManager.Instance != null && selectedEquipment != null)
-        {
-            // Equip the selected item
-            bool equipped = EquipmentManager.Instance.EquipItem(selectedEquipment);
-            if (equipped && Inventory.instance != null)
-            {
-                // Remove from inventory
-                Inventory.instance.RemoveItem(selectedEquipment);
-            }
-        }
-    }
-    
-    private void UnequipCurrentItem()
-    {
-        if (currentEquipment != null && EquipmentManager.Instance != null)
-        {
-            EquipmentData unequippedItem = EquipmentManager.Instance.UnequipItem(slotType);
-            if (unequippedItem != null && Inventory.instance != null)
-            {
-                // Add back to inventory
-                Inventory.instance.AddItem(unequippedItem);
-            }
-        }
-    }
-    
-    // Tooltip functionality (if needed later)
-    public void ShowTooltip()
-    {
-        if (currentEquipment != null)
-        {
-            // TODO: Show equipment tooltip
-            Debug.Log($"Equipment: {currentEquipment.GetTooltip()}");
-        }
-    }
-    
-    public void HideTooltip()
-    {
-        // TODO: Hide equipment tooltip
+        Debug.Log($"Equipment selected: {selectedEquipment.itemName} for slot {slotType}");
+        
+        // For now, just update the display
+        // TODO: Integrate with EquipmentManager when it's ready
+        currentEquipment = selectedEquipment;
+        UpdateSlotDisplay();
     }
 } 

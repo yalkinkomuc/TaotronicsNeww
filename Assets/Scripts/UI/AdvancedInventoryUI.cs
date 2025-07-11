@@ -242,6 +242,18 @@ public class AdvancedInventoryUI : BaseUIPanel
         armorSlot?.Initialize(EquipmentSlot.Armor);
         secondaryWeaponSlot?.Initialize(EquipmentSlot.SecondaryWeapon);
         accessorySlot?.Initialize(EquipmentSlot.Accessory);
+        
+        // Update slot displays
+        UpdateEquipmentSlots();
+    }
+    
+    private void UpdateEquipmentSlots()
+    {
+        // Update all equipment slots to show current equipment
+        weaponSlot?.UpdateSlotDisplay();
+        armorSlot?.UpdateSlotDisplay();
+        secondaryWeaponSlot?.UpdateSlotDisplay();
+        accessorySlot?.UpdateSlotDisplay();
     }
     
     private void InitializeRuneSlots()
@@ -284,8 +296,12 @@ public class AdvancedInventoryUI : BaseUIPanel
             ShowInventoryPage(); // Fallback
         }
         
+        // Force show inventory page regardless of tab system (temporary fix)
+        ShowInventoryPage();
+        
         UpdateMaterialDisplays();
         UpdateStatsDisplay();
+        UpdateEquipmentSlots();
         UpdateGearCapacity();
         
         if (UIInputBlocker.instance != null)
@@ -495,6 +511,7 @@ public class AdvancedInventoryUI : BaseUIPanel
     private void OnEquipmentChanged(EquipmentSlot slot, EquipmentData equipment)
     {
         UpdateStatsDisplay();
+        UpdateEquipmentSlots();
     }
     
     private void OnRuneChanged(int slotIndex, RuneData rune)
