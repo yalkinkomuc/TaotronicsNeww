@@ -297,44 +297,22 @@ public class BlacksmithUI : BaseUIPanel
                 currentLevelText.text = $" {selectedWeapon.level}/{selectedWeapon.maxLevel}";
             }
             
-            // Get the appropriate base damage based on weapon type
-            float baseDamage;
-            switch (selectedWeapon.weaponType)
-            {
-                case WeaponType.Sword:
-                    baseDamage = playerStats.baseDamage.GetBaseValue();
-                    break;
-                case WeaponType.Boomerang:
-                    baseDamage = playerStats.boomerangDamage.GetBaseValue();
-                    break;
-                case WeaponType.Spellbook:
-                    baseDamage = playerStats.spellbookDamage.GetBaseValue();
-                    break;
-                default:
-                    baseDamage = playerStats.baseDamage.GetBaseValue();
-                    break;
-            }
-            
-            // Calculate current damage (base damage + might bonus + current weapon bonus)
-            float mightBonus = playerStats.CalculateDamageBonusForMight(playerStats.Might);
-            float currentWeaponBonus = selectedWeapon.GetCurrentDamageBonus();
-            float totalCurrentDamage = baseDamage + mightBonus + currentWeaponBonus;
+            // Calculate current damage range (min normal - max critical)
+            string currentDamageRange = CalculateWeaponDamageRange(selectedWeapon, false);
             
             if (currentDamageText != null)
             {
-                currentDamageText.text = $" {totalCurrentDamage}";
+                currentDamageText.text = $" {currentDamageRange}";
             }
             
             // Calculate next level damage if not max level
             if (selectedWeapon.level < selectedWeapon.maxLevel)
             {
-                float nextLevelWeaponBonus = selectedWeapon.baseDamageBonus + 
-                                           (selectedWeapon.upgradeDamageIncrement * selectedWeapon.level);
-                float totalNextLevelDamage = baseDamage + mightBonus + nextLevelWeaponBonus;
+                string nextLevelDamageRange = CalculateWeaponDamageRange(selectedWeapon, true);
                 
                 if (nextLevelDamageText != null)
                 {
-                    nextLevelDamageText.text = $" {totalNextLevelDamage}";
+                    nextLevelDamageText.text = $" {nextLevelDamageRange}";
                 }
                 
                 // Set upgrade cost and materials
@@ -555,5 +533,57 @@ public class BlacksmithUI : BaseUIPanel
         }
         
         return true;
+    }
+    
+    /// <summary>
+    /// Calculate weapon damage range including critical hit potential
+    /// Uses the same calculation as AdvancedInventoryUI for consistency
+    /// </summary>
+    /// <param name="weapon">Weapon to calculate for</param>
+    /// <param name="isNextLevel">If true, calculate for next level upgrade</param>
+    /// <returns>Formatted damage range string</returns>
+    private string CalculateWeaponDamageRange(WeaponData weapon, bool isNextLevel)
+    {
+        if (weapon == null || playerStats == null) return "0";
+        
+        if (isNextLevel)
+        {
+            // For next level preview, we need to temporarily simulate the upgrade
+            // Create a temporary copy or calculate manually
+            int tempLevel = weapon.level + 1;
+            if (tempLevel > weapon.maxLevel) return playerStats.GetDamageRangeWithCriticalString();
+            
+            // Get weapon's base min-max damage
+            int weaponMinDamage = weapon.minDamage;
+            int weaponMaxDamage = weapon.maxDamage;
+            
+            // Calculate next level upgrade bonus
+            float nextLevelBonus = weapon.baseDamageBonus + (weapon.upgradeDamageIncrement * (tempLevel - 1));
+            
+            // Add might attribute bonus (use PlayerStats method)
+            float mightBonus = playerStats.baseDamage.GetValue() - playerStats.baseDamage.GetBaseValue();
+            
+            // Calculate final damage range
+            int finalMinDamage = weaponMinDamage + Mathf.RoundToInt(nextLevelBonus + mightBonus);
+            int finalMaxDamage = weaponMaxDamage + Mathf.RoundToInt(nextLevelBonus + mightBonus);
+            
+            // Apply critical multiplier to max damage
+            int maxCritical = Mathf.RoundToInt(finalMaxDamage * playerStats.criticalDamage);
+            
+            // Format the range string
+            if (finalMinDamage == maxCritical)
+            {
+                return finalMinDamage.ToString();
+            }
+            else
+            {
+                return $"{finalMinDamage}-{maxCritical}";
+            }
+        }
+        else
+        {
+            // For current level, use the same method as AdvancedInventoryUI
+            return playerStats.GetDamageRangeWithCriticalString();
+        }
     }
 } 

@@ -162,6 +162,30 @@ public class WeaponData : EquipmentData
     {
         return maxDamage + Mathf.RoundToInt(GetCurrentDamageBonus());
     }
+    
+    // Get random damage in min-max range
+    public int GetRandomDamage()
+    {
+        int min = GetTotalMinDamage();
+        int max = GetTotalMaxDamage();
+        
+        // Ensure max is at least min + 1 for random range
+        if (max <= min) max = min + 1;
+        
+        return UnityEngine.Random.Range(min, max + 1); // +1 because Range is exclusive for int
+    }
+    
+    // Get damage range as formatted string for UI
+    public string GetDamageRangeString()
+    {
+        int min = GetTotalMinDamage();
+        int max = GetTotalMaxDamage();
+        
+        if (min == max)
+            return min.ToString();
+        else
+            return $"{min}-{max}";
+    }
 }
 
 // Enum to categorize weapon types - Updated to match weapon state machine

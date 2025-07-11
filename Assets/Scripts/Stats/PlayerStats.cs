@@ -166,6 +166,170 @@ public class PlayerStats : CharacterStats
         return base.CalculateHealthBonusForVitality(vitalityLevel);
     }
     
+    #region Damage Range System
+    
+    /// <summary>
+    /// Get minimum damage from equipped weapon + attributes + upgrades
+    /// </summary>
+    public int GetMinDamage()
+    {
+        // Get equipped main weapon
+        WeaponData weapon = EquipmentManager.Instance?.GetCurrentMainWeapon();
+        
+        if (weapon != null)
+        {
+            // Weapon min damage + upgrade bonuses
+            int weaponMinDamage = weapon.GetTotalMinDamage();
+            
+            // Add attribute bonus from might
+            float mightBonus = baseDamage.GetValue() - baseDamage.GetBaseValue();
+            
+            return weaponMinDamage + Mathf.RoundToInt(mightBonus);
+        }
+        else
+        {
+            // Fallback to base damage system
+            return Mathf.RoundToInt(baseDamage.GetValue());
+        }
+    }
+    
+    /// <summary>
+    /// Get maximum damage from equipped weapon + attributes + upgrades
+    /// </summary>
+    public int GetMaxDamage()
+    {
+        // Get equipped main weapon
+        WeaponData weapon = EquipmentManager.Instance?.GetCurrentMainWeapon();
+        
+        if (weapon != null)
+        {
+            // Weapon max damage + upgrade bonuses
+            int weaponMaxDamage = weapon.GetTotalMaxDamage();
+            
+            // Add attribute bonus from might
+            float mightBonus = baseDamage.GetValue() - baseDamage.GetBaseValue();
+            
+            return weaponMaxDamage + Mathf.RoundToInt(mightBonus);
+        }
+        else
+        {
+            // Fallback to base damage system
+            return Mathf.RoundToInt(baseDamage.GetValue());
+        }
+    }
+    
+    /// <summary>
+    /// Get random damage in min-max range for combat
+    /// </summary>
+    public int GetRandomDamage()
+    {
+        int min = GetMinDamage();
+        int max = GetMaxDamage();
+        
+        // Ensure max is at least min + 1 for random range
+        if (max <= min) max = min + 1;
+        
+        return UnityEngine.Random.Range(min, max + 1);
+    }
+    
+    /// <summary>
+    /// Get damage range as formatted string for UI display
+    /// </summary>
+    public string GetDamageRangeString()
+    {
+        int min = GetMinDamage();
+        int max = GetMaxDamage();
+        
+        if (min == max)
+            return min.ToString();
+        else
+            return $"{min}-{max}";
+    }
+    
+    /// <summary>
+    /// Get damage range including critical hit potential for UI display
+    /// Shows: Min Normal Damage - Max Critical Damage
+    /// </summary>
+    public string GetDamageRangeWithCriticalString()
+    {
+        int minNormal = GetMinDamage();
+        int maxNormal = GetMaxDamage();
+        
+        // Apply critical multiplier to max damage (1.5f default)
+        int maxCritical = Mathf.RoundToInt(maxNormal * criticalDamage);
+        
+        if (minNormal == maxCritical)
+            return minNormal.ToString();
+        else
+            return $"{minNormal}-{maxCritical}";
+    }
+    
+    /// <summary>
+    /// Get average damage for comparison purposes
+    /// </summary>
+    public float GetAverageDamage()
+    {
+        return (GetMinDamage() + GetMaxDamage()) / 2f;
+    }
+    
+    /// <summary>
+    /// Get damage range string with temporary might value for preview
+    /// Used by AttributesUpgradePanel for real-time preview
+    /// </summary>
+    public string GetDamageRangeWithCriticalString(int tempMight)
+    {
+        // Calculate temporary might bonus
+        float baseDamageValue = baseDamage.GetBaseValue();
+        float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, tempMight) - 1;
+        float tempMightBonus = baseDamageValue * damageMultiplier;
+        
+        // Get current equipment bonus (excluding might bonus)
+        float currentMightBonus = baseDamage.GetValue() - baseDamage.GetBaseValue();
+        float equipmentOnlyBonus = baseDamage.GetValue() - baseDamage.GetBaseValue() - currentMightBonus;
+        
+        // Actually, let's simplify: get all non-attribute bonuses
+        float currentTotalBonus = baseDamage.GetValue() - baseDamage.GetBaseValue();
+        float currentMightBonusCalculated = baseDamageValue * (Mathf.Pow(1 + DAMAGE_GROWTH, Might) - 1);
+        float equipmentAndOtherBonuses = currentTotalBonus - currentMightBonusCalculated;
+        
+        // Get equipped weapon
+        WeaponData weapon = EquipmentManager.Instance?.GetCurrentMainWeapon();
+        
+        if (weapon != null)
+        {
+            // Calculate min damage with temp might value + equipment bonuses
+            int weaponMinDamage = weapon.GetTotalMinDamage();
+            int totalMinDamage = weaponMinDamage + Mathf.RoundToInt(tempMightBonus + equipmentAndOtherBonuses);
+            
+            // Calculate max damage with temp might value + equipment bonuses
+            int weaponMaxDamage = weapon.GetTotalMaxDamage();
+            int totalMaxDamage = weaponMaxDamage + Mathf.RoundToInt(tempMightBonus + equipmentAndOtherBonuses);
+            
+            // Apply critical multiplier to max damage
+            int maxCritical = Mathf.RoundToInt(totalMaxDamage * criticalDamage);
+            
+            // Format the range string
+            if (totalMinDamage == maxCritical)
+                return totalMinDamage.ToString();
+            else
+                return $"{totalMinDamage}-{maxCritical}";
+        }
+        else
+        {
+            // Fallback to base damage system
+            float totalDamage = baseDamageValue + tempMightBonus + equipmentAndOtherBonuses;
+            int normalDamage = Mathf.RoundToInt(totalDamage);
+            int maxCritical = Mathf.RoundToInt(totalDamage * criticalDamage);
+            
+            if (normalDamage == maxCritical)
+                return normalDamage.ToString();
+            else
+                return $"{normalDamage}-{maxCritical}";
+        }
+    }
+    
+    #endregion
+    
     // Calculates just the damage bonus for a specific might level (for preview)
     public new float CalculateDamageBonusForMight(int mightLevel)
     {

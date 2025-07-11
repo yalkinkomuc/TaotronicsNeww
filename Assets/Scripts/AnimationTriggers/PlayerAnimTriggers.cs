@@ -247,12 +247,16 @@ public class PlayerAnimTriggers : MonoBehaviour
       dummy.TakeDamage(damage, comboCounter, isCritical);
    }
 
-   // Temel hasar ve kritik vuruş hesaplama
+   // Temel hasar ve kritik vuruş hesaplama (now uses min-max range system)
    private float CalculateDamage(out bool isCritical)
    {
       float damage = 0f;
       if (player.stats is PlayerStats playerStats)
-         damage = playerStats.baseDamage.GetValue();
+      {
+         // Use new damage range system instead of fixed baseDamage
+         damage = playerStats.GetRandomDamage();
+      }
+      
       isCritical = false;
       // Kritik vuruş kontrolü
       if (player.stats is PlayerStats ps && ps.IsCriticalHit())

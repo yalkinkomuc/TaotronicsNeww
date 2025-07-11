@@ -234,15 +234,17 @@ public class AttributesUpgradePanel : BaseUIPanel
         
         // Health preview: vitality arttıkça anlık güncellensin
         float healthValue = CalculateHealth(tempVitality);
-        float attackValue = CalculateAttack(tempMight);
         float elementalPower = CalculateElementalMultiplier(tempMind);
         float defenseValue = CalculateDefense(tempDefense);
         float critValue = CalculateCritRate(tempLuck);
         
+        // Calculate attack damage range string using PlayerStats method (same as AdvancedInventoryUI)
+        string attackRangeString = playerStats.GetDamageRangeWithCriticalString(tempMight);
+        
         // Update UI
         if (healthValueText) healthValueText.text = healthValue.ToString("F0");
         if (manaValueText) manaValueText.text = "-";
-        if (attackValueText) attackValueText.text = attackValue.ToString("F1");
+        if (attackValueText) attackValueText.text = attackRangeString;
         if (speedValueText) speedValueText.text = "-";
         if (defenseValueText) defenseValueText.text = defenseValue.ToString("F0");
         if (critRateValueText) critRateValueText.text = (critValue * 100).ToString("F1") + "%";
@@ -263,15 +265,7 @@ public class AttributesUpgradePanel : BaseUIPanel
         return baseHealth + bonus;
     }
     
-    private float CalculateAttack(int might)
-    {
-        // Base damage
-        float baseDamage = playerStats.baseDamage.GetBaseValue();
-        // Might bonus hesaplama (exponential growth)
-        float damageMultiplier = Mathf.Pow(1 + 0.06f, might) - 1; // DAMAGE_GROWTH = 0.06f
-        float bonus = baseDamage * damageMultiplier;
-        return baseDamage + bonus;
-    }
+
     
     private float CalculateDefense(int defense)
     {
@@ -292,6 +286,8 @@ public class AttributesUpgradePanel : BaseUIPanel
         // Elemental multiplier calculation
         return 1f + (mind * 0.01f); // ELEMENTAL_MULTIPLIER_PER_MIND = 0.01f
     }
+    
+
     
     private void HandleAttributeSelection()
     {

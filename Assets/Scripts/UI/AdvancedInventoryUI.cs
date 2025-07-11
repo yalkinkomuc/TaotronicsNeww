@@ -499,8 +499,19 @@ public class AdvancedInventoryUI : BaseUIPanel
         if (healthText != null)
             healthText.text = stats.ContainsKey(StatType.Health) ? stats[StatType.Health].ToString() : "0";
             
+        // Update attack damage to show min-max range (including critical potential)
         if (attackDamageText != null)
-            attackDamageText.text = stats.ContainsKey(StatType.Might) ? stats[StatType.Might].ToString() : "0";
+        {
+            PlayerStats playerStats = PlayerManager.instance?.player?.GetComponent<PlayerStats>();
+            if (playerStats != null)
+            {
+                attackDamageText.text = playerStats.GetDamageRangeWithCriticalString();
+            }
+            else
+            {
+                attackDamageText.text = "0";
+            }
+        }
             
         if (abilityPowerText != null)
             abilityPowerText.text = "0"; // Placeholder
