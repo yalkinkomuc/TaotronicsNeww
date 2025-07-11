@@ -47,6 +47,12 @@ public class EquipmentManager : MonoBehaviour
             playerStats = FindFirstObjectByType<PlayerStats>();
         }
         
+        // Initialize weapon references from existing systems
+        InitializeWeaponReferences();
+        
+        // Listen to weapon switching events
+        PlayerWeaponManager.OnSecondaryWeaponChanged += OnPlayerSecondaryWeaponChanged;
+        
         CalculateAllStats();
     }
     
@@ -259,6 +265,109 @@ public class EquipmentManager : MonoBehaviour
     
     #endregion
     
+    #region Weapon Integration
+    
+    /// <summary>
+    /// Initialize weapon references from existing systems
+    /// </summary>
+    private void InitializeWeaponReferences()
+    {
+        // Get weapons from BlacksmithManager and set them as equipped
+        if (BlacksmithManager.Instance != null)
+        {
+            var weapons = BlacksmithManager.Instance.GetAllWeapons();
+            if (weapons != null && weapons.Count > 0)
+            {
+                // Find and equip main weapon (Sword)
+                var sword = weapons.Find(w => w.weaponType == WeaponType.Sword);
+                if (sword != null && currentWeapon == null)
+                {
+                    currentWeapon = sword;
+                    Debug.Log($"[EquipmentManager] Auto-equipped main weapon: {sword.itemName}");
+                }
+                
+                // Find and equip initial secondary weapon (Boomerang by default)
+                var boomerang = weapons.Find(w => w.weaponType == WeaponType.Boomerang);
+                if (boomerang != null && currentSecondaryWeapon == null)
+                {
+                    currentSecondaryWeapon = boomerang;
+                    Debug.Log($"[EquipmentManager] Auto-equipped secondary weapon: {boomerang.itemName}");
+                }
+            }
+        }
+        
+        Debug.Log($"[EquipmentManager] Weapon references initialized - Main: {currentWeapon?.itemName}, Secondary: {currentSecondaryWeapon?.itemName}");
+    }
+    
+    /// <summary>
+    /// Called when PlayerWeaponManager switches secondary weapon
+    /// </summary>
+    private void OnPlayerSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)
+    {
+        Debug.Log($"[EquipmentManager] PlayerWeaponManager switched to weapon index {weaponIndex}");
+        
+        // Determine new secondary weapon data based on state machine type
+        WeaponData newSecondaryWeapon = GetWeaponDataFromStateMachine(weaponStateMachine);
+        
+        if (newSecondaryWeapon != null && newSecondaryWeapon != currentSecondaryWeapon)
+        {
+            // Update secondary weapon without going through EquipItem (to avoid conflicts)
+            var previousWeapon = currentSecondaryWeapon;
+            currentSecondaryWeapon = newSecondaryWeapon;
+            
+            // Recalculate stats and fire events
+            CalculateAllStats();
+            OnEquipmentChanged?.Invoke(EquipmentSlot.SecondaryWeapon, newSecondaryWeapon);
+            
+            Debug.Log($"[EquipmentManager] Secondary weapon updated: {previousWeapon?.itemName} → {newSecondaryWeapon.itemName}");
+        }
+    }
+    
+    /// <summary>
+    /// Get WeaponData from a WeaponStateMachine
+    /// </summary>
+    private WeaponData GetWeaponDataFromStateMachine(WeaponStateMachine stateMachine)
+    {
+        if (stateMachine == null || BlacksmithManager.Instance == null) return null;
+        
+        var weapons = BlacksmithManager.Instance.GetAllWeapons();
+        if (weapons == null) return null;
+        
+        // Determine weapon type based on state machine type
+        if (stateMachine is BoomerangWeaponStateMachine)
+        {
+            return weapons.Find(w => w.weaponType == WeaponType.Boomerang);
+        }
+        else if (stateMachine is SpellbookWeaponStateMachine)
+        {
+            return weapons.Find(w => w.weaponType == WeaponType.Spellbook);
+        }
+        else if (stateMachine is SwordWeaponStateMachine)
+        {
+            return weapons.Find(w => w.weaponType == WeaponType.Sword);
+        }
+        
+        return null;
+    }
+    
+    /// <summary>
+    /// Get currently equipped main weapon (public getter)
+    /// </summary>
+    public WeaponData GetCurrentMainWeapon()
+    {
+        return currentWeapon as WeaponData;
+    }
+    
+    /// <summary>
+    /// Get currently equipped secondary weapon (public getter)
+    /// </summary>
+    public WeaponData GetCurrentSecondaryWeapon()
+    {
+        return currentSecondaryWeapon as WeaponData;
+    }
+    
+    #endregion
+    
     #region Save/Load
     
     public void SaveEquipment()
@@ -274,4 +383,10 @@ public class EquipmentManager : MonoBehaviour
     }
     
     #endregion
+    
+    private void OnDestroy()
+    {
+        // Unsubscribe from events
+        PlayerWeaponManager.OnSecondaryWeaponChanged -= OnPlayerSecondaryWeaponChanged;
+    }
 } 

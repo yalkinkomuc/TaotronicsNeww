@@ -23,9 +23,6 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private EquipmentData currentEquipment;
     
-    // Cache expensive references to avoid repeated FindFirstObjectByType calls
-    private PlayerWeaponManager cachedWeaponManager;
-    
     private void Start()
     {
         UpdateSlotDisplay();
@@ -119,50 +116,24 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private WeaponData GetEquippedWeapon()
     {
-        // Currently equipped weapon from inventory or blacksmith system
-        if (BlacksmithManager.Instance != null)
+        // Use EquipmentManager as the single source of truth
+        if (EquipmentManager.Instance != null)
         {
-            var weapons = BlacksmithManager.Instance.GetAllWeapons();
-            return weapons?.Count > 0 ? weapons[0] : null; // For now, return first weapon
+            return EquipmentManager.Instance.GetCurrentMainWeapon();
         }
-        return null;
+        
+        return null; // No EquipmentManager available
     }
     
     private WeaponData GetEquippedSecondaryWeapon()
     {
-        // Cache PlayerWeaponManager reference to avoid expensive FindFirstObjectByType calls
-        if (cachedWeaponManager == null)
+        // Use EquipmentManager as the single source of truth
+        if (EquipmentManager.Instance != null)
         {
-            cachedWeaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+            return EquipmentManager.Instance.GetCurrentSecondaryWeapon();
         }
         
-        if (cachedWeaponManager != null && cachedWeaponManager.weapons != null && cachedWeaponManager.weapons.Length > 1)
-        {
-            // Get current secondary weapon index
-            int currentIndex = cachedWeaponManager.GetCurrentSecondaryWeaponIndex();
-            
-            if (currentIndex > 0 && currentIndex < cachedWeaponManager.weapons.Length)
-            {
-                var activeWeapon = cachedWeaponManager.weapons[currentIndex];
-                
-                if (activeWeapon != null && activeWeapon.gameObject.activeInHierarchy)
-                {
-                    // Check weapon type and get from BlacksmithManager
-                    if (activeWeapon.name.Contains("Boomerang"))
-                    {
-                        var boomerang = BlacksmithManager.Instance?.GetAllWeapons()?.FirstOrDefault(w => w.weaponType == WeaponType.Boomerang);
-                        return boomerang;
-                    }
-                    else if (activeWeapon.name.Contains("Spellbook"))
-                    {
-                        var spellbook = BlacksmithManager.Instance?.GetAllWeapons()?.FirstOrDefault(w => w.weaponType == WeaponType.Spellbook);
-                        return spellbook;
-                    }
-                }
-            }
-        }
-        
-        return null; // No secondary weapon active
+        return null; // No EquipmentManager available
     }
     
     private ArmorData GetEquippedArmor()

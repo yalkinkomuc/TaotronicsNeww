@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Sword
   description: Sword
-  icon: {fileID: 21300000, guid: b4dec29edac104c48826d4ed7027f7e5, type: 3}
+  icon: {fileID: 21300000, guid: 376a4d93db499f84589a4a3a5bdaec21, type: 3}
   itemType: 0
   dropChance: 0
   sellValue: 0
@@ -26,7 +26,7 @@ MonoBehaviour:
   equipmentSlot: 0
   statModifiers: []
   enhancementLevel: 0
-  maxEnhancementLevel: 15
+  maxEnhancementLevel: 10
   weaponType: 0
   attackSpeed: 1
   criticalChance: 5
@@ -37,13 +37,8 @@ MonoBehaviour:
   level: 1
   maxLevel: 10
   upgradeDamageIncrement: 2
-  baseUpgradeCost: 100
+  baseUpgradeCost: 1
   upgradeCostMultiplier: 1.1
-  requiredMaterials:
-  - materialType: 0
-    baseAmount: 1
-    scalesWithLevel: 0
-    levelScaleRate: 0
-    minimumLevel: 0
+  requiredMaterials: []
   hasSpecialEffect: 0
   specialEffectDescription: 
