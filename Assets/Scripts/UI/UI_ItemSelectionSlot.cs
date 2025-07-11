@@ -159,7 +159,7 @@ public class UI_ItemSelectionSlot : MonoBehaviour
         }
         
         // Add weapon-specific stats
-        if (equipmentData is EquipmentWeaponData weapon)
+        if (equipmentData is WeaponData weapon)
         {
             if (count < 2)
             {

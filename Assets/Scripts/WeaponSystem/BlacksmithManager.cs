@@ -9,16 +9,16 @@ public class BlacksmithManager : MonoBehaviour
     [Header("Weapon Database")]
     public List<WeaponData> weaponDatabase = new List<WeaponData>();
     
-    // Dictionary to store currently active weapon upgrades
+    // Dictionary to store currently active weapon upgrades (original ScriptableObjects)
     private Dictionary<string, WeaponData> activeWeapons = new Dictionary<string, WeaponData>();
     
     private void Awake()
     {
-        // Basit singleton pattern
+        // Singleton pattern
         if (Instance == null)
         {
             Instance = this;
-            
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -26,118 +26,40 @@ public class BlacksmithManager : MonoBehaviour
             return;
         }
         
-        // weaponDatabase null olup olmadığını kontrol et
-        if (weaponDatabase == null)
-        {
-            weaponDatabase = new List<WeaponData>();
-        }
-        
-        // Silahları tanımla (her zaman)
-        InitializeDefaultWeapons();
-        
-        // Kaydedilmiş verileri yükle
+        // Load weapon data
         LoadWeaponData();
-        
-
     }
     
-    private void InitializeDefaultWeapons()
-    {
-        // Eğer weaponDatabase zaten dolu ise (inspector'dan ayarlanmışsa), temizleme
-        if (weaponDatabase != null && weaponDatabase.Count > 0)
-        {
-            // Inspector'dan ayarlanmış silahlar varsa onları koru
-            return;
-        }
-        
-        // Sadece boş ise default silahları oluştur
-        weaponDatabase.Clear();
-        
-        // Kılıç - Material gereksinimlerini inspector'dan ayarlayabilirsin
-        WeaponData sword = new WeaponData("sword", "Kılıç", WeaponType.Sword, 10f, 100);
-        sword.upgradeDamageIncrement = 5f;
-        weaponDatabase.Add(sword);
-        
-        // Bumerang - Material gereksinimlerini inspector'dan ayarlayabilirsin
-        WeaponData boomerang = new WeaponData("boomerang", "Bumerang", WeaponType.Boomerang, 8f, 120);
-        boomerang.upgradeDamageIncrement = 4f;
-        weaponDatabase.Add(boomerang);
-        
-        // Büyü Kitabı - Material gereksinimlerini inspector'dan ayarlayabilirsin
-        WeaponData spellbook = new WeaponData("spellbook", "Büyü Kitabı", WeaponType.Spellbook, 6f, 150);
-        spellbook.upgradeDamageIncrement = 3f;
-        weaponDatabase.Add(spellbook);
-        
-
-    }
-    
-    private void AddWeaponWithIcon(string id, string name, WeaponType type, float baseDamage, int cost)
-    {
-        WeaponData weapon = new WeaponData(id, name, type, baseDamage, cost);
-        
-        // Resources klasöründen ikonu yüklemeyi dene
-        string iconPath = $"WeaponIcons/{id}";
-        Sprite icon = Resources.Load<Sprite>(iconPath);
-        
-        if (icon != null)
-        {
-            weapon.weaponIcon = icon;
-        }
-        
-        weaponDatabase.Add(weapon);
-    }
-    
-    // Get a list of all weapons - Null kontrolü eklendi
+    // Get a list of all weapons
     public List<WeaponData> GetAllWeapons()
     {
-        // weaponDatabase null kontrolü
         if (weaponDatabase == null)
         {
             return new List<WeaponData>();
         }
         
-        // Veritabanı boş ise, default silahları yükle
-        if (weaponDatabase.Count == 0)
-        {
-            InitializeDefaultWeapons();
-        }
-        
-        // Bu fonksiyon çağrıldığında, silahların hepsinin aktif olmasını sağla
-        if (weaponDatabase.Count > 0 && activeWeapons.Count == 0)
-        {
-            LoadWeaponData();
-        }
-        
         return weaponDatabase;
     }
     
-    // Get a specific weapon by ID - Null kontrolü eklendi
-    public WeaponData GetWeapon(string weaponId)
+    // Get a specific weapon by itemName
+    public WeaponData GetWeapon(string weaponName)
     {
-        // Eğer activeWeapons boş ise, yeniden yüklemeyi dene
-        if (activeWeapons.Count == 0)
-        {
-            LoadWeaponData();
-        }
-        
-        return (activeWeapons != null && activeWeapons.ContainsKey(weaponId)) ? 
-               activeWeapons[weaponId] : null;
+        return weaponDatabase?.FirstOrDefault(w => w.itemName == weaponName);
     }
     
     // Get weapons of a specific type
     public List<WeaponData> GetWeaponsByType(WeaponType type)
     {
-        return weaponDatabase.Where(w => w.weaponType == type).ToList();
+        return weaponDatabase?.Where(w => w.weaponType == type).ToList() ?? new List<WeaponData>();
     }
     
     // Try to upgrade a weapon
-    public bool UpgradeWeapon(string weaponId, PlayerStats playerStats)
+    public bool UpgradeWeapon(string weaponName, PlayerStats playerStats)
     {
-        if (!activeWeapons.ContainsKey(weaponId))
+        WeaponData weapon = GetWeapon(weaponName);
+        if (weapon == null)
             return false;
             
-        WeaponData weapon = activeWeapons[weaponId];
-        
         // Check if the weapon can be upgraded
         if (!weapon.CanUpgrade())
             return false;
@@ -152,7 +74,7 @@ public class BlacksmithManager : MonoBehaviour
         // Check upgrade materials requirement
         if (!CheckUpgradeMaterials(weapon))
         {
-            Debug.Log($"Yeterli upgrade material yok! {weapon.weaponName} için gerekli materyaller eksik.");
+            Debug.Log($"Yeterli upgrade material yok! {weapon.itemName} için gerekli materyaller eksik.");
             return false;
         }
             
@@ -162,7 +84,7 @@ public class BlacksmithManager : MonoBehaviour
         // Consume upgrade materials
         ConsumeUpgradeMaterials(weapon);
         
-        // Upgrade the weapon
+        // Upgrade the weapon (modify the ScriptableObject directly)
         weapon.level++;
         
         // Apply the upgrade effect
@@ -190,8 +112,10 @@ public class BlacksmithManager : MonoBehaviour
         float boomerangDamageBonus = 0f;
         float spellbookDamageBonus = 0f;
         
-        foreach (var weapon in activeWeapons.Values)
+        foreach (var weapon in weaponDatabase)
         {
+            if (weapon == null) continue;
+            
             float weaponBonus = weapon.GetCurrentDamageBonus();
             totalDamageBonus += weaponBonus;
             
@@ -225,20 +149,19 @@ public class BlacksmithManager : MonoBehaviour
         {
             playerStats.spellbookDamage.AddModifier(spellbookDamageBonus, StatModifierType.Equipment);
         }
-        
-
     }
     
     // Save weapon data to PlayerPrefs
     private void SaveWeaponData()
     {
-        foreach (var weapon in activeWeapons.Values)
+        foreach (var weapon in weaponDatabase)
         {
-            PlayerPrefs.SetInt($"Weapon_{weapon.weaponId}_Level", weapon.level);
+            if (weapon != null)
+            {
+                PlayerPrefs.SetInt($"Weapon_{weapon.itemName}_Level", weapon.level);
+            }
         }
         PlayerPrefs.Save();
-        
-
     }
     
     // Load weapon data from PlayerPrefs
@@ -249,56 +172,16 @@ public class BlacksmithManager : MonoBehaviour
             return;
         }
         
-        activeWeapons.Clear();
-        
         foreach (var weapon in weaponDatabase)
         {
-            if (weapon == null)
+            if (weapon != null)
             {
-                continue;
-            }
-            
-            // Create a copy of the weapon data
-            WeaponData weaponCopy = new WeaponData(
-                weapon.weaponId, 
-                weapon.weaponName, 
-                weapon.weaponType, 
-                weapon.baseDamageBonus, 
-                weapon.baseUpgradeCost
-            );
-            
-            // Copy additional properties
-            weaponCopy.maxLevel = weapon.maxLevel;
-            weaponCopy.upgradeDamageIncrement = weapon.upgradeDamageIncrement;
-            weaponCopy.upgradeCostMultiplier = weapon.upgradeCostMultiplier;
-            
-            // Copy material requirements
-            weaponCopy.requiredMaterials = new System.Collections.Generic.List<RequiredMaterial>(weapon.requiredMaterials);
-            
-            // Ikon ataması
-            if (weapon.weaponIcon != null)
-            {
-                weaponCopy.weaponIcon = weapon.weaponIcon;
-            }
-            else
-            {
-                // Eğer orijinal WeaponData'da ikon yoksa, Resources'dan tekrar yüklemeyi dene
-                string iconPath = $"WeaponIcons/{weapon.weaponId}";
-                Sprite icon = Resources.Load<Sprite>(iconPath);
-                if (icon != null)
+                // Load saved level
+                if (PlayerPrefs.HasKey($"Weapon_{weapon.itemName}_Level"))
                 {
-                    weaponCopy.weaponIcon = icon;
+                    weapon.level = PlayerPrefs.GetInt($"Weapon_{weapon.itemName}_Level");
                 }
             }
-            
-            // Load saved level
-            if (PlayerPrefs.HasKey($"Weapon_{weapon.weaponId}_Level"))
-            {
-                weaponCopy.level = PlayerPrefs.GetInt($"Weapon_{weapon.weaponId}_Level");
-            }
-            
-            // Add to active weapons dictionary
-            activeWeapons.Add(weaponCopy.weaponId, weaponCopy);
         }
     }
 
@@ -341,7 +224,6 @@ public class BlacksmithManager : MonoBehaviour
     // Get required materials for weapon upgrade
     private Dictionary<MaterialType, int> GetRequiredMaterials(WeaponData weapon)
     {
-        // Use the new inspector-configurable system
         return weapon.GetRequiredMaterialsForUpgrade();
     }
     
@@ -399,11 +281,12 @@ public class BlacksmithManager : MonoBehaviour
     }
     
     // Get required materials info for UI display (public method for BlacksmithUI)
-    public Dictionary<MaterialType, int> GetRequiredMaterialsForDisplay(string weaponId)
+    public Dictionary<MaterialType, int> GetRequiredMaterialsForDisplay(string weaponName)
     {
-        if (!activeWeapons.ContainsKey(weaponId))
+        WeaponData weapon = GetWeapon(weaponName);
+        if (weapon == null)
             return new Dictionary<MaterialType, int>();
             
-        return GetRequiredMaterials(activeWeapons[weaponId]);
+        return GetRequiredMaterials(weapon);
     }
 } 

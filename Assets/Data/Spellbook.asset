@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 028815b49f7a1ae4fb731c59df2cb0dc, type: 3}
+  m_Name: Spellbook
+  m_EditorClassIdentifier: 
+  itemName: Sword
+  description: Sword
+  icon: {fileID: 21300000, guid: b4dec29edac104c48826d4ed7027f7e5, type: 3}
+  itemType: 0
+  dropChance: 0
+  sellValue: 0
+  rarity: 0
+  isStackable: 0
+  maxStackSize: 1
+  resourcePath: Items/S
+  requiredLevel: 1
+  equipmentSlot: 0
+  statModifiers: []
+  enhancementLevel: 0
+  maxEnhancementLevel: 15
+  weaponType: 0
+  attackSpeed: 1
+  criticalChance: 5
+  criticalDamage: 150
+  minDamage: 10
+  maxDamage: 25
+  baseDamageBonus: 0
+  level: 1
+  maxLevel: 10
+  upgradeDamageIncrement: 2
+  baseUpgradeCost: 100
+  upgradeCostMultiplier: 1.1
+  requiredMaterials:
+  - materialType: 0
+    baseAmount: 1
+    scalesWithLevel: 0
+    levelScaleRate: 0
+    minimumLevel: 0
+  hasSpecialEffect: 0
+  specialEffectDescription: 

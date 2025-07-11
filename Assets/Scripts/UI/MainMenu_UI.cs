@@ -151,12 +151,26 @@ public class MainMenu_UI : MonoBehaviour
    private void ClearWeaponData()
    {
       // Silah seviye verilerini temizle
-      // Tüm weapon ID'leri için döngü yapabiliriz ya da prefix kullanabiliriz
-      string[] weaponIDs = {"Sword", "Boomerang", "Spellbook"}; // Bilinen silah ID'leri
-      
-      foreach (string weaponID in weaponIDs)
+      // BlacksmithManager'dan weapon isimlerini al
+      if (BlacksmithManager.Instance != null)
       {
-         PlayerPrefs.DeleteKey($"Weapon_{weaponID}_Level");
+         var weapons = BlacksmithManager.Instance.GetAllWeapons();
+         foreach (var weapon in weapons)
+         {
+            if (weapon != null)
+            {
+               PlayerPrefs.DeleteKey($"Weapon_{weapon.itemName}_Level");
+            }
+         }
+      }
+      else
+      {
+         // Fallback - bilinen eski weapon ID'leri
+         string[] weaponNames = {"Sword", "Boomerang", "Spellbook", "Kılıç", "Bumerang", "Büyü Kitabı"};
+         foreach (string weaponName in weaponNames)
+         {
+            PlayerPrefs.DeleteKey($"Weapon_{weaponName}_Level");
+         }
       }
    }
    

@@ -44,34 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f53de8add54f05549a47eb4153eade4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponDatabase:
-  - weaponId: sword
-    weaponName: Sword
-    weaponType: 0
-    level: 1
-    maxLevel: 10
-    baseDamageBonus: 0
-    upgradeDamageIncrement: 100
-    baseUpgradeCost: 150
-    upgradeCostMultiplier: 1.5
-    weaponIcon: {fileID: 304685198442149715, guid: f5de301bc17e0a144baf43ee1ee52d39, type: 3}
-  - weaponId: boomerang
-    weaponName: Boomerang
-    weaponType: 1
-    level: 1
-    maxLevel: 10
-    baseDamageBonus: 0
-    upgradeDamageIncrement: 100
-    baseUpgradeCost: 150
-    upgradeCostMultiplier: 1.5
-    weaponIcon: {fileID: -3858649371512188071, guid: 190280e45cbca0449b6a3d2dc9226398, type: 3}
-  - weaponId: spellbook
-    weaponName: Spellbook
-    weaponType: 2
-    level: 1
-    maxLevel: 10
-    baseDamageBonus: 0
-    upgradeDamageIncrement: 100
-    baseUpgradeCost: 150
-    upgradeCostMultiplier: 1.5
-    weaponIcon: {fileID: 3286403360914397607, guid: cf524f4ab5f37f2429b240a2eff57d44, type: 3}
+  weaponDatabase: []

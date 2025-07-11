@@ -234,22 +234,22 @@ public class BlacksmithUI : BaseUIPanel
                 
                 if (buttonImage == null)
                 {
-                    Debug.LogWarning($"{weapon.weaponName} için image bileşeni bulunamadı!");
+                    Debug.LogWarning($"{weapon.itemName} için image bileşeni bulunamadı!");
                 }
             }
             
             // Set button icon
-            if (weapon.weaponIcon != null && buttonImage != null)
+            if (weapon.icon != null && buttonImage != null)
             {
-                buttonImage.sprite = weapon.weaponIcon;
+                buttonImage.sprite = weapon.icon;
             }
             
             // Add click event
-            string weaponId = weapon.weaponId; // Create a local copy for the lambda
-            button.onClick.AddListener(() => SelectWeapon(weaponId));
+            string weaponName = weapon.itemName; // Create a local copy for the lambda
+            button.onClick.AddListener(() => SelectWeapon(weaponName));
             
             // Store button reference
-            weaponButtons.Add(weaponId, button);
+            weaponButtons.Add(weaponName, button);
             
             // Set tooltip
             // TooltipTrigger tooltip = buttonObj.GetComponent<TooltipTrigger>();
@@ -261,7 +261,7 @@ public class BlacksmithUI : BaseUIPanel
         }
     }
     
-    private void SelectWeapon(string weaponId)
+    private void SelectWeapon(string weaponName)
     {
         try
         {
@@ -273,23 +273,23 @@ public class BlacksmithUI : BaseUIPanel
             }
             
             // Get weapon data
-            selectedWeapon = BlacksmithManager.Instance.GetWeapon(weaponId);
+            selectedWeapon = BlacksmithManager.Instance.GetWeapon(weaponName);
             
             if (selectedWeapon == null)
             {
-                Debug.LogError($"Weapon with ID {weaponId} not found!");
+                Debug.LogError($"Weapon with name {weaponName} not found!");
                 return;
             }
             
             // Update UI - tüm UI elemanları için null kontrolü
             if (weaponNameText != null)
             {
-                weaponNameText.text = selectedWeapon.weaponName;
+                weaponNameText.text = selectedWeapon.itemName;
             }
             
-            if (weaponIcon != null && selectedWeapon.weaponIcon != null)
+            if (weaponIcon != null && selectedWeapon.icon != null)
             {
-                weaponIcon.sprite = selectedWeapon.weaponIcon;
+                weaponIcon.sprite = selectedWeapon.icon;
             }
             
             if (currentLevelText != null)
@@ -341,7 +341,7 @@ public class BlacksmithUI : BaseUIPanel
                 int upgradeCost = selectedWeapon.GetNextUpgradeCost();
                 
                 // Get required materials
-                var requiredMaterials = BlacksmithManager.Instance.GetRequiredMaterialsForDisplay(selectedWeapon.weaponId);
+                var requiredMaterials = BlacksmithManager.Instance.GetRequiredMaterialsForDisplay(selectedWeapon.itemName);
                 
                 if (upgradeCostText != null)
                 {
@@ -440,7 +440,7 @@ public class BlacksmithUI : BaseUIPanel
             }
             
             // Try to upgrade
-            bool success = BlacksmithManager.Instance.UpgradeWeapon(selectedWeapon.weaponId, playerStats);
+            bool success = BlacksmithManager.Instance.UpgradeWeapon(selectedWeapon.itemName, playerStats);
             
             if (success)
             {
@@ -448,12 +448,12 @@ public class BlacksmithUI : BaseUIPanel
                 UpdateGoldText();
                 
                 // Refresh weapon selection
-                SelectWeapon(selectedWeapon.weaponId);
+                SelectWeapon(selectedWeapon.itemName);
                 
                 // Show success message
                 if (descriptionText != null)
                 {
-                    descriptionText.text = $"{selectedWeapon.weaponName} başarıyla geliştirildi!";
+                    descriptionText.text = $"{selectedWeapon.itemName} başarıyla geliştirildi!";
                 }
             }
             else
@@ -472,7 +472,7 @@ public class BlacksmithUI : BaseUIPanel
                     {
                         int upgradeCost = selectedWeapon.GetNextUpgradeCost();
                         bool hasEnoughGold = playerStats.gold >= upgradeCost;
-                        var requiredMaterials = BlacksmithManager.Instance.GetRequiredMaterialsForDisplay(selectedWeapon.weaponId);
+                        var requiredMaterials = BlacksmithManager.Instance.GetRequiredMaterialsForDisplay(selectedWeapon.itemName);
                         bool hasEnoughMaterials = CheckHasRequiredMaterials(requiredMaterials);
                         
                         if (!hasEnoughGold && !hasEnoughMaterials)
