@@ -1177,6 +1177,8 @@ public class Player : Entity
         // Tüm silah referanslarını güncelle (aktif veya inaktif)
         boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
         spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>(true);
+        hammer = GetComponentInChildren<HammerSwordStateMachine>(true);
+        burningSword = GetComponentInChildren<BurningSwordStateMachine>(true);
     }
     
     public void HideWeapons()
@@ -1208,12 +1210,7 @@ public class Player : Entity
         }
         else
         {
-            // Fallback if no weapon manager found
-            if (swordWeapon != null) swordWeapon.gameObject.SetActive(false);
-            if (boomerangWeapon != null) boomerangWeapon.gameObject.SetActive(false);
-            if (spellbookWeapon != null) spellbookWeapon.gameObject.SetActive(false);
-            if(burningSword != null) burningSword.gameObject.SetActive(false);
-            if (hammer != null) hammer.gameObject.SetActive(false);
+            Debug.LogWarning("PlayerWeaponManager not found during weapon hiding!");
         }
         
         weaponsHidden = true;
@@ -1238,42 +1235,7 @@ public class Player : Entity
         }
         else
         {
-            
-            
-            // Fallback if no weapon manager found - we need to manually activate the weapons
-            if (swordWeapon != null) 
-                swordWeapon.gameObject.SetActive(true);
-            
-            // Son aktif silahı belirle
-            if (lastActiveWeaponState == WeaponState.ThrowBoomerang || 
-                lastActiveWeaponState == WeaponState.CatchBoomerang)
-            {
-                // Boomerang silahını aktif et
-                if (boomerangWeapon != null)
-                    boomerangWeapon.gameObject.SetActive(true);
-                    
-                if (spellbookWeapon != null)
-                    spellbookWeapon.gameObject.SetActive(false);
-            }
-            else if (lastActiveWeaponState == WeaponState.Spell1 || 
-                     lastActiveWeaponState == WeaponState.Spell2)
-            {
-                // Spellbook silahını aktif et
-                if (spellbookWeapon != null)
-                    spellbookWeapon.gameObject.SetActive(true);
-                    
-                if (boomerangWeapon != null)
-                    boomerangWeapon.gameObject.SetActive(false);
-            }
-            else
-            {
-                // Hiçbir özel durum yoksa varsayılan olarak bumerangı aktif et
-                if (boomerangWeapon != null)
-                    boomerangWeapon.gameObject.SetActive(true);
-                    
-                if (spellbookWeapon != null)
-                    spellbookWeapon.gameObject.SetActive(false);
-            }
+            Debug.LogWarning("PlayerWeaponManager not found! Weapon management may not work properly.");
         }
         
         weaponsHidden = false;
@@ -1294,8 +1256,9 @@ public class Player : Entity
             PlayerWeaponManager weaponManager = GetComponent<PlayerWeaponManager>();
             if (weaponManager != null && weaponManager.weapons != null)
             {
-                // Sword'u aktif tut (0. index)
-                if (weaponManager.weapons.Length > 0 && weaponManager.weapons[0] != null)
+                // Primary weapon'ı aktif tut (starting weapon)
+                if (weaponManager.weapons.Length > weaponManager.startingWeaponIndex && 
+                    weaponManager.weapons[weaponManager.startingWeaponIndex] != null)
                 {
                     weaponManager.weapons[weaponManager.startingWeaponIndex].gameObject.SetActive(true);
                 }
@@ -1311,12 +1274,7 @@ public class Player : Entity
             }
             else
             {
-                // Fallback: Manuel kontrol
-                if (swordWeapon != null) swordWeapon.gameObject.SetActive(true);
-                if (boomerangWeapon != null) boomerangWeapon.gameObject.SetActive(false);
-                if (spellbookWeapon != null) spellbookWeapon.gameObject.SetActive(false);
-                if (burningSword != null) burningSword.gameObject.SetActive(false);
-                if (hammer != null) hammer.gameObject.SetActive(false);
+                Debug.LogWarning("PlayerWeaponManager not found during boomerang visibility management!");
             }
         }
         // Boomerang havada değilse normal silah sistemine müdahale etme

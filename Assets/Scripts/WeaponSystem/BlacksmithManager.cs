@@ -106,11 +106,15 @@ public class BlacksmithManager : MonoBehaviour
         playerStats.baseDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
         playerStats.boomerangDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
         playerStats.spellbookDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
+        playerStats.hammerDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
+        playerStats.burningSwordDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
         
         // Calculate total damage bonus from all upgraded weapons
         float totalDamageBonus = 0f;
         float boomerangDamageBonus = 0f;
         float spellbookDamageBonus = 0f;
+        float hammerDamageBonus = 0f;
+        float burningSwordDamageBonus = 0f;
         
         foreach (var weapon in weaponDatabase)
         {
@@ -130,6 +134,18 @@ public class BlacksmithManager : MonoBehaviour
             {
                 spellbookDamageBonus += weaponBonus;
             }
+            
+            // If this is the hammer weapon, add its bonus to hammer damage
+            if (weapon.weaponType == WeaponType.Hammer)
+            {
+                hammerDamageBonus += weaponBonus;
+            }
+            
+            // If this is the burning sword weapon, add its bonus to burning sword damage
+            if (weapon.weaponType == WeaponType.BurningSword)
+            {
+                burningSwordDamageBonus += weaponBonus;
+            }
         }
         
         // Apply total damage bonus if it's greater than 0
@@ -148,6 +164,18 @@ public class BlacksmithManager : MonoBehaviour
         if (spellbookDamageBonus > 0)
         {
             playerStats.spellbookDamage.AddModifier(spellbookDamageBonus, StatModifierType.Equipment);
+        }
+        
+        // Apply hammer-specific damage bonus
+        if (hammerDamageBonus > 0)
+        {
+            playerStats.hammerDamage.AddModifier(hammerDamageBonus, StatModifierType.Equipment);
+        }
+        
+        // Apply burning sword-specific damage bonus
+        if (burningSwordDamageBonus > 0)
+        {
+            playerStats.burningSwordDamage.AddModifier(burningSwordDamageBonus, StatModifierType.Equipment);
         }
     }
     

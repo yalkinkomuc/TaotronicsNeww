@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class PlayerWeaponManager : MonoBehaviour
 {
@@ -7,9 +8,9 @@ public class PlayerWeaponManager : MonoBehaviour
     public static event Action<int, WeaponStateMachine> OnSecondaryWeaponChanged;
     
     public WeaponStateMachine[] weapons;
-    private int currentSecondaryWeaponIndex = 1; // 1'den başlıyoruz çünkü 0 kılıç
+    private int currentSecondaryWeaponIndex = -1; // Will be set to first secondary weapon found
 
-    [SerializeField] public int startingWeaponIndex = 4;
+    [SerializeField] public int startingWeaponIndex = 4; // Hammer ile başla
     
     // Public getter for UI access
     public int GetCurrentSecondaryWeaponIndex() => currentSecondaryWeaponIndex;
@@ -23,7 +24,6 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         if (weapons.Length < 2)
         {
-
             return;
         }
         
@@ -31,11 +31,18 @@ public class PlayerWeaponManager : MonoBehaviour
         player = GetComponent<Player>();
         playerStats = GetComponent<PlayerStats>();
 
-        // Kılıcı aktif et (her zaman aktif kalacak)
-        weapons[startingWeaponIndex].gameObject.SetActive(true); // başlangıç indexi
+        // Initialize all weapons (disable all first)
+        InitializeAllWeapons();
         
-        // İkincil silahı aktif et
-        EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+        // Activate starting primary weapon
+        ActivatePrimaryWeapon(startingWeaponIndex);
+        
+        // Find and activate first secondary weapon
+        currentSecondaryWeaponIndex = GetFirstSecondaryWeaponIndex();
+        if (currentSecondaryWeaponIndex != -1)
+        {
+            EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+        }
         
         // Initialize weapon upgrades
         if (BlacksmithManager.Instance != null && playerStats != null)
@@ -44,7 +51,7 @@ public class PlayerWeaponManager : MonoBehaviour
         }
         
         // Fire initial event for UI
-        if (weapons.Length > currentSecondaryWeaponIndex)
+        if (currentSecondaryWeaponIndex != -1 && currentSecondaryWeaponIndex < weapons.Length)
         {
             OnSecondaryWeaponChanged?.Invoke(currentSecondaryWeaponIndex, weapons[currentSecondaryWeaponIndex]);
         }
@@ -52,7 +59,7 @@ public class PlayerWeaponManager : MonoBehaviour
 
     void Update()
     {
-                if (Input.GetKeyDown(weaponSwitchKey) && weapons.Length > 2)
+                if (Input.GetKeyDown(weaponSwitchKey) && currentSecondaryWeaponIndex != -1)
         {
             // Boomerang havadayken silah değişimine izin verme
             if (player != null && player.isBoomerangInAir)
@@ -60,41 +67,59 @@ public class PlayerWeaponManager : MonoBehaviour
                 return;
             }
             
-            // Sadece ikincil silahlar arasında geçiş yap (1. indeksten başlayarak)
-            currentSecondaryWeaponIndex++;
-            if (currentSecondaryWeaponIndex >= weapons.Length)
+            // Find next secondary weapon
+            int nextIndex = GetNextSecondaryWeaponIndex();
+            if (nextIndex != -1)
             {
-                currentSecondaryWeaponIndex = 1; // 1'e dön (0 kılıç olduğu için)
+                currentSecondaryWeaponIndex = nextIndex;
+                EquipSecondaryWeapon(currentSecondaryWeaponIndex);
             }
-            EquipSecondaryWeapon(currentSecondaryWeaponIndex);
         }
     }
 
     void EquipSecondaryWeapon(int index)
     {
-        // Kılıcı etkileme (0. index)
-        for (int i = 1; i < weapons.Length; i++)
+        if (index < 0 || index >= weapons.Length || weapons[index] == null)
         {
-            // Seçilen silahı aktif et, diğerlerini deaktif et
-            weapons[i].gameObject.SetActive(i == index);
+            Debug.LogError($"Invalid secondary weapon index: {index}");
+            return;
         }
         
-        // Player üzerindeki lastActiveWeaponState'i güncelle
-        if (player != null)
+        // Only affect secondary weapons - disable all secondary weapons first
+        for (int i = 0; i < weapons.Length; i++)
         {
-            // Eğer aktif edilen silah boomerang ise
-            if (weapons[index] is BoomerangWeaponStateMachine)
+            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
             {
-                player.UpdateLastActiveWeapon(WeaponState.ThrowBoomerang);
-            }
-            // Eğer aktif edilen silah spellbook ise
-            else if (weapons[index] is SpellbookWeaponStateMachine)
-            {
-                player.UpdateLastActiveWeapon(WeaponState.Spell1);
+                weapons[i].gameObject.SetActive(false);
             }
         }
         
-        //Debug.Log($"Equipped secondary weapon: {weapons[index].name}");
+        // Activate the selected secondary weapon (only if it's actually a secondary weapon)
+        if (IsSecondaryWeapon(weapons[index]))
+        {
+            weapons[index].gameObject.SetActive(true);
+            
+            // Player üzerindeki lastActiveWeaponState'i güncelle
+            if (player != null)
+            {
+                // Eğer aktif edilen silah boomerang ise
+                if (weapons[index] is BoomerangWeaponStateMachine)
+                {
+                    player.UpdateLastActiveWeapon(WeaponState.ThrowBoomerang);
+                }
+                // Eğer aktif edilen silah spellbook ise
+                else if (weapons[index] is SpellbookWeaponStateMachine)
+                {
+                    player.UpdateLastActiveWeapon(WeaponState.Spell1);
+                }
+            }
+            
+            Debug.Log($"Equipped secondary weapon: {weapons[index].name}");
+        }
+        else
+        {
+            Debug.LogError($"Weapon at index {index} is not a secondary weapon!");
+        }
         
         // Update UI when weapon changes
         UpdateUISlots();
@@ -116,10 +141,105 @@ public class PlayerWeaponManager : MonoBehaviour
     // Method to restore weapon visibility - called after HideWeapons/ShowWeapons
     public void RefreshWeaponVisibility()
     {
-        
+        // Refresh primary weapon
+        ActivatePrimaryWeapon(startingWeaponIndex);
         
         // Refresh the secondary weapons visibility
         EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+    }
+    
+    // Initialize all weapons (disable everything first)
+    private void InitializeAllWeapons()
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] != null)
+            {
+                weapons[i].gameObject.SetActive(false);
+            }
+        }
+    }
+    
+    // Activate primary weapon and disable other primary weapons
+    private void ActivatePrimaryWeapon(int primaryIndex)
+    {
+        if (primaryIndex < 0 || primaryIndex >= weapons.Length || weapons[primaryIndex] == null)
+        {
+            Debug.LogError($"Invalid primary weapon index: {primaryIndex}");
+            return;
+        }
+        
+        // Disable all primary weapons first
+        DisableAllPrimaryWeapons();
+        
+        // Activate the selected primary weapon
+        weapons[primaryIndex].gameObject.SetActive(true);
+        
+        Debug.Log($"Activated primary weapon: {weapons[primaryIndex].name}");
+    }
+    
+    // Disable all primary weapons (indices that are primary weapons)
+    private void DisableAllPrimaryWeapons()
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] != null && IsPrimaryWeapon(weapons[i]))
+            {
+                weapons[i].gameObject.SetActive(false);
+            }
+        }
+    }
+    
+    // Check if weapon is a primary weapon
+    private bool IsPrimaryWeapon(WeaponStateMachine weapon)
+    {
+        return weapon is SwordWeaponStateMachine || 
+               weapon is BurningSwordStateMachine || 
+               weapon is HammerSwordStateMachine;
+    }
+    
+    // Check if weapon is a secondary weapon
+    private bool IsSecondaryWeapon(WeaponStateMachine weapon)
+    {
+        return weapon is BoomerangWeaponStateMachine || 
+               weapon is SpellbookWeaponStateMachine;
+    }
+    
+    // Get next secondary weapon index for cycling
+    private int GetNextSecondaryWeaponIndex()
+    {
+        // Find all secondary weapon indices
+        List<int> secondaryIndices = new List<int>();
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
+            {
+                secondaryIndices.Add(i);
+            }
+        }
+        
+        if (secondaryIndices.Count == 0) return -1;
+        
+        // Find current index in the list
+        int currentIndexInList = secondaryIndices.IndexOf(currentSecondaryWeaponIndex);
+        
+        // Get next index (cycle back to 0 if at end)
+        int nextIndexInList = (currentIndexInList + 1) % secondaryIndices.Count;
+        
+        return secondaryIndices[nextIndexInList];
+    }
+    
+    // Get first secondary weapon index
+    private int GetFirstSecondaryWeaponIndex()
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
     
     // Get the current active weapons for blacksmith system

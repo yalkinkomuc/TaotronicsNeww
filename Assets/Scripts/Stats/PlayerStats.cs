@@ -71,6 +71,10 @@ public class PlayerStats : CharacterStats
     [Header("Spellbook Damage")]
     public Stat spellbookDamage;
 
+    [Header("Primary Weapon Damage")]
+    public Stat hammerDamage;
+    public Stat burningSwordDamage;
+
     protected override void Awake()
     {
         // Önce baz sınıfın Awake metodunu çağır
@@ -78,6 +82,8 @@ public class PlayerStats : CharacterStats
         baseDamage = new Stat(_baseDamageValue);
         boomerangDamage = new Stat(_baseDamageValue * 0.8f);
         spellbookDamage = new Stat(_baseDamageValue * 0.7f);
+        hammerDamage = new Stat(_baseDamageValue * 1.2f);
+        burningSwordDamage = new Stat(_baseDamageValue * 1.1f);
     }
 
     protected override void Start()
