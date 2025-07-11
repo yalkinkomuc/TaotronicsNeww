@@ -194,10 +194,6 @@ public enum WeaponType
     Sword = 0,
     Boomerang = 1,
     Spellbook = 2,
-    Bow = 3,
-    Staff = 4,
-    Dagger = 5,
-    Axe = 6,
-    Mace = 7,
-    Spear = 8
+    BurningSword=3,
+    Hammer=4,
 } 

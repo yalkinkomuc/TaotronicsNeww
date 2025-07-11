@@ -270,6 +270,12 @@ public class Checkpoint : MonoBehaviour, IInteractable
 
         if (player.swordWeapon != null)
             PlayerPrefs.SetInt("HasSword", player.swordWeapon.gameObject.activeInHierarchy ? 1 : 0);
+        
+        if (player.burningSword != null)
+            PlayerPrefs.SetInt ("HasBurningSword", player.burningSword.gameObject.activeInHierarchy ? 1 : 0);
+        
+        if (player.hammer != null)
+            PlayerPrefs.SetInt ("HasHammer", player.hammer.gameObject.activeInHierarchy ? 1 : 0);
     }
 
     public static void LoadItemStates(Player player)
@@ -297,6 +303,18 @@ public class Checkpoint : MonoBehaviour, IInteractable
         {
             bool hasSword = PlayerPrefs.GetInt("HasSword", 0) == 1;
             player.swordWeapon.gameObject.SetActive(hasSword);
+        }
+
+        if (player.burningSword != null)
+        {
+            bool hasBurningSword = PlayerPrefs.GetInt("HasBurningSword", 0) == 1;
+            player.burningSword.gameObject.SetActive(hasBurningSword);
+        }
+        
+        if (player.hammer != null)
+        {
+            bool hasHammer= PlayerPrefs.GetInt("HasHammer", 0) == 1;
+            player.burningSword.gameObject.SetActive(hasHammer);
         }
     }
 

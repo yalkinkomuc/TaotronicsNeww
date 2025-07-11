@@ -346,6 +346,14 @@ public class EquipmentManager : MonoBehaviour
         {
             return weapons.Find(w => w.weaponType == WeaponType.Sword);
         }
+        else if (stateMachine is BurningSwordStateMachine)
+        {
+            return weapons.Find(w => w.weaponType == WeaponType.BurningSword);
+        }
+        else if (stateMachine is HammerSwordStateMachine)
+        {
+            return weapons.Find(w => w.weaponType == WeaponType.Hammer);
+        }
         
         return null;
     }

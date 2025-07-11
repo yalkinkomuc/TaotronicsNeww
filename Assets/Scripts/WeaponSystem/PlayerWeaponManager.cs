@@ -8,6 +8,8 @@ public class PlayerWeaponManager : MonoBehaviour
     
     public WeaponStateMachine[] weapons;
     private int currentSecondaryWeaponIndex = 1; // 1'den başlıyoruz çünkü 0 kılıç
+
+    [SerializeField] public int startingWeaponIndex = 4;
     
     // Public getter for UI access
     public int GetCurrentSecondaryWeaponIndex() => currentSecondaryWeaponIndex;
@@ -30,7 +32,7 @@ public class PlayerWeaponManager : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
 
         // Kılıcı aktif et (her zaman aktif kalacak)
-        weapons[0].gameObject.SetActive(true);
+        weapons[startingWeaponIndex].gameObject.SetActive(true); // başlangıç indexi
         
         // İkincil silahı aktif et
         EquipSecondaryWeapon(currentSecondaryWeaponIndex);
@@ -139,6 +141,14 @@ public class PlayerWeaponManager : MonoBehaviour
             else if (weapons[i] is SpellbookWeaponStateMachine)
             {
                 types[i] = WeaponType.Spellbook;
+            }
+            else if (weapons[i] is BurningSwordStateMachine)
+            {
+                types[i] = WeaponType.BurningSword;
+            }
+            else if (weapons[i] is HammerSwordStateMachine)
+            {
+                types[i] = WeaponType.Hammer;
             }
         }
         

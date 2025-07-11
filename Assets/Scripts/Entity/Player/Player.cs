@@ -123,6 +123,8 @@ public class Player : Entity
     public BoomerangWeaponStateMachine boomerangWeapon;
     public SpellbookWeaponStateMachine spellbookWeapon;
     public SwordWeaponStateMachine swordWeapon;
+    public BurningSwordStateMachine burningSword;
+    public HammerSwordStateMachine hammer;
 
     [Header("Boomerang Settings")]
     [SerializeField] private float boomerangCooldown = 2f;
@@ -395,6 +397,18 @@ public class Player : Entity
         {
             swordWeapon = GetComponentInChildren<SwordWeaponStateMachine>();
         }
+
+        if (hammer == null)
+        {
+            hammer = GetComponentInChildren<HammerSwordStateMachine>();
+        }
+
+        if (burningSword == null)
+        {
+            burningSword = GetComponentInChildren<BurningSwordStateMachine>();
+        }
+        
+        
     }
 
     #endregion
@@ -1198,6 +1212,8 @@ public class Player : Entity
             if (swordWeapon != null) swordWeapon.gameObject.SetActive(false);
             if (boomerangWeapon != null) boomerangWeapon.gameObject.SetActive(false);
             if (spellbookWeapon != null) spellbookWeapon.gameObject.SetActive(false);
+            if(burningSword != null) burningSword.gameObject.SetActive(false);
+            if (hammer != null) hammer.gameObject.SetActive(false);
         }
         
         weaponsHidden = true;
@@ -1214,7 +1230,7 @@ public class Player : Entity
             // Always show the primary weapon (sword)
             if (weaponManager.weapons.Length > 0 && weaponManager.weapons[0] != null)
             {
-                weaponManager.weapons[0].gameObject.SetActive(true);
+                weaponManager.weapons[weaponManager.startingWeaponIndex].gameObject.SetActive(true);
             }
             
             // Refresh the secondary weapon state
@@ -1281,7 +1297,7 @@ public class Player : Entity
                 // Sword'u aktif tut (0. index)
                 if (weaponManager.weapons.Length > 0 && weaponManager.weapons[0] != null)
                 {
-                    weaponManager.weapons[0].gameObject.SetActive(true);
+                    weaponManager.weapons[weaponManager.startingWeaponIndex].gameObject.SetActive(true);
                 }
                 
                 // Tüm secondary silahları gizle (1. index ve sonrası)
@@ -1299,6 +1315,8 @@ public class Player : Entity
                 if (swordWeapon != null) swordWeapon.gameObject.SetActive(true);
                 if (boomerangWeapon != null) boomerangWeapon.gameObject.SetActive(false);
                 if (spellbookWeapon != null) spellbookWeapon.gameObject.SetActive(false);
+                if (burningSword != null) burningSword.gameObject.SetActive(false);
+                if (hammer != null) hammer.gameObject.SetActive(false);
             }
         }
         // Boomerang havada değilse normal silah sistemine müdahale etme
