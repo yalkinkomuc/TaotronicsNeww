@@ -150,21 +150,22 @@ public class TabManager : MonoBehaviour
         // Only handle tab switching if we have multiple tabs
         if (tabs.Count <= 1) return;
 
-        // IMPORTANT: Only allow tab switching if AdvancedInventoryUI is open and no other blocking panels are active
+        // PERFORMANCE OPTIMIZATION: Only check expensive conditions when input is actually pressed
         bool leftPressed = playerInput.tabLeftInput;
         bool rightPressed = playerInput.tabRightInput;
         
-        if (leftPressed || rightPressed)
+        // Early exit if no input - avoid expensive checks
+        if (!leftPressed && !rightPressed) return;
+        
+        // Only run expensive blocking checks when input is detected
+        Debug.Log($"TabManager: Input detected! Left: {leftPressed}, Right: {rightPressed}");
+        bool allowed = IsTabSwitchingAllowed();
+        Debug.Log($"TabManager: IsTabSwitchingAllowed returned: {allowed}");
+        
+        if (!allowed)
         {
-            Debug.Log($"TabManager: Input detected! Left: {leftPressed}, Right: {rightPressed}");
-            bool allowed = IsTabSwitchingAllowed();
-            Debug.Log($"TabManager: IsTabSwitchingAllowed returned: {allowed}");
-            
-            if (!allowed)
-            {
-                Debug.Log("TabManager: Tab switching BLOCKED!");
-                return;
-            }
+            Debug.Log("TabManager: Tab switching BLOCKED!");
+            return;
         }
 
         if (leftPressed)

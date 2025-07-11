@@ -23,6 +23,9 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private EquipmentData currentEquipment;
     
+    // Cache expensive references to avoid repeated FindFirstObjectByType calls
+    private PlayerWeaponManager cachedWeaponManager;
+    
     private void Start()
     {
         UpdateSlotDisplay();
@@ -127,18 +130,20 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private WeaponData GetEquippedSecondaryWeapon()
     {
-        // Get active secondary weapon from PlayerWeaponManager
-        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        // Cache PlayerWeaponManager reference to avoid expensive FindFirstObjectByType calls
+        if (cachedWeaponManager == null)
+        {
+            cachedWeaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        }
         
-        if (weaponManager != null && weaponManager.weapons != null && weaponManager.weapons.Length > 1)
+        if (cachedWeaponManager != null && cachedWeaponManager.weapons != null && cachedWeaponManager.weapons.Length > 1)
         {
             // Get current secondary weapon index
-            int currentIndex = weaponManager.GetCurrentSecondaryWeaponIndex();
+            int currentIndex = cachedWeaponManager.GetCurrentSecondaryWeaponIndex();
             
-            if (currentIndex > 0 && currentIndex < weaponManager.weapons.Length)
+            if (currentIndex > 0 && currentIndex < cachedWeaponManager.weapons.Length)
             {
-                var activeWeapon = weaponManager.weapons[currentIndex];
-                Debug.Log($"[SecondaryWeapon] Active weapon: {activeWeapon?.name}, Active: {activeWeapon?.gameObject.activeInHierarchy}");
+                var activeWeapon = cachedWeaponManager.weapons[currentIndex];
                 
                 if (activeWeapon != null && activeWeapon.gameObject.activeInHierarchy)
                 {
@@ -146,18 +151,12 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
                     if (activeWeapon.name.Contains("Boomerang"))
                     {
                         var boomerang = BlacksmithManager.Instance?.GetAllWeapons()?.FirstOrDefault(w => w.weaponType == WeaponType.Boomerang);
-                        Debug.Log($"[SecondaryWeapon] Returning Boomerang: {boomerang?.itemName}");
                         return boomerang;
                     }
                     else if (activeWeapon.name.Contains("Spellbook"))
                     {
                         var spellbook = BlacksmithManager.Instance?.GetAllWeapons()?.FirstOrDefault(w => w.weaponType == WeaponType.Spellbook);
-                        Debug.Log($"[SecondaryWeapon] Returning Spellbook: {spellbook?.itemName}");
                         return spellbook;
-                    }
-                    else
-                    {
-                        Debug.Log($"[SecondaryWeapon] Unknown weapon: {activeWeapon.name}");
                     }
                 }
             }
