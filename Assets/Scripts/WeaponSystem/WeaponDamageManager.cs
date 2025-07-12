@@ -45,10 +45,12 @@ public static class WeaponDamageManager
     
     /// <summary>
     /// Gets the weapon damage range as a formatted string for UI display
+    /// Includes player attribute bonuses and critical hit potential
     /// </summary>
     /// <param name="weaponType">The type of weapon</param>
+    /// <param name="playerStats">Player stats for attribute bonuses</param>
     /// <returns>Formatted damage range string (e.g., "15-25")</returns>
-    public static string GetWeaponDamageRangeString(WeaponType weaponType)
+    public static string GetWeaponDamageRangeString(WeaponType weaponType, PlayerStats playerStats = null)
     {
         WeaponData weaponData = GetWeaponData(weaponType);
         if (weaponData == null)
@@ -56,7 +58,58 @@ public static class WeaponDamageManager
             return "N/A";
         }
         
-        return weaponData.GetDamageRangeString();
+        if (playerStats == null)
+        {
+            return weaponData.GetDamageRangeString();
+        }
+        
+        // Get weapon's base damage range
+        int weaponMinDamage = weaponData.GetTotalMinDamage();
+        int weaponMaxDamage = weaponData.GetTotalMaxDamage();
+        
+        // Apply player attribute bonuses based on weapon type
+        float attributeMultiplier = GetAttributeMultiplierForWeapon(weaponType, playerStats);
+        
+        // Calculate final damage range
+        int finalMinDamage = Mathf.RoundToInt(weaponMinDamage * attributeMultiplier);
+        int finalMaxDamage = Mathf.RoundToInt(weaponMaxDamage * attributeMultiplier);
+        
+        // Apply critical multiplier to max damage
+        int maxCritical = Mathf.RoundToInt(finalMaxDamage * playerStats.criticalDamage);
+        
+        // Format the range string
+        if (finalMinDamage == maxCritical)
+            return finalMinDamage.ToString();
+        else
+            return $"{finalMinDamage}-{maxCritical}";
+    }
+    
+    /// <summary>
+    /// Gets the weapon damage range string for next level upgrade preview
+    /// </summary>
+    public static string GetWeaponDamageRangeStringNextLevel(WeaponType weaponType, PlayerStats playerStats = null)
+    {
+        WeaponData weaponData = GetWeaponData(weaponType);
+        if (weaponData == null)
+        {
+            return "N/A";
+        }
+        
+        // Check if weapon can be upgraded
+        if (weaponData.level >= weaponData.maxLevel) 
+            return GetWeaponDamageRangeString(weaponType, playerStats);
+        
+        // Temporarily increase level for preview
+        int originalLevel = weaponData.level;
+        weaponData.level++;
+        
+        // Get damage range with increased level
+        string nextLevelRange = GetWeaponDamageRangeString(weaponType, playerStats);
+        
+        // Restore original level
+        weaponData.level = originalLevel;
+        
+        return nextLevelRange;
     }
     
     /// <summary>
@@ -154,5 +207,26 @@ public static class WeaponDamageManager
         
         var weapons = BlacksmithManager.Instance.GetWeaponsByType(weaponType);
         return weapons.Count > 0 ? weapons[0] : null;
+    }
+    
+    /// <summary>
+    /// Gets the attribute multiplier for a specific weapon type
+    /// </summary>
+    private static float GetAttributeMultiplierForWeapon(WeaponType weaponType, PlayerStats playerStats)
+    {
+        switch (weaponType)
+        {
+            case WeaponType.Spellbook:
+                // Spellbook uses Mind attribute for elemental damage
+                return playerStats.GetTotalElementalDamageMultiplier();
+            case WeaponType.Sword:
+            case WeaponType.Hammer:
+            case WeaponType.Boomerang:
+            case WeaponType.BurningSword:
+            default:
+                // Physical weapons use Might attribute
+                float mightMultiplier = Mathf.Pow(1 + 0.1f, playerStats.Might);
+                return mightMultiplier;
+        }
     }
 } 

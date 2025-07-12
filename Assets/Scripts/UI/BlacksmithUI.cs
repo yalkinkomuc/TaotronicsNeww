@@ -532,8 +532,8 @@ public class BlacksmithUI : BaseUIPanel
     }
     
     /// <summary>
-    /// Calculate weapon damage range using PlayerStats method (same as AdvancedInventoryUI)
-    /// Shows the actual total damage range including attributes and upgrades
+    /// Calculate weapon damage range using WeaponDamageManager
+    /// Shows each weapon's individual damage range from its ScriptableObject
     /// </summary>
     /// <param name="weapon">Weapon to calculate for</param>
     /// <param name="isNextLevel">If true, calculate for next level upgrade</param>
@@ -544,29 +544,13 @@ public class BlacksmithUI : BaseUIPanel
         
         if (isNextLevel)
         {
-            // For next level preview, temporarily increment weapon level
-            int originalLevel = weapon.level;
-            if (originalLevel >= weapon.maxLevel) 
-            {
-                // Already at max level, return current damage
-                return playerStats.GetDamageRangeWithCriticalString();
-            }
-            
-            // Temporarily increase weapon level for preview
-            weapon.level++;
-            
-            // Get damage range with upgraded weapon
-            string nextLevelRange = playerStats.GetDamageRangeWithCriticalString();
-            
-            // Restore original level
-            weapon.level = originalLevel;
-            
-            return nextLevelRange;
+            // Use WeaponDamageManager to get next level damage range for specific weapon
+            return WeaponDamageManager.GetWeaponDamageRangeStringNextLevel(weapon.weaponType, playerStats);
         }
         else
         {
-            // For current level, use the same method as AdvancedInventoryUI
-            return playerStats.GetDamageRangeWithCriticalString();
+            // Use WeaponDamageManager to get current damage range for specific weapon
+            return WeaponDamageManager.GetWeaponDamageRangeString(weapon.weaponType, playerStats);
         }
     }
 } 
