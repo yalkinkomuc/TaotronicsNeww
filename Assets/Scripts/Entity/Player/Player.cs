@@ -1196,7 +1196,7 @@ public class Player : Entity
         }
         
         // Find PlayerWeaponManager
-        PlayerWeaponManager weaponManager = GetComponent<PlayerWeaponManager>();
+        PlayerWeaponManager weaponManager = GetComponentInChildren<PlayerWeaponManager>();
         if (weaponManager != null && weaponManager.weapons != null)
         {
             foreach (WeaponStateMachine weapon in weaponManager.weapons)
@@ -1221,7 +1221,7 @@ public class Player : Entity
         if (!weaponsHidden) return;
         
         // Find PlayerWeaponManager
-        PlayerWeaponManager weaponManager = GetComponent<PlayerWeaponManager>();
+        PlayerWeaponManager weaponManager = GetComponentInChildren<PlayerWeaponManager>();
         if (weaponManager != null && weaponManager.weapons != null)
         {
             // Always show the primary weapon (sword)
@@ -1253,7 +1253,7 @@ public class Player : Entity
         if (isBoomerangInAir)
         {
             // Boomerang havadayken: Sadece sword görünür, diğerleri gizli
-            PlayerWeaponManager weaponManager = GetComponent<PlayerWeaponManager>();
+            PlayerWeaponManager weaponManager = GetComponentInChildren<PlayerWeaponManager>();
             if (weaponManager != null && weaponManager.weapons != null)
             {
                 // Primary weapon'ı aktif tut (starting weapon)

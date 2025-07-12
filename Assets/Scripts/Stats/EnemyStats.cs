@@ -37,7 +37,7 @@ public class EnemyStats : CharacterStats
     [SerializeField] private float attributePointsPerLevel = 1.5f; // How many attribute points to distribute per level
 
     [Header("Base Values")]
-    [SerializeField] private float baseDamageValue = 10f;
+    [SerializeField] private new float baseDamageValue = 10f;
 
     public Stat enemyDamage;
 

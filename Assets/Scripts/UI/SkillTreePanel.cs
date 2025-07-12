@@ -53,7 +53,7 @@ public class SkillTreePanel : BaseUIPanel
     private Dictionary<Button, string> buttonToSkillID = new Dictionary<Button, string>();
     private Dictionary<string, int> skillCosts = new Dictionary<string, int>();
     
-    private void Awake()
+    private new void Awake()
     {
         // Panel'i önce kapat
         gameObject.SetActive(false);

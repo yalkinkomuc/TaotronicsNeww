@@ -19,7 +19,7 @@ public class UI_ChestInventory : BaseUIPanel
     [Header("Debug")]
     [SerializeField] private bool debugMode = true;
 
-    private void Awake()
+    private new void Awake()
     {
         // İlk olarak, kendimizi uygun şekilde ayarla
         if (Instance == null)

@@ -26,7 +26,7 @@ public class UIInputBlocker : MonoBehaviour
         {
             instance = this;
             
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -138,7 +138,7 @@ public class UIInputBlocker : MonoBehaviour
             "SkillScreenPanel", "TabManager", "InGameUI"
         };
         
-        BaseUIPanel[] allPanels = FindObjectsOfType<BaseUIPanel>();
+        BaseUIPanel[] allPanels = FindObjectsByType<BaseUIPanel>(FindObjectsSortMode.None);
         foreach (BaseUIPanel panelComponent in allPanels)
         {
             GameObject panelObj = panelComponent.gameObject;

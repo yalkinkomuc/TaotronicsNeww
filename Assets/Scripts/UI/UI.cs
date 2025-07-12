@@ -9,7 +9,7 @@ public class UI : BaseUIPanel
     public GameObject[] uiPanels;
 
 
-    private void Awake()
+    private new void Awake()
     {
         if (instance == null )
         {

@@ -64,12 +64,12 @@ public class AdvancedInventoryUI : BaseUIPanel
     public bool IsCollectiblesPage => isCollectiblesPage;
     public bool IsInventoryOpen => gameObject.activeInHierarchy;
     
-    private void Awake()
+    private new void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             
             // Setup critical event listeners that need to work even when inventory is closed
             SetupCriticalEventListeners();

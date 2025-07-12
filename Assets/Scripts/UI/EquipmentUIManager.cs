@@ -24,7 +24,7 @@ public class EquipmentUIManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             
             // Setup event listeners immediately
             SetupEventListeners();

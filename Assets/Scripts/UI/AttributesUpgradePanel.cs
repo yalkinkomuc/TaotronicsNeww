@@ -67,7 +67,7 @@ public class AttributesUpgradePanel : BaseUIPanel
     // Singleton pattern
     public static AttributesUpgradePanel instance;
     
-    private void Awake()
+    private new void Awake()
     {
         // Set singleton instance
         if (instance == null)

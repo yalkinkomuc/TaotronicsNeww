@@ -22,7 +22,7 @@ public class CollectiblesPanel : BaseUIPanel
         ShowDefaultLore();
     }
     
-    private void OnEnable()
+    private new void OnEnable()
     {
         RefreshCollectibles();
         ShowDefaultLore();

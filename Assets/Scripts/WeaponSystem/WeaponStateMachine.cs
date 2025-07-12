@@ -22,10 +22,7 @@ public abstract class WeaponStateMachine : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (animator == null)
-        {
-
-        }
+       
     }
 
     protected abstract void HandleStateChange();

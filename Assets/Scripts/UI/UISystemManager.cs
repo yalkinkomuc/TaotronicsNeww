@@ -23,7 +23,7 @@ public class UISystemManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             
             // UI sistemini hemen başlat
             InitializeUISystem();
@@ -73,7 +73,7 @@ public class UISystemManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         
         // Tüm Canvas'ları bul
-        allCanvases = FindObjectsOfType<Canvas>();
+        allCanvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
         
         foreach (Canvas canvas in allCanvases)
         {
@@ -178,7 +178,7 @@ public class UISystemManager : MonoBehaviour
     private void FixPixelPerfectCameraIssues()
     {
         // Tüm PixelPerfectCamera'ları bul
-        UnityEngine.U2D.PixelPerfectCamera[] pixelPerfectCameras = FindObjectsOfType<UnityEngine.U2D.PixelPerfectCamera>();
+        UnityEngine.U2D.PixelPerfectCamera[] pixelPerfectCameras = FindObjectsByType<UnityEngine.U2D.PixelPerfectCamera>(FindObjectsSortMode.None);
         
         foreach (var pixelCamera in pixelPerfectCameras)
         {
@@ -247,7 +247,7 @@ public class UISystemManager : MonoBehaviour
         Debug.Log($"Reference Resolution: {referenceResolution}");
         Debug.Log($"EventSystem exists: {EventSystem.current != null}");
         
-        allCanvases = FindObjectsOfType<Canvas>();
+        allCanvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
         Debug.Log($"Active Canvases: {allCanvases.Length}");
         
         foreach (Canvas canvas in allCanvases)
@@ -259,7 +259,7 @@ public class UISystemManager : MonoBehaviour
         }
         
         // PixelPerfectCamera bilgilerini de göster
-        UnityEngine.U2D.PixelPerfectCamera[] pixelCameras = FindObjectsOfType<UnityEngine.U2D.PixelPerfectCamera>();
+        UnityEngine.U2D.PixelPerfectCamera[] pixelCameras = FindObjectsByType<UnityEngine.U2D.PixelPerfectCamera>(FindObjectsSortMode.None);
         if (pixelCameras.Length > 0)
         {
             Debug.Log($"PixelPerfectCameras found: {pixelCameras.Length}");

@@ -40,7 +40,7 @@ public class BlacksmithUI : BaseUIPanel
     private Dictionary<string, Button> weaponButtons = new Dictionary<string, Button>();
     private AudioSource audioSource;
     
-    private void Awake()
+    private new void Awake()
     {
         // Singleton pattern uygula
         if (Instance == null)

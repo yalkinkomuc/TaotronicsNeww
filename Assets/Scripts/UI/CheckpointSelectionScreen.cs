@@ -16,7 +16,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
     [SerializeField] private SkillTreePanel skillTreePanel;
     
 
-    private void Awake()
+    private new  void Awake()
     {
         if (Checkpoint.persistentSelectionScreen == null)
         {

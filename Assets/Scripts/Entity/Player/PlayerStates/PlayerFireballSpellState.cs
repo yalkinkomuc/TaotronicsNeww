@@ -6,7 +6,7 @@ public class PlayerFireballSpellState : PlayerState
     private Transform fireballSpawnPoint;
     
     private bool fireballCast = false;
-    private bool triggerCalled = false;
+    private new bool  triggerCalled = false;
     private SkillType skillType = SkillType.FireballSpell;
     
     public PlayerFireballSpellState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
