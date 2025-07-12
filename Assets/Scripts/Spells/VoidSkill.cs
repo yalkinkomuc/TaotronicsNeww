@@ -19,18 +19,20 @@ public class VoidSkill : MonoBehaviour
          
          Player player = PlayerManager.instance?.player;
          bool isCritical = false;
-         float critMultiplier = 1f;
-         float spellbookBonus = 0f;
+         float finalDamage = damage;
+         
          if (player != null && player.stats is PlayerStats playerStats)
          {
-            if (player.stats.IsCriticalHit())
+            // Use WeaponDamageManager to get spell damage from spellbook weapon
+            finalDamage = WeaponDamageManager.GetSpellDamage(playerStats);
+            
+            // Check for critical hit
+            if (playerStats.IsCriticalHit())
             {
-               critMultiplier = 1.5f;
+               finalDamage *= 1.5f;
                isCritical = true;
             }
-            spellbookBonus = playerStats.spellbookDamage.GetValue();
          }
-         float finalDamage = (damage + spellbookBonus) * critMultiplier;
          enemyUnit.Damage();
          enemyUnit.stats.TakeDamage(finalDamage,CharacterStats.DamageType.Void);
          

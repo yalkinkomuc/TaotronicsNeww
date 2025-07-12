@@ -532,8 +532,8 @@ public class BlacksmithUI : BaseUIPanel
     }
     
     /// <summary>
-    /// Calculate weapon damage range including critical hit potential
-    /// Uses the same calculation as AdvancedInventoryUI for consistency
+    /// Calculate weapon damage range using PlayerStats method (same as AdvancedInventoryUI)
+    /// Shows the actual total damage range including attributes and upgrades
     /// </summary>
     /// <param name="weapon">Weapon to calculate for</param>
     /// <param name="isNextLevel">If true, calculate for next level upgrade</param>
@@ -544,37 +544,24 @@ public class BlacksmithUI : BaseUIPanel
         
         if (isNextLevel)
         {
-            // For next level preview, we need to temporarily simulate the upgrade
-            // Create a temporary copy or calculate manually
-            int tempLevel = weapon.level + 1;
-            if (tempLevel > weapon.maxLevel) return playerStats.GetDamageRangeWithCriticalString();
-            
-            // Get weapon's base min-max damage
-            int weaponMinDamage = weapon.minDamage;
-            int weaponMaxDamage = weapon.maxDamage;
-            
-            // Calculate next level upgrade bonus
-            float nextLevelBonus = weapon.baseDamageBonus + (weapon.upgradeDamageIncrement * (tempLevel - 1));
-            
-            // Add might attribute bonus (use PlayerStats method)
-            float mightBonus = playerStats.baseDamage.GetValue() - playerStats.baseDamage.GetBaseValue();
-            
-            // Calculate final damage range
-            int finalMinDamage = weaponMinDamage + Mathf.RoundToInt(nextLevelBonus + mightBonus);
-            int finalMaxDamage = weaponMaxDamage + Mathf.RoundToInt(nextLevelBonus + mightBonus);
-            
-            // Apply critical multiplier to max damage
-            int maxCritical = Mathf.RoundToInt(finalMaxDamage * playerStats.criticalDamage);
-            
-            // Format the range string
-            if (finalMinDamage == maxCritical)
+            // For next level preview, temporarily increment weapon level
+            int originalLevel = weapon.level;
+            if (originalLevel >= weapon.maxLevel) 
             {
-                return finalMinDamage.ToString();
+                // Already at max level, return current damage
+                return playerStats.GetDamageRangeWithCriticalString();
             }
-            else
-            {
-                return $"{finalMinDamage}-{maxCritical}";
-            }
+            
+            // Temporarily increase weapon level for preview
+            weapon.level++;
+            
+            // Get damage range with upgraded weapon
+            string nextLevelRange = playerStats.GetDamageRangeWithCriticalString();
+            
+            // Restore original level
+            weapon.level = originalLevel;
+            
+            return nextLevelRange;
         }
         else
         {

@@ -106,11 +106,8 @@ public class PlayerStats : CharacterStats
         // UI'ı güncelle
         UpdateLevelUI();
         
-        // Ensure weapons are upgraded with saved values
-        if (BlacksmithManager.Instance != null)
-        {
-            BlacksmithManager.Instance.ApplyWeaponUpgrades(this);
-        }
+        // Weapon upgrades are now handled directly by WeaponDamageManager
+        // No need to apply weapon upgrades to player stats anymore
     }
     
     private void Update()

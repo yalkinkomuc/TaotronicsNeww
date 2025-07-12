@@ -247,24 +247,45 @@ public class PlayerAnimTriggers : MonoBehaviour
       dummy.TakeDamage(damage, comboCounter, isCritical);
    }
 
-   // Temel hasar ve kritik vuruş hesaplama (now uses min-max range system)
+   // Temel hasar ve kritik vuruş hesaplama (now uses WeaponDamageManager)
    private float CalculateDamage(out bool isCritical)
    {
       float damage = 0f;
+      isCritical = false;
+      
       if (player.stats is PlayerStats playerStats)
       {
-         // Use new damage range system instead of fixed baseDamage
-         damage = playerStats.GetRandomDamage();
+         // Determine which weapon is currently being used
+         WeaponType currentWeaponType = GetCurrentWeaponType();
+         
+         // Get weapon damage using WeaponDamageManager
+         damage = WeaponDamageManager.GetWeaponDamage(currentWeaponType, playerStats);
+         
+         // WeaponDamageManager already handles critical hits internally
+         // So we just need to check if it was a critical
+         isCritical = playerStats.IsCriticalHit();
       }
       
-      isCritical = false;
-      // Kritik vuruş kontrolü
-      if (player.stats is PlayerStats ps && ps.IsCriticalHit())
-      {
-         damage *= 1.5f; // Kritik vuruş için %50 daha fazla hasar
-         isCritical = true;
-      }
       return damage;
+   }
+   
+   // Determine which weapon is currently active
+   private WeaponType GetCurrentWeaponType()
+   {
+      // Check which weapon is currently active based on player weapon manager
+      if (player.hammer != null && player.hammer.gameObject.activeInHierarchy)
+      {
+         return WeaponType.Hammer;
+      }
+      else if (player.burningSword != null && player.burningSword.gameObject.activeInHierarchy)
+      {
+         return WeaponType.BurningSword;
+      }
+      else
+      {
+         // Default to Sword if no specific weapon is active
+         return WeaponType.Sword;
+      }
    }
 
    // Debug amaçlı - saldırı kutusunu görmek için

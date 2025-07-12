@@ -68,7 +68,7 @@ public class FireballSpell : MonoBehaviour
             {
                 hasHit = true;
                 
-                // Calculate damage based on player's mind attribute and spellbook upgrades
+                // Calculate damage using WeaponDamageManager
                 float finalDamage = CalculateDamage();
                 
                 // Apply damage with fire type
@@ -93,13 +93,8 @@ public class FireballSpell : MonoBehaviour
     {
         if (playerStats == null) return damage;
         
-        // Base damage uses spellbook damage which includes blacksmith upgrades
-        float baseDamage = playerStats.spellbookDamage.GetValue();
-        float finalDamage = baseDamage;
-        
-        // Apply mind attribute bonus from player
-        float mindMultiplier = playerStats.GetTotalElementalDamageMultiplier();
-        finalDamage *= mindMultiplier;
+        // Use WeaponDamageManager to get spell damage from spellbook weapon
+        float finalDamage = WeaponDamageManager.GetSpellDamage(playerStats);
         
         // Check for critical hit
         if (playerStats.IsCriticalHit())

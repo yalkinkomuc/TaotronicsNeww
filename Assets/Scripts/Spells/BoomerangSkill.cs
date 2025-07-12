@@ -145,18 +145,20 @@ public class BoomerangSkill : MonoBehaviour
                 // Knockback uygula (boomerang'ın geldiği yönden)
                 enemy.ApplyKnockback(transform.position);
                 
-                // Hasar ver
+                // Hasar ver - Use WeaponDamageManager for boomerang damage
                 if (enemy.TryGetComponent<CharacterStats>(out CharacterStats enemyStats))
                 {
-                    enemyStats.TakeDamage(0, CharacterStats.DamageType.Physical, ((PlayerStats)player.stats).boomerangDamage);
-                }
-                
-                // Hasar metni göster
-                if (FloatingTextManager.Instance != null)
-                {
-                    float damage = ((PlayerStats)player.stats).boomerangDamage.GetValue();
-                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    FloatingTextManager.Instance.ShowDamageText(damage, textPosition);
+                    PlayerStats playerStats = player.stats as PlayerStats;
+                    float boomerangDamage = WeaponDamageManager.GetWeaponDamage(WeaponType.Boomerang, playerStats);
+                    
+                    enemyStats.TakeDamage(boomerangDamage, CharacterStats.DamageType.Physical);
+                    
+                    // Hasar metni göster
+                    if (FloatingTextManager.Instance != null)
+                    {
+                        Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                        FloatingTextManager.Instance.ShowDamageText(boomerangDamage, textPosition);
+                    }
                 }
             }
             

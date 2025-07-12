@@ -96,87 +96,14 @@ public class BlacksmithManager : MonoBehaviour
         return true;
     }
     
-    // Apply all weapon upgrades to the player stats
+    // Apply weapon upgrades - now only handles weapon level increases
+    // Actual damage calculation is handled by WeaponDamageManager
     public void ApplyWeaponUpgrades(PlayerStats playerStats)
     {
-        if (playerStats == null)
-            return;
-            
-        // First remove all existing equipment modifiers
-        playerStats.baseDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
-        playerStats.boomerangDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
-        playerStats.spellbookDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
-        playerStats.hammerDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
-        playerStats.burningSwordDamage.RemoveAllModifiersOfType(StatModifierType.Equipment);
-        
-        // Calculate total damage bonus from all upgraded weapons
-        float totalDamageBonus = 0f;
-        float boomerangDamageBonus = 0f;
-        float spellbookDamageBonus = 0f;
-        float hammerDamageBonus = 0f;
-        float burningSwordDamageBonus = 0f;
-        
-        foreach (var weapon in weaponDatabase)
-        {
-            if (weapon == null) continue;
-            
-            float weaponBonus = weapon.GetCurrentDamageBonus();
-            totalDamageBonus += weaponBonus;
-            
-            // If this is the boomerang weapon, add its bonus to boomerang damage
-            if (weapon.weaponType == WeaponType.Boomerang)
-            {
-                boomerangDamageBonus += weaponBonus;
-            }
-            
-            // If this is the spellbook weapon, add its bonus to spellbook damage
-            if (weapon.weaponType == WeaponType.Spellbook)
-            {
-                spellbookDamageBonus += weaponBonus;
-            }
-            
-            // If this is the hammer weapon, add its bonus to hammer damage
-            if (weapon.weaponType == WeaponType.Hammer)
-            {
-                hammerDamageBonus += weaponBonus;
-            }
-            
-            // If this is the burning sword weapon, add its bonus to burning sword damage
-            if (weapon.weaponType == WeaponType.BurningSword)
-            {
-                burningSwordDamageBonus += weaponBonus;
-            }
-        }
-        
-        // Apply total damage bonus if it's greater than 0
-        if (totalDamageBonus > 0)
-        {
-            playerStats.baseDamage.AddModifier(totalDamageBonus, StatModifierType.Equipment);
-        }
-        
-        // Apply boomerang-specific damage bonus
-        if (boomerangDamageBonus > 0)
-        {
-            playerStats.boomerangDamage.AddModifier(boomerangDamageBonus, StatModifierType.Equipment);
-        }
-        
-        // Apply spellbook-specific damage bonus
-        if (spellbookDamageBonus > 0)
-        {
-            playerStats.spellbookDamage.AddModifier(spellbookDamageBonus, StatModifierType.Equipment);
-        }
-        
-        // Apply hammer-specific damage bonus
-        if (hammerDamageBonus > 0)
-        {
-            playerStats.hammerDamage.AddModifier(hammerDamageBonus, StatModifierType.Equipment);
-        }
-        
-        // Apply burning sword-specific damage bonus
-        if (burningSwordDamageBonus > 0)
-        {
-            playerStats.burningSwordDamage.AddModifier(burningSwordDamageBonus, StatModifierType.Equipment);
-        }
+        // This method is now deprecated - weapon damage is calculated
+        // directly from WeaponData when attacks are performed
+        // Only weapon levels are stored and managed here
+        Debug.Log("WeaponData levels updated. Damage will be calculated from WeaponData directly.");
     }
     
     // Save weapon data to PlayerPrefs
