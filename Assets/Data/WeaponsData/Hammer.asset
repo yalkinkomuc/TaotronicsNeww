@@ -31,13 +31,13 @@ MonoBehaviour:
   attackSpeed: 1
   criticalChance: 5
   criticalDamage: 150
-  minDamage: 0
-  maxDamage: 0
+  minDamage: 40
+  maxDamage: 60
   baseDamageBonus: 0
   level: 1
   maxLevel: 30
   upgradeDamageIncrement: 2
-  baseUpgradeCost: 100
+  baseUpgradeCost: 1
   upgradeCostMultiplier: 1.1
   requiredMaterials: []
   hasSpecialEffect: 0
