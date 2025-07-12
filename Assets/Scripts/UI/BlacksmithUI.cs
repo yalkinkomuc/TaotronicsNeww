@@ -353,11 +353,7 @@ public class BlacksmithUI : BaseUIPanel
             }
             else
             {
-                // Max level reached
-                if (nextLevelDamageText != null)
-                {
-                    nextLevelDamageText.text = "Maksimum seviyeye ulaşıldı!";
-                }
+               
                 
                 if (upgradeCostText != null)
                 {
