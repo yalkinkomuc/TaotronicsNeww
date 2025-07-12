@@ -239,6 +239,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc24d94d3df25e848ab58be516c94d85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enforceScreenBounds: 1
+  delayedInputBlocking: 1
+  inputBlockingDelay: 0.1
   itemSlotsContainer: {fileID: 2422248369297515684}
   itemSlotPrefab: {fileID: 4684946533040090449, guid: 40e8a0bceb60dd84ea4f32a3c603d389, type: 3}
   closeButton: {fileID: 5023322447568366749}
