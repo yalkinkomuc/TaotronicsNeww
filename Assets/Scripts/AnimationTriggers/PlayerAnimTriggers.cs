@@ -389,6 +389,16 @@ public class PlayerAnimTriggers : MonoBehaviour
          {
             player.swordWeapon.animator.speed = 0;
          }
+
+         if (player.hammer != null)
+         {
+            player.hammer.animator.speed = 0;
+         }
+
+         if (player.burningSword != null)
+         {
+            player.burningSword.animator.speed = 0;
+         }
          
          // Fire Spell'i spawn et
          spell2State.SpawnFireSpell();

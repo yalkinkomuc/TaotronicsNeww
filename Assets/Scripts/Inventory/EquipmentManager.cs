@@ -272,18 +272,48 @@ public class EquipmentManager : MonoBehaviour
     /// </summary>
     private void InitializeWeaponReferences()
     {
-        // Get weapons from BlacksmithManager and set them as equipped
-        if (BlacksmithManager.Instance != null)
+        // Get current equipped weapons from PlayerWeaponManager
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        
+        if (weaponManager != null && weaponManager.weapons != null && weaponManager.weapons.Length > 0)
+        {
+            // Get the currently active primary weapon based on startingWeaponIndex
+            int primaryIndex = weaponManager.startingWeaponIndex;
+            if (primaryIndex >= 0 && primaryIndex < weaponManager.weapons.Length && weaponManager.weapons[primaryIndex] != null)
+            {
+                WeaponStateMachine primaryWeapon = weaponManager.weapons[primaryIndex];
+                
+                // Determine weapon type and find corresponding WeaponData
+                WeaponType primaryWeaponType = GetWeaponTypeFromStateMachine(primaryWeapon);
+                
+                if (BlacksmithManager.Instance != null)
+                {
+                    var weapons = BlacksmithManager.Instance.GetAllWeapons();
+                    if (weapons != null)
+                    {
+                        var primaryWeaponData = weapons.Find(w => w.weaponType == primaryWeaponType);
+                        if (primaryWeaponData != null && currentWeapon == null)
+                        {
+                            currentWeapon = primaryWeaponData;
+                            Debug.Log($"[EquipmentManager] Auto-equipped primary weapon: {primaryWeaponData.itemName} (Type: {primaryWeaponType})");
+                        }
+                    }
+                }
+            }
+        }
+        
+        // If no primary weapon found through PlayerWeaponManager, fallback to default logic
+        if (currentWeapon == null && BlacksmithManager.Instance != null)
         {
             var weapons = BlacksmithManager.Instance.GetAllWeapons();
             if (weapons != null && weapons.Count > 0)
             {
-                // Find and equip main weapon (Sword)
+                // Try to find Sword first (default fallback)
                 var sword = weapons.Find(w => w.weaponType == WeaponType.Sword);
-                if (sword != null && currentWeapon == null)
+                if (sword != null)
                 {
                     currentWeapon = sword;
-                    Debug.Log($"[EquipmentManager] Auto-equipped main weapon: {sword.itemName}");
+                    Debug.Log($"[EquipmentManager] Fallback: Auto-equipped main weapon: {sword.itemName}");
                 }
                 
                 // Find and equip initial secondary weapon (Boomerang by default)
@@ -297,6 +327,38 @@ public class EquipmentManager : MonoBehaviour
         }
         
         Debug.Log($"[EquipmentManager] Weapon references initialized - Main: {currentWeapon?.itemName}, Secondary: {currentSecondaryWeapon?.itemName}");
+    }
+    
+    /// <summary>
+    /// Get WeaponType from a WeaponStateMachine
+    /// </summary>
+    private WeaponType GetWeaponTypeFromStateMachine(WeaponStateMachine stateMachine)
+    {
+        if (stateMachine == null) return WeaponType.Sword; // Default fallback
+        
+        // Determine weapon type based on state machine type
+        if (stateMachine is SwordWeaponStateMachine)
+        {
+            return WeaponType.Sword;
+        }
+        else if (stateMachine is BurningSwordStateMachine)
+        {
+            return WeaponType.BurningSword;
+        }
+        else if (stateMachine is HammerSwordStateMachine)
+        {
+            return WeaponType.Hammer;
+        }
+        else if (stateMachine is BoomerangWeaponStateMachine)
+        {
+            return WeaponType.Boomerang;
+        }
+        else if (stateMachine is SpellbookWeaponStateMachine)
+        {
+            return WeaponType.Spellbook;
+        }
+        
+        return WeaponType.Sword; // Default fallback
     }
     
     /// <summary>

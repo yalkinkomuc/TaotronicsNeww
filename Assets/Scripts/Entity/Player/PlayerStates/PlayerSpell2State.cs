@@ -100,6 +100,16 @@ public class PlayerSpell2State : PlayerState
         {
             player.swordWeapon.animator.speed = 1;
         }
+
+        if (player.burningSword != null)
+        {
+            player.burningSword.animator.speed = 1;
+        }
+
+        if (player.hammer != null)
+        {
+            player.hammer.animator.speed = 1;
+        }
     }
 
     private void CleanupSpell()

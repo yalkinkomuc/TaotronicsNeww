@@ -10,7 +10,7 @@ public class PlayerWeaponManager : MonoBehaviour
     public WeaponStateMachine[] weapons;
     private int currentSecondaryWeaponIndex = -1; // Will be set to first secondary weapon found
 
-    [SerializeField] public int startingWeaponIndex = 4; // Hammer ile başla
+    [SerializeField] public int startingWeaponIndex = 3; // Burning Sword ile başla
     
     // Public getter for UI access
     public int GetCurrentSecondaryWeaponIndex() => currentSecondaryWeaponIndex;
