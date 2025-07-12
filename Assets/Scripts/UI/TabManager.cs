@@ -137,7 +137,7 @@ public class TabManager : MonoBehaviour
         private void HandleTabSwitching()
     {
         // Get player input
-        IPlayerInput playerInput = GetPlayerInput();
+        NewInputSystem playerInput = GetPlayerInput();
         if (playerInput == null) return;
 
         // Handle ESC input to close the entire tab UI system
@@ -388,7 +388,7 @@ public class TabManager : MonoBehaviour
     
     #region Utility
     
-    private IPlayerInput GetPlayerInput()
+    private NewInputSystem GetPlayerInput()
     {
         // Get player input from PlayerManager or find Player
         if (PlayerManager.instance != null && PlayerManager.instance.player != null)
