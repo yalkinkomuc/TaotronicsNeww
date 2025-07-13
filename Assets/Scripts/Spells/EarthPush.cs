@@ -70,14 +70,14 @@ public class EarthPush : MonoBehaviour
         float finalDamage = damage;
         bool isCritical = false;
         
-        // Scale damage with player's Mind attribute and spellbook upgrades if available
+        // Use WeaponDamageManager for spell damage calculation
         if (player != null && player.stats is PlayerStats playerStats)
         {
-            float elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
-            finalDamage = (damage + playerStats.spellbookDamage.GetValue()) * elementalMultiplier;
+            // Get spell damage from spellbook weapon
+            finalDamage = WeaponDamageManager.GetSpellDamage(playerStats);
             
             // Critical hit check
-            if (player.stats.IsCriticalHit())
+            if (playerStats.IsCriticalHit())
             {
                 finalDamage *= 1.5f;
                 isCritical = true;

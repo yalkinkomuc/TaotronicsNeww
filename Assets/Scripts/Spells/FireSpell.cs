@@ -124,18 +124,16 @@ public class FireSpell : MonoBehaviour
                     float burnTimeFactor = Mathf.Clamp01(enemyBurnTimes[enemy] / damageRampUpTime);
                     float currentDamageMultiplier = Mathf.Lerp(1f, maxDamageMultiplier, burnTimeFactor);
                     
-                    // Get player's elemental damage multiplier
+                    // Get player's spell damage using WeaponDamageManager
                     Player player = PlayerManager.instance.player;
-                    float elementalMultiplier = 1f;
-                    float spellbookBonus = 0f;
+                    float spellDamage = damagePerSecond;
                     if (player != null && player.stats is PlayerStats playerStats)
                     {
-                        elementalMultiplier = player.stats.GetTotalElementalDamageMultiplier();
-                        spellbookBonus = playerStats.spellbookDamage.GetValue();
+                        spellDamage = WeaponDamageManager.GetSpellDamage(playerStats);
                     }
                     
-                    // Calculate frame damage with ramp-up and elemental multiplier
-                    float frameDamage = (damagePerSecond + spellbookBonus) * currentDamageMultiplier * elementalMultiplier * Time.deltaTime;
+                    // Calculate frame damage with ramp-up
+                    float frameDamage = spellDamage * currentDamageMultiplier * Time.deltaTime;
                     enemy.stats.TakeDamage(frameDamage, CharacterStats.DamageType.Fire);
                     
                     // Accumulated damage for text display
@@ -151,7 +149,7 @@ public class FireSpell : MonoBehaviour
                     else if (Time.time - lastTextTimes[enemy] >= textDisplayInterval)
                     {
                         // Show approximate damage over interval with current multiplier
-                        accumulatedDamage = (damagePerSecond + spellbookBonus) * currentDamageMultiplier * elementalMultiplier * textDisplayInterval;
+                        accumulatedDamage = spellDamage * currentDamageMultiplier * textDisplayInterval;
                         shouldShowText = true;
                         lastTextTimes[enemy] = Time.time;
                     }

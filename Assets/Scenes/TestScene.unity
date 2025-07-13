@@ -31295,8 +31295,8 @@ MonoBehaviour:
   _luck: 0
   _mind: 0
   _maxAttributeLevel: 99
-  _baseHealthValue: 100
-  _baseDamageValue: 25
+  _baseHealthValue: 10000
+  _baseDamageValue: 100
   _baseSpeedValue: 10
   experience: 0
   experienceToNextLevel: 100
@@ -31307,15 +31307,15 @@ MonoBehaviour:
   levelText: {fileID: 0}
   goldText: {fileID: 1210678473}
   boomerangDamage:
-    baseValue: 20
+    baseValue: 0
   baseDamage:
     baseValue: 100
   spellbookDamage:
     baseValue: 20
   hammerDamage:
-    baseValue: 0
+    baseValue: 100
   burningSwordDamage:
-    baseValue: 0
+    baseValue: 100
 --- !u!114 &1377457618
 MonoBehaviour:
   m_ObjectHideFlags: 0

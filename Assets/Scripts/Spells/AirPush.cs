@@ -83,20 +83,11 @@ public class AirPush : MonoBehaviour
             transform.localScale = new Vector3(-2.5f, 1.5f, 1);
         }
         
-        // Calculate damage based on player's spellbook damage and mind attribute
+        // Calculate damage using WeaponDamageManager
         if (stats != null && stats is PlayerStats playerStatsRef)
         {
-            // Get base damage from spellbook
-            finalDamage = baseDamage;
-            
-            // Add spellbook damage if available
-            if (playerStatsRef.spellbookDamage != null)
-            {
-                finalDamage = playerStatsRef.spellbookDamage.GetValue();
-            }
-            
-            // Apply elemental damage multiplier from stats (includes mind scaling)
-            finalDamage *= stats.GetTotalElementalDamageMultiplier();
+            // Get spell damage from spellbook weapon
+            finalDamage = WeaponDamageManager.GetSpellDamage(playerStatsRef);
         }
         else
         {
