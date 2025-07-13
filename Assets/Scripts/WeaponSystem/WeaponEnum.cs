@@ -20,4 +20,5 @@ public enum WeaponState
     SuccesfulParry,
     AirPush,
     FireballSpell,
+    HammerAttack,
 }

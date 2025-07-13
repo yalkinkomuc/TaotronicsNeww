@@ -94,6 +94,7 @@ public class Player : Entity
     public PlayerCrouchState crouchState { get; private set; }
     public PlayerGroundDashState groundDashState { get; private set; }
     public PlayerAttackState attackState {get;private set;}
+    public PlayerHammerAttackState hammerAttackState {get;private set;}
     public PlayerCrouchAttackState crouchAttackState {get;private set;}
     public PlayerDeadState deadState {get;private set;}
     public PlayerStunnedState stunnedState {get;private set;}
@@ -365,6 +366,7 @@ public class Player : Entity
         crouchState = new PlayerCrouchState(this,stateMachine,"Crouch");
         groundDashState = new PlayerGroundDashState(this,stateMachine,"GroundDash");
         attackState = new PlayerAttackState(this, stateMachine, "Attack");
+        hammerAttackState = new PlayerHammerAttackState(this, stateMachine, "HammerAttack");
         crouchAttackState = new PlayerCrouchAttackState(this, stateMachine, "GroundAttack");
         deadState = new PlayerDeadState(this,stateMachine,"Death");
         stunnedState = new PlayerStunnedState(this,stateMachine,"Stunned");

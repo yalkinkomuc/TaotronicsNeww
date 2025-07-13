@@ -37,7 +37,17 @@ public class PlayerGroundedState : PlayerState
         
         if (player.playerInput.attackInput)
         {
-            stateMachine.ChangeState(player.attackState);
+            // Hangi silahın aktif olduğunu kontrol et
+            if (IsHammerActive())
+            {
+                stateMachine.ChangeState(player.hammerAttackState);
+            }
+            else
+            {
+                stateMachine.ChangeState(player.attackState);
+            }
+            
+            Debug.Log(IsHammerActive());
         }
 
        
@@ -63,5 +73,10 @@ public class PlayerGroundedState : PlayerState
         // {
         //     stateMachine.ChangeState(player.spell2State);
         // }
+    }
+    
+    private bool IsHammerActive()
+    {
+        return player.hammer != null && player.hammer.gameObject.activeInHierarchy;
     }
 }

@@ -60,6 +60,14 @@ public class HammerSwordStateMachine : WeaponStateMachine
                     animator.SetInteger("HammerComboCounter", attackState.GetComboCounter());
                 }
                 break;
+            case WeaponState.HammerAttack:
+                animator.SetBool("HammerAttack",true);
+                if (player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState)
+                {
+                    // Direkt combo counter'ı set ediyoruz
+                    animator.SetInteger("HammerComboCounter", hammerAttackState.GetComboCounter());
+                }
+                break;
             case WeaponState.Crouch:
                 animator.SetBool("HammerCrouch", true);
                 break;
@@ -114,6 +122,10 @@ public class HammerSwordStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.attackState)
         {
             ChangeState(WeaponState.Attack);
+        }
+        else if (player.stateMachine.currentState == player.hammerAttackState)
+        {
+            ChangeState(WeaponState.HammerAttack);
         }
         else if (player.stateMachine.currentState == player.moveState) 
         {
