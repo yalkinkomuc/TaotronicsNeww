@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerHammerAttackState : PlayerState
 {
-    protected int comboCounter = 0;
+    protected int hammerComboCounter = 0;
     private float comboWindow = 3f;
     
     private float lastTimeAttacked;
@@ -14,7 +14,7 @@ public class PlayerHammerAttackState : PlayerState
    
     
 
-    public int GetComboCounter() => comboCounter;
+    public int GetComboCounter() => hammerComboCounter;
 
     public PlayerHammerAttackState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -24,9 +24,9 @@ public class PlayerHammerAttackState : PlayerState
     {
         base.Enter();
 
-        if (comboCounter > 2 || Time.time >= lastTimeAttacked + comboWindow)
+        if (hammerComboCounter > 2 || Time.time >= lastTimeAttacked + comboWindow)
         {
-            comboCounter = 0;
+            hammerComboCounter = 0;
         }
 
         
@@ -34,7 +34,7 @@ public class PlayerHammerAttackState : PlayerState
         // Saldırı başlamadan önce yakındaki düşmana doğru bak
         FaceNearestEnemy();
         
-        player.anim.SetInteger("HammerComboCounter", comboCounter);
+        player.anim.SetInteger("HammerComboCounter", hammerComboCounter);
         stateTimer = .1f;
         
         player.StartNewAttack();
@@ -43,7 +43,7 @@ public class PlayerHammerAttackState : PlayerState
     public override void Exit()
     {
         base.Exit();
-        comboCounter++;
+        hammerComboCounter++;
         
         lastTimeAttacked = Time.time;
     }
