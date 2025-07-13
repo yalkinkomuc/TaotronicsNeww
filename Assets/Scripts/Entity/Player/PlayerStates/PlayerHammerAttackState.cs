@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerHammerAttackState : PlayerState
 {
     protected int comboCounter = 0;
-    private float comboWindow = 1f;
+    private float comboWindow = 3f;
     
     private float lastTimeAttacked;
    
@@ -34,8 +34,8 @@ public class PlayerHammerAttackState : PlayerState
         // Saldırı başlamadan önce yakındaki düşmana doğru bak
         FaceNearestEnemy();
         
-        player.anim.SetInteger("comboCounter", comboCounter);
-        stateTimer = 2f;
+        player.anim.SetInteger("HammerComboCounter", comboCounter);
+        stateTimer = .1f;
         
         player.StartNewAttack();
     }
