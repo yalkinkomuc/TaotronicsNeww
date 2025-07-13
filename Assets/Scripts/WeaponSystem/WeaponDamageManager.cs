@@ -45,7 +45,7 @@ public static class WeaponDamageManager
     
     /// <summary>
     /// Gets the weapon damage range as a formatted string for UI display
-    /// Includes player attribute bonuses and critical hit potential
+    /// Includes player attribute bonuses and combo multipliers (NO critical hit)
     /// </summary>
     /// <param name="weaponType">The type of weapon</param>
     /// <param name="playerStats">Player stats for attribute bonuses</param>
@@ -67,21 +67,23 @@ public static class WeaponDamageManager
         int weaponMinDamage = weaponData.GetTotalMinDamage();
         int weaponMaxDamage = weaponData.GetTotalMaxDamage();
         
-        // Apply player attribute bonuses based on weapon type
-        float attributeMultiplier = GetAttributeMultiplierForWeapon(weaponType, playerStats);
+        // Add player's might bonus (same as PlayerStats calculation)
+        float mightBonus = playerStats.baseDamage.GetValue() - playerStats.baseDamage.GetBaseValue();
         
         // Calculate final damage range
-        int finalMinDamage = Mathf.RoundToInt(weaponMinDamage * attributeMultiplier);
-        int finalMaxDamage = Mathf.RoundToInt(weaponMaxDamage * attributeMultiplier);
+        int finalMinDamage = weaponMinDamage + Mathf.RoundToInt(mightBonus);
+        int finalMaxDamage = weaponMaxDamage + Mathf.RoundToInt(mightBonus);
         
-        // Apply critical multiplier to max damage
-        int maxCritical = Mathf.RoundToInt(finalMaxDamage * playerStats.criticalDamage);
+        // Apply combo multipliers to show realistic damage range
+        int maxComboNormal = Mathf.RoundToInt(finalMaxDamage * playerStats.thirdComboDamageMultiplier.GetValue());
+        
+        // DON'T apply critical multiplier - just show normal combo range
         
         // Format the range string
-        if (finalMinDamage == maxCritical)
+        if (finalMinDamage == maxComboNormal)
             return finalMinDamage.ToString();
         else
-            return $"{finalMinDamage}-{maxCritical}";
+            return $"{finalMinDamage}-{maxComboNormal}";
     }
     
     /// <summary>
@@ -187,24 +189,5 @@ public static class WeaponDamageManager
         return weapons.Count > 0 ? weapons[0] : null;
     }
     
-    /// <summary>
-    /// Gets the attribute multiplier for a specific weapon type
-    /// </summary>
-    private static float GetAttributeMultiplierForWeapon(WeaponType weaponType, PlayerStats playerStats)
-    {
-        switch (weaponType)
-        {
-            case WeaponType.Spellbook:
-                // Spellbook uses Mind attribute for elemental damage
-                return playerStats.GetTotalElementalDamageMultiplier();
-            case WeaponType.Sword:
-            case WeaponType.Hammer:
-            case WeaponType.Boomerang:
-            case WeaponType.BurningSword:
-            default:
-                // Physical weapons use Might attribute
-                float mightMultiplier = Mathf.Pow(1 + 0.1f, playerStats.Might);
-                return mightMultiplier;
-        }
-    }
+
 } 
