@@ -3,16 +3,7 @@ using UnityEngine;
 public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
 {
     protected int hammerComboCounter = 0;
-    private float comboWindow = 3f;
-    
     private float lastTimeAttacked;
-   
-    
-    // Hammer'a özel özellikler
-    
-    private float hammerKnockbackMultiplier = 1.5f; // Daha güçlü knockback
-   
-    
 
     public int GetComboCounter() => hammerComboCounter;
     
@@ -20,37 +11,12 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
     
     public virtual float GetDamageMultiplier(int comboIndex)
     {
-        float baseMultiplier = 1.0f;
-        switch (comboIndex)
-        {
-            case 0:
-                baseMultiplier = 1.0f; // İlk saldırı için standart hasar
-                break;
-            case 1:
-                baseMultiplier = player.stats.secondComboDamageMultiplier.GetValue(); // İkinci saldırı
-                break;
-            case 2:
-                baseMultiplier = player.stats.thirdComboDamageMultiplier.GetValue(); // Üçüncü saldırı
-                break;
-            default:
-                baseMultiplier = 1.0f;
-                break;
-        }
-        
-        // Might bonus'u da dahil et
-        var playerStats = player.stats as PlayerStats;
-        if (playerStats != null)
-        {
-            float totalDamage = playerStats.baseDamage.GetValue() * baseMultiplier;
-            return totalDamage / playerStats.baseDamage.GetBaseValue();
-        }
-        
-        return baseMultiplier;
+        return HammerCalculations.GetDamageMultiplier(player, comboIndex);
     }
     
-    public virtual float GetKnockbackMultiplier() => hammerKnockbackMultiplier;
+    public virtual float GetKnockbackMultiplier() => HammerCalculations.GetKnockbackMultiplier();
     
-    public virtual float GetComboWindow() => comboWindow;
+    public virtual float GetComboWindow() => HammerCalculations.GetComboWindow();
 
     public PlayerHammerAttackState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -60,14 +26,11 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
     {
         base.Enter();
 
-        if (hammerComboCounter > 2 || Time.time >= lastTimeAttacked + comboWindow)
+        if (hammerComboCounter > 2 || Time.time >= lastTimeAttacked + HammerCalculations.GetComboWindow())
         {
             hammerComboCounter = 0;
         }
 
-        
-        
-        // Saldırı başlamadan önce yakındaki düşmana doğru bak
         FaceNearestEnemy();
         
         player.anim.SetInteger("HammerComboCounter", hammerComboCounter);
@@ -80,7 +43,6 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
     {
         base.Exit();
         hammerComboCounter++;
-        
         lastTimeAttacked = Time.time;
     }
 
@@ -94,9 +56,8 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
         }
         else
         {
-            player.SetVelocity(rb.linearVelocity.x*.5f,rb.linearVelocity.y);
+            player.SetVelocity(rb.linearVelocity.x * .5f, rb.linearVelocity.y);
         }
-       
 
         if (triggerCalled)
         {
@@ -104,19 +65,14 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
         }
     }
     
-    /// <summary>
-    /// Saldırı alanında düşman varsa, en yakın düşmana doğru yüzü çevir
-    /// </summary>
     private void FaceNearestEnemy()
     {
-        // Saldırı alanında düşmanları kontrol et
         Vector2 attackPosition = player.attackCheck.position;
         Collider2D[] colliders = Physics2D.OverlapBoxAll(attackPosition, player.attackSize, 0, player.passableEnemiesLayerMask);
         
         Enemy nearestEnemy = null;
         float nearestDistance = float.MaxValue;
         
-        // En yakın düşmanı bul
         foreach (var hit in colliders)
         {
             Enemy enemy = hit.GetComponent<Enemy>();
@@ -131,32 +87,18 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
             }
         }
         
-        // En yakın düşman bulunduysa ona doğru bak
         if (nearestEnemy != null)
         {
             float directionToEnemy = nearestEnemy.transform.position.x - player.transform.position.x;
             
-            // Düşman sağdaysa ve oyuncu sola bakıyorsa, sağa dön
             if (directionToEnemy > 0 && player.facingdir == -1)
             {
                 player.Flip();
             }
-            // Düşman soldaysa ve oyuncu sağa bakıyorsa, sola dön
             else if (directionToEnemy < 0 && player.facingdir == 1)
             {
                 player.Flip();
             }
         }
-    }
-    
-   
-  
-    
-    /// <summary>
-    /// Hammer'a özel knockback katsayısı
-    /// </summary>
-    public float GetHammerKnockbackMultiplier()
-    {
-        return hammerKnockbackMultiplier;
     }
 } 

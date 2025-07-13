@@ -254,8 +254,8 @@ public class PlayerStats : CharacterStats
     }
     
     /// <summary>
-    /// Get damage range including critical hit potential for UI display
-    /// Shows: Min Normal Damage - Max Critical Damage (WITH combo multipliers)
+    /// Get damage range including combo multipliers for UI display
+    /// Shows: Min Normal Damage - Max Combo Damage (WITHOUT critical multiplier)
     /// </summary>
     public string GetDamageRangeWithCriticalString()
     {
@@ -265,13 +265,11 @@ public class PlayerStats : CharacterStats
         // Apply combo multipliers to show realistic damage range
         int maxComboNormal = Mathf.RoundToInt(maxNormal * thirdComboDamageMultiplier.GetValue());
         
-        // Apply critical multiplier to max combo damage (1.5f default)
-        int maxCritical = Mathf.RoundToInt(maxComboNormal * criticalDamage);
-        
-        if (minNormal == maxCritical)
+        // DON'T apply critical multiplier - just show normal combo range
+        if (minNormal == maxComboNormal)
             return minNormal.ToString();
         else
-            return $"{minNormal}-{maxCritical}";
+            return $"{minNormal}-{maxComboNormal}";
     }
     
     /// <summary>
@@ -318,14 +316,13 @@ public class PlayerStats : CharacterStats
             // Apply combo multipliers to show realistic damage range
             int maxComboNormal = Mathf.RoundToInt(totalMaxDamage * thirdComboDamageMultiplier.GetValue());
             
-            // Apply critical multiplier to max combo damage
-            int maxCritical = Mathf.RoundToInt(maxComboNormal * criticalDamage);
+            // DON'T apply critical multiplier - just show normal combo range
             
             // Format the range string
-            if (totalMinDamage == maxCritical)
+            if (totalMinDamage == maxComboNormal)
                 return totalMinDamage.ToString();
             else
-                return $"{totalMinDamage}-{maxCritical}";
+                return $"{totalMinDamage}-{maxComboNormal}";
         }
         else
         {
@@ -336,13 +333,12 @@ public class PlayerStats : CharacterStats
             // Apply combo multipliers to show realistic damage range
             int maxComboNormal = Mathf.RoundToInt(totalDamage * thirdComboDamageMultiplier.GetValue());
             
-            // Apply critical multiplier to max combo damage
-            int maxCritical = Mathf.RoundToInt(maxComboNormal * criticalDamage);
+            // DON'T apply critical multiplier - just show normal combo range
             
-            if (normalDamage == maxCritical)
+            if (normalDamage == maxComboNormal)
                 return normalDamage.ToString();
             else
-                return $"{normalDamage}-{maxCritical}";
+                return $"{normalDamage}-{maxComboNormal}";
         }
     }
     

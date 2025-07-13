@@ -31,9 +31,7 @@ public class BlacksmithUI : BaseUIPanel
     [SerializeField] private Image[] levelIndicators;
     
     [Header("Audio")]
-    //[SerializeField] private AudioClip forgeSound;
-    //[SerializeField] private AudioClip selectSound;
-    //[SerializeField] private AudioClip upgradeSound;
+    
     
     private PlayerStats playerStats;
     private WeaponData selectedWeapon;
@@ -42,7 +40,7 @@ public class BlacksmithUI : BaseUIPanel
     
     private new void Awake()
     {
-        // Singleton pattern uygula
+        
         if (Instance == null)
         {
             Instance = this;
@@ -53,7 +51,7 @@ public class BlacksmithUI : BaseUIPanel
             return;
         }
         
-        // AudioSource kontrolü
+       
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
