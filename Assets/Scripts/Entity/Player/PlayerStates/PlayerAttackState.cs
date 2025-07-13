@@ -13,17 +13,32 @@ public class PlayerAttackState : PlayerState, IWeaponAttackState
     
     public virtual float GetDamageMultiplier(int comboIndex)
     {
+        float baseMultiplier = 1.0f;
         switch (comboIndex)
         {
             case 0:
-                return 1.0f; // İlk saldırı için standart hasar
+                baseMultiplier = 1.0f; // İlk saldırı için standart hasar
+                break;
             case 1:
-                return player.stats.secondComboDamageMultiplier.GetValue(); // İkinci saldırı
+                baseMultiplier = player.stats.secondComboDamageMultiplier.GetValue(); // İkinci saldırı
+                break;
             case 2:
-                return player.stats.thirdComboDamageMultiplier.GetValue(); // Üçüncü saldırı
+                baseMultiplier = player.stats.thirdComboDamageMultiplier.GetValue(); // Üçüncü saldırı
+                break;
             default:
-                return 1.0f;
+                baseMultiplier = 1.0f;
+                break;
         }
+        
+        // Might bonus'u da dahil et
+        var playerStats = player.stats as PlayerStats;
+        if (playerStats != null)
+        {
+            float totalDamage = playerStats.baseDamage.GetValue() * baseMultiplier;
+            return totalDamage / playerStats.baseDamage.GetBaseValue();
+        }
+        
+        return baseMultiplier;
     }
     
     public virtual float GetKnockbackMultiplier() => 1.0f; // Sword için standart knockback

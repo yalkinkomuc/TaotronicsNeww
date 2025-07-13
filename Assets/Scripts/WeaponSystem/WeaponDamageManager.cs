@@ -112,29 +112,7 @@ public static class WeaponDamageManager
         return nextLevelRange;
     }
     
-    /// <summary>
-    /// Gets the minimum damage for a weapon type
-    /// </summary>
-    public static int GetWeaponMinDamage(WeaponType weaponType)
-    {
-        WeaponData weaponData = GetWeaponData(weaponType);
-        return weaponData != null ? weaponData.GetTotalMinDamage() : 0;
-    }
-    
-    /// <summary>
-    /// Gets the maximum damage for a weapon type
-    /// </summary>
-    public static int GetWeaponMaxDamage(WeaponType weaponType)
-    {
-        WeaponData weaponData = GetWeaponData(weaponType);
-        return weaponData != null ? weaponData.GetTotalMaxDamage() : 0;
-    }
-    
-    /// <summary>
-    /// Gets spell damage (spellbook weapon type) with elemental multiplier applied
-    /// </summary>
-    /// <param name="playerStats">Player stats for mind attribute scaling</param>
-    /// <returns>Calculated spell damage</returns>
+   
     public static float GetSpellDamage(PlayerStats playerStats = null)
     {
         // Get base spell damage from spellbook weapon

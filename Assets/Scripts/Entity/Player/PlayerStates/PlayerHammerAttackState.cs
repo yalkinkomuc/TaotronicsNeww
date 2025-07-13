@@ -20,18 +20,32 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
     
     public virtual float GetDamageMultiplier(int comboIndex)
     {
-        // Hammer has different damage progression - more powerful but slower
+        float baseMultiplier = 1.0f;
         switch (comboIndex)
         {
             case 0:
-                return 1.2f; // İlk saldırı için daha güçlü hasar
+                baseMultiplier = 1.0f; // İlk saldırı için standart hasar
+                break;
             case 1:
-                return 1.5f; // İkinci saldırı için daha da güçlü
+                baseMultiplier = player.stats.secondComboDamageMultiplier.GetValue(); // İkinci saldırı
+                break;
             case 2:
-                return 2.0f; // Üçüncü saldırı için çok güçlü
+                baseMultiplier = player.stats.thirdComboDamageMultiplier.GetValue(); // Üçüncü saldırı
+                break;
             default:
-                return 1.2f;
+                baseMultiplier = 1.0f;
+                break;
         }
+        
+        // Might bonus'u da dahil et
+        var playerStats = player.stats as PlayerStats;
+        if (playerStats != null)
+        {
+            float totalDamage = playerStats.baseDamage.GetValue() * baseMultiplier;
+            return totalDamage / playerStats.baseDamage.GetBaseValue();
+        }
+        
+        return baseMultiplier;
     }
     
     public virtual float GetKnockbackMultiplier() => hammerKnockbackMultiplier;
