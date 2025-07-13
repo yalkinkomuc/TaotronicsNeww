@@ -1,15 +1,29 @@
 using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerAnimTriggers : MonoBehaviour
 {
    
    private Player player => GetComponentInParent<Player>();
    
+   // Weapon-specific attack handlers
+   private Dictionary<WeaponType, IWeaponAttackHandler> weaponAttackHandlers;
+   
    private void Awake()
    {
-      
+      InitializeWeaponHandlers();
+   }
+   
+   private void InitializeWeaponHandlers()
+   {
+      weaponAttackHandlers = new Dictionary<WeaponType, IWeaponAttackHandler>
+      {
+         { WeaponType.Sword, new SwordAttackHandler() },
+         { WeaponType.Hammer, new HammerAttackHandler() },
+         { WeaponType.BurningSword, new BurningSwordAttackHandler() }
+      };
    }
 
    private void AnimationTrigger()
@@ -58,6 +72,24 @@ public class PlayerAnimTriggers : MonoBehaviour
       // Saldırı pozisyonunu belirle - normal veya crouch durumuna göre
       Vector2 attackPosition = GetAttackPosition();
 
+      // Mevcut silah türünü belirle
+      WeaponType currentWeapon = GetCurrentWeaponType();
+      
+      // Silah türüne göre handler'ı al ve saldırıyı işle
+      if (weaponAttackHandlers.TryGetValue(currentWeapon, out IWeaponAttackHandler handler))
+      {
+         handler.HandleAttack(player, attackPosition);
+      }
+      else
+      {
+         // Fallback: Eğer handler bulunamazsa eski sistemi kullan
+         HandleLegacyAttack(attackPosition);
+      }
+   }
+   
+   // Backward compatibility için eski saldırı sistemi
+   private void HandleLegacyAttack(Vector2 attackPosition)
+   {
       // Saldırı alanındaki nesneleri kontrol et
       Collider2D[] colliders = Physics2D.OverlapBoxAll(attackPosition, player.attackSize, 0, player.passableEnemiesLayerMask);
 
@@ -83,7 +115,8 @@ public class PlayerAnimTriggers : MonoBehaviour
       return player.attackCheck.position;
    }
 
-   // Düşmana saldırıyı dene
+   // Legacy attack methods - these are now handled by weapon-specific handlers
+   // Keeping for backward compatibility with legacy attacks (crouch attacks, etc.)
    private void TryAttackEnemy(Collider2D hit)
    {
       Enemy enemy = hit.GetComponent<Enemy>();
@@ -95,97 +128,28 @@ public class PlayerAnimTriggers : MonoBehaviour
       // Bu düşmanı vurulmuş olarak işaretle
       player.MarkEntityAsHit(enemy);
       
-      // Hasar hesapla ve uygula
-      ApplyDamageToEnemy(enemy);
+      // Hasar hesapla ve uygula - simplified legacy version
+      ApplyLegacyDamageToEnemy(enemy);
    }
 
-   // Düşmana hasar uygula
-   private void ApplyDamageToEnemy(Enemy enemy)
+   private void ApplyLegacyDamageToEnemy(Enemy enemy)
    {
-      // Temel hasar değerini al
-      float currentDamage = CalculateDamage(out bool isCritical);
-      //int comboCounter = 0;
+      // Basit hasar hesaplama - sadece crouch attack için
+      float damage = 10f; // Varsayılan hasar
       
-      // Saldırı türüne göre hasar ve knockback'i ayarla
-      if (player.stateMachine.currentState is PlayerAttackState attackState)
+      if (player.stateMachine.currentState == player.crouchAttackState)
       {
-         // Kombo saldırısı için hasar hesapla
-         HandleComboAttack(enemy, attackState, currentDamage, isCritical);
-      }
-      else if (player.stateMachine.currentState == player.crouchAttackState)
-      {
-         // Çömelme saldırısı için hasar hesapla
-         HandleCrouchAttack(enemy, currentDamage, isCritical);
-      }
-   }
-
-   // Kombo saldırısı için hasar ve knockback hesapla
-   private void HandleComboAttack(Enemy enemy, PlayerAttackState attackState, float baseDamage, bool isCritical)
-   {
-      int comboCounter = attackState.GetComboCounter();
-      float damage = baseDamage;
-      
-      // Combo sayısına göre hasarı ayarla
-      switch (comboCounter)
-      {
-         case 0:
-            // İlk saldırı için standart hasar
-            break;
-         case 1:
-            // İkinci saldırı için arttırılmış hasar
-            damage *= player.stats.secondComboDamageMultiplier.GetValue();
-            break;
-         case 2:
-            // Üçüncü saldırı için en yüksek hasar
-            damage *= player.stats.thirdComboDamageMultiplier.GetValue();
-            break;
+         damage = 12f; // Çömelme saldırısı için %20 ekstra hasar
       }
       
       // Hasarı uygula
-      DealDamageToEnemy(enemy, damage, comboCounter, isCritical);
-      
-      // Static olmayan düşmanlara yeni knockback sistemi ile knockback uygula
-      if (enemy.rb.bodyType != RigidbodyType2D.Static)
-      {
-         enemy.ApplyComboKnockback(player.transform.position, comboCounter);
-      }
-   }
-
-   // Çömelme saldırısı için hasar ve knockback hesapla
-   private void HandleCrouchAttack(Enemy enemy, float baseDamage, bool isCritical)
-   {
-      // Çömelme saldırısı için %20 ekstra hasar
-      float damage = baseDamage * 1.2f;
-      
-      // Hasarı uygula
-      DealDamageToEnemy(enemy, damage, 0, isCritical);
-      
-      // Static olmayan düşmanlara yeni knockback sistemi ile knockback uygula
-      if (enemy.rb.bodyType != RigidbodyType2D.Static)
-      {
-         enemy.ApplyKnockback(player.transform.position);
-      }
-   }
-
-   // Düşmana hasarı uygula ve görsel efektleri göster
-   private void DealDamageToEnemy(Enemy enemy, float damage, int comboCounter, bool isCritical)
-   {
-      // Hasarı doğrudan uygula
-      enemy.stats.TakeDamage(damage,CharacterStats.DamageType.Physical);
+      enemy.stats.TakeDamage(damage, CharacterStats.DamageType.Physical);
       
       // Hasar metni göster
       if (FloatingTextManager.Instance != null)
       {
          Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-         
-         if (comboCounter > 0)
-         {
-            FloatingTextManager.Instance.ShowComboDamageText(damage, textPosition, comboCounter);
-         }
-         else
-         {
-            FloatingTextManager.Instance.ShowDamageText(damage, textPosition);
-         }
+         FloatingTextManager.Instance.ShowDamageText(damage, textPosition);
       }
       
       // Vuruş efekti göster
@@ -193,9 +157,14 @@ public class PlayerAnimTriggers : MonoBehaviour
       {
          enemy.entityFX.StartCoroutine("HitFX");
       }
+      
+      // Knockback uygula
+      if (enemy.rb.bodyType != RigidbodyType2D.Static)
+      {
+         enemy.ApplyKnockback(player.transform.position);
+      }
    }
 
-   // Eğitim kuklaları (dummy) için saldırı işlemi
    private void TryAttackDummy(Collider2D hit)
    {
       Dummy dummy = hit.GetComponent<Dummy>();
@@ -210,63 +179,15 @@ public class PlayerAnimTriggers : MonoBehaviour
       // Vurulan dummy ID'sini listeye ekle
       player.hitDummyIDs.Add(dummyID);
       
-      // Hasarı hesapla ve uygula
-      ApplyDamageToDummy(dummy);
-   }
-
-   // Dummy'ye hasar uygula
-   private void ApplyDamageToDummy(Dummy dummy)
-   {
-      // Temel hasar değerini al
-      float damage = CalculateDamage(out bool isCritical);
-      int comboCounter = 0;
-      
-      // Saldırı türüne göre hasarı ayarla
-      if (player.stateMachine.currentState is PlayerAttackState attackState)
+      // Basit hasar uygula
+      float damage = 10f;
+      if (player.stateMachine.currentState == player.crouchAttackState)
       {
-         comboCounter = attackState.GetComboCounter();
-         
-         // Combo sayısına göre hasarı ayarla
-         switch (comboCounter)
-         {
-            case 1:
-               damage *= player.stats.secondComboDamageMultiplier.GetValue();
-               break;
-            case 2:
-               damage *= player.stats.thirdComboDamageMultiplier.GetValue();
-               break;
-         }
-      }
-      else if (player.stateMachine.currentState == player.crouchAttackState)
-      {
-         // Çömelme saldırısı için %20 ekstra hasar
-         damage *= 1.2f;
+         damage = 12f;
       }
       
       // Dummy'ye hasarı uygula
-      dummy.TakeDamage(damage, comboCounter, isCritical);
-   }
-
-   // Temel hasar ve kritik vuruş hesaplama (now uses WeaponDamageManager)
-   private float CalculateDamage(out bool isCritical)
-   {
-      float damage = 0f;
-      isCritical = false;
-      
-      if (player.stats is PlayerStats playerStats)
-      {
-         // Determine which weapon is currently being used
-         WeaponType currentWeaponType = GetCurrentWeaponType();
-         
-         // Get weapon damage using WeaponDamageManager
-         damage = WeaponDamageManager.GetWeaponDamage(currentWeaponType, playerStats);
-         
-         // WeaponDamageManager already handles critical hits internally
-         // So we just need to check if it was a critical
-         isCritical = playerStats.IsCriticalHit();
-      }
-      
-      return damage;
+      dummy.TakeDamage(damage, 0, false);
    }
    
    // Determine which weapon is currently active

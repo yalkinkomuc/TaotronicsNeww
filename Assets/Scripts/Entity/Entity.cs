@@ -140,11 +140,22 @@ public class Entity : MonoBehaviour
     /// <param name="comboCounter">Current combo count (0 = first hit, 1 = second hit, 2 = third hit)</param>
     public virtual void ApplyComboKnockback(Vector2 attackerPosition, int comboCounter = 0)
     {
+        ApplyComboKnockback(attackerPosition, comboCounter, 1.0f);
+    }
+    
+    /// <summary>
+    /// Enhanced knockback system with combo multipliers and weapon-specific knockback multiplier
+    /// </summary>
+    /// <param name="attackerPosition">Position of the entity dealing damage</param>
+    /// <param name="comboCounter">Current combo count (0 = first hit, 1 = second hit, 2 = third hit)</param>
+    /// <param name="weaponKnockbackMultiplier">Weapon-specific knockback multiplier (e.g., hammer = 1.5f)</param>
+    public virtual void ApplyComboKnockback(Vector2 attackerPosition, int comboCounter, float weaponKnockbackMultiplier)
+    {
         // Players don't get knocked back
         if (this is Player)
             return;
             
-        float knockbackForce = knockbackDirection.x;
+        float knockbackForce = knockbackDirection.x * weaponKnockbackMultiplier;
         float knockbackHeight = knockbackDirection.y;
         
         // Apply combo multipliers

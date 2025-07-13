@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHammerAttackState : PlayerState
+public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
 {
     protected int hammerComboCounter = 0;
     private float comboWindow = 3f;
@@ -15,6 +15,28 @@ public class PlayerHammerAttackState : PlayerState
     
 
     public int GetComboCounter() => hammerComboCounter;
+    
+    public virtual WeaponType GetWeaponType() => WeaponType.Hammer;
+    
+    public virtual float GetDamageMultiplier(int comboIndex)
+    {
+        // Hammer has different damage progression - more powerful but slower
+        switch (comboIndex)
+        {
+            case 0:
+                return 1.2f; // İlk saldırı için daha güçlü hasar
+            case 1:
+                return 1.5f; // İkinci saldırı için daha da güçlü
+            case 2:
+                return 2.0f; // Üçüncü saldırı için çok güçlü
+            default:
+                return 1.2f;
+        }
+    }
+    
+    public virtual float GetKnockbackMultiplier() => hammerKnockbackMultiplier;
+    
+    public virtual float GetComboWindow() => comboWindow;
 
     public PlayerHammerAttackState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {

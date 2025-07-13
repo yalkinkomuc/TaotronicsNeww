@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerAttackState : PlayerState
+public class PlayerAttackState : PlayerState, IWeaponAttackState
 {
     protected int comboCounter = 0;
     
@@ -8,6 +8,27 @@ public class PlayerAttackState : PlayerState
     private float comboWindow = .5f;
 
     public int GetComboCounter() => comboCounter;
+    
+    public virtual WeaponType GetWeaponType() => WeaponType.Sword;
+    
+    public virtual float GetDamageMultiplier(int comboIndex)
+    {
+        switch (comboIndex)
+        {
+            case 0:
+                return 1.0f; // İlk saldırı için standart hasar
+            case 1:
+                return player.stats.secondComboDamageMultiplier.GetValue(); // İkinci saldırı
+            case 2:
+                return player.stats.thirdComboDamageMultiplier.GetValue(); // Üçüncü saldırı
+            default:
+                return 1.0f;
+        }
+    }
+    
+    public virtual float GetKnockbackMultiplier() => 1.0f; // Sword için standart knockback
+    
+    public virtual float GetComboWindow() => comboWindow;
 
     public PlayerAttackState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
