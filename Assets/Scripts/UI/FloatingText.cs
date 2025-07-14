@@ -172,11 +172,11 @@ public class FloatingText : MonoBehaviour
         if (textCount > 0 && Vector3.Distance(transform.position, lastPosition) < 1.0f)
         {
             // Farklı yönler belirle (sol üst, sağ üst, sol alt, sağ alt)
-            Vector3[] directions = new Vector3[] {
-                new Vector3(-0.7f, 0.7f, 0),
-                new Vector3(0.7f, 0.7f, 0),
-                new Vector3(-0.7f, -0.7f, 0),
-                new Vector3(0.7f, -0.7f, 0)
+            Vector3[] directions = {
+                new (-0.7f, 0.7f, 0),
+                new (0.7f, 0.7f, 0),
+                new (-0.7f, -0.7f, 0),
+                new (0.7f, -0.7f, 0)
             };
             
             // Text sayısına göre farklı bir yön seç
@@ -276,21 +276,5 @@ public class FloatingText : MonoBehaviour
         damageValue = damage;
     }
     
-    /// <summary>
-    /// Font boyutunu min-max aralığında ayarlar (Inspector'dan çağrılır)
-    /// </summary>
-    public void SetFontSizeRange(float min, float max, float damageThreshold)
-    {
-        minFontSize = min;
-        maxFontSize = max;
-        minDamageForMaxSize = damageThreshold;
-    }
-    
-    /// <summary>
-    /// Büyü hasarı olarak işaretle
-    /// </summary>
-    public void SetAsMagicDamage(bool value = true)
-    {
-        isMagicDamage = value;
-    }
+   
 } 

@@ -80,10 +80,10 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
         float damagePerSecond = 3f;
         float damageRampUpTime = 1.5f;
         float maxDamageMultiplier = 1.3f;
-        float textDisplayInterval = 0.5f;
+        float damageInterval = 0.5f; // How often to deal damage (in seconds)
         
         float startTime = Time.time;
-        float lastTextTime = Time.time;
+        float accumulatedDamage = 0f;
         
         while (Time.time - startTime < burnDuration && enemy != null)
         {
@@ -100,23 +100,21 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
                 spellDamage = WeaponDamageManager.GetSpellDamage(playerStats);
             }
             
-            // Calculate frame damage
-            float frameDamage = spellDamage * currentDamageMultiplier * Time.deltaTime;
-            enemy.stats.TakeDamage(frameDamage, CharacterStats.DamageType.Fire);
+            // Calculate damage for this interval
+            float intervalDamage = spellDamage * currentDamageMultiplier * damageInterval;
+            enemy.stats.TakeDamage(intervalDamage, CharacterStats.DamageType.Fire);
             
-            // Show damage text at intervals
-            if (Time.time - lastTextTime >= textDisplayInterval)
+            // Accumulate damage for counter display
+            accumulatedDamage += intervalDamage;
+            
+            // Show accumulated damage as counter
+            if (FloatingTextManager.Instance != null)
             {
-                if (FloatingTextManager.Instance != null)
-                {
-                    float accumulatedDamage = spellDamage * currentDamageMultiplier * textDisplayInterval;
-                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage, textPosition);
-                }
-                lastTextTime = Time.time;
+                Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage, textPosition);
             }
             
-            yield return null;
+            yield return new WaitForSeconds(damageInterval);
         }
         
         // Remove burn effect when finished

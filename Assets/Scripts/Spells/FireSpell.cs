@@ -8,6 +8,7 @@ public class FireSpell : MonoBehaviour
     [SerializeField] private float damagePerSecond = 5f; // Increased damage per second
     [SerializeField] private float damageRampUpTime = 2f; // Time it takes to reach full damage
     [SerializeField] private float maxDamageMultiplier = 1.5f; // Maximum damage multiplier after ramp-up
+    [SerializeField] private float damageInterval = 0.5f; // How often to deal damage (in seconds)
     
     [Header("Visual Settings")]
     [SerializeField] private float textDisplayInterval = 0.5f; // How often to show damage text
@@ -16,6 +17,7 @@ public class FireSpell : MonoBehaviour
     private List<Enemy> burningEnemies = new List<Enemy>();
     private Dictionary<Enemy, float> lastTextTimes = new Dictionary<Enemy, float>();
     private Dictionary<Enemy, float> enemyBurnTimes = new Dictionary<Enemy, float>(); // Track how long each enemy has been burning
+    private Dictionary<Enemy, float> accumulatedDamage = new Dictionary<Enemy, float>(); // Track accumulated damage for each enemy
 
     private void Awake()
     {
@@ -46,6 +48,7 @@ public class FireSpell : MonoBehaviour
         burningEnemies.Clear();
         lastTextTimes.Clear();
         enemyBurnTimes.Clear();
+        accumulatedDamage.Clear();
     }
 
     public void EnableDamage()
@@ -76,6 +79,7 @@ public class FireSpell : MonoBehaviour
             // Initialize tracking dictionaries
             lastTextTimes[enemy] = 0f;
             enemyBurnTimes[enemy] = 0f;
+            accumulatedDamage[enemy] = 0f;
         }
     }
 
@@ -99,6 +103,13 @@ public class FireSpell : MonoBehaviour
             {
                 enemyBurnTimes.Remove(enemy);
             }
+            
+            if (accumulatedDamage.ContainsKey(enemy))
+            {
+                accumulatedDamage.Remove(enemy);
+            }
+            
+
         }
     }
 
@@ -106,7 +117,7 @@ public class FireSpell : MonoBehaviour
     {
         while (true)
         {
-            // Her frame'de hasar ver
+            // Belirli aralıklarla hasar ver
             for (int i = burningEnemies.Count - 1; i >= 0; i--)
             {
                 if (burningEnemies[i] != null)
@@ -118,7 +129,7 @@ public class FireSpell : MonoBehaviour
                     {
                         enemyBurnTimes[enemy] = 0f;
                     }
-                    enemyBurnTimes[enemy] += Time.deltaTime;
+                    enemyBurnTimes[enemy] += damageInterval;
                     
                     // Calculate damage multiplier based on how long enemy has been burning
                     float burnTimeFactor = Mathf.Clamp01(enemyBurnTimes[enemy] / damageRampUpTime);
@@ -132,33 +143,22 @@ public class FireSpell : MonoBehaviour
                         spellDamage = WeaponDamageManager.GetSpellDamage(playerStats);
                     }
                     
-                    // Calculate frame damage with ramp-up
-                    float frameDamage = spellDamage * currentDamageMultiplier * Time.deltaTime;
-                    enemy.stats.TakeDamage(frameDamage, CharacterStats.DamageType.Fire);
+                    // Calculate damage for this interval with ramp-up
+                    float intervalDamage = spellDamage * currentDamageMultiplier * damageInterval;
+                    enemy.stats.TakeDamage(intervalDamage, CharacterStats.DamageType.Fire);
                     
-                    // Accumulated damage for text display
-                    bool shouldShowText = false;
-                    float accumulatedDamage = frameDamage;
-                    
-                    // Check if it's time to show damage text
-                    if (!lastTextTimes.ContainsKey(enemy))
+                    // Accumulate damage for counter
+                    if (!accumulatedDamage.ContainsKey(enemy))
                     {
-                        lastTextTimes[enemy] = 0f;
-                        shouldShowText = true;
+                        accumulatedDamage[enemy] = 0f;
                     }
-                    else if (Time.time - lastTextTimes[enemy] >= textDisplayInterval)
-                    {
-                        // Show approximate damage over interval with current multiplier
-                        accumulatedDamage = spellDamage * currentDamageMultiplier * textDisplayInterval;
-                        shouldShowText = true;
-                        lastTextTimes[enemy] = Time.time;
-                    }
+                    accumulatedDamage[enemy] += intervalDamage;
                     
-                    // Display magic damage text at intervals
-                    if (shouldShowText && FloatingTextManager.Instance != null)
+                    // Show accumulated damage as counter (every damage tick)
+                    if (FloatingTextManager.Instance != null)
                     {
                         Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                        FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage, textPosition);
+                        FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage[enemy], textPosition);
                     }
                 }
                 else
@@ -167,7 +167,7 @@ public class FireSpell : MonoBehaviour
                 }
             }
 
-            yield return null; // Her frame'de çalış
+            yield return new WaitForSeconds(damageInterval); // Belirli aralıklarla çalış
         }
     }
 } 
