@@ -45,7 +45,7 @@ public static class WeaponDamageManager
     
     /// <summary>
     /// Gets the weapon damage range as a formatted string for UI display
-    /// Includes player attribute bonuses and combo multipliers (NO critical hit)
+    /// Uses the SAME calculation as actual combat damage
     /// </summary>
     /// <param name="weaponType">The type of weapon</param>
     /// <param name="playerStats">Player stats for attribute bonuses</param>
@@ -67,23 +67,26 @@ public static class WeaponDamageManager
         int weaponMinDamage = weaponData.GetTotalMinDamage();
         int weaponMaxDamage = weaponData.GetTotalMaxDamage();
         
-        // Add player's might bonus (same as PlayerStats calculation)
-        float mightBonus = playerStats.baseDamage.GetValue() - playerStats.baseDamage.GetBaseValue();
+        // Calculate damage multiplier using the SAME formula as all weapons
+        float damageMultiplier = 1.0f;
+        float totalDamage = playerStats.baseDamage.GetValue() * 1.0f; // First combo
+        damageMultiplier = totalDamage / playerStats.baseDamage.GetBaseValue();
         
-        // Calculate final damage range
-        int finalMinDamage = weaponMinDamage + Mathf.RoundToInt(mightBonus);
-        int finalMaxDamage = weaponMaxDamage + Mathf.RoundToInt(mightBonus);
+        // Calculate final damage range using the same multiplier as combat
+        int finalMinDamage = Mathf.RoundToInt(weaponMinDamage * damageMultiplier);
+        int finalMaxDamage = Mathf.RoundToInt(weaponMaxDamage * damageMultiplier);
         
-        // Apply combo multipliers to show realistic damage range
-        int maxComboNormal = Mathf.RoundToInt(finalMaxDamage * playerStats.thirdComboDamageMultiplier.GetValue());
+        // For 3rd combo, apply the combo multiplier
+        float totalDamageThirdCombo = playerStats.baseDamage.GetValue() * playerStats.thirdComboDamageMultiplier.GetValue();
+        float thirdComboMultiplier = totalDamageThirdCombo / playerStats.baseDamage.GetBaseValue();
         
-        // DON'T apply critical multiplier - just show normal combo range
+        int maxComboDamage = Mathf.RoundToInt(weaponMaxDamage * thirdComboMultiplier);
         
-        // Format the range string
-        if (finalMinDamage == maxComboNormal)
+        // Format the range string: "First combo min - Third combo max"
+        if (finalMinDamage == maxComboDamage)
             return finalMinDamage.ToString();
         else
-            return $"{finalMinDamage}-{maxComboNormal}";
+            return $"{finalMinDamage}-{maxComboDamage}";
     }
     
     /// <summary>

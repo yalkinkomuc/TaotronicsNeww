@@ -255,21 +255,24 @@ public class PlayerStats : CharacterStats
     
     /// <summary>
     /// Get damage range including combo multipliers for UI display
-    /// Shows: Min Normal Damage - Max Combo Damage (WITHOUT critical multiplier)
+    /// Uses WeaponDamageManager for consistent calculation
     /// </summary>
     public string GetDamageRangeWithCriticalString()
     {
-        int minNormal = GetMinDamage();
-        int maxNormal = GetMaxDamage();
+        // Get current equipped weapon type
+        WeaponType currentWeaponType = WeaponType.Sword; // Default fallback
         
-        // Apply combo multipliers to show realistic damage range
-        int maxComboNormal = Mathf.RoundToInt(maxNormal * thirdComboDamageMultiplier.GetValue());
+        if (EquipmentManager.Instance != null)
+        {
+            var currentWeapon = EquipmentManager.Instance.GetCurrentMainWeapon();
+            if (currentWeapon != null)
+            {
+                currentWeaponType = currentWeapon.weaponType;
+            }
+        }
         
-        // DON'T apply critical multiplier - just show normal combo range
-        if (minNormal == maxComboNormal)
-            return minNormal.ToString();
-        else
-            return $"{minNormal}-{maxComboNormal}";
+        // Use WeaponDamageManager for consistent calculation
+        return WeaponDamageManager.GetWeaponDamageRangeString(currentWeaponType, this);
     }
     
     /// <summary>
@@ -286,60 +289,28 @@ public class PlayerStats : CharacterStats
     /// </summary>
     public string GetDamageRangeWithCriticalString(int tempMight)
     {
-        // Calculate temporary might bonus
-        float baseDamageValue = baseDamage.GetBaseValue();
-        float damageMultiplier = Mathf.Pow(1 + DAMAGE_GROWTH, tempMight) - 1;
-        float tempMightBonus = baseDamageValue * damageMultiplier;
+        // Create a temporary PlayerStats with the temp might value
+        // We'll temporarily modify the might attribute and use WeaponDamageManager
         
-        // Get current equipment bonus (excluding might bonus)
-        float currentMightBonus = baseDamage.GetValue() - baseDamage.GetBaseValue();
-        float equipmentOnlyBonus = baseDamage.GetValue() - baseDamage.GetBaseValue() - currentMightBonus;
+        // Store original might value
+        int originalMight = _might;
         
-        // Actually, let's simplify: get all non-attribute bonuses
-        float currentTotalBonus = baseDamage.GetValue() - baseDamage.GetBaseValue();
-        float currentMightBonusCalculated = baseDamageValue * (Mathf.Pow(1 + DAMAGE_GROWTH, Might) - 1);
-        float equipmentAndOtherBonuses = currentTotalBonus - currentMightBonusCalculated;
+        // Temporarily set might to temp value
+        _might = tempMight;
         
-        // Get equipped weapon
-        WeaponData weapon = EquipmentManager.Instance?.GetCurrentMainWeapon();
+        // Reapply attribute bonuses with new might value
+        ApplyAttributeBonuses();
         
-        if (weapon != null)
-        {
-            // Calculate min damage with temp might value + equipment bonuses
-            int weaponMinDamage = weapon.GetTotalMinDamage();
-            int totalMinDamage = weaponMinDamage + Mathf.RoundToInt(tempMightBonus + equipmentAndOtherBonuses);
-            
-            // Calculate max damage with temp might value + equipment bonuses
-            int weaponMaxDamage = weapon.GetTotalMaxDamage();
-            int totalMaxDamage = weaponMaxDamage + Mathf.RoundToInt(tempMightBonus + equipmentAndOtherBonuses);
-            
-            // Apply combo multipliers to show realistic damage range
-            int maxComboNormal = Mathf.RoundToInt(totalMaxDamage * thirdComboDamageMultiplier.GetValue());
-            
-            // DON'T apply critical multiplier - just show normal combo range
-            
-            // Format the range string
-            if (totalMinDamage == maxComboNormal)
-                return totalMinDamage.ToString();
-            else
-                return $"{totalMinDamage}-{maxComboNormal}";
-        }
-        else
-        {
-            // Fallback to base damage system
-            float totalDamage = baseDamageValue + tempMightBonus + equipmentAndOtherBonuses;
-            int normalDamage = Mathf.RoundToInt(totalDamage);
-            
-            // Apply combo multipliers to show realistic damage range
-            int maxComboNormal = Mathf.RoundToInt(totalDamage * thirdComboDamageMultiplier.GetValue());
-            
-            // DON'T apply critical multiplier - just show normal combo range
-            
-            if (normalDamage == maxComboNormal)
-                return normalDamage.ToString();
-            else
-                return $"{normalDamage}-{maxComboNormal}";
-        }
+        // Get damage range using WeaponDamageManager
+        string damageRange = GetDamageRangeWithCriticalString();
+        
+        // Restore original might value
+        _might = originalMight;
+        
+        // Reapply attribute bonuses with original might value
+        ApplyAttributeBonuses();
+        
+        return damageRange;
     }
     
     #endregion
