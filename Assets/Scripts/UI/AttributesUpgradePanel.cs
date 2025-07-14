@@ -256,12 +256,12 @@ public class AttributesUpgradePanel : BaseUIPanel
         if (playerStats == null)
             return 0f;
         
-        // Base health
+        // Use the same calculation as PlayerStats.ApplyAttributeBonuses
+        // Get the actual base health value from PlayerStats (same as _baseHealthValue)
         float baseHealth = playerStats.maxHealth.GetBaseValue();
-        // Vitality bonus
         float healthMultiplier = Mathf.Pow(1 + 0.08f, vitality) - 1; // HEALTH_GROWTH = 0.08f
         float bonus = baseHealth * healthMultiplier;
-        // Sadece base health + vitality bonusu
+        // Total health = base health + vitality bonus
         return baseHealth + bonus;
     }
     
