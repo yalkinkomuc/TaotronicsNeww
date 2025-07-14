@@ -24065,11 +24065,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weapons:
   - {fileID: 305076}
-  - {fileID: 1503857569}
-  - {fileID: 3452476}
   - {fileID: 1260116254}
   - {fileID: 5043374}
-  startingWeaponIndex: 4
+  - {fileID: 1503857569}
+  - {fileID: 3452476}
+  startingWeaponIndex: 1
   weaponSwitchKey: 9
 --- !u!1 &806093475
 GameObject:
@@ -31274,7 +31274,7 @@ MonoBehaviour:
   thirdComboDamageMultiplier:
     baseValue: 1.5
   maxHealth:
-    baseValue: 100
+    baseValue: 1000
   maxMana:
     baseValue: 100
   currentHealth: 0
@@ -31295,7 +31295,7 @@ MonoBehaviour:
   _luck: 0
   _mind: 0
   _maxAttributeLevel: 99
-  _baseHealthValue: 10000
+  _baseHealthValue: 1000
   _baseDamageValue: 100
   _baseSpeedValue: 10
   experience: 0
