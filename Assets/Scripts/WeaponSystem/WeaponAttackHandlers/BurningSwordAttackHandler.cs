@@ -76,14 +76,22 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
     
     private System.Collections.IEnumerator BurnDamageOverTime(Player player, Enemy enemy)
     {
-        float burnDuration = 3f;
-        float damagePerSecond = 3f;
+        float damagePerSecond = 1f;
         float damageRampUpTime = 1.5f;
         float maxDamageMultiplier = 1.3f;
         float damageInterval = 0.5f; // How often to deal damage (in seconds)
+        float textDisplayInterval = 0.1f; // How often to show damage text
+        
+        // Get burn duration from enemy's EntityFX
+        float burnDuration = 1f; // Default value
+        if (enemy.entityFX != null)
+        {
+            burnDuration = enemy.entityFX.burnDuration;
+        }
         
         float startTime = Time.time;
         float accumulatedDamage = 0f;
+        float lastTextDisplayTime = 0f;
         
         while (Time.time - startTime < burnDuration && enemy != null)
         {
@@ -107,11 +115,15 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
             // Accumulate damage for counter display
             accumulatedDamage += intervalDamage;
             
-            // Show accumulated damage as counter
-            if (FloatingTextManager.Instance != null)
+            // Show accumulated damage as counter (every 0.1 seconds)
+            if (Time.time - lastTextDisplayTime >= textDisplayInterval)
             {
-                Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage, textPosition);
+                if (FloatingTextManager.Instance != null)
+                {
+                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                    FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage, textPosition);
+                }
+                lastTextDisplayTime = Time.time;
             }
             
             yield return new WaitForSeconds(damageInterval);

@@ -11,13 +11,14 @@ public class FireSpell : MonoBehaviour
     [SerializeField] private float damageInterval = 0.5f; // How often to deal damage (in seconds)
     
     [Header("Visual Settings")]
-    [SerializeField] private float textDisplayInterval = 0.5f; // How often to show damage text
+    [SerializeField] private float textDisplayInterval = 0.1f; // How often to show damage text
     
     private BoxCollider2D boxCollider2D;
     private List<Enemy> burningEnemies = new List<Enemy>();
     private Dictionary<Enemy, float> lastTextTimes = new Dictionary<Enemy, float>();
     private Dictionary<Enemy, float> enemyBurnTimes = new Dictionary<Enemy, float>(); // Track how long each enemy has been burning
     private Dictionary<Enemy, float> accumulatedDamage = new Dictionary<Enemy, float>(); // Track accumulated damage for each enemy
+    private Dictionary<Enemy, float> lastTextDisplayTimes = new Dictionary<Enemy, float>(); // Track when text was last displayed
 
     private void Awake()
     {
@@ -49,6 +50,7 @@ public class FireSpell : MonoBehaviour
         lastTextTimes.Clear();
         enemyBurnTimes.Clear();
         accumulatedDamage.Clear();
+        lastTextDisplayTimes.Clear();
     }
 
     public void EnableDamage()
@@ -80,6 +82,7 @@ public class FireSpell : MonoBehaviour
             lastTextTimes[enemy] = 0f;
             enemyBurnTimes[enemy] = 0f;
             accumulatedDamage[enemy] = 0f;
+            lastTextDisplayTimes[enemy] = 0f;
         }
     }
 
@@ -109,6 +112,11 @@ public class FireSpell : MonoBehaviour
                 accumulatedDamage.Remove(enemy);
             }
             
+            if (lastTextDisplayTimes.ContainsKey(enemy))
+            {
+                lastTextDisplayTimes.Remove(enemy);
+            }
+            
 
         }
     }
@@ -130,6 +138,27 @@ public class FireSpell : MonoBehaviour
                         enemyBurnTimes[enemy] = 0f;
                     }
                     enemyBurnTimes[enemy] += damageInterval;
+                    
+                    // Get burn duration from enemy's EntityFX
+                    float burnDuration = 1f; // Default value
+                    if (enemy.entityFX != null)
+                    {
+                        burnDuration = enemy.entityFX.burnDuration;
+                    }
+                    
+                    // Check if burn effect should end
+                    if (enemyBurnTimes[enemy] >= burnDuration)
+                    {
+                        // Remove enemy from burning list and stop effects
+                        burningEnemies.RemoveAt(i);
+                        if (enemy.entityFX != null)
+                        {
+                            enemy.entityFX.StopCoroutine("BurnFX");
+                            enemy.entityFX.ResetToOriginalMaterial();
+                        }
+                        enemy.RemoveBurnEffect();
+                        continue;
+                    }
                     
                     // Calculate damage multiplier based on how long enemy has been burning
                     float burnTimeFactor = Mathf.Clamp01(enemyBurnTimes[enemy] / damageRampUpTime);
@@ -154,11 +183,20 @@ public class FireSpell : MonoBehaviour
                     }
                     accumulatedDamage[enemy] += intervalDamage;
                     
-                    // Show accumulated damage as counter (every damage tick)
-                    if (FloatingTextManager.Instance != null)
+                    // Show accumulated damage as counter (every 0.1 seconds)
+                    if (!lastTextDisplayTimes.ContainsKey(enemy))
                     {
-                        Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                        FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage[enemy], textPosition);
+                        lastTextDisplayTimes[enemy] = 0f;
+                    }
+                    
+                    if (Time.time - lastTextDisplayTimes[enemy] >= textDisplayInterval)
+                    {
+                        if (FloatingTextManager.Instance != null)
+                        {
+                            Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+                            FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage[enemy], textPosition);
+                        }
+                        lastTextDisplayTimes[enemy] = Time.time;
                     }
                 }
                 else

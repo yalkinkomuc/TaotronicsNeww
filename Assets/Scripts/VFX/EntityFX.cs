@@ -19,7 +19,7 @@ public class EntityFX : MonoBehaviour
 
    [Header("BurnFX")] 
    [SerializeField] public Material burnMat; // Unity'de turuncu flash materyali atanacak
-   [SerializeField] private float burnDuration =1f; // Default burn duration
+   [SerializeField] public float burnDuration = 1f; // Default burn duration
    [SerializeField] private float burnFlashInterval = 0.10f; // Flash interval during burn effect
 
    [Header("IceFX")]
