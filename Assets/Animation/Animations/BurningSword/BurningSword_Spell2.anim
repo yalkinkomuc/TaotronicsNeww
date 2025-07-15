@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BurningSword_FireSpell
+  m_Name: BurningSword_Spell2
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,11 +21,11 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -7238355357926509167, guid: ec2f771cd671a4a4f88beac00ffb55f9, type: 3}
+      value: {fileID: 6871208406960788041, guid: 89752204a903fa24d9a649ecec0f11d1, type: 3}
     - time: 0.1
-      value: {fileID: -8943115350572945245, guid: ec2f771cd671a4a4f88beac00ffb55f9, type: 3}
+      value: {fileID: -2899182604718813902, guid: 89752204a903fa24d9a649ecec0f11d1, type: 3}
     - time: 0.2
-      value: {fileID: -6586414427991249688, guid: ec2f771cd671a4a4f88beac00ffb55f9, type: 3}
+      value: {fileID: -8399651287035349683, guid: 89752204a903fa24d9a649ecec0f11d1, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -48,9 +48,9 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -7238355357926509167, guid: ec2f771cd671a4a4f88beac00ffb55f9, type: 3}
-    - {fileID: -8943115350572945245, guid: ec2f771cd671a4a4f88beac00ffb55f9, type: 3}
-    - {fileID: -6586414427991249688, guid: ec2f771cd671a4a4f88beac00ffb55f9, type: 3}
+    - {fileID: 6871208406960788041, guid: 89752204a903fa24d9a649ecec0f11d1, type: 3}
+    - {fileID: -2899182604718813902, guid: 89752204a903fa24d9a649ecec0f11d1, type: 3}
+    - {fileID: -8399651287035349683, guid: 89752204a903fa24d9a649ecec0f11d1, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

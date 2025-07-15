@@ -65,9 +65,9 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
             Debug.LogWarning("[BurningSword] Enemy has no entityFX component!");
         }
         
-        // Apply burn effect to enemy
-        enemy.ApplyBurnEffect();
-        Debug.Log("[BurningSword] Applied burn effect to enemy");
+        // Apply burn effect to enemy (without movement speed reduction for burning sword)
+        enemy.ApplyBurnEffect(false);
+        Debug.Log("[BurningSword] Applied burn effect to enemy (no movement speed reduction)");
         
         // Start damage over time coroutine
         player.StartCoroutine(BurnDamageOverTime(player, enemy));
@@ -137,7 +137,7 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
                 enemy.entityFX.StopCoroutine("BurnFX");
                 enemy.entityFX.ResetToOriginalMaterial();
             }
-            enemy.RemoveBurnEffect();
+            enemy.RemoveBurnEffect(false); // No movement speed restoration for burning sword
         }
     }
 } 

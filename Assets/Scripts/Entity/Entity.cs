@@ -250,24 +250,30 @@ public class Entity : MonoBehaviour
   
     #region BurnEffect
 
-    public virtual void ApplyBurnEffect()
+    public virtual void ApplyBurnEffect(bool affectMovementSpeed = true)
     {
         if (this is Enemy enemy)
         {
-            originalMoveSpeed = enemy.moveSpeed;
-            originalChaseSpeed = enemy.chaseSpeed;
-            
-            enemy.moveSpeed *= 0.5f;
-            enemy.chaseSpeed *= 0.5f;
+            if (affectMovementSpeed)
+            {
+                originalMoveSpeed = enemy.moveSpeed;
+                originalChaseSpeed = enemy.chaseSpeed;
+                
+                enemy.moveSpeed *= 0.5f;
+                enemy.chaseSpeed *= 0.5f;
+            }
         }
     }
 
-    public virtual void RemoveBurnEffect()
+    public virtual void RemoveBurnEffect(bool affectMovementSpeed = true)
     {
         if (this is Enemy enemy)
         {
-            enemy.moveSpeed = originalMoveSpeed;
-            enemy.chaseSpeed = originalChaseSpeed;
+            if (affectMovementSpeed)
+            {
+                enemy.moveSpeed = originalMoveSpeed;
+                enemy.chaseSpeed = originalChaseSpeed;
+            }
         }
     }
 

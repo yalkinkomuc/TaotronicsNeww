@@ -43,7 +43,7 @@ public class FireSpell : MonoBehaviour
             {
                 enemy.entityFX.StopCoroutine("BurnFX");
                 enemy.entityFX.ResetToOriginalMaterial();
-                enemy.RemoveBurnEffect();
+                enemy.RemoveBurnEffect(true); // Fire spell affects movement speed
             }
         }
         burningEnemies.Clear();
@@ -76,7 +76,7 @@ public class FireSpell : MonoBehaviour
         {
             burningEnemies.Add(enemy);
             enemy.entityFX.StartCoroutine("BurnFX");
-            enemy.ApplyBurnEffect();
+            enemy.ApplyBurnEffect(true); // Fire spell affects movement speed
             
             // Initialize tracking dictionaries
             lastTextTimes[enemy] = 0f;
@@ -94,7 +94,7 @@ public class FireSpell : MonoBehaviour
             burningEnemies.Remove(enemy);
             enemy.entityFX.StopCoroutine("BurnFX");
             enemy.entityFX.ResetToOriginalMaterial();
-            enemy.RemoveBurnEffect();
+            enemy.RemoveBurnEffect(true); // Fire spell affects movement speed
             
             // Remove from dictionaries
             if (lastTextTimes.ContainsKey(enemy))
@@ -156,7 +156,7 @@ public class FireSpell : MonoBehaviour
                             enemy.entityFX.StopCoroutine("BurnFX");
                             enemy.entityFX.ResetToOriginalMaterial();
                         }
-                        enemy.RemoveBurnEffect();
+                        enemy.RemoveBurnEffect(true); // Fire spell affects movement speed
                         continue;
                     }
                     
