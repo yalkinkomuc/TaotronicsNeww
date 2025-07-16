@@ -1254,21 +1254,21 @@ public class Player : Entity
     {
         if (isBoomerangInAir)
         {
-            // Boomerang havadayken: Sadece sword görünür, diğerleri gizli
+            // Boomerang havadayken: Sadece aktif primary weapon görünür, diğerleri gizli
             PlayerWeaponManager weaponManager = GetComponentInChildren<PlayerWeaponManager>();
             if (weaponManager != null && weaponManager.weapons != null)
             {
-                // Primary weapon'ı aktif tut (starting weapon)
-                if (weaponManager.weapons.Length > weaponManager.startingWeaponIndex && 
-                    weaponManager.weapons[weaponManager.startingWeaponIndex] != null)
+                // Aktif primary weapon'ı bul ve aktif tut
+                WeaponStateMachine activePrimaryWeapon = FindActivePrimaryWeapon(weaponManager);
+                if (activePrimaryWeapon != null)
                 {
-                    weaponManager.weapons[weaponManager.startingWeaponIndex].gameObject.SetActive(true);
+                    activePrimaryWeapon.gameObject.SetActive(true);
                 }
                 
-                // Tüm secondary silahları gizle (1. index ve sonrası)
-                for (int i = 1; i < weaponManager.weapons.Length; i++)
+                // Tüm secondary silahları gizle
+                for (int i = 0; i < weaponManager.weapons.Length; i++)
                 {
-                    if (weaponManager.weapons[i] != null)
+                    if (weaponManager.weapons[i] != null && IsSecondaryWeapon(weaponManager.weapons[i]))
                     {
                         weaponManager.weapons[i].gameObject.SetActive(false);
                     }
@@ -1280,6 +1280,44 @@ public class Player : Entity
             }
         }
         // Boomerang havada değilse normal silah sistemine müdahale etme
+    }
+    
+    // Aktif primary weapon'ı bul
+    private WeaponStateMachine FindActivePrimaryWeapon(PlayerWeaponManager weaponManager)
+    {
+        for (int i = 0; i < weaponManager.weapons.Length; i++)
+        {
+            if (weaponManager.weapons[i] != null && 
+                IsPrimaryWeapon(weaponManager.weapons[i]) && 
+                weaponManager.weapons[i].gameObject.activeInHierarchy)
+            {
+                return weaponManager.weapons[i];
+            }
+        }
+        
+        // Eğer aktif primary weapon bulunamazsa, starting weapon'ı döndür
+        if (weaponManager.weapons.Length > weaponManager.startingWeaponIndex && 
+            weaponManager.weapons[weaponManager.startingWeaponIndex] != null)
+        {
+            return weaponManager.weapons[weaponManager.startingWeaponIndex];
+        }
+        
+        return null;
+    }
+    
+    // Primary weapon kontrolü
+    private bool IsPrimaryWeapon(WeaponStateMachine weapon)
+    {
+        return weapon is SwordWeaponStateMachine || 
+               weapon is BurningSwordStateMachine || 
+               weapon is HammerSwordStateMachine;
+    }
+    
+    // Secondary weapon kontrolü
+    private bool IsSecondaryWeapon(WeaponStateMachine weapon)
+    {
+        return weapon is BoomerangWeaponStateMachine || 
+               weapon is SpellbookWeaponStateMachine;
     }
 
     #endregion
