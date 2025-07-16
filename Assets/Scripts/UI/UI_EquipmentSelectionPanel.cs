@@ -344,6 +344,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponData.icon = Resources.Load<Sprite>("WeaponIcons/sword");
             weaponData.minDamage = 15;
             weaponData.maxDamage = 20;
+            weaponData.equipmentSlot = EquipmentSlot.MainWeapon;
         }
         else if (weaponStateMachine is BurningSwordStateMachine)
         {
@@ -353,6 +354,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponData.icon = Resources.Load<Sprite>("WeaponIcons/burning sword");
             weaponData.minDamage = 20;
             weaponData.maxDamage = 25;
+            weaponData.equipmentSlot = EquipmentSlot.MainWeapon;
         }
         else if (weaponStateMachine is HammerSwordStateMachine)
         {
@@ -362,6 +364,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponData.icon = Resources.Load<Sprite>("WeaponIcons/hammer");
             weaponData.minDamage = 30;
             weaponData.maxDamage = 35;
+            weaponData.equipmentSlot = EquipmentSlot.MainWeapon;
         }
         else if (weaponStateMachine is BoomerangWeaponStateMachine)
         {
@@ -371,6 +374,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponData.icon = Resources.Load<Sprite>("WeaponIcons/boomerang");
             weaponData.minDamage = 12;
             weaponData.maxDamage = 18;
+            weaponData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
         }
         else if (weaponStateMachine is SpellbookWeaponStateMachine)
         {
@@ -380,6 +384,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponData.icon = Resources.Load<Sprite>("WeaponIcons/spellbook");
             weaponData.minDamage = 18;
             weaponData.maxDamage = 22;
+            weaponData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
         }
         else
         {
@@ -388,7 +393,6 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         }
         
         // Set basic properties
-        weaponData.equipmentSlot = EquipmentSlot.MainWeapon; // Will be overridden by filtering logic
         weaponData.requiredLevel = 1;
         
         return weaponData;
