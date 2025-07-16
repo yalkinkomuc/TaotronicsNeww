@@ -17,6 +17,12 @@ public class HammerAttackHandler : BaseWeaponAttackHandler
         
         // Hasarı uygula
         DealDamageToEnemy(player, enemy, damage, comboCounter, isCritical);
+
+        // Eğer 3. combo ise, gerçek hasarı kaydet
+        if (comboCounter == 2)
+        {
+            player.lastHammerCombo3Damage = damage;
+        }
         
         // Static olmayan düşmanlara hammer knockback uygula
         if (enemy.rb.bodyType != RigidbodyType2D.Static)

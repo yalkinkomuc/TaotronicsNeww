@@ -403,13 +403,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       player.explosionHitEntities.Add(id);
 
       // Hasar hesapla ve uygula
-      float baseMultiplier = 1.0f;
-      if (player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState)
-         baseMultiplier = hammerAttackState.GetDamageMultiplier(2); // 3. kombo
-
-      var playerStats = player.stats as PlayerStats;
-      float baseDamage = playerStats != null ? playerStats.baseDamage.GetValue() : 10f;
-      float explosionDamage = baseDamage * baseMultiplier * 0.25f;
+      float explosionDamage = player.lastHammerCombo3Damage * 0.25f;
 
       enemy.stats.TakeDamage(explosionDamage, CharacterStats.DamageType.Physical);
       Debug.Log($"Hammer Explosion hit: {enemy.name} for {explosionDamage} damage");
