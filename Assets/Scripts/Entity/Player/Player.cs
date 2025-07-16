@@ -1773,5 +1773,8 @@ public class Player : Entity
     }
     
     #endregion
+
+    [Header("Hammer Explosion")]
+    public PolygonCollider2D hammerExplosionCollider; // Hammer 3. kombo patlama için özel collider
 }
 
