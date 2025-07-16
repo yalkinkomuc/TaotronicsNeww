@@ -398,6 +398,11 @@ public class PlayerAnimTriggers : MonoBehaviour
    {
       Enemy enemy = hit.GetComponent<Enemy>();
       if (enemy == null) return;
+      
+      // Enemy'nin hala aktif olup olmadığını kontrol et
+      if (enemy.gameObject == null || !enemy.gameObject.activeInHierarchy)
+         return;
+         
       int id = enemy.GetInstanceID();
       if (player.explosionHitEntities.Contains(id)) return;
       player.explosionHitEntities.Add(id);
@@ -422,7 +427,8 @@ public class PlayerAnimTriggers : MonoBehaviour
          FloatingTextManager.Instance.ShowDamageText(explosionDamage, textPosition);
       }
 
-      if (enemy.entityFX != null)
+      // EntityFX null kontrolü ve GameObject aktiflik kontrolü
+      if (enemy.entityFX != null && enemy.entityFX.gameObject != null && enemy.entityFX.gameObject.activeInHierarchy)
       {
          enemy.entityFX.StartCoroutine("HitFX");
       }

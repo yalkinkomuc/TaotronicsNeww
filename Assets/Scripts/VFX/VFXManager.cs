@@ -44,18 +44,33 @@ public class VFXManager : MonoBehaviour
     {
         if (vfxPool.TryGetValue(vfxId, out GameObject vfx))
         {
+            // VFX GameObject'inin hala geçerli olup olmadığını kontrol et
+            if (vfx == null)
+            {
+                Debug.LogWarning($"VFX with ID '{vfxId}' is null in pool!");
+                return;
+            }
+            
             vfx.transform.position = position;
             
             // Vuran player'ın pozisyonuna göre VFX'i döndür
-            Player player = PlayerManager.instance.player;
-            bool hitFromLeft = player.transform.position.x < position.x;
-            
-            // Y ekseninde döndür
-            vfx.transform.rotation = hitFromLeft ? 
-                Quaternion.Euler(0f, 180f, 0f) : 
-                Quaternion.Euler(0f, 0f, 0f);
+            Player player = PlayerManager.instance?.player;
+            if (player != null && player.gameObject != null && player.gameObject.activeInHierarchy)
+            {
+                bool hitFromLeft = player.transform.position.x < position.x;
                 
-            if (parent != null)
+                // Y ekseninde döndür
+                vfx.transform.rotation = hitFromLeft ? 
+                    Quaternion.Euler(0f, 180f, 0f) : 
+                    Quaternion.Euler(0f, 0f, 0f);
+            }
+            else
+            {
+                // Player bulunamazsa varsayılan rotasyon
+                vfx.transform.rotation = Quaternion.identity;
+            }
+                
+            if (parent != null && parent.gameObject != null && parent.gameObject.activeInHierarchy)
                 vfx.transform.SetParent(parent);
                 
             vfx.SetActive(true);

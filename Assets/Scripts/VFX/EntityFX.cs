@@ -45,16 +45,30 @@ public class EntityFX : MonoBehaviour
 
    private IEnumerator HitFX()
    {
+      // GameObject'in hala aktif olup olmadığını kontrol et
+      if (sr == null || gameObject == null || !gameObject.activeInHierarchy)
+         yield break;
+         
       sr.material = hitMat;
       
-      if (hitVFXIds != null && hitVFXIds.Length > 0)
+      if (hitVFXIds != null && hitVFXIds.Length > 0 && vfxSpawnPoint != null)
       {
           string randomVFXId = hitVFXIds[UnityEngine.Random.Range(0, hitVFXIds.Length)];
-          VFXManager.Instance.PlayVFX(randomVFXId, vfxSpawnPoint.position, transform);
+          
+          // VFXManager ve spawn point kontrolü
+          if (VFXManager.Instance != null && vfxSpawnPoint.gameObject != null && vfxSpawnPoint.gameObject.activeInHierarchy)
+          {
+              VFXManager.Instance.PlayVFX(randomVFXId, vfxSpawnPoint.position, transform);
+          }
       }
       
       yield return new WaitForSeconds(.2f);
-      sr.material = originalMat;
+      
+      // Coroutine sonunda da GameObject kontrolü
+      if (sr != null && gameObject != null && gameObject.activeInHierarchy)
+      {
+         sr.material = originalMat;
+      }
    }
    
    // Yeni ölüm efekti metodu
