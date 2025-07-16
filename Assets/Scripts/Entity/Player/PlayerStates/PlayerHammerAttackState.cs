@@ -25,7 +25,7 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
     public override void Enter()
     {
         base.Enter();
-
+        player.explosionHitEntities.Clear(); // Her yeni hammer saldırısında explosion hit listesi temizlenir
         if (hammerComboCounter > 2 || Time.time >= lastTimeAttacked + HammerCalculations.GetComboWindow())
         {
             hammerComboCounter = 0;

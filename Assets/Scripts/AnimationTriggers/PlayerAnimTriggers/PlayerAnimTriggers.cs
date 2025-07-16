@@ -389,18 +389,62 @@ public class PlayerAnimTriggers : MonoBehaviour
    // Parry animasyonu bittiğinde çağrılacak
    
    // Hammer 3. kombo patlama animasyonunda çağrılacak
+   public void ClearExplosionHitEntities()
+   {
+      player.explosionHitEntities.Clear();
+   }
+
+   private void TryExplosionAttackEnemy(Collider2D hit)
+   {
+      Enemy enemy = hit.GetComponent<Enemy>();
+      if (enemy == null) return;
+      int id = enemy.GetInstanceID();
+      if (player.explosionHitEntities.Contains(id)) return;
+      player.explosionHitEntities.Add(id);
+
+      // Hasar hesapla ve uygula
+      float baseMultiplier = 1.0f;
+      if (player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState)
+         baseMultiplier = hammerAttackState.GetDamageMultiplier(2); // 3. kombo
+
+      var playerStats = player.stats as PlayerStats;
+      float baseDamage = playerStats != null ? playerStats.baseDamage.GetValue() : 10f;
+      float explosionDamage = baseDamage * baseMultiplier * 0.25f;
+
+      enemy.stats.TakeDamage(explosionDamage, CharacterStats.DamageType.Physical);
+      Debug.Log($"Hammer Explosion hit: {enemy.name} for {explosionDamage} damage");
+
+      if (enemy.rb != null && enemy.rb.bodyType != RigidbodyType2D.Static)
+      {
+         float knockbackMultiplier = 1.0f;
+         if (player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState2)
+            knockbackMultiplier = hammerAttackState2.GetKnockbackMultiplier(2);
+         enemy.ApplyComboKnockback(player.transform.position, 2, knockbackMultiplier);
+      }
+
+      if (FloatingTextManager.Instance != null)
+      {
+         Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+         FloatingTextManager.Instance.ShowDamageText(explosionDamage, textPosition);
+      }
+
+      if (enemy.entityFX != null)
+      {
+         enemy.entityFX.StartCoroutine("HitFX");
+      }
+   }
+
    public void HammerExplosionTrigger()
    {
-      player.ClearHitEntities(); // Her patlama frame'inde vurulanlar listesini sıfırla
       // Sadece hammer aktifken ve 3. kombo sırasında çalışsın
       if (GetCurrentWeaponType() != WeaponType.Hammer)
-          return;
+         return;
       if (!(player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState))
-          return;
+         return;
       if (hammerAttackState.GetComboCounter() != 2) // 3. saldırı (0-based)
-          return;
+         return;
       if (player.hammerExplosionCheck == null)
-          return;
+         return;
 
       Vector2 explosionPos = player.hammerExplosionCheck.position;
       Vector2 explosionSize = player.hammerExplosionSize;
@@ -408,8 +452,8 @@ public class PlayerAnimTriggers : MonoBehaviour
 
       foreach (var hit in hits)
       {
-          TryAttackEnemy(hit);
-          TryAttackDummy(hit);
+         TryExplosionAttackEnemy(hit);
+         TryAttackDummy(hit);
       }
    }
    
