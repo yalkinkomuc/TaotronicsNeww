@@ -41,7 +41,7 @@ public class PlayerAttackState : PlayerState, IWeaponAttackState
         return baseMultiplier;
     }
     
-    public virtual float GetKnockbackMultiplier() => 1.0f; // Sword için standart knockback
+    public virtual float GetKnockbackMultiplier(int comboIndex) => 1.0f; // Sword için standart knockback
     
     public virtual float GetComboWindow() => comboWindow;
 

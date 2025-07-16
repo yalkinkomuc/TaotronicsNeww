@@ -35,9 +35,15 @@ public static class HammerCalculations
         return baseMultiplier;
     }
     
-    public static float GetKnockbackMultiplier()
+    public static float GetKnockbackMultiplier(int comboIndex)
     {
-        return hammerKnockbackMultiplier;
+        switch (comboIndex)
+        {
+            case 2: // 3. saldırı (0-based)
+                return 1f; // 3. saldırı için özel knockback
+            default:
+                return hammerKnockbackMultiplier;
+        }
     }
     
     public static float GetComboWindow()

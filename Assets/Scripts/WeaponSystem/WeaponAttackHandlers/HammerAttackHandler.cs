@@ -22,7 +22,7 @@ public class HammerAttackHandler : BaseWeaponAttackHandler
         if (enemy.rb.bodyType != RigidbodyType2D.Static)
         {
             // Hammer has stronger knockback
-            float knockbackMultiplier = weaponAttackState.GetKnockbackMultiplier();
+            float knockbackMultiplier = weaponAttackState.GetKnockbackMultiplier(comboCounter);
             enemy.ApplyComboKnockback(player.transform.position, comboCounter, knockbackMultiplier);
         }
     }

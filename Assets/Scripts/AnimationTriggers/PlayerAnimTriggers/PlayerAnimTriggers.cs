@@ -243,6 +243,24 @@ public class PlayerAnimTriggers : MonoBehaviour
       }
       
       Gizmos.DrawWireCube(attackPosition, p.attackSize);
+
+      // Hammer explosion alanını da çiz
+      if (p.hammerExplosionCheck != null)
+      {
+         Gizmos.color = Color.yellow;
+         Gizmos.DrawWireCube(p.hammerExplosionCheck.position, p.hammerExplosionSize);
+      }
+   }
+
+   private void OnDrawGizmos()
+   {
+      Player p = GetComponentInParent<Player>();
+      if (p == null) return;
+      if (p.hammerExplosionCheck != null)
+      {
+         Gizmos.color = Color.yellow;
+         Gizmos.DrawWireCube(p.hammerExplosionCheck.position, p.hammerExplosionSize);
+      }
    }
 
    private void SpellOneTrigger()
@@ -373,53 +391,26 @@ public class PlayerAnimTriggers : MonoBehaviour
    // Hammer 3. kombo patlama animasyonunda çağrılacak
    public void HammerExplosionTrigger()
    {
-       // Sadece hammer aktifken ve 3. kombo sırasında çalışsın
-       if (GetCurrentWeaponType() != WeaponType.Hammer)
-           return;
-       if (!(player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState))
-           return;
-       if (hammerAttackState.GetComboCounter() != 2) // 3. saldırı (0-based)
-           return;
-       if (player.hammerExplosionCollider == null || !player.hammerExplosionCollider.enabled)
-           return;
+      player.ClearHitEntities(); // Her patlama frame'inde vurulanlar listesini sıfırla
+      // Sadece hammer aktifken ve 3. kombo sırasında çalışsın
+      if (GetCurrentWeaponType() != WeaponType.Hammer)
+          return;
+      if (!(player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState))
+          return;
+      if (hammerAttackState.GetComboCounter() != 2) // 3. saldırı (0-based)
+          return;
+      if (player.hammerExplosionCheck == null)
+          return;
 
-       // Collider ile çakışan düşmanları bul
-       ContactFilter2D filter = new ContactFilter2D();
-       filter.SetLayerMask(player.passableEnemiesLayerMask);
-       Collider2D[] results = new Collider2D[16];
-       int hitCount = player.hammerExplosionCollider.Overlap(filter, results);
+      Vector2 explosionPos = player.hammerExplosionCheck.position;
+      Vector2 explosionSize = player.hammerExplosionSize;
+      Collider2D[] hits = Physics2D.OverlapBoxAll(explosionPos, explosionSize, 0, player.passableEnemiesLayerMask);
 
-       // 3. kombo hasarının %25'i
-       float baseMultiplier = hammerAttackState.GetDamageMultiplier(2); // 3. kombo
-       var playerStats = player.stats as PlayerStats;
-       float baseDamage = playerStats != null ? playerStats.baseDamage.GetValue() : 10f;
-       float explosionDamage = baseDamage * baseMultiplier * 0.25f;
-
-       for (int i = 0; i < hitCount; i++)
-       {
-           Collider2D hit = results[i];
-           if (hit == null) continue;
-           Enemy enemy = hit.GetComponent<Enemy>();
-           if (enemy == null) continue;
-           if (player.HasHitEntity(enemy)) continue;
-           player.MarkEntityAsHit(enemy);
-
-           // Hasarı uygula
-           enemy.stats.TakeDamage(explosionDamage, CharacterStats.DamageType.Physical);
-
-           // Hasar metni göster
-           if (FloatingTextManager.Instance != null)
-           {
-               Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-               FloatingTextManager.Instance.ShowDamageText(explosionDamage, textPosition);
-           }
-
-           // Vuruş efekti göster
-           if (enemy.entityFX != null)
-           {
-               enemy.entityFX.StartCoroutine("HitFX");
-           }
-       }
+      foreach (var hit in hits)
+      {
+          TryAttackEnemy(hit);
+          TryAttackDummy(hit);
+      }
    }
    
 }

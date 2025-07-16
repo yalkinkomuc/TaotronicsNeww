@@ -19,7 +19,7 @@ public interface IWeaponAttackState
     /// <summary>
     /// Gets the knockback multiplier for this weapon type
     /// </summary>
-    float GetKnockbackMultiplier();
+    float GetKnockbackMultiplier(int comboIndex);
     
     /// <summary>
     /// Gets the combo window duration for this weapon

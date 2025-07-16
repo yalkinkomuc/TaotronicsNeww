@@ -14,7 +14,7 @@ public class PlayerHammerAttackState : PlayerState, IWeaponAttackState
         return HammerCalculations.GetDamageMultiplier(player, comboIndex);
     }
     
-    public virtual float GetKnockbackMultiplier() => HammerCalculations.GetKnockbackMultiplier();
+    public virtual float GetKnockbackMultiplier(int comboIndex) => HammerCalculations.GetKnockbackMultiplier(comboIndex);
     
     public virtual float GetComboWindow() => HammerCalculations.GetComboWindow();
 
