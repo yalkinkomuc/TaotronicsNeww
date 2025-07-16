@@ -462,6 +462,76 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     private void OnWeaponSelected(WeaponData selectedWeapon)
     {
+        Debug.Log($"[EquipmentSelectionPanel] Weapon selected: {selectedWeapon.itemName}");
+        
+        // Get PlayerWeaponManager
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        if (weaponManager == null)
+        {
+            Debug.LogError("[EquipmentSelectionPanel] PlayerWeaponManager not found!");
+            return;
+        }
+        
+        // Find the weapon state machine for the selected weapon
+        WeaponStateMachine selectedWeaponStateMachine = null;
+        foreach (var weaponStateMachine in weaponManager.weapons)
+        {
+            if (weaponStateMachine != null)
+            {
+                WeaponData weaponData = GetWeaponDataFromStateMachine(weaponStateMachine);
+                if (weaponData != null && weaponData.weaponType == selectedWeapon.weaponType)
+                {
+                    selectedWeaponStateMachine = weaponStateMachine;
+                    break;
+                }
+            }
+        }
+        
+        if (selectedWeaponStateMachine == null)
+        {
+            Debug.LogError($"[EquipmentSelectionPanel] Weapon state machine not found for {selectedWeapon.itemName}!");
+            return;
+        }
+        
+        // Deactivate current weapon
+        WeaponStateMachine currentWeaponStateMachine = null;
+        foreach (var weaponStateMachine in weaponManager.weapons)
+        {
+            if (weaponStateMachine != null && weaponStateMachine.gameObject.activeInHierarchy)
+            {
+                // Check if this is the currently equipped weapon type
+                WeaponData currentWeaponData = GetWeaponDataFromStateMachine(weaponStateMachine);
+                if (currentWeaponData != null && 
+                    ((currentSlotType == EquipmentSlot.MainWeapon && 
+                      (currentWeaponData.weaponType == WeaponType.Sword || 
+                       currentWeaponData.weaponType == WeaponType.BurningSword || 
+                       currentWeaponData.weaponType == WeaponType.Hammer)) ||
+                     (currentSlotType == EquipmentSlot.SecondaryWeapon && 
+                      (currentWeaponData.weaponType == WeaponType.Boomerang || 
+                       currentWeaponData.weaponType == WeaponType.Spellbook))))
+                {
+                    currentWeaponStateMachine = weaponStateMachine;
+                    break;
+                }
+            }
+        }
+        
+        // Deactivate current weapon and activate selected weapon
+        if (currentWeaponStateMachine != null)
+        {
+            Debug.Log($"[EquipmentSelectionPanel] Deactivating current weapon: {GetWeaponDataFromStateMachine(currentWeaponStateMachine)?.itemName}");
+            currentWeaponStateMachine.gameObject.SetActive(false);
+        }
+        
+        Debug.Log($"[EquipmentSelectionPanel] Activating selected weapon: {selectedWeapon.itemName}");
+        selectedWeaponStateMachine.gameObject.SetActive(true);
+        
+        // Update EquipmentManager
+        if (EquipmentManager.Instance != null)
+        {
+            EquipmentManager.Instance.EquipItem(selectedWeapon);
+        }
+        
         // Convert WeaponData to EquipmentData for callback compatibility
         EquipmentData equipmentData = selectedWeapon as EquipmentData;
         onItemSelected?.Invoke(equipmentData);
