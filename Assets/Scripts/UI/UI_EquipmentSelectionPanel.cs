@@ -24,7 +24,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     [Header("Panel References")]
     [SerializeField] private GameObject selectionPanel;
     [SerializeField] private Transform itemGridParent;
-    [SerializeField] private GameObject itemSelectionSlotPrefab;
+    [SerializeField] private GameObject equipmentSlotPrefab; // UI_EquipmentSlot prefab'ı
     [SerializeField] private Button closeButton;
     [SerializeField] private TextMeshProUGUI panelTitleText;
     
@@ -33,7 +33,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     [SerializeField] private Vector2 panelOffset = new Vector2(200, 0); // Increased offset to position panel to the right of inventory
     
     private EquipmentSlot currentSlotType;
-    private List<UI_ItemSelectionSlot> selectionSlots = new List<UI_ItemSelectionSlot>();
+    private List<UI_EquipmentSlot> selectionSlots = new List<UI_EquipmentSlot>();
     private System.Action<EquipmentData> onItemSelected;
     
     // Lazy loading support
@@ -270,6 +270,20 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
         if (weaponManager != null && weaponManager.weapons != null)
         {
+            // Get currently equipped weapon to filter it out
+            WeaponData equippedWeapon = null;
+            if (EquipmentManager.Instance != null)
+            {
+                if (slotType == EquipmentSlot.MainWeapon)
+                {
+                    equippedWeapon = EquipmentManager.Instance.GetCurrentMainWeapon();
+                }
+                else if (slotType == EquipmentSlot.SecondaryWeapon)
+                {
+                    equippedWeapon = EquipmentManager.Instance.GetCurrentSecondaryWeapon();
+                }
+            }
+            
             foreach (var weaponStateMachine in weaponManager.weapons)
             {
                 if (weaponStateMachine != null)
@@ -287,20 +301,28 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                                             weapon.weaponType == WeaponType.BurningSword || 
                                             weapon.weaponType == WeaponType.Hammer))
                         {
-                            matchingWeapons.Add(weapon);
+                            // Don't add if this weapon is currently equipped
+                            if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
+                            {
+                                matchingWeapons.Add(weapon);
+                            }
                         }
                         // Secondary weapons: Boomerang, Spellbook
                         else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 
                                                       weapon.weaponType == WeaponType.Spellbook))
                         {
-                            matchingWeapons.Add(weapon);
+                            // Don't add if this weapon is currently equipped
+                            if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
+                            {
+                                matchingWeapons.Add(weapon);
+                            }
                         }
                     }
                 }
             }
         }
         
-        Debug.Log($"[EquipmentSelectionPanel] Found {matchingWeapons.Count} weapons from PlayerWeaponManager for {slotType}");
+        Debug.Log($"[EquipmentSelectionPanel] Found {matchingWeapons.Count} available weapons for {slotType}");
         
         // Sort by rarity and level
         return matchingWeapons.OrderByDescending(w => w.rarity)
@@ -319,30 +341,45 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponData.weaponType = WeaponType.Sword;
             weaponData.itemName = "Sword";
             weaponData.rarity = ItemRarity.Common;
+            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/sword");
+            weaponData.minDamage = 15;
+            weaponData.maxDamage = 20;
         }
         else if (weaponStateMachine is BurningSwordStateMachine)
         {
             weaponData.weaponType = WeaponType.BurningSword;
             weaponData.itemName = "Burning Sword";
             weaponData.rarity = ItemRarity.Rare;
+            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/burning sword");
+            weaponData.minDamage = 20;
+            weaponData.maxDamage = 25;
         }
         else if (weaponStateMachine is HammerSwordStateMachine)
         {
             weaponData.weaponType = WeaponType.Hammer;
             weaponData.itemName = "Hammer";
             weaponData.rarity = ItemRarity.Epic;
+            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/hammer");
+            weaponData.minDamage = 30;
+            weaponData.maxDamage = 35;
         }
         else if (weaponStateMachine is BoomerangWeaponStateMachine)
         {
             weaponData.weaponType = WeaponType.Boomerang;
             weaponData.itemName = "Boomerang";
             weaponData.rarity = ItemRarity.Uncommon;
+            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/boomerang");
+            weaponData.minDamage = 12;
+            weaponData.maxDamage = 18;
         }
         else if (weaponStateMachine is SpellbookWeaponStateMachine)
         {
             weaponData.weaponType = WeaponType.Spellbook;
             weaponData.itemName = "Spellbook";
             weaponData.rarity = ItemRarity.Rare;
+            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/spellbook");
+            weaponData.minDamage = 18;
+            weaponData.maxDamage = 22;
         }
         else
         {
@@ -353,46 +390,55 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         // Set basic properties
         weaponData.equipmentSlot = EquipmentSlot.MainWeapon; // Will be overridden by filtering logic
         weaponData.requiredLevel = 1;
-        weaponData.minDamage = 10;
-        weaponData.maxDamage = 15;
         
         return weaponData;
     }
     
     private void CreateSelectionSlot(EquipmentData equipment)
     {
-        GameObject slotObj = Instantiate(itemSelectionSlotPrefab, itemGridParent);
-        UI_ItemSelectionSlot slot = slotObj.GetComponent<UI_ItemSelectionSlot>();
+        GameObject slotObj = Instantiate(equipmentSlotPrefab, itemGridParent);
+        UI_EquipmentSlot slot = slotObj.GetComponent<UI_EquipmentSlot>();
         
         if (slot != null)
         {
-            slot.Initialize(equipment, () => OnItemSelected(equipment));
+            // Initialize slot with the equipment data
+            slot.Initialize(currentSlotType);
+            // Set the equipment data directly
+            slot.SetEquipmentData(equipment);
+            // Set callback for selection
+            slot.SetSelectionCallback((equipment) => OnItemSelected(equipment));
             selectionSlots.Add(slot);
         }
     }
     
     private void CreateWeaponSelectionSlot(WeaponData weapon)
     {
-        GameObject slotObj = Instantiate(itemSelectionSlotPrefab, itemGridParent);
-        UI_ItemSelectionSlot slot = slotObj.GetComponent<UI_ItemSelectionSlot>();
+        GameObject slotObj = Instantiate(equipmentSlotPrefab, itemGridParent);
+        UI_EquipmentSlot slot = slotObj.GetComponent<UI_EquipmentSlot>();
         
         if (slot != null)
         {
-            // Convert WeaponData to EquipmentData for compatibility
-            EquipmentData equipmentData = weapon as EquipmentData;
-            slot.Initialize(equipmentData, () => OnWeaponSelected(weapon));
+            // Initialize slot with the slot type
+            slot.Initialize(currentSlotType);
+            // Set the weapon data directly
+            slot.SetWeaponData(weapon);
+            // Set callback for selection
+            slot.SetSelectionCallback((equipment) => OnWeaponSelected(weapon));
             selectionSlots.Add(slot);
         }
     }
     
     private void CreateEmptySlot()
     {
-        GameObject slotObj = Instantiate(itemSelectionSlotPrefab, itemGridParent);
-        UI_ItemSelectionSlot slot = slotObj.GetComponent<UI_ItemSelectionSlot>();
+        GameObject slotObj = Instantiate(equipmentSlotPrefab, itemGridParent);
+        UI_EquipmentSlot slot = slotObj.GetComponent<UI_EquipmentSlot>();
         
         if (slot != null)
         {
-            slot.InitializeEmpty("No items available");
+            // Initialize slot with the slot type
+            slot.Initialize(currentSlotType);
+            // Update display (will show empty slot)
+            slot.UpdateSlotDisplay();
             selectionSlots.Add(slot);
         }
     }

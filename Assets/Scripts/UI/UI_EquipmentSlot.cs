@@ -22,6 +22,7 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     public EquipmentSlot SlotType => slotType;
     
     private EquipmentData currentEquipment;
+    private System.Action<EquipmentData> onEquipmentSelected;
     
     private void Start()
     {
@@ -34,9 +35,30 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         UpdateSlotDisplay();
     }
     
+    public void SetWeaponData(WeaponData weaponData)
+    {
+        currentEquipment = weaponData;
+        UpdateSlotDisplay();
+    }
+    
+    public void SetEquipmentData(EquipmentData equipmentData)
+    {
+        currentEquipment = equipmentData;
+        UpdateSlotDisplay();
+    }
+    
+    public void SetSelectionCallback(System.Action<EquipmentData> callback)
+    {
+        onEquipmentSelected = callback;
+    }
+    
     public void UpdateSlotDisplay()
     {
-        currentEquipment = GetEquippedItem();
+        // Only get equipped item if currentEquipment is not set (for regular equipment slots)
+        if (currentEquipment == null)
+        {
+            currentEquipment = GetEquippedItem();
+        }
         
         if (slotType == EquipmentSlot.SecondaryWeapon)
         {
@@ -164,9 +186,18 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Always open equipment selection panel regardless of slot state
-        Debug.Log($"Clicked on {slotType} slot - Opening selection panel");
-        OpenEquipmentSelectionPanel();
+        // If we have a selection callback, this is a selection slot
+        if (onEquipmentSelected != null)
+        {
+            Debug.Log($"Clicked on selection slot with equipment: {currentEquipment?.itemName ?? "null"}");
+            onEquipmentSelected?.Invoke(currentEquipment);
+        }
+        else
+        {
+            // This is a regular equipment slot, open selection panel
+            Debug.Log($"Clicked on {slotType} slot - Opening selection panel");
+            OpenEquipmentSelectionPanel();
+        }
     }
     
     private void OpenEquipmentSelectionPanel()
@@ -197,5 +228,6 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         // TODO: Integrate with EquipmentManager when it's ready
         currentEquipment = selectedEquipment;
         UpdateSlotDisplay();
+        onEquipmentSelected?.Invoke(selectedEquipment);
     }
 } 
