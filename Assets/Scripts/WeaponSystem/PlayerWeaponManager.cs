@@ -11,9 +11,11 @@ public class PlayerWeaponManager : MonoBehaviour
     private int currentSecondaryWeaponIndex = -1; // Will be set to first secondary weapon found
 
     [SerializeField] public int startingWeaponIndex = 3; // Burning Sword ile başla
+    private int currentPrimaryWeaponIndex = -1; // Aktif primary weapon index
     
     // Public getter for UI access
     public int GetCurrentSecondaryWeaponIndex() => currentSecondaryWeaponIndex;
+    public int GetCurrentPrimaryWeaponIndex() => currentPrimaryWeaponIndex >= 0 ? currentPrimaryWeaponIndex : startingWeaponIndex;
     
     [SerializeField] private KeyCode weaponSwitchKey = KeyCode.Tab; // Silah değiştirme tuşu
     
@@ -142,7 +144,7 @@ public class PlayerWeaponManager : MonoBehaviour
     public void RefreshWeaponVisibility()
     {
         // Refresh primary weapon
-        ActivatePrimaryWeapon(startingWeaponIndex);
+        ActivatePrimaryWeapon(GetCurrentPrimaryWeaponIndex());
         
         // Refresh the secondary weapons visibility
         EquipSecondaryWeapon(currentSecondaryWeaponIndex);
@@ -161,7 +163,7 @@ public class PlayerWeaponManager : MonoBehaviour
     }
     
     // Activate primary weapon and disable other primary weapons
-    private void ActivatePrimaryWeapon(int primaryIndex)
+    public void ActivatePrimaryWeapon(int primaryIndex)
     {
         if (primaryIndex < 0 || primaryIndex >= weapons.Length || weapons[primaryIndex] == null)
         {
@@ -174,6 +176,9 @@ public class PlayerWeaponManager : MonoBehaviour
         
         // Activate the selected primary weapon
         weapons[primaryIndex].gameObject.SetActive(true);
+        
+        // Aktif primary weapon index'ini güncelle
+        currentPrimaryWeaponIndex = primaryIndex;
         
         Debug.Log($"Activated primary weapon: {weapons[primaryIndex].name}");
     }

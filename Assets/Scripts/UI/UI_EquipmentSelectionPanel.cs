@@ -459,35 +459,37 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             Debug.LogError("[EquipmentSelectionPanel] PlayerWeaponManager not found!");
             return;
         }
-        
-        // Find the weapon state machine for the selected weapon
+
+        // Find the weapon state machine and its index for the selected weapon
+        int selectedIndex = -1;
         WeaponStateMachine selectedWeaponStateMachine = null;
-        foreach (var weaponStateMachine in weaponManager.weapons)
+        for (int i = 0; i < weaponManager.weapons.Length; i++)
         {
+            var weaponStateMachine = weaponManager.weapons[i];
             if (weaponStateMachine != null)
             {
                 WeaponData weaponData = GetWeaponDataFromStateMachine(weaponStateMachine);
                 if (weaponData != null && weaponData.weaponType == selectedWeapon.weaponType)
                 {
                     selectedWeaponStateMachine = weaponStateMachine;
+                    selectedIndex = i;
                     break;
                 }
             }
         }
-        
+
         if (selectedWeaponStateMachine == null)
         {
             Debug.LogError($"[EquipmentSelectionPanel] Weapon state machine not found for {selectedWeapon.itemName}!");
             return;
         }
-        
+
         // Deactivate current weapon
-        WeaponStateMachine currentWeaponStateMachine = null;
-        foreach (var weaponStateMachine in weaponManager.weapons)
+        for (int i = 0; i < weaponManager.weapons.Length; i++)
         {
+            var weaponStateMachine = weaponManager.weapons[i];
             if (weaponStateMachine != null && weaponStateMachine.gameObject.activeInHierarchy)
             {
-                // Check if this is the currently equipped weapon type
                 WeaponData currentWeaponData = GetWeaponDataFromStateMachine(weaponStateMachine);
                 if (currentWeaponData != null && 
                     ((currentSlotType == EquipmentSlot.MainWeapon && 
@@ -498,27 +500,27 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                       (currentWeaponData.weaponType == WeaponType.Boomerang || 
                        currentWeaponData.weaponType == WeaponType.Spellbook))))
                 {
-                    currentWeaponStateMachine = weaponStateMachine;
-                    break;
+                    weaponStateMachine.gameObject.SetActive(false);
                 }
             }
         }
-        
-        // Deactivate current weapon and activate selected weapon
-        if (currentWeaponStateMachine != null)
+
+        // Aktif primary weapon index'i güncelle!
+        if (currentSlotType == EquipmentSlot.MainWeapon && selectedIndex != -1)
         {
-            currentWeaponStateMachine.gameObject.SetActive(false);
+            weaponManager.ActivatePrimaryWeapon(selectedIndex);
         }
-        
-        selectedWeaponStateMachine.gameObject.SetActive(true);
-        
+        else
+        {
+            selectedWeaponStateMachine.gameObject.SetActive(true);
+        }
+
         // Update EquipmentManager
         if (EquipmentManager.Instance != null)
         {
             EquipmentManager.Instance.EquipItem(selectedWeapon);
         }
-        
-        // Convert WeaponData to EquipmentData for callback compatibility
+
         EquipmentData equipmentData = selectedWeapon as EquipmentData;
         onItemSelected?.Invoke(equipmentData);
         ClosePanel();

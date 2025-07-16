@@ -1226,10 +1226,11 @@ public class Player : Entity
         PlayerWeaponManager weaponManager = GetComponentInChildren<PlayerWeaponManager>();
         if (weaponManager != null && weaponManager.weapons != null)
         {
-            // Always show the primary weapon (sword)
-            if (weaponManager.weapons.Length > 0 && weaponManager.weapons[0] != null)
+            // Always show the active primary weapon
+            int primaryIndex = weaponManager.GetCurrentPrimaryWeaponIndex();
+            if (weaponManager.weapons.Length > 0 && weaponManager.weapons[primaryIndex] != null)
             {
-                weaponManager.weapons[weaponManager.startingWeaponIndex].gameObject.SetActive(true);
+                weaponManager.weapons[primaryIndex].gameObject.SetActive(true);
             }
             
             // Refresh the secondary weapon state
