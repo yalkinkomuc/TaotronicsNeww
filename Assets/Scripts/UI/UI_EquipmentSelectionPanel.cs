@@ -96,8 +96,6 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     public void ShowSelectionPanel(EquipmentSlot slotType, Vector3 screenPosition, System.Action<EquipmentData> onSelected)
     {
-        Debug.Log($"[EquipmentSelectionPanel] ShowSelectionPanel called with slotType: {slotType}");
-        
         currentSlotType = slotType;
         onItemSelected = onSelected;
         
@@ -183,8 +181,6 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     private void PopulateItems(EquipmentSlot slotType)
     {
-        Debug.Log($"[EquipmentSelectionPanel] PopulateItems called with slotType: {slotType}");
-        
         // Clear existing slots
         ClearSelectionSlots();
         
@@ -197,12 +193,10 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         // Handle weapon slots differently
         if (slotType == EquipmentSlot.MainWeapon || slotType == EquipmentSlot.SecondaryWeapon)
         {
-            Debug.Log($"[EquipmentSelectionPanel] Populating weapon slots for: {slotType}");
             PopulateWeaponSlots(slotType);
         }
         else
         {
-            Debug.Log($"[EquipmentSelectionPanel] Populating equipment slots for: {slotType}");
             // Handle other equipment types (armor, accessory)
             List<EquipmentData> matchingItems = GetMatchingEquipment(slotType);
             
@@ -222,23 +216,17 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     private void PopulateWeaponSlots(EquipmentSlot slotType)
     {
-        Debug.Log($"[EquipmentSelectionPanel] PopulateWeaponSlots called for: {slotType}");
-        
         List<WeaponData> matchingWeapons = GetMatchingWeapons(slotType);
-        
-        Debug.Log($"[EquipmentSelectionPanel] Found {matchingWeapons.Count} matching weapons");
         
         // Create selection slots for each matching weapon
         foreach (var weapon in matchingWeapons)
         {
-            Debug.Log($"[EquipmentSelectionPanel] Creating slot for weapon: {weapon.itemName} (Type: {weapon.weaponType})");
             CreateWeaponSelectionSlot(weapon);
         }
         
         // If no weapons available, show empty message
         if (matchingWeapons.Count == 0)
         {
-            Debug.Log("[EquipmentSelectionPanel] No weapons found, creating empty slot");
             CreateEmptySlot();
         }
     }
@@ -321,8 +309,6 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 }
             }
         }
-        
-        Debug.Log($"[EquipmentSelectionPanel] Found {matchingWeapons.Count} available weapons for {slotType}");
         
         // Sort by rarity and level
         return matchingWeapons.OrderByDescending(w => w.rarity)
@@ -466,8 +452,6 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     private void OnWeaponSelected(WeaponData selectedWeapon)
     {
-        Debug.Log($"[EquipmentSelectionPanel] Weapon selected: {selectedWeapon.itemName}");
-        
         // Get PlayerWeaponManager
         PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
         if (weaponManager == null)
@@ -523,11 +507,9 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         // Deactivate current weapon and activate selected weapon
         if (currentWeaponStateMachine != null)
         {
-            Debug.Log($"[EquipmentSelectionPanel] Deactivating current weapon: {GetWeaponDataFromStateMachine(currentWeaponStateMachine)?.itemName}");
             currentWeaponStateMachine.gameObject.SetActive(false);
         }
         
-        Debug.Log($"[EquipmentSelectionPanel] Activating selected weapon: {selectedWeapon.itemName}");
         selectedWeaponStateMachine.gameObject.SetActive(true);
         
         // Update EquipmentManager

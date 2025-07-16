@@ -1254,30 +1254,26 @@ public class Player : Entity
     {
         if (isBoomerangInAir)
         {
-            // Boomerang havadayken: Sadece aktif primary weapon görünür, diğerleri gizli
-            PlayerWeaponManager weaponManager = GetComponentInChildren<PlayerWeaponManager>();
-            if (weaponManager != null && weaponManager.weapons != null)
+                    // Boomerang havadayken: Sadece aktif primary weapon görünür, diğerleri gizli
+        PlayerWeaponManager weaponManager = GetComponentInChildren<PlayerWeaponManager>();
+        if (weaponManager != null && weaponManager.weapons != null)
+        {
+            // Aktif primary weapon'ı bul ve aktif tut
+            WeaponStateMachine activePrimaryWeapon = FindActivePrimaryWeapon(weaponManager);
+            if (activePrimaryWeapon != null)
             {
-                // Aktif primary weapon'ı bul ve aktif tut
-                WeaponStateMachine activePrimaryWeapon = FindActivePrimaryWeapon(weaponManager);
-                if (activePrimaryWeapon != null)
+                activePrimaryWeapon.gameObject.SetActive(true);
+            }
+            
+            // Tüm secondary silahları gizle
+            for (int i = 0; i < weaponManager.weapons.Length; i++)
+            {
+                if (weaponManager.weapons[i] != null && IsSecondaryWeapon(weaponManager.weapons[i]))
                 {
-                    activePrimaryWeapon.gameObject.SetActive(true);
-                }
-                
-                // Tüm secondary silahları gizle
-                for (int i = 0; i < weaponManager.weapons.Length; i++)
-                {
-                    if (weaponManager.weapons[i] != null && IsSecondaryWeapon(weaponManager.weapons[i]))
-                    {
-                        weaponManager.weapons[i].gameObject.SetActive(false);
-                    }
+                    weaponManager.weapons[i].gameObject.SetActive(false);
                 }
             }
-            else
-            {
-                Debug.LogWarning("PlayerWeaponManager not found during boomerang visibility management!");
-            }
+        }
         }
         // Boomerang havada değilse normal silah sistemine müdahale etme
     }

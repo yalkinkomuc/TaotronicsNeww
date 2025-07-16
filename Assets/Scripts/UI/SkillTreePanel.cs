@@ -187,34 +187,23 @@ public class SkillTreePanel : BaseUIPanel
                 
                 // Click to show skill info
                 button.onClick.AddListener(() => {
-                    Debug.Log($"BUTTON CLICKED! SkillID: {skillID}");
                     ShowSkillInfo(skillID);
                 });
                 
-                // FİRESKİLL İÇİN EKSTRA DEBUG!
-                if (skillID == "FireSpell")
-                {
-                    Debug.Log("FIRESKILL BUTTON EVENT ADDED!");
-                    button.onClick.AddListener(() => {
-                        Debug.Log("FIRESKILL EXTRA EVENT TRIGGERED!");
-                    });
-                }
-                
-                // TEST İÇİN: EventTrigger ile PointerClick test et
+                // Add EventTrigger for hover effects
                 EventTrigger trigger = button.GetComponent<EventTrigger>();
                 if (trigger == null)
                 {
                     trigger = button.gameObject.AddComponent<EventTrigger>();
                 }
                 
-                // Eski trigger'ları temizle
+                // Clear old triggers
                 trigger.triggers.Clear();
                 
-                // PointerClick eventi ekle
+                // Add PointerClick event
                 EventTrigger.Entry pointerClick = new EventTrigger.Entry();
                 pointerClick.eventID = EventTriggerType.PointerClick;
                 pointerClick.callback.AddListener((data) => {
-                    Debug.Log($"EVENTTRIGGER CLICKED! SkillID: {skillID}");
                     ShowSkillInfo(skillID);
                 });
                 trigger.triggers.Add(pointerClick);
@@ -241,21 +230,16 @@ public class SkillTreePanel : BaseUIPanel
                 // BASILI TUTMA SİSTEMİ EKLE!
                 AddHoldToUnlockEvents(button, skillID);
                 
-                Debug.Log($"Button {skillID} is now interactable: {button.interactable}");
             }
             else
             {
                 Debug.LogWarning($"Button is null for skillID: {skillID}");
             }
         }
-        
-        Debug.Log($"Total buttons set up: {buttonToSkillID.Count}");
     }
     
     private void ShowSkillInfo(string skillID)
     {
-        Debug.Log($"ShowSkillInfo called for skillID: {skillID}");
-        
         if (SkillManager.Instance == null) 
         {
             Debug.LogWarning("SkillManager.Instance is null!");
@@ -265,7 +249,6 @@ public class SkillTreePanel : BaseUIPanel
         var skillInfo = SkillManager.Instance.GetSkillInfo(skillID);
         if (skillInfo != null)
         {
-            Debug.Log($"Found skillInfo for {skillID}: {skillInfo.skillName}");
             
             // Sol üstteki skill cost (eski skillNameText)
             if (skillNameText != null)
@@ -290,8 +273,6 @@ public class SkillTreePanel : BaseUIPanel
         }
         else
         {
-            Debug.Log($"SkillInfo not found for {skillID}, using future skill data");
-            
             // Future skill için varsayılan bilgiler
             string skillName = GetFutureSkillName(skillID);
             string description = "Coming Soon...";
@@ -338,7 +319,6 @@ public class SkillTreePanel : BaseUIPanel
         // Check if already unlocked
         if (SkillManager.Instance.IsSkillUnlocked(skillID))
         {
-            Debug.Log($"Skill {skillID} is already unlocked!");
             return;
         }
         
@@ -346,7 +326,6 @@ public class SkillTreePanel : BaseUIPanel
         int cost = skillCosts.ContainsKey(skillID) ? skillCosts[skillID] : 50;
         if (SkillManager.Instance.GetShardCount() < cost)
         {
-            Debug.Log($"Not enough shards to unlock {skillID}. Need: {cost}, Have: {SkillManager.Instance.GetShardCount()}");
             return;
         }
         
@@ -355,7 +334,6 @@ public class SkillTreePanel : BaseUIPanel
         
         if (success)
         {
-            Debug.Log($"Successfully unlocked skill: {skillID}");
             UpdateShardCount();
             UpdateAllSkillButtons();
             ShowSkillInfo(skillID); // Refresh the info display

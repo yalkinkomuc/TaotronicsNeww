@@ -39,7 +39,6 @@ public class Chest : MonoBehaviour, IInteractable
         if (string.IsNullOrEmpty(chestUniqueID))
         {
             chestUniqueID = "chest_" + System.Guid.NewGuid().ToString();
-            Debug.Log("Yeni Chest ID oluşturuldu: " + chestUniqueID);
         }
         
         // PlayerPrefs anahtarını ayarla
@@ -99,11 +98,10 @@ public class Chest : MonoBehaviour, IInteractable
             {
                 string uniqueID = "item_" + System.Guid.NewGuid().ToString();
                 item.SetUniqueID(uniqueID);
-                Debug.Log("Item için yeni ID oluşturuldu: " + uniqueID);
             }
         }
         
-        Debug.Log($"Chest items processed. Unique items: {stackedItems.Count}, Total items: {itemsInChest.Count}");
+
     }
 
     // Sandık durumunu PlayerPrefs'ten yükle
@@ -125,7 +123,7 @@ public class Chest : MonoBehaviour, IInteractable
                 }
             }
             
-            Debug.Log("Sandık daha önce açılmış, açık duruma getirildi: " + chestUniqueID);
+
         }
         else
         {
@@ -158,7 +156,6 @@ public class Chest : MonoBehaviour, IInteractable
         
         if (collectedItems == null || collectedItems.Count == 0)
         {
-            Debug.Log("Bu sandıktan daha önce toplanmış item yok: " + chestUniqueID);
             return;
         }
         
@@ -174,7 +171,6 @@ public class Chest : MonoBehaviour, IInteractable
             // Eğer bu item daha önce toplanmışsa, listeden çıkar
             if (collectedItems.Contains(itemObj.GetUniqueID()))
             {
-                Debug.Log("Daha önce toplanmış item kaldırıldı: " + itemObj.GetUniqueID());
                 
                 // Stack bilgisini güncelle
                 string itemName = itemObj.GetItemData().itemName;
@@ -194,7 +190,7 @@ public class Chest : MonoBehaviour, IInteractable
             }
         }
         
-        Debug.Log("Toplam " + collectedItems.Count + " item daha önce toplanmış, kalan item sayısı: " + itemsInChest.Count);
+
     }
     
     // ChestManager'ı bekleme coroutine'i
