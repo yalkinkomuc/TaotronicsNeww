@@ -385,7 +385,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5043373
 Transform:
   m_ObjectHideFlags: 0
@@ -398,7 +398,8 @@ Transform:
   m_LocalPosition: {x: -0.0018, y: 0.001, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 269300306}
   m_Father: {fileID: 805791711}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5043374
@@ -17334,6 +17335,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &269300304
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 269300306}
+  m_Layer: 8
+  m_Name: HammerExplosionCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &269300306
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269300304}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.221, y: 0.055, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5043373}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &303049490
 GameObject:
   m_ObjectHideFlags: 0
@@ -24073,7 +24105,7 @@ MonoBehaviour:
   - {fileID: 5043374}
   - {fileID: 1503857569}
   - {fileID: 3452476}
-  startingWeaponIndex: 1
+  startingWeaponIndex: 2
   weaponSwitchKey: 9
 --- !u!1 &806093475
 GameObject:
@@ -31183,6 +31215,9 @@ MonoBehaviour:
   parryRadius: 1.02
   parryCooldown: 1
   parryEffectPrefab: {fileID: 6790647974808866659, guid: 6b414d20df288a443a4f888a59c2f32a, type: 3}
+  hammerExplosionCheck: {fileID: 269300306}
+  hammerExplosionSize: {x: 1.51, y: 1.1}
+  lastHammerCombo3Damage: 0
 --- !u!4 &1377457613
 Transform:
   m_ObjectHideFlags: 0
