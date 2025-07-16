@@ -164,37 +164,28 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Handle slot click - open equipment selection or show details
-        Debug.Log($"Clicked on {slotType} slot");
-        
-        if (currentEquipment != null)
-        {
-            // Show equipment details or context menu
-            Debug.Log($"Equipped: {currentEquipment.itemName}");
-            // TODO: Show tooltip or context menu
-        }
-        else
-        {
-            // Open equipment selection for this slot type
-            Debug.Log($"Open equipment selection for {slotType}");
-            OpenEquipmentSelectionPanel();
-        }
+        // Always open equipment selection panel regardless of slot state
+        Debug.Log($"Clicked on {slotType} slot - Opening selection panel");
+        OpenEquipmentSelectionPanel();
     }
     
     private void OpenEquipmentSelectionPanel()
     {
-        if (UI_EquipmentSelectionPanel.Instance != null)
+        // This will trigger lazy loading if needed
+        UI_EquipmentSelectionPanel panel = UI_EquipmentSelectionPanel.Instance;
+        if (panel != null)
         {
-            Vector3 worldPosition = transform.position;
-            UI_EquipmentSelectionPanel.Instance.ShowSelectionPanel(
+            // Get the slot's screen position instead of world position
+            Vector3 screenPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, transform.position);
+            panel.ShowSelectionPanel(
                 slotType, 
-                worldPosition, 
+                screenPosition, 
                 OnEquipmentSelected
             );
         }
         else
         {
-            Debug.LogWarning("UI_EquipmentSelectionPanel.Instance not found!");
+            Debug.LogError("Failed to load UI_EquipmentSelectionPanel!");
         }
     }
     

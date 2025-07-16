@@ -6,7 +6,20 @@ using System.Linq;
 
 public class UI_EquipmentSelectionPanel : MonoBehaviour
 {
-    public static UI_EquipmentSelectionPanel Instance { get; private set; }
+    private static UI_EquipmentSelectionPanel _instance;
+    public static UI_EquipmentSelectionPanel Instance 
+    { 
+        get 
+        {
+            if (_instance == null && !isInitializing)
+            {
+                isInitializing = true;
+                LoadInstance();
+            }
+            return _instance;
+        }
+        private set => _instance = value;
+    }
     
     [Header("Panel References")]
     [SerializeField] private GameObject selectionPanel;
@@ -15,18 +28,24 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private TextMeshProUGUI panelTitleText;
     
+    
     [Header("Positioning")]
-    [SerializeField] private Vector2 panelOffset = new Vector2(50, 0);
+    [SerializeField] private Vector2 panelOffset = new Vector2(200, 0); // Increased offset to position panel to the right of inventory
     
     private EquipmentSlot currentSlotType;
     private List<UI_ItemSelectionSlot> selectionSlots = new List<UI_ItemSelectionSlot>();
     private System.Action<EquipmentData> onItemSelected;
     
+    // Lazy loading support
+    private static string prefabPath = "UI/EquipmentSelection";
+    private static bool isInitializing = false;
+    
     private void Awake()
     {
-        if (Instance == null)
+        if (_instance == null)
         {
-            Instance = this;
+            _instance = this;
+            isInitializing = false;
         }
         else
         {
@@ -39,6 +58,35 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             selectionPanel.SetActive(false);
     }
     
+    private static void LoadInstance()
+    {
+        // Load prefab from Resources
+        GameObject prefab = Resources.Load<GameObject>(prefabPath);
+        if (prefab != null)
+        {
+            // Find the Menu UI object
+           GameObject menuUI = GameObject.Find("Menu_UI");
+            if (menuUI != null)
+            {
+                GameObject instance = Instantiate(prefab, menuUI.transform);
+                instance.name = "UI_EquipmentSelectionPanel (Lazy Loaded)";
+                
+                // The Awake method will set the instance
+                Debug.Log("UI_EquipmentSelectionPanel loaded from Resources and added to Menu UI");
+            }
+            else
+            {
+                Debug.LogError("Menu UI object not found in scene! Cannot instantiate UI panel.");
+                isInitializing = false;
+            }
+        }
+        else
+        {
+            Debug.LogError($"Failed to load UI_EquipmentSelectionPanel prefab from path: {prefabPath}");
+            isInitializing = false;
+        }
+    }
+    
     private void Start()
     {
         // Setup close button
@@ -46,13 +94,13 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             closeButton.onClick.AddListener(ClosePanel);
     }
     
-    public void ShowSelectionPanel(EquipmentSlot slotType, Vector3 worldPosition, System.Action<EquipmentData> onSelected)
+    public void ShowSelectionPanel(EquipmentSlot slotType, Vector3 screenPosition, System.Action<EquipmentData> onSelected)
     {
         currentSlotType = slotType;
         onItemSelected = onSelected;
         
         // Position panel near the clicked slot
-        PositionPanel(worldPosition);
+        PositionPanel(screenPosition);
         
         // Update panel title
         UpdatePanelTitle(slotType);
@@ -72,18 +120,18 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         onItemSelected = null;
     }
     
-    private void PositionPanel(Vector3 targetWorldPosition)
+    private void PositionPanel(Vector3 screenPosition)
     {
         if (selectionPanel == null) return;
         
-        // Convert world position to screen position
-        Camera cam = Camera.main;
-        if (cam == null) cam = FindFirstObjectByType<Camera>();
+        // TEMPORARY: Just position at center for now
+        selectionPanel.GetComponent<RectTransform>().localPosition = Vector3.zero;
+        Debug.Log("Panel positioned at center (0,0,0)");
         
-        Vector2 screenPosition = cam.WorldToScreenPoint(targetWorldPosition);
-        
-        // Apply offset
-        screenPosition += panelOffset;
+        // TODO: Fix positioning logic later
+        /*
+        // Apply offset to screen position
+        Vector2 offsetPosition = (Vector2)screenPosition + panelOffset;
         
         // Get canvas for proper positioning
         Canvas canvas = GetComponentInParent<Canvas>();
@@ -91,11 +139,28 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         {
             RectTransform canvasRect = canvas.GetComponent<RectTransform>();
             Vector2 localPosition;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvasRect, screenPosition, canvas.worldCamera, out localPosition);
             
-            selectionPanel.GetComponent<RectTransform>().localPosition = localPosition;
+            // Convert screen position to canvas local position
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect, offsetPosition, canvas.worldCamera, out localPosition))
+            {
+                selectionPanel.GetComponent<RectTransform>().localPosition = localPosition;
+                Debug.Log($"Panel positioned at local position: {localPosition}");
+            }
+            else
+            {
+                Debug.LogError("Failed to convert screen position to local position!");
+                // Fallback: position at center of canvas
+                selectionPanel.GetComponent<RectTransform>().localPosition = Vector3.zero;
+            }
         }
+        else
+        {
+            Debug.LogError("No Canvas found for panel positioning!");
+            // Fallback: position at center
+            selectionPanel.GetComponent<RectTransform>().localPosition = Vector3.zero;
+        }
+        */
     }
     
     private void UpdatePanelTitle(EquipmentSlot slotType)
@@ -121,17 +186,42 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         
         if (Inventory.instance == null) return;
         
-        // Get items that match this equipment slot
-        List<EquipmentData> matchingItems = GetMatchingEquipment(slotType);
-        
-        // Create selection slots for each matching item
-        foreach (var equipment in matchingItems)
+        // Handle weapon slots differently
+        if (slotType == EquipmentSlot.MainWeapon || slotType == EquipmentSlot.SecondaryWeapon)
         {
-            CreateSelectionSlot(equipment);
+            PopulateWeaponSlots(slotType);
+        }
+        else
+        {
+            // Handle other equipment types (armor, accessory)
+            List<EquipmentData> matchingItems = GetMatchingEquipment(slotType);
+            
+            // Create selection slots for each matching item
+            foreach (var equipment in matchingItems)
+            {
+                CreateSelectionSlot(equipment);
+            }
+            
+            // If no items available, show empty message
+            if (matchingItems.Count == 0)
+            {
+                CreateEmptySlot();
+            }
+        }
+    }
+    
+    private void PopulateWeaponSlots(EquipmentSlot slotType)
+    {
+        List<WeaponData> matchingWeapons = GetMatchingWeapons(slotType);
+        
+        // Create selection slots for each matching weapon
+        foreach (var weapon in matchingWeapons)
+        {
+            CreateWeaponSelectionSlot(weapon);
         }
         
-        // If no items available, show empty message
-        if (matchingItems.Count == 0)
+        // If no weapons available, show empty message
+        if (matchingWeapons.Count == 0)
         {
             CreateEmptySlot();
         }
@@ -156,6 +246,40 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                           .ToList();
     }
     
+    private List<WeaponData> GetMatchingWeapons(EquipmentSlot slotType)
+    {
+        List<WeaponData> matchingWeapons = new List<WeaponData>();
+        
+        foreach (var inventoryItem in Inventory.instance.inventoryItems)
+        {
+            if (inventoryItem.data is WeaponData weapon)
+            {
+                // Check if weapon type matches slot type
+                bool isMainWeapon = slotType == EquipmentSlot.MainWeapon;
+                bool isSecondaryWeapon = slotType == EquipmentSlot.SecondaryWeapon;
+                
+                // Main weapons: Sword, BurningSword, Hammer
+                if (isMainWeapon && (weapon.weaponType == WeaponType.Sword || 
+                                    weapon.weaponType == WeaponType.BurningSword || 
+                                    weapon.weaponType == WeaponType.Hammer))
+                {
+                    matchingWeapons.Add(weapon);
+                }
+                // Secondary weapons: Boomerang, Spellbook
+                else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 
+                                              weapon.weaponType == WeaponType.Spellbook))
+                {
+                    matchingWeapons.Add(weapon);
+                }
+            }
+        }
+        
+        // Sort by rarity and level
+        return matchingWeapons.OrderByDescending(w => w.rarity)
+                             .ThenByDescending(w => w.requiredLevel)
+                             .ToList();
+    }
+    
     private void CreateSelectionSlot(EquipmentData equipment)
     {
         GameObject slotObj = Instantiate(itemSelectionSlotPrefab, itemGridParent);
@@ -164,6 +288,20 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         if (slot != null)
         {
             slot.Initialize(equipment, () => OnItemSelected(equipment));
+            selectionSlots.Add(slot);
+        }
+    }
+    
+    private void CreateWeaponSelectionSlot(WeaponData weapon)
+    {
+        GameObject slotObj = Instantiate(itemSelectionSlotPrefab, itemGridParent);
+        UI_ItemSelectionSlot slot = slotObj.GetComponent<UI_ItemSelectionSlot>();
+        
+        if (slot != null)
+        {
+            // Convert WeaponData to EquipmentData for compatibility
+            EquipmentData equipmentData = weapon as EquipmentData;
+            slot.Initialize(equipmentData, () => OnWeaponSelected(weapon));
             selectionSlots.Add(slot);
         }
     }
@@ -194,6 +332,14 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     private void OnItemSelected(EquipmentData selectedEquipment)
     {
         onItemSelected?.Invoke(selectedEquipment);
+        ClosePanel();
+    }
+    
+    private void OnWeaponSelected(WeaponData selectedWeapon)
+    {
+        // Convert WeaponData to EquipmentData for callback compatibility
+        EquipmentData equipmentData = selectedWeapon as EquipmentData;
+        onItemSelected?.Invoke(equipmentData);
         ClosePanel();
     }
     
