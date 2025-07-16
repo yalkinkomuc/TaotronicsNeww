@@ -96,6 +96,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     public void ShowSelectionPanel(EquipmentSlot slotType, Vector3 screenPosition, System.Action<EquipmentData> onSelected)
     {
+        Debug.Log($"[EquipmentSelectionPanel] ShowSelectionPanel called with slotType: {slotType}");
+        
         currentSlotType = slotType;
         onItemSelected = onSelected;
         
@@ -181,18 +183,26 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     private void PopulateItems(EquipmentSlot slotType)
     {
+        Debug.Log($"[EquipmentSelectionPanel] PopulateItems called with slotType: {slotType}");
+        
         // Clear existing slots
         ClearSelectionSlots();
         
-        if (Inventory.instance == null) return;
+        if (Inventory.instance == null) 
+        {
+            Debug.LogError("[EquipmentSelectionPanel] Inventory.instance is null!");
+            return;
+        }
         
         // Handle weapon slots differently
         if (slotType == EquipmentSlot.MainWeapon || slotType == EquipmentSlot.SecondaryWeapon)
         {
+            Debug.Log($"[EquipmentSelectionPanel] Populating weapon slots for: {slotType}");
             PopulateWeaponSlots(slotType);
         }
         else
         {
+            Debug.Log($"[EquipmentSelectionPanel] Populating equipment slots for: {slotType}");
             // Handle other equipment types (armor, accessory)
             List<EquipmentData> matchingItems = GetMatchingEquipment(slotType);
             
@@ -212,17 +222,23 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     private void PopulateWeaponSlots(EquipmentSlot slotType)
     {
+        Debug.Log($"[EquipmentSelectionPanel] PopulateWeaponSlots called for: {slotType}");
+        
         List<WeaponData> matchingWeapons = GetMatchingWeapons(slotType);
+        
+        Debug.Log($"[EquipmentSelectionPanel] Found {matchingWeapons.Count} matching weapons");
         
         // Create selection slots for each matching weapon
         foreach (var weapon in matchingWeapons)
         {
+            Debug.Log($"[EquipmentSelectionPanel] Creating slot for weapon: {weapon.itemName} (Type: {weapon.weaponType})");
             CreateWeaponSelectionSlot(weapon);
         }
         
         // If no weapons available, show empty message
         if (matchingWeapons.Count == 0)
         {
+            Debug.Log("[EquipmentSelectionPanel] No weapons found, creating empty slot");
             CreateEmptySlot();
         }
     }
@@ -250,34 +266,97 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     {
         List<WeaponData> matchingWeapons = new List<WeaponData>();
         
-        foreach (var inventoryItem in Inventory.instance.inventoryItems)
+        // Get weapons from PlayerWeaponManager (including deactivated ones)
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        if (weaponManager != null && weaponManager.weapons != null)
         {
-            if (inventoryItem.data is WeaponData weapon)
+            foreach (var weaponStateMachine in weaponManager.weapons)
             {
-                // Check if weapon type matches slot type
-                bool isMainWeapon = slotType == EquipmentSlot.MainWeapon;
-                bool isSecondaryWeapon = slotType == EquipmentSlot.SecondaryWeapon;
-                
-                // Main weapons: Sword, BurningSword, Hammer
-                if (isMainWeapon && (weapon.weaponType == WeaponType.Sword || 
-                                    weapon.weaponType == WeaponType.BurningSword || 
-                                    weapon.weaponType == WeaponType.Hammer))
+                if (weaponStateMachine != null)
                 {
-                    matchingWeapons.Add(weapon);
-                }
-                // Secondary weapons: Boomerang, Spellbook
-                else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 
-                                              weapon.weaponType == WeaponType.Spellbook))
-                {
-                    matchingWeapons.Add(weapon);
+                    // Get WeaponData from the weapon state machine
+                    WeaponData weapon = GetWeaponDataFromStateMachine(weaponStateMachine);
+                    if (weapon != null)
+                    {
+                        // Check if weapon type matches slot type
+                        bool isMainWeapon = slotType == EquipmentSlot.MainWeapon;
+                        bool isSecondaryWeapon = slotType == EquipmentSlot.SecondaryWeapon;
+                        
+                        // Main weapons: Sword, BurningSword, Hammer
+                        if (isMainWeapon && (weapon.weaponType == WeaponType.Sword || 
+                                            weapon.weaponType == WeaponType.BurningSword || 
+                                            weapon.weaponType == WeaponType.Hammer))
+                        {
+                            matchingWeapons.Add(weapon);
+                        }
+                        // Secondary weapons: Boomerang, Spellbook
+                        else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 
+                                                      weapon.weaponType == WeaponType.Spellbook))
+                        {
+                            matchingWeapons.Add(weapon);
+                        }
+                    }
                 }
             }
         }
+        
+        Debug.Log($"[EquipmentSelectionPanel] Found {matchingWeapons.Count} weapons from PlayerWeaponManager for {slotType}");
         
         // Sort by rarity and level
         return matchingWeapons.OrderByDescending(w => w.rarity)
                              .ThenByDescending(w => w.requiredLevel)
                              .ToList();
+    }
+    
+    private WeaponData GetWeaponDataFromStateMachine(WeaponStateMachine weaponStateMachine)
+    {
+        // Create WeaponData based on weapon state machine type
+        WeaponData weaponData = ScriptableObject.CreateInstance<WeaponData>();
+        
+        // Set weapon type based on the state machine type
+        if (weaponStateMachine is SwordWeaponStateMachine)
+        {
+            weaponData.weaponType = WeaponType.Sword;
+            weaponData.itemName = "Sword";
+            weaponData.rarity = ItemRarity.Common;
+        }
+        else if (weaponStateMachine is BurningSwordStateMachine)
+        {
+            weaponData.weaponType = WeaponType.BurningSword;
+            weaponData.itemName = "Burning Sword";
+            weaponData.rarity = ItemRarity.Rare;
+        }
+        else if (weaponStateMachine is HammerSwordStateMachine)
+        {
+            weaponData.weaponType = WeaponType.Hammer;
+            weaponData.itemName = "Hammer";
+            weaponData.rarity = ItemRarity.Epic;
+        }
+        else if (weaponStateMachine is BoomerangWeaponStateMachine)
+        {
+            weaponData.weaponType = WeaponType.Boomerang;
+            weaponData.itemName = "Boomerang";
+            weaponData.rarity = ItemRarity.Uncommon;
+        }
+        else if (weaponStateMachine is SpellbookWeaponStateMachine)
+        {
+            weaponData.weaponType = WeaponType.Spellbook;
+            weaponData.itemName = "Spellbook";
+            weaponData.rarity = ItemRarity.Rare;
+        }
+        else
+        {
+            // Unknown weapon type
+            return null;
+        }
+        
+        // Set basic properties
+        weaponData.equipmentSlot = EquipmentSlot.MainWeapon; // Will be overridden by filtering logic
+        weaponData.requiredLevel = 1;
+        weaponData.minDamage = 10;
+        weaponData.maxDamage = 15;
+        
+        return weaponData;
     }
     
     private void CreateSelectionSlot(EquipmentData equipment)
