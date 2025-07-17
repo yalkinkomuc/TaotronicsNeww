@@ -76,6 +76,13 @@ public class SceneManager : MonoBehaviour
     
     private void HandlePlayerSpawning(Player player)
     {
+        // Check if player is valid before spawning
+        if (player == null || player.gameObject == null)
+        {
+            Debug.LogError("SceneManager: Cannot spawn null player!");
+            return;
+        }
+        
         // İsimle belirtilen spawn noktasını kontrol et
         if (PlayerPrefs.GetInt("UseNamedSpawnPoint", 0) == 1)
         {

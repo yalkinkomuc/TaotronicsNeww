@@ -61,6 +61,23 @@ public class PlayerManager : MonoBehaviour
         // Wait a bit for scene to fully load
         yield return new WaitForSeconds(0.1f);
         
+        // Check for duplicate players and destroy them
+        Player[] allPlayers = FindObjectsOfType<Player>();
+        if (allPlayers.Length > 1)
+        {
+            Debug.LogWarning($"PlayerManager: Found {allPlayers.Length} players in scene, cleaning up duplicates...");
+            
+            // Keep the first player (our managed one) and destroy the rest
+            for (int i = 1; i < allPlayers.Length; i++)
+            {
+                if (allPlayers[i] != null && allPlayers[i].gameObject != null)
+                {
+                    Debug.Log($"PlayerManager: Destroying duplicate player: {allPlayers[i].name}");
+                    Destroy(allPlayers[i].gameObject);
+                }
+            }
+        }
+        
         // Check if player reference is still valid
         if (player == null || player.gameObject == null)
         {

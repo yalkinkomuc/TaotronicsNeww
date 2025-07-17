@@ -18,6 +18,8 @@ public class EquipmentUIManager : MonoBehaviour
     [Header("Auto-Find Settings")]
     [SerializeField] private bool autoFindSlots = true;
     [SerializeField] private float findSlotsDelay = 1f; // Delay to find slots after scene load
+    [SerializeField] private int maxRetryAttempts = 3; // Maximum number of retry attempts
+    private int currentRetryAttempts = 0;
     
     private void Awake()
     {
@@ -67,12 +69,63 @@ public class EquipmentUIManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Retry slot search if initial search failed
+    /// </summary>
+    private IEnumerator RetrySlotSearch()
+    {
+        currentRetryAttempts++;
+        
+        if (currentRetryAttempts > maxRetryAttempts)
+        {
+            Debug.LogWarning($"[EquipmentUIManager] Max retry attempts ({maxRetryAttempts}) reached. Stopping retry.");
+            yield break;
+        }
+        
+        // Wait a bit longer before retrying
+        yield return new WaitForSeconds(2f);
+        
+        Debug.Log($"[EquipmentUIManager] Retrying slot search (attempt {currentRetryAttempts}/{maxRetryAttempts})...");
+        FindEquipmentSlots();
+        
+        // Update slots after finding them
+        UpdateAllEquipmentSlots();
+    }
+    
+    /// <summary>
     /// Automatically find equipment slots in the scene
     /// </summary>
     public void FindEquipmentSlots()
     {
-        // Try to find AdvancedInventoryUI first
-        AdvancedInventoryUI inventoryUI = FindFirstObjectByType<AdvancedInventoryUI>();
+        // Try multiple strategies to find AdvancedInventoryUI
+        AdvancedInventoryUI inventoryUI = null;
+        
+        // Strategy 1: Try to find via Instance (if already initialized)
+        if (AdvancedInventoryUI.Instance != null)
+        {
+            inventoryUI = AdvancedInventoryUI.Instance;
+            Debug.Log("[EquipmentUIManager] Found AdvancedInventoryUI via Instance");
+        }
+        
+        // Strategy 2: Try to find via FindFirstObjectByType (includes inactive objects)
+        if (inventoryUI == null)
+        {
+            inventoryUI = FindFirstObjectByType<AdvancedInventoryUI>();
+            if (inventoryUI != null)
+            {
+                Debug.Log("[EquipmentUIManager] Found AdvancedInventoryUI via FindFirstObjectByType");
+            }
+        }
+        
+        // Strategy 3: Try to find via FindObjectsOfType (includes inactive objects)
+        if (inventoryUI == null)
+        {
+            AdvancedInventoryUI[] allInventoryUIs = FindObjectsOfType<AdvancedInventoryUI>(true); // true = include inactive
+            if (allInventoryUIs.Length > 0)
+            {
+                inventoryUI = allInventoryUIs[0];
+                Debug.Log("[EquipmentUIManager] Found AdvancedInventoryUI via FindObjectsOfType");
+            }
+        }
         
         if (inventoryUI != null)
         {
@@ -106,7 +159,9 @@ public class EquipmentUIManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[EquipmentUIManager] AdvancedInventoryUI not found in scene");
+            Debug.LogWarning("[EquipmentUIManager] AdvancedInventoryUI not found in scene - will retry later");
+            // Schedule a retry if slots are not found
+            StartCoroutine(RetrySlotSearch());
         }
     }
     

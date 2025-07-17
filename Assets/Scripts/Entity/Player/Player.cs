@@ -213,6 +213,20 @@ public class Player : Entity
     protected override void Awake()
     {
         base.Awake();
+        
+        // Check if there's already a player in the scene (duplicate prevention)
+        Player[] existingPlayers = FindObjectsOfType<Player>();
+        if (existingPlayers.Length > 1)
+        {
+            // If this is not the first player, destroy this instance
+            if (existingPlayers[0] != this)
+            {
+                Debug.LogWarning($"Player duplicate detected, destroying: {gameObject.name}");
+                Destroy(gameObject);
+                return;
+            }
+        }
+        
         playerInput = new NewInputSystem(); // PCInputa çevirebilirsin********************
         stateMachine = new PlayerStateMachine();
         

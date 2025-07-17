@@ -24105,7 +24105,7 @@ MonoBehaviour:
   - {fileID: 5043374}
   - {fileID: 1503857569}
   - {fileID: 3452476}
-  startingWeaponIndex: 2
+  startingWeaponIndex: 0
   weaponSwitchKey: 9
 --- !u!1 &806093475
 GameObject:
@@ -36447,6 +36447,7 @@ MonoBehaviour:
   accessorySlot: {fileID: 590808760}
   autoFindSlots: 1
   findSlotsDelay: 1
+  maxRetryAttempts: 3
 --- !u!1 &1794730789
 GameObject:
   m_ObjectHideFlags: 0
