@@ -57,6 +57,9 @@ public class CameraManager : MonoBehaviour
     [SerializeField] public float screenYSmoothTime = 0.25f;
     private float screenYVelocity = 0f;
     
+    [Tooltip("Orta bölgede oyuncunun ekranın neresinde olacağı (0=alt, 1=üst)")]
+    [SerializeField] public float screenYCenter = 0.65f;
+    
     
     // SceneBoundary'den doğrudan çağrılır
     public void RegisterSceneBoundary(SceneBoundary boundary)
@@ -397,24 +400,19 @@ public class CameraManager : MonoBehaviour
         float lowerMid = bottomBoundary + sceneHeight * 0.3f;
         float upperMid = bottomBoundary + sceneHeight * 0.7f;
 
-        float targetScreenY;
-        if (playerY < lowerMid)
-        {
-            // Alt bölge: ekranın altına yakın
-            targetScreenY = screenYMin;
-        }
-        else if (playerY > upperMid)
-        {
-            // Üst bölge: ekranın üstüne yakın
-            targetScreenY = screenYMax;
-        }
-        else
-        {
-            // Orta bölge: ekranın ortası
-            targetScreenY = 0.5f;
-        }
+        float targetScreenY = GetTargetScreenY(playerY, lowerMid, upperMid);
 
         // Kamera konumunu SmoothDamp ile yumuşak geçişle ayarla
         transposer.m_ScreenY = Mathf.SmoothDamp(transposer.m_ScreenY, targetScreenY, ref screenYVelocity, screenYSmoothTime);
+    }
+
+    private float GetTargetScreenY(float playerY, float lowerMid, float upperMid)
+    {
+        if (playerY < lowerMid)
+            return screenYMin; // Alt bölge
+        else if (playerY > upperMid)
+            return screenYMax; // Üst bölge
+        else
+            return screenYCenter; // Orta bölge (biraz yukarıda)
     }
 } 

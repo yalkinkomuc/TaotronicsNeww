@@ -33141,6 +33141,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneBoundaryForestScene-2
       objectReference: {fileID: 0}
+    - target: {fileID: 1631495604372568928, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].x
+      value: 124.957794
+      objectReference: {fileID: 0}
+    - target: {fileID: 1631495604372568928, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].y
+      value: 10.080383
+      objectReference: {fileID: 0}
+    - target: {fileID: 1631495604372568928, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].x
+      value: -0.024852991
+      objectReference: {fileID: 0}
+    - target: {fileID: 1631495604372568928, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].y
+      value: 10.078447
+      objectReference: {fileID: 0}
+    - target: {fileID: 3276453664837333337, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
+      propertyPath: topBoundary
+      value: 10.06
+      objectReference: {fileID: 0}
     - target: {fileID: 7005369960958320381, guid: 0496c65c144de7343a16d03ecb7b1de4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
