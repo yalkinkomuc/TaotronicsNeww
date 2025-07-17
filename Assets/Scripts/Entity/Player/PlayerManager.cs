@@ -56,6 +56,7 @@ public class PlayerManager : MonoBehaviour
     }
     
     // Coroutine to validate and restore player reference after scene loading
+    [Obsolete("Obsolete")]
     private IEnumerator ValidatePlayerReference()
     {
         // Wait a bit for scene to fully load

@@ -31,7 +31,7 @@ public class ItemData : ScriptableObject
         if (string.IsNullOrEmpty(resourcePath) && !string.IsNullOrEmpty(itemName))
         {
             resourcePath = $"Items/{itemName}";
-            Debug.Log($"{name} için resourcePath ayarlandı: {resourcePath}");
+           // Debug.Log($"{name} için resourcePath ayarlandı: {resourcePath}");
         }
     }
     

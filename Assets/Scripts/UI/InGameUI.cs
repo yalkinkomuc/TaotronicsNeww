@@ -19,6 +19,8 @@ public class InGameUI : MonoBehaviour
         }
     }
     
+    // ReSharper disable Unity.PerformanceAnalysis
+    [Obsolete("Obsolete")]
     private void DebugUISystem()
     {
         Debug.Log("=== UI SYSTEM DEBUG ===");

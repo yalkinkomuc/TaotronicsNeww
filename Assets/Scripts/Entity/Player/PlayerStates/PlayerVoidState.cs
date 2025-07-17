@@ -156,29 +156,13 @@ public class PlayerVoidState : PlayerState
         // Düşmanın baktığı yönün tam tersine oyuncuyu konumlandır
         Vector2 repositionDirection = new Vector2(-targetEnemy.facingdir, 0).normalized;
         Vector3 newPosition = targetEnemy.transform.position + new Vector3(repositionDirection.x * teleportDistance, 0, 0);
-        
-        // Zemin kontrolü için yüksekten bir raycast at
-        RaycastHit2D hit = Physics2D.Raycast(
-            new Vector2(newPosition.x, newPosition.y + 5f), // Yeterince yüksekten başla
-            Vector2.down,
-                10f, // Zemin bulmak için yeterli mesafe
-            player.whatIsGround
-        );
-        
-        if (hit.collider != null)
-        {
-            // Zemin bulunduysa, zeminin biraz üstüne konumlandır
-            newPosition.y = hit.point.y + 0.2f; // 0.2 birim zeminin üstünde
-        }
-        else
-        {
-            // Zemin bulunamadıysa orijinal groundCheck'i kullan
-            newPosition.y = player.groundCheck.position.y;
-        }
-        
+
+        // Y eksenini oyuncunun mevcut yüksekliğine ayarla
+        newPosition.y = player.transform.position.y;
+
         // Oyuncuyu yeni pozisyona taşı
         player.transform.position = newPosition;
-        
+
         // Oyuncuyu düşmana baktır
         int newFacingDir = targetEnemy.transform.position.x > player.transform.position.x ? 1 : -1;
         if (player.facingdir != newFacingDir)
