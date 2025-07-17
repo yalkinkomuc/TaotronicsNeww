@@ -4,6 +4,10 @@ using Cinemachine;
 using System.Collections;
 using UnityEngine.Serialization;
 
+// CameraManager: Scene-specific camera offset and clamp parameters can be set in the Inspector.
+// Adjust 'screenY', 'screenYMin', 'screenYMax', 'screenYTransitionSpeed', and boundary values per scene as needed.
+// This allows designers to tune camera feel for each level without code changes.
+
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager instance { get; private set; }
@@ -15,27 +19,43 @@ public class CameraManager : MonoBehaviour
     private CinemachineConfiner2D confiner;
     [FormerlySerializedAs("SceneBoundsCollider2D")] public PolygonCollider2D[] sceneBoundsCollider2D;
     
-    [Header("Camera Settings")]
-    [SerializeField] private float xDamping = 1f;
-    [SerializeField] private float yDamping = 1f;
-    [SerializeField] private float screenY = 0.7f;
-    [SerializeField] private float screenYMin = 0.5f;
-    [SerializeField] private float screenYMax = 0.8f;
-    [SerializeField] private float screenYTransitionSpeed = 2f;
+    [Header("Camera Settings (Per Scene)")]
+    [Tooltip("Vertical offset for player tracking. 0.5 = center, 1 = top, 0 = bottom.")]
+    [SerializeField] public float screenY = 0.7f;
+    [Tooltip("Minimum vertical offset (player at lower area)")]
+    [SerializeField] public float screenYMin = 0.5f;
+    [Tooltip("Maximum vertical offset (player at upper area)")]
+    [SerializeField] public float screenYMax = 0.8f;
+    [Tooltip("How fast the camera transitions between offsets")]
+    [SerializeField] public float screenYTransitionSpeed = 2f;
+    [Tooltip("How fast the camera transitions horizontally")]
+    [SerializeField] public float screenXTransitionSpeed = 3f;
+    [Tooltip("Camera vertical damping (smoothness)")]
+    [SerializeField] public float yDamping = 1f;
+    [Tooltip("Camera horizontal damping (smoothness)")]
+    [SerializeField] public float xDamping = 1f;
+    
+    [Header("Manual Clamp Boundaries (Optional, per scene)")]
+    [Tooltip("Left camera clamp (world X)")]
+    public float leftBoundary;
+    [Tooltip("Right camera clamp (world X)")]
+    public float rightBoundary;
+    [Tooltip("Top camera clamp (world Y)")]
+    public float topBoundary;
+    [Tooltip("Bottom camera clamp (world Y)")]
+    public float bottomBoundary;
+    [Tooltip("Enable manual boundaries for this scene")]
+    public bool hasBoundaries = false;
     
     [Header("Player Following")]
     private Vector3 lastPlayerPos;
     private float targetScreenX = 0.5f;
-    [SerializeField] private float screenXTransitionSpeed = 3f;
     
-    [Header("Boundaries")]
-    private float leftBoundary;
-    private float rightBoundary;
-    private float topBoundary;
-    private float bottomBoundary;
-    private bool hasBoundaries = false;
-
     private Enemy enemyScript;
+    
+    [Tooltip("SmoothDamp için yumuşatma süresi (daha küçük = daha hızlı)")]
+    [SerializeField] public float screenYSmoothTime = 0.25f;
+    private float screenYVelocity = 0f;
     
     
     // SceneBoundary'den doğrudan çağrılır
@@ -371,20 +391,30 @@ public class CameraManager : MonoBehaviour
         
         // Sahne yüksekliği
         float sceneHeight = topBoundary - bottomBoundary;
-        
-        // Sahnenin alt kısmından 0.3 (yüzde 30) yüksekliğindeki eşik noktası
-        float thresholdY = bottomBoundary + (sceneHeight * 0.3f);
-        
         float playerY = PlayerManager.instance.player.transform.position.y;
-        
-        // Oyuncunun eşik noktasına göre pozisyonu (0 = eşikte, 1 = en üstte)
-        float normalizedPosition = Mathf.Clamp01((playerY - thresholdY) / (topBoundary - thresholdY));
-        
-        // Oyuncu eşiğin üzerindeyse (0.3 yüksekliğin üzerinde) kamerayı aşağı indir
-        // normalizedPosition 0 olduğunda (eşikte) screenYMin, 1 olduğunda (en üstte) screenYMax kullan
-        float targetScreenY = Mathf.Lerp(screenYMin, screenYMax, normalizedPosition);
-        
-        // Kamera konumunu yumuşak geçişle ayarla
-        transposer.m_ScreenY = Mathf.Lerp(transposer.m_ScreenY, targetScreenY, Time.deltaTime * screenYTransitionSpeed);
+
+        // Alt, orta ve üst bölgeleri tanımla
+        float lowerMid = bottomBoundary + sceneHeight * 0.3f;
+        float upperMid = bottomBoundary + sceneHeight * 0.7f;
+
+        float targetScreenY;
+        if (playerY < lowerMid)
+        {
+            // Alt bölge: ekranın altına yakın
+            targetScreenY = screenYMin;
+        }
+        else if (playerY > upperMid)
+        {
+            // Üst bölge: ekranın üstüne yakın
+            targetScreenY = screenYMax;
+        }
+        else
+        {
+            // Orta bölge: ekranın ortası
+            targetScreenY = 0.5f;
+        }
+
+        // Kamera konumunu SmoothDamp ile yumuşak geçişle ayarla
+        transposer.m_ScreenY = Mathf.SmoothDamp(transposer.m_ScreenY, targetScreenY, ref screenYVelocity, screenYSmoothTime);
     }
 } 

@@ -55,13 +55,19 @@ MonoBehaviour:
   - {fileID: 6927370450936928131, guid: 3e8488bd3c978274692baa21f5e2fabf, type: 3}
   - {fileID: 4594642030209605112, guid: 792ec4aff6e625748bf94aae532534b7, type: 3}
   - {fileID: 7854495120977660595, guid: 9ad2c7113bd37db4480ab1816f526814, type: 3}
-  xDamping: 1
-  yDamping: 1
   screenY: 0.85
   screenYMin: 0.6
   screenYMax: 0.9
   screenYTransitionSpeed: 3.5
   screenXTransitionSpeed: 5
+  yDamping: 1
+  xDamping: 1
+  leftBoundary: 0
+  rightBoundary: 0
+  topBoundary: 0
+  bottomBoundary: 0
+  hasBoundaries: 0
+  screenYSmoothTime: 0.15
 --- !u!1 &7339666878853165440
 GameObject:
   m_ObjectHideFlags: 0

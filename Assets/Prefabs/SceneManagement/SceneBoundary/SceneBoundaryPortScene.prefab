@@ -28,7 +28,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.56, y: 3.42, z: 0}
-  m_LocalScale: {x: 1.325, y: 1, z: 1}
+  m_LocalScale: {x: 1.325, y: 0.85, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -47,8 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftBoundary: -27.6
   rightBoundary: 22.3
-  topBoundary: 6.83
-  bottomBoundary: -10.3
+  topBoundary: 6.13
+  bottomBoundary: -9.82
   hasLeftExit: 0
   hasRightExit: 1
   hasTopExit: 0
@@ -58,7 +58,7 @@ MonoBehaviour:
   topSceneIndex: -1
   bottomSceneIndex: -1
   exitTriggerThickness: 0.78
-  exitHeight: 13.7
+  exitHeight: 12
   boundaryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   exitColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!60 &7854495120977660595
@@ -107,8 +107,8 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 18.946718, y: 3.316906}
-      - {x: -18.755426, y: 3.3169065}
-      - {x: -18.990168, y: -13.725242}
-      - {x: 18.844946, y: -13.673394}
+    - - {x: 18.75, y: 3.8}
+      - {x: -18.9, y: 3.8}
+      - {x: -18.9, y: -14.75}
+      - {x: 18.75, y: -14.75}
   m_UseDelaunayMesh: 0
