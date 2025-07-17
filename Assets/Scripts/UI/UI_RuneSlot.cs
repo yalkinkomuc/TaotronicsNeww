@@ -11,6 +11,7 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TextMeshProUGUI enhancementText;
     [SerializeField] private GameObject emptySlotIndicator;
     [SerializeField] private Image runeTypeIndicator; // Shows rune type color
+    [SerializeField] private TextMeshProUGUI runeNameText; // Rune ismini göstermek için
     
     [Header("Slot Configuration")]
     [SerializeField] private Sprite emptySlotSprite;
@@ -89,6 +90,11 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
         }
         
         UpdateSlotVisuals();
+        if (runeNameText != null)
+        {
+            runeNameText.text = rune != null ? rune.itemName : "";
+            runeNameText.gameObject.SetActive(rune != null);
+        }
     }
     
     private void UpdateSlotVisuals()

@@ -64,12 +64,12 @@ public class AdvancedInventoryUI : BaseUIPanel
     public bool IsCollectiblesPage => isCollectiblesPage;
     public bool IsInventoryOpen => gameObject.activeInHierarchy;
     
-    private new void Awake()
+    private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
             
             // Setup critical event listeners that need to work even when inventory is closed
             SetupCriticalEventListeners();
@@ -324,7 +324,12 @@ public class AdvancedInventoryUI : BaseUIPanel
         UpdateEquipmentSlots();
         UpdateGearCapacity();
         
-        // Equipment slot updates are now handled by EquipmentUIManager automatically
+        // Notify EquipmentUIManager that inventory is now open and slots are available
+        if (EquipmentUIManager.Instance != null)
+        {
+            EquipmentUIManager.Instance.FindEquipmentSlots();
+            EquipmentUIManager.Instance.UpdateAllEquipmentSlots();
+        }
         
         if (UIInputBlocker.instance != null)
         {
@@ -550,6 +555,10 @@ public class AdvancedInventoryUI : BaseUIPanel
     private void OnRuneChanged(int slotIndex, RuneData rune)
     {
         UpdateStatsDisplay();
+        if (runeSlots != null && slotIndex >= 0 && slotIndex < runeSlots.Length)
+        {
+            runeSlots[slotIndex].UpdateRune(rune);
+        }
     }
     
     private void OnSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)

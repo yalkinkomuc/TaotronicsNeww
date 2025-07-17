@@ -12,23 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f844eaaa8b7b6d64eb9b30c50553e35e, type: 3}
   m_Name: VitalityRune
   m_EditorClassIdentifier: 
-  itemName: 
-  description: 
-  icon: {fileID: 0}
+  itemName: Vitality Rune
+  description: Vitality Rune
+  icon: {fileID: 21300000, guid: 8beb91d5c25087544a9049bec90ea9ba, type: 3}
   itemType: 4
   dropChance: 0
   sellValue: 0
   rarity: 0
   isStackable: 1
   maxStackSize: 999
-  resourcePath: 
+  resourcePath: Items/V
   runeType: 0
   runeLevel: 1
   statModifier:
     statType: 0
-    baseValue: 0
-    percentageBonus: 0
-  canCombineWithOthers: 1
+    baseValue: 100
+    percentageBonus: 4
+  canCombineWithOthers: 0
   combinationResult: []
   enhancementLevel: 0
   maxEnhancementLevel: 10
