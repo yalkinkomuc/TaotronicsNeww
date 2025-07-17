@@ -53,9 +53,7 @@ public class UI_RuneInventoryPanel : MonoBehaviour
 
     private void OnRuneClicked(RuneData rune)
     {
-        // Burada hangi slotun seçili olduğunu UI_RuneSlot üzerinden öğrenip equip işlemini başlatabilirsin
-        // Örnek: Seçili slotun indexini bir static değişkenle tutabilirsin veya UI'dan seçimi alabilirsin
-        // Şimdilik örnek olarak ilk boş rune slotuna equip edelim:
+        // Equip işlemi
         if (EquipmentManager.Instance != null)
         {
             for (int i = 0; i < 6; i++)
@@ -67,6 +65,13 @@ public class UI_RuneInventoryPanel : MonoBehaviour
                 }
             }
         }
+        // Envanterden çıkar
+        if (Inventory.instance != null)
+        {
+            Inventory.instance.RemoveItem(rune);
+        }
+        // Grid'i güncelle
+        RefreshRuneGrid();
         // Paneli kapatmak istersen:
         ClosePanel();
     }
