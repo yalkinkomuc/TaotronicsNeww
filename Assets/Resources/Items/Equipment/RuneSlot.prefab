@@ -456,7 +456,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -5.6, y: 5.8}
+  m_AnchoredPosition: {x: -5.600006, y: 5.799999}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &3549698439906177157
@@ -602,9 +602,10 @@ MonoBehaviour:
   emptySlotIndicator: {fileID: 6410142627589490099}
   runeTypeIndicator: {fileID: 3125157134450581572}
   runeNameText: {fileID: 8589404095541987199}
+  openRuneInventoryButton: {fileID: 2293120872589269253}
   emptySlotSprite: {fileID: -1448324343, guid: 069a00c4a21d8654bbe27600f3ba7103, type: 3}
   equippedColor: {r: 1, g: 1, b: 1, a: 1}
-  emptyColor: {r: 1, g: 1, b: 1, a: 0.3}
+  emptyColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &8996070647240582372
 GameObject:
   m_ObjectHideFlags: 0

@@ -56,6 +56,17 @@ public class AdvancedInventoryUI : BaseUIPanel
     [SerializeField] private Button closeButton;
     [SerializeField] private TextMeshProUGUI gearCapacityText;
     
+    [Header("Rune Inventory Panel")] 
+    [SerializeField] private GameObject runeInventoryPanel; // Inspector'dan atanacak
+
+    public void ToggleRuneInventoryPanel()
+    {
+        if (runeInventoryPanel != null)
+        {
+            runeInventoryPanel.SetActive(!runeInventoryPanel.activeSelf);
+        }
+    }
+    
     // Private fields
     private UI_MaterialDisplay[] materialDisplays;
     private bool isCollectiblesPage = false;

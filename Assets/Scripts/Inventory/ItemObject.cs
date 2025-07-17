@@ -149,19 +149,6 @@ public class ItemObject : MonoBehaviour
         if (Inventory.instance != null && itemData != null)
         {
             Inventory.instance.AddItem(itemData);
-
-            // Eğer bu bir Rune ise, otomatik olarak ilk boş rune slot'una yerleştir
-            if (itemData is RuneData runeData && EquipmentManager.Instance != null)
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    if (EquipmentManager.Instance.IsRuneSlotEmpty(i))
-                    {
-                        EquipmentManager.Instance.EquipRune(runeData, i);
-                        break;
-                    }
-                }
-            }
             
             // If this is a Skill Shard, add to SkillManager
             if (itemData is SkillShard shard)

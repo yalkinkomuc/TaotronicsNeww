@@ -12,6 +12,7 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] private GameObject emptySlotIndicator;
     [SerializeField] private Image runeTypeIndicator; // Shows rune type color
     [SerializeField] private TextMeshProUGUI runeNameText; // Rune ismini göstermek için
+    [SerializeField] private Button openRuneInventoryButton; // Inspector'dan atanacak
     
     [Header("Slot Configuration")]
     [SerializeField] private Sprite emptySlotSprite;
@@ -184,5 +185,21 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
     public RuneType? GetRuneType()
     {
         return currentRune?.runeType;
+    }
+
+    private void Start()
+    {
+        if (openRuneInventoryButton != null)
+        {
+            openRuneInventoryButton.onClick.AddListener(OpenRuneInventoryPanel);
+        }
+    }
+
+    private void OpenRuneInventoryPanel()
+    {
+        if (AdvancedInventoryUI.Instance != null)
+        {
+            AdvancedInventoryUI.Instance.ToggleRuneInventoryPanel();
+        }
     }
 } 
