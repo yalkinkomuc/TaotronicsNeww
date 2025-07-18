@@ -17,7 +17,7 @@ public class PlayerWeaponManager : MonoBehaviour
     public int GetCurrentSecondaryWeaponIndex() => currentSecondaryWeaponIndex;
     public int GetCurrentPrimaryWeaponIndex() => currentPrimaryWeaponIndex >= 0 ? currentPrimaryWeaponIndex : startingWeaponIndex;
     
-    [SerializeField] private KeyCode weaponSwitchKey = KeyCode.Tab; // Silah değiştirme tuşu
+    
     
     private Player player;
     private PlayerStats playerStats;
@@ -61,22 +61,7 @@ public class PlayerWeaponManager : MonoBehaviour
 
     void Update()
     {
-                if (Input.GetKeyDown(weaponSwitchKey) && currentSecondaryWeaponIndex != -1)
-        {
-            // Boomerang havadayken silah değişimine izin verme
-            if (player != null && player.isBoomerangInAir)
-            {
-                return;
-            }
-            
-            // Find next secondary weapon
-            int nextIndex = GetNextSecondaryWeaponIndex();
-            if (nextIndex != -1)
-            {
-                currentSecondaryWeaponIndex = nextIndex;
-                EquipSecondaryWeapon(currentSecondaryWeaponIndex);
-            }
-        }
+          
     }
 
     void EquipSecondaryWeapon(int index)
