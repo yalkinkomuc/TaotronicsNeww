@@ -160,8 +160,10 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private ArmorData GetEquippedArmor()
     {
-        // TODO: Get from EquipmentManager when implemented
-        // For now return null (empty slot)
+        if (EquipmentManager.Instance != null)
+        {
+            return EquipmentManager.Instance.GetEquippedItem(EquipmentSlot.Armor) as ArmorData;
+        }
         return null;
     }
     

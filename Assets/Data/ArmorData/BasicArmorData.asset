@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d064af2634b4a984da8b5431cef84a62, type: 3}
   m_Name: BasicArmorData
   m_EditorClassIdentifier: 
-  itemName: 
-  description: 
-  icon: {fileID: 0}
+  itemName: Basic Armor
+  description: Basic Armor
+  icon: {fileID: -8000858378993298659, guid: 003cb5b4d933e804a82b099d4a98ef0b, type: 3}
   itemType: 1
   dropChance: 0
   sellValue: 0
   rarity: 0
   isStackable: 0
   maxStackSize: 99
-  resourcePath: 
+  resourcePath: Items/B
   requiredLevel: 1
   equipmentSlot: 1
   statModifiers:
