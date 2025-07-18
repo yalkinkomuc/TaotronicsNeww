@@ -48,8 +48,16 @@ public class NewInputSystem : IPlayerInput
     public bool escapeInput => playerInputActions.UI.EscapePressed.WasPressedThisFrame();
 
     
-   
-   
+    public void DisableGameplayInput()
+    {
+        playerInputActions.Gameplay.Disable();
+        // UI açık kalacak
+    }
 
+    public void EnableGameplayInput()
+    {
+        playerInputActions.Gameplay.Enable();
+        // UI zaten açık
+    }
    
 }

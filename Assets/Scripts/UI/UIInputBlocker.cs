@@ -389,7 +389,7 @@ public class UIInputBlocker : MonoBehaviour
             {
                 Debug.Log("UIInputBlocker: PlayerInput found, disabling gameplay input");
                 // Only disable gameplay inputs
-               
+                playerInput.DisableGameplayInput();
             }
             else
             {
@@ -404,6 +404,8 @@ public class UIInputBlocker : MonoBehaviour
         
         // Show UI Blocker
         SetUIBlockerVisibility(true);
+        // Oyun duraklat
+        Time.timeScale = 0f;
     }
     
     // Player henüz hazır değilse tekrar dene
@@ -460,7 +462,7 @@ public class UIInputBlocker : MonoBehaviour
             {
                 Debug.Log("UIInputBlocker: PlayerInput found, enabling all input");
                 // Enable all inputs
-                
+                playerInput.EnableGameplayInput();
             }
             else
             {
@@ -469,6 +471,8 @@ public class UIInputBlocker : MonoBehaviour
             
             // Hide UI Blocker
             SetUIBlockerVisibility(false);
+            // Oyun devam etsin
+            Time.timeScale = 1f;
         }
         else
         {
