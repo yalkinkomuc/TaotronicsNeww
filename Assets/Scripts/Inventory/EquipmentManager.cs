@@ -228,6 +228,12 @@ public class EquipmentManager : MonoBehaviour
         }
         
         OnStatsUpdated?.Invoke();
+        
+        // Statları PlayerStats'a uygula
+        if (playerStats != null)
+        {
+            playerStats.ApplyEquipmentStats(GetAllStats());
+        }
     }
     
     private void AddEquipmentStats(EquipmentData equipment)

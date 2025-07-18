@@ -37,10 +37,7 @@ public enum StatType
 {
     Health = 0,
     Vitality = 1,        // Actually means health bonus from vitality
-    Might = 2,           // Actually means attack damage bonus from might
-    WarriorDamage = 3,   // Legacy - maps to AttackDamage
-    HunterDamage = 4,    // Legacy - maps to AttackDamage  
-    AssassinDamage = 5,  // Legacy - maps to AttackDamage
+    Might = 2,           // Actually means attack damage bonus from might// Legacy - maps to AttackDamage
     Armor = 6,
     CriticalChance = 7,
     CriticalDamage = 8

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d064af2634b4a984da8b5431cef84a62, type: 3}
+  m_Name: BasicArmorData
+  m_EditorClassIdentifier: 
+  itemName: 
+  description: 
+  icon: {fileID: 0}
+  itemType: 1
+  dropChance: 0
+  sellValue: 0
+  rarity: 0
+  isStackable: 0
+  maxStackSize: 99
+  resourcePath: 
+  requiredLevel: 1
+  equipmentSlot: 1
+  statModifiers: []
+  enhancementLevel: 0
+  maxEnhancementLevel: 15
+  armorType: 0
+  armorValue: 0
+  magicResistance: 0
+  isPartOfSet: 0
+  setName: 
+  setBonusDescription: 

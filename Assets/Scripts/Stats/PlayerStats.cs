@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class PlayerStats : CharacterStats
 {
@@ -766,4 +767,15 @@ public class PlayerStats : CharacterStats
     protected override int defense { get => _defense; set => _defense = value; }
     protected override int luck { get => _luck; set => _luck = value; }
     protected override int mind { get => _mind; set => _mind = value; }
+
+    public void ApplyEquipmentStats(Dictionary<StatType, int> stats)
+    {
+        // Armor statını uygula
+        if (stats.TryGetValue(StatType.Armor, out int armorValue))
+        {
+            _defense = armorValue;
+        }
+        // Diğer statlar için de ekleme yapılabilir
+        ApplyAttributeBonuses();
+    }
 }
