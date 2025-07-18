@@ -54,11 +54,8 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     public void UpdateSlotDisplay()
     {
-        // Only get equipped item if currentEquipment is not set (for regular equipment slots)
-        if (currentEquipment == null)
-        {
-            currentEquipment = GetEquippedItem();
-        }
+        // Her zaman güncel ekipmanı çek
+        currentEquipment = GetEquippedItem();
         
         if (slotType == EquipmentSlot.SecondaryWeapon)
         {
@@ -231,5 +228,25 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         currentEquipment = selectedEquipment;
         UpdateSlotDisplay();
         onEquipmentSelected?.Invoke(selectedEquipment);
+    }
+
+    private void OnEnable()
+    {
+        EquipmentManager.OnEquipmentChanged += HandleEquipmentChanged;
+    }
+
+    private void OnDisable()
+    {
+        EquipmentManager.OnEquipmentChanged -= HandleEquipmentChanged;
+    }
+
+    private void HandleEquipmentChanged(EquipmentSlot changedSlot, EquipmentData newEquipment)
+    {
+        if (changedSlot == slotType)
+        {
+            // Ekipman değiştiyse, slotu güncelle
+            currentEquipment = newEquipment;
+            UpdateSlotDisplay();
+        }
     }
 } 

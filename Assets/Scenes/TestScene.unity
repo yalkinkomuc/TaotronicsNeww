@@ -218,7 +218,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1051577623
   m_SortingLayer: 5
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_Sprite: {fileID: 2324931242116937151, guid: d0a84e01c417a034786b33cbd3cb26fb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -480,7 +480,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1051577623
   m_SortingLayer: 5
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_Sprite: {fileID: 313374463458331706, guid: 892e6b183b51152428daeb0f269f5753, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -28413,6 +28413,7 @@ GameObject:
   - component: {fileID: 1058560462}
   - component: {fileID: 1058560463}
   - component: {fileID: 1058560464}
+  - component: {fileID: 1058560465}
   m_Layer: 8
   m_Name: Armor
   m_TagString: Untagged
@@ -28428,12 +28429,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1058560461}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06, y: 0.01, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.059999943, y: 0.010000229, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1377457613}
+  m_Father: {fileID: 1279763918}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1058560463
 SpriteRenderer:
@@ -28512,6 +28513,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1058560465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058560461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 696031f9a68f47048b85d5f5cc5d1c1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1058560464}
 --- !u!1 &1084888866
 GameObject:
   m_ObjectHideFlags: 0
@@ -30400,7 +30414,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1051577623
   m_SortingLayer: 5
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_Sprite: {fileID: -6190081398509759198, guid: cc40441101fe5a54eae2f4270617c45a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -30787,6 +30801,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1277978037}
   m_CullTransparentMesh: 1
+--- !u!1 &1279763917
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1279763918}
+  - component: {fileID: 1279763919}
+  m_Layer: 8
+  m_Name: ArmorHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1279763918
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1279763917}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1058560462}
+  m_Father: {fileID: 1377457613}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1279763919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1279763917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b01c4e36c32cbe147b5d97c4bad304e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armors:
+  - {fileID: 1058560465}
+  armorDatas:
+  - {fileID: 11400000, guid: c9cd9fa2641465f48b2d7b6c7ff45a2a, type: 2}
+  startingArmorIndex: 0
 --- !u!1 &1280454015
 GameObject:
   m_ObjectHideFlags: 0
@@ -32132,7 +32196,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1104591362}
-  - {fileID: 1058560462}
+  - {fileID: 1279763918}
   - {fileID: 1976835994}
   - {fileID: 1448585253}
   - {fileID: 805791711}
