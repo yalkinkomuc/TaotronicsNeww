@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerArmorManager : MonoBehaviour
 {
     public ArmorStateMachine[] armors;
+    public ArmorData[] armorDatas; // Inspector'dan sırayla atayacaksın
     [SerializeField] public int startingArmorIndex = 0;
     private int currentArmorIndex = -1;
 
@@ -41,6 +42,16 @@ public class PlayerArmorManager : MonoBehaviour
         armors[index].gameObject.SetActive(true);
         currentArmorIndex = index;
         Debug.Log($"Activated armor: {armors[index].name}");
+
+        // ArmorData'yı EquipmentManager'a giydir
+        if (armorDatas != null && index < armorDatas.Length && armorDatas[index] != null)
+        {
+            EquipmentManager.Instance.EquipItem(armorDatas[index]);
+        }
+        else
+        {
+            Debug.LogWarning($"ArmorData eşleşmedi! Index: {index}");
+        }
     }
 
     public int GetCurrentArmorIndex() => currentArmorIndex;

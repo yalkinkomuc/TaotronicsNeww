@@ -24,7 +24,10 @@ MonoBehaviour:
   resourcePath: 
   requiredLevel: 1
   equipmentSlot: 1
-  statModifiers: []
+  statModifiers:
+  - statType: 6
+    baseValue: 10
+    percentageBonus: 0
   enhancementLevel: 0
   maxEnhancementLevel: 15
   armorType: 0

@@ -19,14 +19,14 @@ MonoBehaviour:
   dropChance: 0
   sellValue: 0
   rarity: 0
-  isStackable: 1
-  maxStackSize: 999
+  isStackable: 0
+  maxStackSize: 1
   resourcePath: Items/V
   runeType: 0
   runeLevel: 1
   statModifier:
-    statType: 0
-    baseValue: 100
+    statType: 6
+    baseValue: 50
     percentageBonus: 4
   canCombineWithOthers: 0
   combinationResult: []
