@@ -197,14 +197,7 @@ public class EnemyBossNecromancerBoss : Enemy
         if (summonedSkeletons.Count >= maxSkeletons || skeletonPrefab == null || arenaCollider == null)
             return;
 
-        float minX = arenaCollider.bounds.min.x + 2f;
-        float maxX = arenaCollider.bounds.max.x - 2f;
-        float groundY = arenaCollider.bounds.min.y;
-        
-        float clampedX = Mathf.Clamp(position.x, minX, maxX);
-        Vector2 spawnPos = new Vector2(clampedX, groundY + 0.5f);
-        
-        GameObject skeletonObj = Instantiate(skeletonPrefab, spawnPos, Quaternion.identity);
+        GameObject skeletonObj = Instantiate(skeletonPrefab, position, Quaternion.identity);
         Skeleton_Enemy skeleton = skeletonObj.GetComponent<Skeleton_Enemy>();
         if (skeleton != null)
         {
@@ -235,7 +228,6 @@ public class EnemyBossNecromancerBoss : Enemy
 
     public void CreateSpawnEffect(Vector2 position)
     {
-        // Sadece spawn effect cooldown kontrolü
         if (spawnEffectCooldownTimer > 0)
         {
             if (debugMode)
@@ -243,7 +235,6 @@ public class EnemyBossNecromancerBoss : Enemy
             return;
         }
 
-        // Maksimum iskelet kontrolü
         if (summonedSkeletons.Count >= maxSkeletons)
         {
             if (debugMode)
@@ -253,55 +244,61 @@ public class EnemyBossNecromancerBoss : Enemy
 
         if (spawnEffectPrefab != null && arenaCollider != null)
         {
-            float minX = arenaCollider.bounds.min.x + 2f;
-            float maxX = arenaCollider.bounds.max.x - 2f;
-            float groundY = arenaCollider.bounds.min.y;
-            
-            float clampedX = Mathf.Clamp(position.x, minX, maxX);
-            Vector2 effectPosition = new Vector2(clampedX, groundY + 0.5f);
-            
-            GameObject effect = Instantiate(spawnEffectPrefab, effectPosition, Quaternion.identity);
-            SkeletonSpawnEffect spawnEffect = effect.GetComponent<SkeletonSpawnEffect>();
-            
-            if (spawnEffect != null)
+            int maxTries = 20;
+            float margin = 1f;
+            float offset = 0.5f;
+            for (int i = 0; i < maxTries; i++)
             {
-                spawnEffect.Initialize(this, effectPosition);
-                // Sadece efekt cooldown'unu başlat
-                spawnEffectCooldownTimer = spawnEffectCooldown;
+                float x = Random.Range(arenaCollider.bounds.min.x + margin, arenaCollider.bounds.max.x - margin);
+                Vector2 rayOrigin = new Vector2(x, arenaCollider.bounds.max.y);
+                float rayLength = arenaCollider.bounds.size.y + 2f;
+                RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, rayLength, whatIsGround);
+                if (hit.collider != null)
+                {
+                    Vector2 effectPosition = new Vector2(x, hit.point.y + offset);
+                    GameObject effect = Instantiate(spawnEffectPrefab, effectPosition, Quaternion.identity);
+                    SkeletonSpawnEffect spawnEffect = effect.GetComponent<SkeletonSpawnEffect>();
+
+                    if (spawnEffect != null)
+                    {
+                        spawnEffect.Initialize(this, effectPosition);
+                        spawnEffectCooldownTimer = spawnEffectCooldown;
+                    }
+                    else
+                    {
+                        if (debugMode)
+                            Debug.LogError("SkeletonSpawnEffect component bulunamadı!");
+                        Destroy(effect);
+                    }
+                    return;
+                }
             }
-            else
-            {
-                if (debugMode)
-                    Debug.LogError("SkeletonSpawnEffect component bulunamadı!");
-                Destroy(effect);
-            }
+            Debug.LogError("Uygun spawn efekti pozisyonu bulunamadı!");
         }
     }
 
     public void FindPosition()
     {
-        Vector3 originalPosition = transform.position;
-        float x = Random.Range(arenaCollider.bounds.min.x + 3, arenaCollider.bounds.max.x - 3);
-        float y = Random.Range(arenaCollider.bounds.min.y + 3, arenaCollider.bounds.max.y - 3);
-
-        Vector3 newPosition = new Vector3(x, y);
-        float distance = Vector2.Distance(originalPosition, newPosition);
-
-        // Eğer yeni konum mevcut konuma çok yakınsa yeni konum bul
-        if (distance < 15f)
+        int maxTries = 20;
+        float margin = 1f;
+        float offset = capsuleCollider.size.y / 2;
+        for (int i = 0; i < maxTries; i++)
         {
-            FindPosition();
-            return;
+            float x = Random.Range(arenaCollider.bounds.min.x + margin, arenaCollider.bounds.max.x - margin);
+            Vector2 rayOrigin = new Vector2(x, arenaCollider.bounds.max.y);
+            float rayLength = arenaCollider.bounds.size.y + 2f;
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, rayLength, whatIsGround);
+            if (hit.collider != null)
+            {
+                Vector2 spawnPos = new Vector2(x, hit.point.y + offset);
+                if (!SomethingIsAround())
+                {
+                    transform.position = spawnPos;
+                    return;
+                }
+            }
         }
-
-        transform.position = newPosition;
-        transform.position = new Vector3(transform.position.x,
-            transform.position.y - GroundBelow().distance + (capsuleCollider.size.y / 2));
-
-        if (!GroundBelow() || SomethingIsAround())
-        {
-            FindPosition();
-        }
+        Debug.LogError("Uygun pozisyon bulunamadı, boss arenada spawn edilemiyor!");
     }
 
     protected override void OnDrawGizmos()
