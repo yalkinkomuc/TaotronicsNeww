@@ -46,15 +46,15 @@ public class NecromancerAnimTriggers : EnemyAnimationTriggers
         // Hiç slot kalmadıysa çık
         if (remainingSlots <= 0) return;
         
-        // En fazla 3 iskelet spawn et (veya kalan slot sayısı kadar) - 2'den 3'e artırıldı
-        int effectsToCreate = Mathf.Min(3, remainingSlots);
+        // 5 iskelet spawn et (veya kalan slot sayısı kadar)
+        int effectsToCreate = Mathf.Min(5, remainingSlots);
         
         // Arena sınırları
         float minX = enemyBossNecromancer.arenaCollider.bounds.min.x + 2f;
         float maxX = enemyBossNecromancer.arenaCollider.bounds.max.x - 2f;
         float groundY = enemyBossNecromancer.arenaCollider.bounds.min.y;
         
-        // Her iskelet için ayrı bir efekt oluştur (en fazla 3 tane)
+        // Her iskelet için ayrı bir efekt oluştur (en fazla 5 tane)
         for (int i = 0; i < effectsToCreate; i++)
         {
             float randomX;
@@ -74,7 +74,7 @@ public class NecromancerAnimTriggers : EnemyAnimationTriggers
             }
             
             Vector2 spawnPos = new Vector2(randomX, groundY + 0.5f);
-            enemyBossNecromancer.CreateSpawnEffect(spawnPos);
+            enemyBossNecromancer.CreateSpawnEffect(spawnPos, true);
         }
    }
    

@@ -28,7 +28,7 @@ public class EnemyBossNecromancerBoss : Enemy
     [Header("Summon Settings")]
     [SerializeField] private GameObject skeletonPrefab;
     [SerializeField] public int skeletonsToSpawn = 2;
-    [SerializeField] public int maxSkeletons = 4;  // Public olarak değiştirdik
+    [SerializeField] public int maxSkeletons = 5;  // 4'ten 5'e çıkarıldı
     public float spawnRange = 15f;
     [SerializeField] public float summonCooldown = 5f; // 8f'den 5f'e düşürüldü
     public float summonCooldownTimer; // Public olarak değiştirdik
@@ -238,9 +238,9 @@ public class EnemyBossNecromancerBoss : Enemy
         stateMachine.ChangeState(deadState);
     }
 
-    public void CreateSpawnEffect(Vector2 position)
+    public void CreateSpawnEffect(Vector2 position, bool ignoreCooldown = false)
     {
-        if (spawnEffectCooldownTimer > 0)
+        if (!ignoreCooldown && spawnEffectCooldownTimer > 0)
         {
             if (debugMode)
                 Debug.Log($"Spawn efekti cooldown: {spawnEffectCooldownTimer}");
@@ -274,7 +274,8 @@ public class EnemyBossNecromancerBoss : Enemy
                     if (spawnEffect != null)
                     {
                         spawnEffect.Initialize(this, effectPosition);
-                        spawnEffectCooldownTimer = spawnEffectCooldown;
+                        if (!ignoreCooldown)
+                            spawnEffectCooldownTimer = spawnEffectCooldown;
                     }
                     else
                     {

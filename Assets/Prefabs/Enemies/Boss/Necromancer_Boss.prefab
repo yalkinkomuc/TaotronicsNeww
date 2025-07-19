@@ -441,7 +441,17 @@ MonoBehaviour:
   summonCooldownTimer: 0
   spawnEffectPrefab: {fileID: 928637090390650468, guid: 131331112bdee41459105cb9091238bf, type: 3}
   spawnEffectCooldown: 3
-  summonedSkeletons: []
+  summonedSkeletons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   arenaCollider: {fileID: 0}
   surroundingCheckSize: {x: 1.1, y: 1.1}
   debugMode: 1
