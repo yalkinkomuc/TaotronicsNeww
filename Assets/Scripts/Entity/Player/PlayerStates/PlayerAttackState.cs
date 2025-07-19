@@ -62,7 +62,7 @@ public class PlayerAttackState : PlayerState, IWeaponAttackState
         FaceNearestEnemy();
         
         player.anim.SetInteger("comboCounter", comboCounter);
-        stateTimer = .1f;
+        stateTimer = .25f;
         
         player.StartNewAttack();
     }
