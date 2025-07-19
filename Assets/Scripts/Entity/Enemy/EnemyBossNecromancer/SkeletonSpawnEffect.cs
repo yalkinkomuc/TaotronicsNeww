@@ -14,7 +14,7 @@ public class SkeletonSpawnEffect : MonoBehaviour
     // Animation Event'ten çağrılacak
     private void OnSpawnAnimationComplete()
     {
-        if (necromancer != null && necromancer.CanSummon())
+        if (necromancer != null)
         {
             necromancer.SummonSkeletonAtPosition(spawnPosition);
         }

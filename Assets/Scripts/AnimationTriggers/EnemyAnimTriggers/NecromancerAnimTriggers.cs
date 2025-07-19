@@ -47,7 +47,7 @@ public class NecromancerAnimTriggers : EnemyAnimationTriggers
         if (remainingSlots <= 0) return;
         
         // 5 iskelet spawn et (veya kalan slot sayısı kadar)
-        int effectsToCreate = Mathf.Min(5, remainingSlots);
+        int effectsToCreate = Mathf.Min(3, remainingSlots);
         
         // Arena sınırları
         float minX = enemyBossNecromancer.arenaCollider.bounds.min.x + 2f;
