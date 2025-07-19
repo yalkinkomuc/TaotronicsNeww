@@ -5,6 +5,7 @@ using UnityEngine;
 public class EntityFX : MonoBehaviour
 {
    private SpriteRenderer sr;
+   private SpriteRenderer armorSr; // Armor SpriteRenderer
    private Animator animator;
 
    [Header("FlashFX")] 
@@ -41,6 +42,27 @@ public class EntityFX : MonoBehaviour
       animator = GetComponentInChildren<Animator>();
       originalMat = sr.material;
       
+      // Eğer Player ise, Armor SpriteRenderer'ı bul
+      var player = GetComponent<Player>();
+      if (player != null)
+      {
+         var armorManager = player.GetComponent<PlayerArmorManager>();
+         if (armorManager != null && armorManager.armors != null && armorManager.armors.Length > 0)
+         {
+            int currentArmorIndex = armorManager.GetCurrentArmorIndex();
+            if (currentArmorIndex >= 0 && currentArmorIndex < armorManager.armors.Length)
+            {
+               var currentArmor = armorManager.armors[currentArmorIndex];
+               if (currentArmor != null)
+               {
+                  armorSr = currentArmor.GetComponent<SpriteRenderer>();
+                  // Eğer armor GameObject'inin child'ında ise:
+                  if (armorSr == null)
+                     armorSr = currentArmor.GetComponentInChildren<SpriteRenderer>();
+               }
+            }
+         }
+      }
    }
 
    private IEnumerator HitFX()
@@ -123,102 +145,130 @@ public class EntityFX : MonoBehaviour
       Destroy(gameObject);
    }
 
-   public void MakeTransparent(bool _transparent)
+   // Yardımcı: Hem ana hem armor SpriteRenderer'a uygula
+   private void ForEachRenderer(System.Action<SpriteRenderer> action)
    {
-      if (_transparent)
+      if (sr != null) action(sr);
+      if (armorSr != null) action(armorSr);
+   }
+
+   // Aktif armor SpriteRenderer'ını güncelle
+   private void UpdateArmorSpriteRenderer()
+   {
+      var player = GetComponent<Player>();
+      if (player != null)
       {
-         Color newColor = sr.color;
-         newColor.a = 0f;
-         sr.color = newColor;
+         var armorManager = player.GetComponentInChildren<PlayerArmorManager>();
+         if (armorManager != null && armorManager.armors != null && armorManager.armors.Length > 0)
+         {
+            int currentArmorIndex = armorManager.GetCurrentArmorIndex();
+            if (currentArmorIndex >= 0 && currentArmorIndex < armorManager.armors.Length)
+            {
+               var currentArmor = armorManager.armors[currentArmorIndex];
+               if (currentArmor != null)
+               {
+                  armorSr = currentArmor.GetComponent<SpriteRenderer>();
+                  if (armorSr == null)
+                     armorSr = currentArmor.GetComponentInChildren<SpriteRenderer>();
+               }
+               else
+               {
+                  armorSr = null;
+               }
+            }
+            else
+            {
+               armorSr = null;
+            }
+         }
+         else
+         {
+            armorSr = null;
+         }
       }
       else
       {
-         Color newColor = sr.color;
-         newColor.a = 1f;
-         sr.color = newColor;
+         armorSr = null;
       }
+   }
+
+   public void MakeTransparent(bool _transparent)
+   {
+      UpdateArmorSpriteRenderer();
+      ForEachRenderer(r => {
+         if (_transparent)
+         {
+            Color newColor = r.color;
+            newColor.a = 0f;
+            r.color = newColor;
+         }
+         else
+         {
+            Color newColor = r.color;
+            newColor.a = 1f;
+            r.color = newColor;
+         }
+      });
    }
 
    public IEnumerator FlashFX(float totalDuration)
    {
-       float endTime = Time.time + totalDuration;
-       
-       while (Time.time < endTime)
-       {
-           // Flash açık
-           sr.material = hitMat;
-           yield return new WaitForSeconds(flashDuration);
-           
-           // Flash kapalı
-           sr.material = originalMat;
-           yield return new WaitForSeconds(flashInterval);
-       }
-       
-       // Son durumda normal materyal
-       sr.material = originalMat;
+      UpdateArmorSpriteRenderer();
+      float endTime = Time.time + totalDuration;
+      while (Time.time < endTime)
+      {
+         ForEachRenderer(r => r.material = hitMat);
+         yield return new WaitForSeconds(flashDuration);
+         ForEachRenderer(r => r.material = originalMat);
+         yield return new WaitForSeconds(flashInterval);
+      }
+      ForEachRenderer(r => r.material = originalMat);
    }
 
    public IEnumerator BurnFX()
    {
-       // Get the current time plus burn duration
-       float endTime = Time.time + burnDuration;
-       
-       // Flash effect with burn material
-       while (Time.time < endTime)
-       {
-           // Burn material on
-           sr.material = burnMat;
-           yield return new WaitForSeconds(burnFlashInterval);
-           
-           // Original material briefly
-           sr.material = originalMat;
-           yield return new WaitForSeconds(burnFlashInterval / 2);
-       }
-       
-       // Reset to original material when finished
-       sr.material = originalMat;
+      UpdateArmorSpriteRenderer();
+      float endTime = Time.time + burnDuration;
+      while (Time.time < endTime)
+      {
+         ForEachRenderer(r => r.material = burnMat);
+         yield return new WaitForSeconds(burnFlashInterval);
+         ForEachRenderer(r => r.material = originalMat);
+         yield return new WaitForSeconds(burnFlashInterval / 2);
+      }
+      ForEachRenderer(r => r.material = originalMat);
    }
 
    public IEnumerator IceFX()
    {
-       float endTime = Time.time + 1.5f;
-       float flashDuration = 0.1f; // Her flash'ın süresi
-       float flashInterval = 0.1f; // Flash'lar arası bekleme süresi
-       
-       while (Time.time < endTime)
-       {
-           // Flash açık
-           sr.material = iceMat;
-           yield return new WaitForSeconds(flashDuration);
-           
-           // Flash kapalı
-           sr.material = originalMat;
-           yield return new WaitForSeconds(flashInterval);
-       }
-       
-       // Son durumda normal materyal
-       sr.material = originalMat;
+      UpdateArmorSpriteRenderer();
+      float endTime = Time.time + 1.5f;
+      float flashDuration = 0.1f;
+      float flashInterval = 0.1f;
+      while (Time.time < endTime)
+      {
+         ForEachRenderer(r => r.material = iceMat);
+         yield return new WaitForSeconds(flashDuration);
+         ForEachRenderer(r => r.material = originalMat);
+         yield return new WaitForSeconds(flashInterval);
+      }
+      ForEachRenderer(r => r.material = originalMat);
    }
 
    public IEnumerator ElectricFX()
    {
-       float endTime = Time.time + 1.2f;
-       float flashDuration = 0.05f; // Daha hızlı flash (elektrik çarpması gibi)
-       float flashInterval = 0.05f; // Flash'lar arası kısa bekleme
-       
-       while (Time.time < endTime)
-       {
-           // Flash açık
-           sr.material = electricMat;
-           yield return new WaitForSeconds(flashDuration);
-           
-           // Flash kapalı
-           sr.material = originalMat;
-           yield return new WaitForSeconds(flashInterval);
-       }
-       
-       // Son durumda normal materyal
-       sr.material = originalMat;
+      UpdateArmorSpriteRenderer();
+      float endTime = Time.time + 1.2f;
+      float flashDuration = 0.05f;
+      float flashInterval = 0.05f;
+      while (Time.time < endTime)
+      {
+         ForEachRenderer(r => r.material = electricMat);
+         yield return new WaitForSeconds(flashDuration);
+         ForEachRenderer(r => r.material = originalMat);
+         yield return new WaitForSeconds(flashInterval);
+      }
+      ForEachRenderer(r => r.material = originalMat);
    }
 
    public void ResetToOriginalMaterial()

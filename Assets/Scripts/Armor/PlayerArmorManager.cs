@@ -55,4 +55,18 @@ public class PlayerArmorManager : MonoBehaviour
     }
 
     public int GetCurrentArmorIndex() => currentArmorIndex;
+
+    public void HideCurrentArmor()
+    {
+        int idx = GetCurrentArmorIndex();
+        if (idx >= 0 && idx < armors.Length && armors[idx] != null)
+            armors[idx].gameObject.SetActive(false);
+    }
+
+    public void ShowCurrentArmor()
+    {
+        int idx = GetCurrentArmorIndex();
+        if (idx >= 0 && idx < armors.Length && armors[idx] != null)
+            armors[idx].gameObject.SetActive(true);
+    }
 } 

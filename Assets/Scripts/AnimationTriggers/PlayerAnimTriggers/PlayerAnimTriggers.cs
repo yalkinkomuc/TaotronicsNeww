@@ -456,5 +456,19 @@ public class PlayerAnimTriggers : MonoBehaviour
          TryAttackDummy(hit);
       }
    }
+
+   public void HideCurrentArmor()
+   {
+      var armorManager = player.GetComponentInChildren<PlayerArmorManager>();
+      if (armorManager != null)
+         armorManager.HideCurrentArmor();
+   }
+
+   public void ShowCurrentArmor()
+   {
+      var armorManager = player.GetComponentInChildren<PlayerArmorManager>();
+      if (armorManager != null)
+         armorManager.ShowCurrentArmor();
+   }
    
 }
