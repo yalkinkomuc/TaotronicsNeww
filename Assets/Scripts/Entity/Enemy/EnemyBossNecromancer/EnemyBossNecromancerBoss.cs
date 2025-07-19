@@ -131,7 +131,19 @@ public class EnemyBossNecromancerBoss : Enemy
     }
 
     private RaycastHit2D GroundBelow() => Physics2D.Raycast(transform.position,Vector2.down,100,whatIsGround);
-    private bool SomethingIsAround() => Physics2D.BoxCast(transform.position,surroundingCheckSize,0,Vector2.zero,0,whatIsGround);
+    private bool SomethingIsAround()
+    {
+        Collider2D[] hits = Physics2D.OverlapBoxAll(transform.position, surroundingCheckSize, 0, whatIsGround);
+        foreach (var hit in hits)
+        {
+            if (hit != null && hit.gameObject != gameObject && !hit.CompareTag("Ground") && !hit.CompareTag("Platform") && !hit.isTrigger)
+            {
+                Debug.Log($"[SomethingIsAround] Engel bulundu: {hit.gameObject.name}");
+                return true;
+            }
+        }
+        return false;
+    }
 
     // CastSpell metodunda cooldown'u kesin şekilde ayarla
     public void CastSpell()
@@ -287,15 +299,24 @@ public class EnemyBossNecromancerBoss : Enemy
             float x = Random.Range(arenaCollider.bounds.min.x + margin, arenaCollider.bounds.max.x - margin);
             Vector2 rayOrigin = new Vector2(x, arenaCollider.bounds.max.y);
             float rayLength = arenaCollider.bounds.size.y + 2f;
+            Debug.DrawLine(rayOrigin, rayOrigin + Vector2.down * rayLength, Color.red, 2f);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, rayLength, whatIsGround);
             if (hit.collider != null)
             {
                 Vector2 spawnPos = new Vector2(x, hit.point.y + offset);
-                if (!SomethingIsAround())
+                Debug.Log($"[FindPosition] Deneme {i+1}: Ground bulundu! Collider: {hit.collider.name}, Pozisyon: {spawnPos}");
+                bool somethingAround = SomethingIsAround();
+                Debug.Log($"[FindPosition] SomethingIsAround sonucu: {somethingAround}");
+                if (!somethingAround)
                 {
                     transform.position = spawnPos;
+                    Debug.Log($"[FindPosition] Boss yeni pozisyona ışınlandı: {spawnPos}");
                     return;
                 }
+            }
+            else
+            {
+                Debug.Log($"[FindPosition] Deneme {i+1}: Ground bulunamadı. RayOrigin: {rayOrigin}, RayLength: {rayLength}");
             }
         }
         Debug.LogError("Uygun pozisyon bulunamadı, boss arenada spawn edilemiyor!");
