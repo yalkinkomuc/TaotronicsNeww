@@ -10,6 +10,10 @@ public class NoteManager : MonoBehaviour
     [SerializeField] private bool showNoteCollection = true;
     [SerializeField] private GameObject noteCollectionUI;
     
+    [Header("Tab Integration")]
+    [SerializeField] private TabManager tabManager;
+    
+    
     // Singleton pattern
     public static NoteManager Instance { get; private set; }
     
@@ -32,6 +36,9 @@ public class NoteManager : MonoBehaviour
         
         // Kayıtlı notları yükle
         LoadReadNotes();
+        
+        // TabManager'a not koleksiyonu tab'ını ekle
+        SetupNoteCollectionTab();
     }
     
     // Not ekleme
@@ -100,14 +107,33 @@ public class NoteManager : MonoBehaviour
     // Not koleksiyonu UI'sini açma
     public void OpenNoteCollection()
     {
-        if (noteCollectionUI != null)
+        if (tabManager != null)
         {
-            noteCollectionUI.SetActive(true);
-            // Not koleksiyonu UI'sini güncelle
-            NoteCollectionUI collectionUI = noteCollectionUI.GetComponent<NoteCollectionUI>();
-            if (collectionUI != null)
+            // TabManager'ı bul ve notlar tab'ına geç
+            // Bu metod TabManager'ın kendi açma metodunu çağıracak
+            // Şimdilik direkt panel'i açalım
+            if (noteCollectionUI != null)
             {
-                collectionUI.UpdateNoteList();
+                noteCollectionUI.SetActive(true);
+                // Not koleksiyonu UI'sini güncelle
+                NoteCollectionUI collectionUI = noteCollectionUI.GetComponent<NoteCollectionUI>();
+                if (collectionUI != null)
+                {
+                    collectionUI.UpdateNoteList();
+                }
+            }
+        }
+        else
+        {
+            // Fallback: direkt panel aç
+            if (noteCollectionUI != null)
+            {
+                noteCollectionUI.SetActive(true);
+                NoteCollectionUI collectionUI = noteCollectionUI.GetComponent<NoteCollectionUI>();
+                if (collectionUI != null)
+                {
+                    collectionUI.UpdateNoteList();
+                }
             }
         }
     }
@@ -118,6 +144,34 @@ public class NoteManager : MonoBehaviour
         if (noteCollectionUI != null)
         {
             noteCollectionUI.SetActive(false);
+        }
+    }
+    
+    // TabManager'a not koleksiyonu tab'ını ekleme
+    private void SetupNoteCollectionTab()
+    {
+        if (tabManager != null && noteCollectionUI != null)
+        {
+            TabData noteTab = new TabData
+            {
+                tabName = "Notlar",
+                tabPanel = noteCollectionUI,
+                onTabSelected = () => {
+                    // Tab seçildiğinde not listesini güncelle
+                    NoteCollectionUI collectionUI = noteCollectionUI.GetComponent<NoteCollectionUI>();
+                    if (collectionUI != null)
+                    {
+                        collectionUI.UpdateNoteList();
+                    }
+                }
+            };
+            
+            tabManager.AddTab(noteTab);
+            Debug.Log("NoteCollectionUI tab'ı TabManager'a eklendi!");
+        }
+        else
+        {
+            Debug.LogWarning("TabManager veya NoteCollectionUI bulunamadı! Tab entegrasyonu yapılamadı.");
         }
     }
     

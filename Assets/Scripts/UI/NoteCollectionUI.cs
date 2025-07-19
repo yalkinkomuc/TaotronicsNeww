@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 
-public class NoteCollectionUI : MonoBehaviour
+public class NoteCollectionUI : BaseUIPanel
 {
     [Header("UI References")]
     [SerializeField] private Transform noteListParent;
@@ -25,8 +25,10 @@ public class NoteCollectionUI : MonoBehaviour
     private List<NoteItemUI> noteItems = new List<NoteItemUI>();
     private NoteTextData selectedNote;
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        
         // Close button event
         if (closeButton != null)
         {
@@ -43,6 +45,12 @@ public class NoteCollectionUI : MonoBehaviour
         
         // Başlangıçta gizli
         gameObject.SetActive(false);
+    }
+    
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        UpdateNoteList();
     }
     
     public void UpdateNoteList()
@@ -186,81 +194,28 @@ public class NoteCollectionUI : MonoBehaviour
         gameObject.SetActive(false);
     }
     
+    // BaseUIPanel override metodları
+    public override void ShowPanel()
+    {
+        base.ShowPanel();
+        UpdateNoteList();
+    }
+    
+    public override void HidePanel()
+    {
+        base.HidePanel();
+    }
+    
+    // ESC tuşu ile kapatma
+    protected override void OnEscapePressed()
+    {
+        CloseCollection();
+    }
+    
     private enum NoteFilter
     {
         All,
         Read,
         Unread
-    }
-}
-
-// Not item UI component'i
-public class NoteItemUI : MonoBehaviour
-{
-    [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private Image iconImage;
-    [SerializeField] private Image backgroundImage;
-    [SerializeField] private Color selectedColor = Color.yellow;
-    [SerializeField] private Color normalColor = Color.white;
-    
-    private NoteTextData noteData;
-    private System.Action<NoteTextData> onNoteSelected;
-    private Button button;
-    
-    public NoteTextData NoteData => noteData;
-    
-    private void Awake()
-    {
-        button = GetComponent<Button>();
-        if (button != null)
-        {
-            button.onClick.AddListener(OnClick);
-        }
-    }
-    
-    public void Setup(NoteTextData data, System.Action<NoteTextData> callback)
-    {
-        noteData = data;
-        onNoteSelected = callback;
-        
-        if (titleText != null)
-            titleText.text = data.noteTitle;
-            
-        if (iconImage != null)
-        {
-            if (data.noteIcon != null)
-            {
-                iconImage.sprite = data.noteIcon;
-                iconImage.gameObject.SetActive(true);
-            }
-            else
-            {
-                iconImage.gameObject.SetActive(false);
-            }
-        }
-        
-        // Okunmuş mu kontrol et
-        if (NoteManager.Instance != null)
-        {
-            bool isRead = NoteManager.Instance.IsNoteRead(data.noteID);
-            // Okunmuş notlar için farklı renk veya ikon kullanabilirsin
-            if (backgroundImage != null)
-            {
-                backgroundImage.color = isRead ? Color.gray : normalColor;
-            }
-        }
-    }
-    
-    public void SetSelected(bool selected)
-    {
-        if (backgroundImage != null)
-        {
-            backgroundImage.color = selected ? selectedColor : normalColor;
-        }
-    }
-    
-    private void OnClick()
-    {
-        onNoteSelected?.Invoke(noteData);
     }
 } 
