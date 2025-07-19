@@ -168,6 +168,8 @@ public class TabManager : MonoBehaviour
             return;
         }
 
+        Debug.Log($"TabManager: Tab switching ALLOWED! Current tab: {currentTabIndex}, Total tabs: {tabs.Count}");
+
         if (leftPressed)
         {
             Debug.Log("TabManager: Switching to PREVIOUS tab");
@@ -277,6 +279,7 @@ public class TabManager : MonoBehaviour
         if (tabs.Count <= 1) return;
         
         int nextIndex = (currentTabIndex + 1) % tabs.Count;
+        Debug.Log($"SwitchToNextTab: {currentTabIndex} -> {nextIndex} (Total: {tabs.Count})");
         SelectTab(nextIndex);
         PlayTabSwitchSound();
     }
@@ -286,6 +289,7 @@ public class TabManager : MonoBehaviour
         if (tabs.Count <= 1) return;
         
         int prevIndex = (currentTabIndex - 1 + tabs.Count) % tabs.Count;
+        Debug.Log($"SwitchToPreviousTab: {currentTabIndex} -> {prevIndex} (Total: {tabs.Count})");
         SelectTab(prevIndex);
         PlayTabSwitchSound();
     }

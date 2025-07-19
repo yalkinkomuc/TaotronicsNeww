@@ -12,6 +12,7 @@ public class NoteManager : MonoBehaviour
     
     [Header("Tab Integration")]
     [SerializeField] private TabManager tabManager;
+     // Tab butonu referansı
     
     
     // Singleton pattern
@@ -36,9 +37,6 @@ public class NoteManager : MonoBehaviour
         
         // Kayıtlı notları yükle
         LoadReadNotes();
-        
-        // TabManager'a not koleksiyonu tab'ını ekle
-        SetupNoteCollectionTab();
     }
     
     // Not ekleme
@@ -147,8 +145,8 @@ public class NoteManager : MonoBehaviour
         }
     }
     
-    // TabManager'a not koleksiyonu tab'ını ekleme
-    private void SetupNoteCollectionTab()
+    // TabManager'a not koleksiyonu tab'ını ekleme (manuel olarak yapılacak)
+    public void SetupNoteCollectionTab()
     {
         if (tabManager != null && noteCollectionUI != null)
         {
@@ -156,6 +154,7 @@ public class NoteManager : MonoBehaviour
             {
                 tabName = "Notlar",
                 tabPanel = noteCollectionUI,
+                
                 onTabSelected = () => {
                     // Tab seçildiğinde not listesini güncelle
                     NoteCollectionUI collectionUI = noteCollectionUI.GetComponent<NoteCollectionUI>();

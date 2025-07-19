@@ -150,8 +150,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionPrompt: {fileID: 6089062627410638457}
   noteTextData: {fileID: 0}
-  customNoteTitle: 
-  customNoteText: 
   useCustomText: 0
   destroyAfterReading: 1
 --- !u!1 &6089062627410638457
@@ -241,9 +239,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -1984086357
+  m_SortingLayer: 3
+  m_SortingOrder: 1
   m_Sprite: {fileID: -1428079781, guid: 069a00c4a21d8654bbe27600f3ba7103, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
