@@ -80,16 +80,4 @@ public class Notepad : MonoBehaviour, IInteractable
             interactionPrompt.SetActive(false);
     }
     
-    // Not verilerini dinamik olarak ayarlama metodu
-    public void SetNoteData(string title, string text)
-    {
-        useCustomText = true;
-    }
-    
-    // ScriptableObject'ten not verilerini ayarlama
-    public void SetNoteData(NoteTextData data)
-    {
-        noteTextData = data;
-        useCustomText = false;
-    }
 }

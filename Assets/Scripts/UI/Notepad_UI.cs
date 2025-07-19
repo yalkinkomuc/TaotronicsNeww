@@ -9,7 +9,7 @@ public class Notepad_UI : BaseUIPanel
     [SerializeField] private TextMeshProUGUI contentText;
     
     [SerializeField] private Image noteBackground;
-    [SerializeField] private Image noteIcon;
+    
     
     
     
@@ -58,27 +58,8 @@ public class Notepad_UI : BaseUIPanel
             noteBackground.color = noteColor.Value;
         }
         
-        // İkon ayarla
-        if (icon != null && noteIcon != null)
-        {
-            noteIcon.sprite = icon;
-            noteIcon.gameObject.SetActive(true);
-        }
-        else if (noteIcon != null)
-        {
-            noteIcon.gameObject.SetActive(false);
-        }
-        
         // UI'yi göster
         ShowPanel();
-    }
-    
-    public void ShowNote(NoteTextData noteData)
-    {
-        if (noteData != null)
-        {
-            ShowNote(noteData.noteTitle, noteData.noteText, noteData.noteColor, noteData.noteIcon);
-        }
     }
     
     public void CloseNote()
