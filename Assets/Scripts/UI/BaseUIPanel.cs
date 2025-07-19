@@ -175,4 +175,32 @@ public class BaseUIPanel : MonoBehaviour
             Debug.Log($"BaseUIPanel: '{gameObject.name}' was forced to safe position (center)");
         }
     }
+    
+    // Panel gösterme metodu
+    public virtual void ShowPanel()
+    {
+        gameObject.SetActive(true);
+    }
+    
+    // Panel gizleme metodu
+    public virtual void HidePanel()
+    {
+        gameObject.SetActive(false);
+    }
+    
+    // ESC tuşu ile kapatma desteği
+    protected virtual void Update()
+    {
+        // ESC tuşu ile kapatma (yeni input sistemi)
+        if (PlayerManager.instance?.player?.playerInput?.escapeInput == true && gameObject.activeInHierarchy)
+        {
+            OnEscapePressed();
+        }
+    }
+    
+    // ESC tuşuna basıldığında çağrılacak metod (override edilebilir)
+    protected virtual void OnEscapePressed()
+    {
+        HidePanel();
+    }
 } 
