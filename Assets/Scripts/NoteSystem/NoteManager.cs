@@ -21,6 +21,24 @@ public class NoteManager : MonoBehaviour
     // Okunan notları takip etmek için
     private Dictionary<string, bool> readNotes = new Dictionary<string, bool>();
     
+    // Collected notes persistence
+    private const string CollectedNotesKey = "CollectedNotes"; // PlayerPrefs key
+
+    // Wrap runtime-generated ScriptableObjects so we can recreate them after load
+    [System.Serializable]
+    private class SavedNoteData
+    {
+        public string noteID;
+        public string noteTitle;
+        public string noteText;
+    }
+
+    [System.Serializable]
+    private class SavedNoteDataList
+    {
+        public List<SavedNoteData> notes = new List<SavedNoteData>();
+    }
+    
     private void Awake()
     {
         // Singleton setup
@@ -35,8 +53,9 @@ public class NoteManager : MonoBehaviour
             return;
         }
         
-        // Kayıtlı notları yükle
+        // Kayıtlı verileri yükle
         LoadReadNotes();
+        LoadCollectedNotes();
     }
     
     // Not ekleme
@@ -45,6 +64,9 @@ public class NoteManager : MonoBehaviour
         if (noteData != null && !allNotes.Contains(noteData))
         {
             allNotes.Add(noteData);
+
+            // Persist collection
+            SaveCollectedNotes();
         }
     }
     
@@ -190,6 +212,55 @@ public class NoteManager : MonoBehaviour
             string json = PlayerPrefs.GetString("ReadNotes");
             SerializableDictionary<string, bool> loadedNotes = JsonUtility.FromJson<SerializableDictionary<string, bool>>(json);
             readNotes = loadedNotes.ToDictionary();
+        }
+    }
+
+    // --- Persistence: collected notes ---
+
+    private void SaveCollectedNotes()
+    {
+        SavedNoteDataList wrapper = new SavedNoteDataList();
+
+        foreach (var note in allNotes)
+        {
+            if (note == null) continue;
+            SavedNoteData data = new SavedNoteData
+            {
+                noteID = note.noteID,
+                noteTitle = note.noteTitle,
+                noteText = note.noteText
+            };
+            wrapper.notes.Add(data);
+        }
+
+        string json = JsonUtility.ToJson(wrapper);
+        PlayerPrefs.SetString(CollectedNotesKey, json);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadCollectedNotes()
+    {
+        if (!PlayerPrefs.HasKey(CollectedNotesKey)) return;
+
+        string json = PlayerPrefs.GetString(CollectedNotesKey);
+        if (string.IsNullOrEmpty(json)) return;
+
+        SavedNoteDataList wrapper = JsonUtility.FromJson<SavedNoteDataList>(json);
+        if (wrapper == null || wrapper.notes == null) return;
+
+        foreach (var saved in wrapper.notes)
+        {
+            // Eğer not zaten listede varsa atla
+            bool exists = allNotes.Exists(n => n != null && n.noteID == saved.noteID);
+            if (exists) continue;
+
+            // Runtime'da yeni ScriptableObject oluşturup verileri doldur
+            NoteTextData runtimeNote = ScriptableObject.CreateInstance<NoteTextData>();
+            runtimeNote.noteID = saved.noteID;
+            runtimeNote.noteTitle = saved.noteTitle;
+            runtimeNote.noteText = saved.noteText;
+
+            allNotes.Add(runtimeNote);
         }
     }
     

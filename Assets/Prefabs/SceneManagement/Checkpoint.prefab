@@ -295,8 +295,10 @@ MonoBehaviour:
   promptText: {fileID: 0}
   isActivated: 0
   checkpointLight: {fileID: 1419371170066109509}
-  activeColor: {r: 0.13965869, g: 1, b: 0, a: 0.5}
-  inactiveColor: {r: 0, g: 0, b: 0, a: 0.2}
+  activeColor: {r: 0.13965869, g: 1, b: 0, a: 1}
+  inactiveColor: {r: 1, g: 0.033018887, b: 0.033018887, a: 1}
+  attributesPanel: {fileID: 0}
+  selectionScreen: {fileID: 0}
 --- !u!61 &3244793218693082731
 BoxCollider2D:
   m_ObjectHideFlags: 0
