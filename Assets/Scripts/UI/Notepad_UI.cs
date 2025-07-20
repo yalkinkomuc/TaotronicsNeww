@@ -45,6 +45,8 @@ public class Notepad_UI : BaseUIPanel
     
     public void ShowNote(string title, string content, Color? noteColor = null, Sprite icon = null)
     {
+        Debug.Log("show note called");
+        
         // UI elementlerini güncelle
         if (titleText != null)
             titleText.text = title;
@@ -69,7 +71,7 @@ public class Notepad_UI : BaseUIPanel
         // Animasyonu kaldır, direkt kapat
         if (canvasGroup != null)
         {
-            canvasGroup.alpha = 0f;
+            LeanTween.cancel(canvasGroup.gameObject);
         }
         
         Debug.Log("Direkt HidePanel() çağrılıyor...");

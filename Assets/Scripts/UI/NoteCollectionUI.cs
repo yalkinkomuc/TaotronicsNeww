@@ -2,49 +2,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class NoteCollectionUI : BaseUIPanel
 {
     [Header("UI References")]
     [SerializeField] private Transform noteListParent;
     [SerializeField] private GameObject noteItemPrefab;
-    [SerializeField] private Button closeButton;
-    [SerializeField] private TextMeshProUGUI titleText;
     
-    [Header("Note Display")]
-    [SerializeField] private TextMeshProUGUI selectedNoteTitle;
     [SerializeField] private TextMeshProUGUI selectedNoteContent;
-    [SerializeField] private Image selectedNoteIcon;
     [SerializeField] private GameObject noteDetailPanel;
-    
-    [Header("Filter Options")]
-    [SerializeField] private Button allNotesButton;
-    [SerializeField] private Button readNotesButton;
-    [SerializeField] private Button unreadNotesButton;
     
     private List<NoteItemUI> noteItems = new List<NoteItemUI>();
     private NoteTextData selectedNote;
+    private NoteItemUI lastSelectedItem;
     
     protected override void Awake()
     {
         base.Awake();
-        
-        // Close button event
-        if (closeButton != null)
-        {
-            closeButton.onClick.AddListener(CloseCollection);
-        }
-        
-        // Filter button events
-        if (allNotesButton != null)
-            allNotesButton.onClick.AddListener(() => FilterNotes(NoteFilter.All));
-        if (readNotesButton != null)
-            readNotesButton.onClick.AddListener(() => FilterNotes(NoteFilter.Read));
-        if (unreadNotesButton != null)
-            unreadNotesButton.onClick.AddListener(() => FilterNotes(NoteFilter.Unread));
-        
         // Başlangıçta gizli
         gameObject.SetActive(false);
+    }
+
+    public void DebugTest()
+    {
+        Debug.Log("DebugTest");
     }
     
     protected override void OnEnable()
@@ -70,11 +52,13 @@ public class NoteCollectionUI : BaseUIPanel
                 CreateNoteItem(note);
             }
         }
-        
-        // İlk notu seç
+
+        // Eğer en az bir not varsa, ilk notu otomatik seç
         if (noteItems.Count > 0)
         {
             SelectNote(noteItems[0].NoteData);
+            // İstersen ilk NoteItemUI'ı EventSystem ile seçili de yapabilirsin:
+            // EventSystem.current.SetSelectedGameObject(noteItems[0].gameObject);
         }
     }
     
@@ -87,6 +71,7 @@ public class NoteCollectionUI : BaseUIPanel
         
         if (noteItem != null)
         {
+            // Kullanıcı NoteItemUI üzerindeki button'a tıkladığında, ilgili notun içeriği sağda gözükecek
             noteItem.Setup(noteData, OnNoteSelected);
             noteItems.Add(noteItem);
         }
@@ -109,86 +94,27 @@ public class NoteCollectionUI : BaseUIPanel
         SelectNote(noteData);
     }
     
+    void Update()
+    {
+        GameObject selectedObj = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+        if (selectedObj != null)
+        {
+            NoteItemUI selectedItem = selectedObj.GetComponent<NoteItemUI>();
+            if (selectedItem != null && selectedItem != lastSelectedItem)
+            {
+                lastSelectedItem = selectedItem;
+                SelectNote(selectedItem.NoteData);
+            }
+        }
+    }
+
     private void SelectNote(NoteTextData noteData)
     {
         selectedNote = noteData;
-        
-        // UI'yi güncelle
-        if (selectedNoteTitle != null)
-            selectedNoteTitle.text = noteData.noteTitle;
-            
         if (selectedNoteContent != null)
             selectedNoteContent.text = noteData.noteText;
-            
-        if (selectedNoteIcon != null)
-        {
-            if (noteData.noteIcon != null)
-            {
-                selectedNoteIcon.sprite = noteData.noteIcon;
-                selectedNoteIcon.gameObject.SetActive(true);
-            }
-            else
-            {
-                selectedNoteIcon.gameObject.SetActive(false);
-            }
-        }
-        
-        // Detay panelini göster
-        if (noteDetailPanel != null)
-            noteDetailPanel.SetActive(true);
-        
-        // Seçili item'ı vurgula
-        foreach (var item in noteItems)
-        {
-            if (item != null)
-            {
-                item.SetSelected(item.NoteData == noteData);
-            }
-        }
     }
-    
-    private void FilterNotes(NoteFilter filter)
-    {
-        if (NoteManager.Instance == null) return;
-        
-        List<NoteTextData> filteredNotes = new List<NoteTextData>();
-        
-        switch (filter)
-        {
-            case NoteFilter.All:
-                filteredNotes = NoteManager.Instance.GetAllNotes();
-                break;
-            case NoteFilter.Read:
-                filteredNotes = NoteManager.Instance.GetReadNotes();
-                break;
-            case NoteFilter.Unread:
-                filteredNotes = NoteManager.Instance.GetUnreadNotes();
-                break;
-        }
-        
-        // UI'yi güncelle
-        ClearNoteList();
-        foreach (var note in filteredNotes)
-        {
-            if (note != null)
-            {
-                CreateNoteItem(note);
-            }
-        }
-        
-        // İlk notu seç
-        if (noteItems.Count > 0)
-        {
-            SelectNote(noteItems[0].NoteData);
-        }
-        else
-        {
-            // Hiç not yoksa detay panelini gizle
-            if (noteDetailPanel != null)
-                noteDetailPanel.SetActive(false);
-        }
-    }
-    
+   
     public void CloseCollection()
     {
         gameObject.SetActive(false);
@@ -201,10 +127,6 @@ public class NoteCollectionUI : BaseUIPanel
         UpdateNoteList();
     }
     
-    public override void HidePanel()
-    {
-        base.HidePanel();
-    }
     
     // ESC tuşu ile kapatma
     protected override void OnEscapePressed()
@@ -212,10 +134,5 @@ public class NoteCollectionUI : BaseUIPanel
         CloseCollection();
     }
     
-    private enum NoteFilter
-    {
-        All,
-        Read,
-        Unread
-    }
+ 
 } 
