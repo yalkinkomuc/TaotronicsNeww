@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 
@@ -8,6 +9,8 @@ using System.Collections;
 public class EquipmentUIManager : MonoBehaviour
 {
     public static EquipmentUIManager Instance { get; private set; }
+
+    
     
     [Header("Equipment Slot References")]
     [SerializeField] private UI_EquipmentSlot weaponSlot;
@@ -46,7 +49,17 @@ public class EquipmentUIManager : MonoBehaviour
             StartCoroutine(DelayedSlotSearch());
         }
     }
-    
+
+    private void OnEnable()
+    {
+        
+    }
+
+    private void OnDisable()
+    {
+        
+    }
+
     private void SetupEventListeners()
     {
         // Listen to weapon switching events

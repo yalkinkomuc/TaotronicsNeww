@@ -135,13 +135,12 @@ public class SceneManager : MonoBehaviour
             }
         }
         
-        // Normalde checkpoint varsa, ölüm sonrası checkpoint'e dön
-        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1 && PlayerPrefs.GetInt("PlayerDied", 0) == 1)
+        // Checkpoint aktifse VE aynı sahnedeysek, her zaman checkpoint konumundan başla
+        if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
         {
             int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
             int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            
-            // Eğer yüklenen sahne checkpoint'in olduğu sahne ise
+
             if (currentSceneIndex == checkpointSceneIndex)
             {
                 float x = PlayerPrefs.GetFloat("CheckpointX");
@@ -149,8 +148,8 @@ public class SceneManager : MonoBehaviour
                 Vector2 checkpointPosition = new Vector2(x, y);
                 
                 SpawnPlayerAt(player, checkpointPosition);
-                
-                // Ölüm bayrağını sıfırla
+
+                // Eğer ölümden geliniyorsa bayrağı sıfırla; yoksa zaten 0/1 fark etmez
                 PlayerPrefs.SetInt("PlayerDied", 0);
                 PlayerPrefs.Save();
                 return;
