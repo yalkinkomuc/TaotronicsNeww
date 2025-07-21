@@ -318,69 +318,78 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     
     private WeaponData GetWeaponDataFromStateMachine(WeaponStateMachine weaponStateMachine)
     {
-        // Create WeaponData based on weapon state machine type
-        WeaponData weaponData = ScriptableObject.CreateInstance<WeaponData>();
-        
-        // Set weapon type based on the state machine type
+        // 1) WeaponType'i belirle
+        WeaponType weaponType;
         if (weaponStateMachine is SwordWeaponStateMachine)
-        {
-            weaponData.weaponType = WeaponType.Sword;
-            weaponData.itemName = "Sword";
-            weaponData.rarity = ItemRarity.Common;
-            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/sword");
-            weaponData.minDamage = 15;
-            weaponData.maxDamage = 20;
-            weaponData.equipmentSlot = EquipmentSlot.MainWeapon;
-        }
+            weaponType = WeaponType.Sword;
         else if (weaponStateMachine is BurningSwordStateMachine)
-        {
-            weaponData.weaponType = WeaponType.BurningSword;
-            weaponData.itemName = "Burning Sword";
-            weaponData.rarity = ItemRarity.Rare;
-            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/burning sword");
-            weaponData.minDamage = 20;
-            weaponData.maxDamage = 25;
-            weaponData.equipmentSlot = EquipmentSlot.MainWeapon;
-        }
+            weaponType = WeaponType.BurningSword;
         else if (weaponStateMachine is HammerSwordStateMachine)
-        {
-            weaponData.weaponType = WeaponType.Hammer;
-            weaponData.itemName = "Hammer";
-            weaponData.rarity = ItemRarity.Epic;
-            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/hammer");
-            weaponData.minDamage = 30;
-            weaponData.maxDamage = 35;
-            weaponData.equipmentSlot = EquipmentSlot.MainWeapon;
-        }
+            weaponType = WeaponType.Hammer;
         else if (weaponStateMachine is BoomerangWeaponStateMachine)
-        {
-            weaponData.weaponType = WeaponType.Boomerang;
-            weaponData.itemName = "Boomerang";
-            weaponData.rarity = ItemRarity.Uncommon;
-            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/boomerang");
-            weaponData.minDamage = 12;
-            weaponData.maxDamage = 18;
-            weaponData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
-        }
+            weaponType = WeaponType.Boomerang;
         else if (weaponStateMachine is SpellbookWeaponStateMachine)
-        {
-            weaponData.weaponType = WeaponType.Spellbook;
-            weaponData.itemName = "Spellbook";
-            weaponData.rarity = ItemRarity.Rare;
-            weaponData.icon = Resources.Load<Sprite>("WeaponIcons/spellbook");
-            weaponData.minDamage = 18;
-            weaponData.maxDamage = 22;
-            weaponData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
-        }
+            weaponType = WeaponType.Spellbook;
         else
+            return null; // bilinmeyen
+
+        // 2) BlacksmithManager'dan gerçek asset'i almaya çalış
+        if (BlacksmithManager.Instance != null)
         {
-            // Unknown weapon type
-            return null;
+            var weaponAsset = BlacksmithManager.Instance.GetAllWeapons()
+                                .Find(w => w != null && w.weaponType == weaponType);
+            if (weaponAsset != null)
+            {
+                return weaponAsset; // Gerçek referansı döndür
+            }
         }
-        
-        // Set basic properties
+
+        // 3) Fallback – önceki CreateInstance mantığı (asset bulunamazsa UI boş kalmasın)
+        WeaponData weaponData = ScriptableObject.CreateInstance<WeaponData>();
+        weaponData.weaponType = weaponType;
+        weaponData.equipmentSlot = (weaponType == WeaponType.Boomerang || weaponType == WeaponType.Spellbook)
+                                    ? EquipmentSlot.SecondaryWeapon : EquipmentSlot.MainWeapon;
+
+        switch (weaponType)
+        {
+            case WeaponType.Sword:
+                weaponData.itemName = "Sword";
+                weaponData.rarity = ItemRarity.Common;
+                weaponData.icon = Resources.Load<Sprite>("WeaponIcons/sword");
+                weaponData.minDamage = 15;
+                weaponData.maxDamage = 20;
+                break;
+            case WeaponType.BurningSword:
+                weaponData.itemName = "Burning Sword";
+                weaponData.rarity = ItemRarity.Rare;
+                weaponData.icon = Resources.Load<Sprite>("WeaponIcons/burning sword");
+                weaponData.minDamage = 20;
+                weaponData.maxDamage = 25;
+                break;
+            case WeaponType.Hammer:
+                weaponData.itemName = "Hammer";
+                weaponData.rarity = ItemRarity.Epic;
+                weaponData.icon = Resources.Load<Sprite>("WeaponIcons/hammer");
+                weaponData.minDamage = 30;
+                weaponData.maxDamage = 35;
+                break;
+            case WeaponType.Boomerang:
+                weaponData.itemName = "Boomerang";
+                weaponData.rarity = ItemRarity.Uncommon;
+                weaponData.icon = Resources.Load<Sprite>("WeaponIcons/boomerang");
+                weaponData.minDamage = 12;
+                weaponData.maxDamage = 18;
+                break;
+            case WeaponType.Spellbook:
+                weaponData.itemName = "Spellbook";
+                weaponData.rarity = ItemRarity.Rare;
+                weaponData.icon = Resources.Load<Sprite>("WeaponIcons/spellbook");
+                weaponData.minDamage = 18;
+                weaponData.maxDamage = 22;
+                break;
+        }
+
         weaponData.requiredLevel = 1;
-        
         return weaponData;
     }
     

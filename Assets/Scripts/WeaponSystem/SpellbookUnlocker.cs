@@ -79,6 +79,8 @@ public class SpellbookUnlocker : MonoBehaviour
                                 .Find(w => w.weaponType == WeaponType.Spellbook);
             if (spellbookData != null)
             {
+                // Spellbook asset'inde slot yanlış tanımlı ise düzelt
+                spellbookData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
                 EquipmentManager.Instance.EquipItem(spellbookData);
             }
         }
