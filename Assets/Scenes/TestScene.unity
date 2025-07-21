@@ -42657,6 +42657,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Notebook_UI
       objectReference: {fileID: 0}
+    - target: {fileID: 9025914747208289038, guid: 224a30c75e579884cae7ecf0dac9b0ac, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -43004,6 +43008,10 @@ PrefabInstance:
     - target: {fileID: 5494369623175931742, guid: 751ab90e2c6b30a42af7ebd8178caa58, type: 3}
       propertyPath: m_Name
       value: BlacksmithUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5494369623175931742, guid: 751ab90e2c6b30a42af7ebd8178caa58, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9156149775087124312, guid: 751ab90e2c6b30a42af7ebd8178caa58, type: 3}
       propertyPath: m_Pivot.x
@@ -43786,6 +43794,10 @@ PrefabInstance:
     - target: {fileID: 5264814957411390564, guid: e15a560d0fdebb8409aeb4f0bb04b5f8, type: 3}
       propertyPath: m_Name
       value: Chest_UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5264814957411390564, guid: e15a560d0fdebb8409aeb4f0bb04b5f8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -35,6 +35,7 @@ public class BasicArmorStateMachine : ArmorStateMachine
 
         // Bool yerine integer kullanıyoruz
         animator.SetInteger("ArmorSwordComboCounter", 0);
+        animator.SetInteger("ArmorHammerComboCounter", 0);
 
         switch (currentState)
         {
