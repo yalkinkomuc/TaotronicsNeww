@@ -68,7 +68,7 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         if (index < 0 || index >= weapons.Length || weapons[index] == null)
         {
-            Debug.LogError($"Invalid secondary weapon index: {index}");
+            Debug.Log($"Invalid secondary weapon index: {index}");
             return;
         }
         

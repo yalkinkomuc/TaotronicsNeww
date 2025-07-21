@@ -34,7 +34,7 @@ public class PlayerAnimTriggers : MonoBehaviour
    private void ThrowBoomerangTrigger() => player.ThrowBoomerang();
    
    // Fireball spell animation trigger - called from animation event
-   private void FireballSpellTrigger()
+   public void FireballSpellTrigger()
    {
       if (player.stateMachine.currentState is PlayerFireballSpellState fireballState)
       {
@@ -269,7 +269,7 @@ public class PlayerAnimTriggers : MonoBehaviour
    }
 
    // Earth Push spell animation event trigger - called when player's foot hits the ground
-   private void EarthPushTrigger()
+   public void EarthPushTrigger()
    {
       if (player.stateMachine.currentState is PlayerEarthPushSpellState && player.earthPushPrefab != null)
       {

@@ -262,7 +262,15 @@ public class BasicArmorStateMachine : ArmorStateMachine
     {
         playerAnimTriggers.AnimationTrigger();
     }
-    
-   
+
+    public void CallFireballTrigger()
+    {
+        playerAnimTriggers.FireballSpellTrigger();
+    }
+
+    public void CallEarthPushTrigger()
+    {
+        playerAnimTriggers.EarthPushTrigger();
+    }
     
 }
