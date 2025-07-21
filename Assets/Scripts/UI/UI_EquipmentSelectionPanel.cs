@@ -390,6 +390,13 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 weaponData.minDamage = 18;
                 weaponData.maxDamage = 22;
                 break;
+            case WeaponType.Shield:
+                weaponData.itemName = "Shield";
+                weaponData.rarity = ItemRarity.Uncommon;
+                weaponData.icon = Resources.Load<Sprite>("WeaponIcons/shield");
+                weaponData.minDamage = 0;
+                weaponData.maxDamage = 0;
+                break;
         }
 
         weaponData.requiredLevel = 1;

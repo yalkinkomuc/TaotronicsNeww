@@ -329,12 +329,17 @@ public class EquipmentManager : MonoBehaviour
                     Debug.Log($"[EquipmentManager] Fallback: Auto-equipped main weapon: {sword.itemName}");
                 }
                 
-                // Find and equip initial secondary weapon (Boomerang by default)
-                var boomerang = weapons.Find(w => w.weaponType == WeaponType.Boomerang);
-                if (boomerang != null && currentSecondaryWeapon == null)
+                // Find and equip initial secondary weapon (prefer Boomerang, then Shield, Spellbook)
+                if (currentSecondaryWeapon == null)
                 {
-                    currentSecondaryWeapon = boomerang;
-                    Debug.Log($"[EquipmentManager] Auto-equipped secondary weapon: {boomerang.itemName}");
+                    WeaponData sec = weapons.Find(w => w.weaponType == WeaponType.Boomerang) ??
+                                      weapons.Find(w => w.weaponType == WeaponType.Shield) ??
+                                      weapons.Find(w => w.weaponType == WeaponType.Spellbook);
+                    if (sec != null)
+                    {
+                        currentSecondaryWeapon = sec;
+                        Debug.Log($"[EquipmentManager] Auto-equipped secondary weapon: {sec.itemName}");
+                    }
                 }
             }
         }
