@@ -157,7 +157,8 @@ public class PlayerWeaponManager : MonoBehaviour
     private bool IsSecondaryWeapon(WeaponStateMachine weapon)
     {
         return weapon is BoomerangWeaponStateMachine || 
-               weapon is SpellbookWeaponStateMachine;
+               weapon is SpellbookWeaponStateMachine ||
+               weapon is ShieldStateMachine;
     }
     
     private int GetNextSecondaryWeaponIndex()
@@ -210,6 +211,10 @@ public class PlayerWeaponManager : MonoBehaviour
             else if (weapons[i] is SpellbookWeaponStateMachine)
             {
                 types[i] = WeaponType.Spellbook;
+            }
+            else if (weapons[i] is ShieldStateMachine)
+            {
+                types[i] = WeaponType.Shield;
             }
             else if (weapons[i] is BurningSwordStateMachine)
             {

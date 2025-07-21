@@ -196,4 +196,5 @@ public enum WeaponType
     Spellbook = 2,
     BurningSword=3,
     Hammer=4,
+    Shield=5,
 } 

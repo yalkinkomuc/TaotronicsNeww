@@ -126,6 +126,7 @@ public class Player : Entity
     public SwordWeaponStateMachine swordWeapon;
     public BurningSwordStateMachine burningSword;
     public HammerSwordStateMachine hammer;
+    public ShieldStateMachine shield;
     
     [Header("Armor References")]
     public ArmorStateMachine basicArmor;
@@ -425,6 +426,11 @@ public class Player : Entity
         if (burningSword == null)
         {
             burningSword = GetComponentInChildren<BurningSwordStateMachine>();
+        }
+
+        if (shield == null)
+        {
+            shield = GetComponentInChildren<ShieldStateMachine>();
         }
 
         if (basicArmor == null)
@@ -1204,6 +1210,7 @@ public class Player : Entity
         spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>(true);
         hammer = GetComponentInChildren<HammerSwordStateMachine>(true);
         burningSword = GetComponentInChildren<BurningSwordStateMachine>(true);
+        shield = GetComponentInChildren<ShieldStateMachine>(true);
         basicArmor = GetComponentInChildren<BasicArmorStateMachine>(true);
     }
     
@@ -1338,7 +1345,8 @@ public class Player : Entity
     private bool IsSecondaryWeapon(WeaponStateMachine weapon)
     {
         return weapon is BoomerangWeaponStateMachine || 
-               weapon is SpellbookWeaponStateMachine;
+               weapon is SpellbookWeaponStateMachine || 
+               weapon is ShieldStateMachine;
     }
 
     #endregion
