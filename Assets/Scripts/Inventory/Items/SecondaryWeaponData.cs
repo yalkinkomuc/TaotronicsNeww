@@ -49,9 +49,7 @@ public class SecondaryWeaponData : EquipmentData
 public enum SecondaryWeaponType
 {
     Shield = 0,
-    Orb = 1,
-    Tome = 2,
-    Quiver = 3,
-    Charm = 4,
-    Relic = 5
+    Spellbook = 1,
+    Boomerang = 2
+    
 } 

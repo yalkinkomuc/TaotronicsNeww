@@ -8,6 +8,8 @@ public class BlacksmithManager : MonoBehaviour
     
     [Header("Weapon Database")]
     public List<WeaponData> weaponDatabase = new List<WeaponData>();
+
+    public List<SecondaryWeaponData> secondaryWeaponDataBase = new List<SecondaryWeaponData>();
     
     // Dictionary to store currently active weapon upgrades (original ScriptableObjects)
     private Dictionary<string, WeaponData> activeWeapons = new Dictionary<string, WeaponData>();

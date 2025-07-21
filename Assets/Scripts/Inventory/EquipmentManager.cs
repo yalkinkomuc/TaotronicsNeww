@@ -7,10 +7,10 @@ public class EquipmentManager : MonoBehaviour
     public static EquipmentManager Instance { get; private set; }
     
     [Header("Equipment Slots")]
-    [SerializeField] private EquipmentData currentWeapon;
-    [SerializeField] private EquipmentData currentArmor;
-    [SerializeField] private EquipmentData currentSecondaryWeapon;
-    [SerializeField] private EquipmentData currentAccessory;
+    [SerializeField] private WeaponData currentWeapon;
+    [SerializeField] private ArmorData currentArmor;
+    [SerializeField] private WeaponData currentSecondaryWeapon;
+    [SerializeField] private AccessoryData currentAccessory;
     
     [Header("Rune Slots")]
     [SerializeField] private RuneData[] equippedRunes = new RuneData[6];
@@ -70,7 +70,14 @@ public class EquipmentManager : MonoBehaviour
     public bool EquipItem(EquipmentData equipment)
     {
         if (equipment == null) return false;
-        
+
+        // Validate item-slot compatibility
+        if (!IsItemCompatibleWithSlot(equipment, equipment.equipmentSlot))
+        {
+            Debug.LogWarning($"[EquipmentManager] Cannot equip {equipment.itemName} to {equipment.equipmentSlot} – incompatible type.");
+            return false;
+        }
+
         // Check if player meets level requirement
         if (playerStats != null && playerStats.GetLevel() < equipment.requiredLevel)
         {
@@ -90,16 +97,16 @@ public class EquipmentManager : MonoBehaviour
         switch (equipment.equipmentSlot)
         {
             case EquipmentSlot.MainWeapon:
-                currentWeapon = equipment;
+                currentWeapon = equipment as WeaponData;
                 break;
             case EquipmentSlot.Armor:
-                currentArmor = equipment;
+                currentArmor = equipment as ArmorData;
                 break;
             case EquipmentSlot.SecondaryWeapon:
-                currentSecondaryWeapon = equipment;
+                currentSecondaryWeapon = equipment as WeaponData;
                 break;
             case EquipmentSlot.Accessory:
-                currentAccessory = equipment;
+                currentAccessory = equipment as AccessoryData;
                 break;
         }
         
@@ -363,6 +370,10 @@ public class EquipmentManager : MonoBehaviour
         {
             return WeaponType.Spellbook;
         }
+        else if (stateMachine is ShieldStateMachine)
+        {
+            return WeaponType.Shield;
+        }
         
         return WeaponType.Sword; // Default fallback
     }
@@ -422,6 +433,10 @@ public class EquipmentManager : MonoBehaviour
         {
             return weapons.Find(w => w.weaponType == WeaponType.Hammer);
         }
+        else if (stateMachine is ShieldStateMachine)
+        {
+            return weapons.Find(w => w.weaponType == WeaponType.Shield);
+        }
         
         return null;
     }
@@ -439,7 +454,7 @@ public class EquipmentManager : MonoBehaviour
     /// </summary>
     public WeaponData GetCurrentSecondaryWeapon()
     {
-        return currentSecondaryWeapon as WeaponData;
+        return currentSecondaryWeapon;
     }
     
     #endregion
@@ -464,5 +479,48 @@ public class EquipmentManager : MonoBehaviour
     {
         // Unsubscribe from events
         PlayerWeaponManager.OnSecondaryWeaponChanged -= OnPlayerSecondaryWeaponChanged;
+    }
+
+    /// <summary>
+    /// Ensure only correct item categories are equipped into each slot.
+    /// </summary>
+    private bool IsItemCompatibleWithSlot(EquipmentData equipment, EquipmentSlot targetSlot)
+    {
+        switch (targetSlot)
+        {
+            case EquipmentSlot.MainWeapon:
+                if (equipment is WeaponData weapon)
+                {
+                    return IsPrimaryWeaponType(weapon.weaponType);
+                }
+                return false;
+
+            case EquipmentSlot.SecondaryWeapon:
+                if (equipment is WeaponData secWeapon)
+                {
+                    return IsSecondaryWeaponType(secWeapon.weaponType);
+                }
+                // Allow SecondaryWeaponData scriptable objects as well
+                return equipment is SecondaryWeaponData;
+
+            case EquipmentSlot.Armor:
+                return equipment is ArmorData;
+
+            case EquipmentSlot.Accessory:
+                return equipment is AccessoryData;
+
+            default:
+                return false;
+        }
+    }
+
+    private bool IsPrimaryWeaponType(WeaponType type)
+    {
+        return type == WeaponType.Sword || type == WeaponType.BurningSword || type == WeaponType.Hammer;
+    }
+
+    private bool IsSecondaryWeaponType(WeaponType type)
+    {
+        return type == WeaponType.Boomerang || type == WeaponType.Spellbook || type == WeaponType.Shield;
     }
 } 

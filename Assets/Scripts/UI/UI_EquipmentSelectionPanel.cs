@@ -295,9 +295,10 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                                 matchingWeapons.Add(weapon);
                             }
                         }
-                        // Secondary weapons: Boomerang, Spellbook
+                        // Secondary weapons: Boomerang, Spellbook, Shield
                         else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 
-                                                      weapon.weaponType == WeaponType.Spellbook))
+                                                      weapon.weaponType == WeaponType.Spellbook ||
+                                                      weapon.weaponType == WeaponType.Shield))
                         {
                             // Don't add if this weapon is currently equipped
                             if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
@@ -330,6 +331,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponType = WeaponType.Boomerang;
         else if (weaponStateMachine is SpellbookWeaponStateMachine)
             weaponType = WeaponType.Spellbook;
+        else if (weaponStateMachine is ShieldStateMachine)
+            weaponType = WeaponType.Shield;
         else
             return null; // bilinmeyen
 
@@ -507,7 +510,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                        currentWeaponData.weaponType == WeaponType.Hammer)) ||
                      (currentSlotType == EquipmentSlot.SecondaryWeapon && 
                       (currentWeaponData.weaponType == WeaponType.Boomerang || 
-                       currentWeaponData.weaponType == WeaponType.Spellbook))))
+                       currentWeaponData.weaponType == WeaponType.Spellbook ||
+                       currentWeaponData.weaponType == WeaponType.Shield))))
                 {
                     weaponStateMachine.gameObject.SetActive(false);
                 }
