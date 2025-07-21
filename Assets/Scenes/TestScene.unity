@@ -41332,6 +41332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 3478122842100113614}
+  playerAnimTriggers: {fileID: 2212682187912483725}
 --- !u!212 &711547003830937419
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -43257,6 +43258,7 @@ MonoBehaviour:
   swordWeapon: {fileID: 0}
   burningSword: {fileID: 0}
   hammer: {fileID: 0}
+  basicArmor: {fileID: 0}
   boomerangCooldown: 1.5
   isBoomerangInAir: 0
   iceShardManaCost: 20

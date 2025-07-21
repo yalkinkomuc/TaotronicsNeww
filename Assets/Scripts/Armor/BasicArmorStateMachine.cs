@@ -1,7 +1,12 @@
+using System;
 using UnityEngine;
 
 public class BasicArmorStateMachine : ArmorStateMachine
 {
+    [SerializeField] private PlayerAnimTriggers playerAnimTriggers;
+    
+    
+
     protected override void Start()
     {
         base.Start(); // Üst sınıftaki Start metodunu çağır
@@ -21,6 +26,7 @@ public class BasicArmorStateMachine : ArmorStateMachine
         animator.SetBool("ArmorJump", false);
 
         animator.SetBool("ArmorAttack", false);
+        animator.SetBool("ArmorHammerAttack", false); // hammer yapıldı
         animator.SetBool("ArmorGroundDash", false);
         animator.SetBool("ArmorCrouch", false);
         animator.SetBool("ArmorGroundAttack", false);
@@ -35,7 +41,7 @@ public class BasicArmorStateMachine : ArmorStateMachine
 
         // Bool yerine integer kullanıyoruz
         animator.SetInteger("ArmorSwordComboCounter", 0);
-        animator.SetInteger("ArmorHammerComboCounter", 0);
+        animator.SetInteger("ArmorHammerComboCounter", 0); // hammer yapıldı
 
         switch (currentState)
         {
@@ -204,4 +210,59 @@ public class BasicArmorStateMachine : ArmorStateMachine
             ChangeState(ArmorState.FireballSpell);
         }
     }
+
+    public void CallPauseSpell2Animation()
+    {
+        
+        if (player.stateMachine.currentState is PlayerSpell2State spell2State)
+        {
+            // SkillManager kontrolü - Fire Spell açık mı?
+            if (SkillManager.Instance != null && !SkillManager.Instance.IsSkillUnlocked("FireSpell"))
+            {
+                // Fire Spell açık değilse animasyonu durdurma ve idle state'ine geç
+                Debug.Log("Fire Spell not unlocked, cancelling animation!");
+                player.stateMachine.ChangeState(player.idleState);
+                return;
+            }
+         
+            // Animation'ı durdur
+            animator.speed = 0;
+         
+            // Spellbook ve sword için de aynı frame'de durduralım
+            if (player.spellbookWeapon != null)
+            {
+                player.spellbookWeapon.animator.speed = 0;
+            }
+            if (player.swordWeapon != null)
+            {
+                player.swordWeapon.animator.speed = 0;
+            }
+
+            if (player.hammer != null)
+            {
+                player.hammer.animator.speed = 0;
+            }
+
+            if (player.burningSword != null)
+            {
+                player.burningSword.animator.speed = 0;
+            }
+         
+            // Fire Spell'i spawn et
+            spell2State.SpawnFireSpell();
+        }
+    }
+
+    public void CallSpell1Trigger()
+    {
+        playerAnimTriggers.SpellOneTrigger();
+    }
+
+    public void CallAnimationTrigger()
+    {
+        playerAnimTriggers.AnimationTrigger();
+    }
+    
+   
+    
 }

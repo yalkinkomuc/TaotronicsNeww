@@ -8,7 +8,7 @@ public abstract class ArmorStateMachine : MonoBehaviour
 
     protected virtual void Start()
     {
-        animator = GetComponent<Animator>();
+        
         player = GetComponentInParent<Player>();
     }
 

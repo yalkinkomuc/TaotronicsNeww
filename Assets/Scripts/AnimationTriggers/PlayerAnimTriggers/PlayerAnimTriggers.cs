@@ -26,7 +26,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       };
    }
 
-   private void AnimationTrigger()
+   public void AnimationTrigger()
    {
       player.AnimationFinishTrigger();
    }
@@ -263,7 +263,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       }
    }
 
-   private void SpellOneTrigger()
+   public void SpellOneTrigger()
    {
       player.SpellOneTrigger();
    }

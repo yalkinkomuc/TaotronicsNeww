@@ -5,6 +5,7 @@ public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
+    private const string SPELL2_ARMOR_ANIM_NAME = "Armor_Spell2";
     private const float MAX_CHARGE_TIME = 1000f;
     private float currentChargeTime;
     private bool isSpellActive;
@@ -52,6 +53,7 @@ public class PlayerSpell2State : PlayerState
         isSpellActive = false;
         
         player.anim.Play(SPELL2_ANIM_NAME);
+        player.anim.Play(SPELL2_ARMOR_ANIM_NAME);
     }
 
     public override void Update()
@@ -91,25 +93,30 @@ public class PlayerSpell2State : PlayerState
         CleanupSpell();
         
         player.anim.speed = 1;
+        if (player.basicArmor != null && player.basicArmor.animator != null)
+        {
+            player.basicArmor.animator.speed = 1;
+        }
         
-        if (player.spellbookWeapon != null)
+        if (player.spellbookWeapon?.animator != null)
         {
             player.spellbookWeapon.animator.speed = 1;
         }
-        if (player.swordWeapon != null)
+        if (player.swordWeapon?.animator != null)
         {
             player.swordWeapon.animator.speed = 1;
         }
 
-        if (player.burningSword != null)
+        if (player.burningSword?.animator != null)
         {
             player.burningSword.animator.speed = 1;
         }
 
-        if (player.hammer != null)
+        if (player.hammer?.animator != null)
         {
             player.hammer.animator.speed = 1;
         }
+        
     }
 
     private void CleanupSpell()

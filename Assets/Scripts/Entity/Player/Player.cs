@@ -126,6 +126,9 @@ public class Player : Entity
     public SwordWeaponStateMachine swordWeapon;
     public BurningSwordStateMachine burningSword;
     public HammerSwordStateMachine hammer;
+    
+    [Header("Armor References")]
+    public ArmorStateMachine basicArmor;
 
     [Header("Boomerang Settings")]
     [SerializeField] private float boomerangCooldown = 2f;
@@ -247,7 +250,7 @@ public class Player : Entity
         ResetPlayerFacing();
         LoadCheckpoint();
 
-        AssignWeapons();
+        AssignEquipments();
     }
 
     
@@ -397,7 +400,7 @@ public class Player : Entity
         fireballSpellState = new PlayerFireballSpellState(this, stateMachine, "Fireball");
     }
     
-    private void AssignWeapons()
+    private void AssignEquipments()
     {
         if (boomerangWeapon == null)
         {
@@ -423,6 +426,12 @@ public class Player : Entity
         {
             burningSword = GetComponentInChildren<BurningSwordStateMachine>();
         }
+
+        if (basicArmor == null)
+        {
+            basicArmor = GetComponentInChildren<BasicArmorStateMachine>();
+        }
+
         
         
     }
@@ -1188,13 +1197,14 @@ public class Player : Entity
     
     #region WeaponManagement
 
-    private void UpdateWeaponReferences()
+    private void UpdateWeaponReferences() 
     {
         // Tüm silah referanslarını güncelle (aktif veya inaktif)
         boomerangWeapon = GetComponentInChildren<BoomerangWeaponStateMachine>(true);
         spellbookWeapon = GetComponentInChildren<SpellbookWeaponStateMachine>(true);
         hammer = GetComponentInChildren<HammerSwordStateMachine>(true);
         burningSword = GetComponentInChildren<BurningSwordStateMachine>(true);
+        basicArmor = GetComponentInChildren<BasicArmorStateMachine>(true);
     }
     
     public void HideWeapons()
