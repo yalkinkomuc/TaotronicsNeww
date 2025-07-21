@@ -231,7 +231,7 @@ public class Player : Entity
             }
         }
         
-        playerInput = new NewInputSystem(); // PCInputa çevirebilirsin********************
+        playerInput = new NewInputSystem(); 
         stateMachine = new PlayerStateMachine();
         
         

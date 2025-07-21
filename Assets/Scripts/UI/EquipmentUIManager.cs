@@ -62,8 +62,8 @@ public class EquipmentUIManager : MonoBehaviour
 
     private void SetupEventListeners()
     {
-        // Listen to weapon switching events
-        PlayerWeaponManager.OnSecondaryWeaponChanged += OnSecondaryWeaponChanged;
+        // Listen to weapon switching events - NO LONGER NEEDED
+        // PlayerWeaponManager.OnSecondaryWeaponChanged += OnSecondaryWeaponChanged;
         
         // Listen to equipment changes if EquipmentManager exists
         if (EquipmentManager.Instance != null)
@@ -216,18 +216,18 @@ public class EquipmentUIManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Called when secondary weapon changes
+    /// Called when secondary weapon changes - NO LONGER NEEDED
     /// </summary>
-    private void OnSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)
-    {
-        Debug.Log($"[EquipmentUIManager] Secondary weapon changed: Index {weaponIndex}, Weapon: {weaponStateMachine?.name}");
+    // private void OnSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)
+    // {
+    //     Debug.Log($"[EquipmentUIManager] Secondary weapon changed: Index {weaponIndex}, Weapon: {weaponStateMachine?.name}");
         
-        // Update secondary weapon slot specifically
-        UpdateEquipmentSlot(secondaryWeaponSlot, "Secondary Weapon");
+    //     // Update secondary weapon slot specifically
+    //     UpdateEquipmentSlot(secondaryWeaponSlot, "Secondary Weapon");
         
-        // Also update main weapon slot if needed
-        UpdateEquipmentSlot(weaponSlot, "Main Weapon");
-    }
+    //     // Also update main weapon slot if needed
+    //     UpdateEquipmentSlot(weaponSlot, "Main Weapon");
+    // }
     
     /// <summary>
     /// Called when any equipment changes (if EquipmentManager is available)
@@ -275,7 +275,7 @@ public class EquipmentUIManager : MonoBehaviour
     private void OnDestroy()
     {
         // Unsubscribe from events
-        PlayerWeaponManager.OnSecondaryWeaponChanged -= OnSecondaryWeaponChanged;
+        // PlayerWeaponManager.OnSecondaryWeaponChanged -= OnSecondaryWeaponChanged;
         
         if (EquipmentManager.Instance != null)
         {

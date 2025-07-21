@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class PlayerWeaponManager : MonoBehaviour
 {
-    // Static event for weapon switching
-    public static event Action<int, WeaponStateMachine> OnSecondaryWeaponChanged;
+    // Static event for weapon switching - NO LONGER NEEDED
+    // public static event Action<int, WeaponStateMachine> OnSecondaryWeaponChanged;
     
     public WeaponStateMachine[] weapons;
     private int currentSecondaryWeaponIndex = -1; // Will be set to first secondary weapon found
@@ -20,21 +20,36 @@ public class PlayerWeaponManager : MonoBehaviour
     private Player player;
     private PlayerStats playerStats;
 
+    private void Awake()
+    {
+        Debug.Log(currentSecondaryWeaponIndex);
+        Debug.Log(GetCurrentSecondaryWeaponIndex());
+        
+        
+    }
+
+    private void Update()
+    {
+        Debug.Log(currentSecondaryWeaponIndex);
+        Debug.Log(GetCurrentSecondaryWeaponIndex());
+        int testIndex = PlayerPrefs.GetInt("EquippedSecondaryWeaponType", -1);
+        Debug.Log(testIndex);
+    }
+
     void Start()
     {
-        if (weapons.Length < 2)
-        {
-            return;
-        }
-        
         player = GetComponent<Player>();
         playerStats = GetComponent<PlayerStats>();
+        int saved = PlayerPrefs.GetInt("EquippedSecondaryWeaponType", -1);
+        Debug.Log($"START: Okunan secondary type = {(WeaponType)saved}");
+        
+        
+        
         
         InitializeAllWeapons();
         
         ActivatePrimaryWeapon(startingWeaponIndex);
         
-        currentSecondaryWeaponIndex = GetFirstSecondaryWeaponIndex();
         if (currentSecondaryWeaponIndex != -1)
         {
             EquipSecondaryWeapon(currentSecondaryWeaponIndex);
@@ -45,22 +60,25 @@ public class PlayerWeaponManager : MonoBehaviour
             BlacksmithManager.Instance.ApplyWeaponUpgrades(playerStats);
         }
         
-        if (currentSecondaryWeaponIndex != -1 && currentSecondaryWeaponIndex < weapons.Length)
-        {
-            OnSecondaryWeaponChanged?.Invoke(currentSecondaryWeaponIndex, weapons[currentSecondaryWeaponIndex]);
-        }
     }
 
    public void EquipSecondaryWeapon(int index)
     {
-        if (index < 0 || index >= weapons.Length || weapons[index] == null)
+        // Eğer gönderilen index geçersizse veya secondary silah değilse ilk geçerli secondary'yi bul
+        if (index < 0 || index >= weapons.Length || weapons[index] == null || !IsSecondaryWeapon(weapons[index]))
         {
-            Debug.Log($"Invalid secondary weapon index: {index}");
+            index = GetFirstSecondaryWeaponIndex();
+        }
+
+        // Hâlâ bulunamadıysa çık
+        if (index == -1)
+        {
+            Debug.LogWarning("No secondary weapon found to equip!");
             return;
         }
-        
-        currentSecondaryWeaponIndex = index;
 
+        currentSecondaryWeaponIndex = index;
+ 
         // Only affect secondary weapons - disable all secondary weapons first
         for (int i = 0; i < weapons.Length; i++)
         {
@@ -74,6 +92,12 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             weapons[index].gameObject.SetActive(true);
             
+            // Equip via EquipmentManager so that single OnEquipmentChanged event kullanılır
+            if (EquipmentManager.Instance != null)
+            {
+                EquipmentManager.Instance.EquipSecondaryByStateMachine(weapons[index]);
+            }
+
             if (player != null)
             {
                 if (weapons[index] is BoomerangWeaponStateMachine)
@@ -84,28 +108,45 @@ public class PlayerWeaponManager : MonoBehaviour
                 {
                     player.UpdateLastActiveWeapon(WeaponState.Spell1);
                 }
+                else if (weapons[index] is ShieldStateMachine)
+                {
+                    player.UpdateLastActiveWeapon(WeaponState.Idle);
+                }
             }
         }
         else
         {
             Debug.LogError($"Weapon at index {index} is not a secondary weapon!");
         }
-        UpdateUISlots();
+        // UpdateUISlots(); - NO LONGER NEEDED, EquipSecondaryByStateMachine handles it.
+    }
+
+    // Dizideki ilk secondary silah index'ini döndür
+    private int GetFirstSecondaryWeaponIndex()
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
     
-    private void UpdateUISlots()
-    {
-        if (AdvancedInventoryUI.Instance != null)
-        {
-            AdvancedInventoryUI.Instance.UpdateEquipmentSlots();
-        }
+    // private void UpdateUISlots() - NO LONGER NEEDED
+    // {
+    //     if (AdvancedInventoryUI.Instance != null)
+    //     {
+    //         AdvancedInventoryUI.Instance.UpdateEquipmentSlots();
+    //     }
         
-        OnSecondaryWeaponChanged?.Invoke(currentSecondaryWeaponIndex, weapons[currentSecondaryWeaponIndex]);
-    }
+    //     OnSecondaryWeaponChanged?.Invoke(currentSecondaryWeaponIndex, weapons[currentSecondaryWeaponIndex]);
+    // }
     public void RefreshWeaponVisibility()
     {
         ActivatePrimaryWeapon(GetCurrentPrimaryWeaponIndex());
-        EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+        EquipSecondaryWeapon(GetCurrentSecondaryWeaponIndex());
     }
     private void InitializeAllWeapons()
     {
@@ -161,38 +202,10 @@ public class PlayerWeaponManager : MonoBehaviour
                weapon is ShieldStateMachine;
     }
     
-    private int GetNextSecondaryWeaponIndex()
-    {
-        // Find all secondary weapon indices
-        List<int> secondaryIndices = new List<int>();
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
-            {
-                secondaryIndices.Add(i);
-            }
-        }
-        if (secondaryIndices.Count == 0) return -1;
-        
-        int currentIndexInList = secondaryIndices.IndexOf(currentSecondaryWeaponIndex);
-      
-        int nextIndexInList = (currentIndexInList + 1) % secondaryIndices.Count;
-        
-        return secondaryIndices[nextIndexInList];
-    }
+  
     
     // Get first secondary weapon index
-    private int GetFirstSecondaryWeaponIndex()
-    {
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
+   
    
     public WeaponType[] GetEquippedWeaponTypes()
     {
@@ -226,5 +239,25 @@ public class PlayerWeaponManager : MonoBehaviour
             }
         }
         return types;
+    }
+
+    // Helper method to find weapon index by WeaponType
+    private int GetWeaponIndexByType(WeaponType type)
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] == null) continue;
+
+            // Sadece secondary silahlar taransın
+            if (!IsSecondaryWeapon(weapons[i])) continue;
+
+            if ((type == WeaponType.Boomerang && weapons[i] is BoomerangWeaponStateMachine) ||
+                (type == WeaponType.Spellbook && weapons[i] is SpellbookWeaponStateMachine) ||
+                (type == WeaponType.Shield && weapons[i] is ShieldStateMachine))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }

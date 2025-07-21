@@ -260,7 +260,12 @@ public class Checkpoint : MonoBehaviour, IInteractable
     {
         Player player = PlayerManager.instance?.player;
         if (player == null) return;
-        
+        // Persist equipped weapons using EquipmentManager if available
+        if (EquipmentManager.Instance != null)
+        {
+            EquipmentManager.Instance.SaveEquipment();
+        }
+ 
         // Silah durumlarını kaydet
         if (player.boomerangWeapon != null)
             PlayerPrefs.SetInt("HasBoomerang", player.boomerangWeapon.gameObject.activeInHierarchy ? 1 : 0);

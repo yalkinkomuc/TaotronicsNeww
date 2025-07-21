@@ -396,6 +396,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 weaponData.icon = Resources.Load<Sprite>("WeaponIcons/shield");
                 weaponData.minDamage = 0;
                 weaponData.maxDamage = 0;
+                weaponData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
                 break;
         }
 
@@ -485,15 +486,27 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         for (int i = 0; i < weaponManager.weapons.Length; i++)
         {
             var weaponStateMachine = weaponManager.weapons[i];
-            if (weaponStateMachine != null)
+            if (weaponStateMachine == null) continue;
+
+            WeaponData weaponData = GetWeaponDataFromStateMachine(weaponStateMachine);
+            if (weaponData == null) continue;
+
+            // Slot türüne göre doğru kategori silahı arıyoruz
+            bool isSecondarySM = weaponStateMachine is BoomerangWeaponStateMachine ||
+                                 weaponStateMachine is SpellbookWeaponStateMachine ||
+                                 weaponStateMachine is ShieldStateMachine;
+            bool isPrimarySM = weaponStateMachine is SwordWeaponStateMachine ||
+                                weaponStateMachine is BurningSwordStateMachine ||
+                                weaponStateMachine is HammerSwordStateMachine;
+
+            if (currentSlotType == EquipmentSlot.SecondaryWeapon && !isSecondarySM) continue;
+            if (currentSlotType == EquipmentSlot.MainWeapon && !isPrimarySM) continue;
+
+            if (weaponData.weaponType == selectedWeapon.weaponType)
             {
-                WeaponData weaponData = GetWeaponDataFromStateMachine(weaponStateMachine);
-                if (weaponData != null && weaponData.weaponType == selectedWeapon.weaponType)
-                {
-                    selectedWeaponStateMachine = weaponStateMachine;
-                    selectedIndex = i;
-                    break;
-                }
+                selectedWeaponStateMachine = weaponStateMachine;
+                selectedIndex = i;
+                break;
             }
         }
 
@@ -533,6 +546,10 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         else
         {
             selectedWeaponStateMachine.gameObject.SetActive(true);
+            if (currentSlotType == EquipmentSlot.SecondaryWeapon && selectedIndex != -1)
+            {
+                weaponManager.EquipSecondaryWeapon(selectedIndex);
+            }
         }
 
         // Update EquipmentManager

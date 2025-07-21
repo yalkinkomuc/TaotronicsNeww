@@ -572,13 +572,6 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
     }
     
-    private void OnSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)
-    {
-        // This method is no longer needed as EquipmentUIManager handles weapon switching
-        // Keep for compatibility but delegate to the new system
-        UpdateEquipmentSlots();
-    }
-    
     // DelayedEquipmentUpdate is no longer needed - EquipmentUIManager handles timing
     
     #endregion

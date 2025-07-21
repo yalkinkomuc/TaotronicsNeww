@@ -224,7 +224,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
             PlayerPrefs.SetFloat("PlayerMaxMana", playerStats.maxMana.GetValue());
             PlayerPrefs.SetFloat("PlayerBaseDamage", playerStats.baseDamage.GetValue());
             PlayerPrefs.SetInt("PlayerSkillPoints", playerStats.AvailableSkillPoints);
-            
+
             // Deneyim değerlerini kaydet
             System.Type type = playerStats.GetType();
             int experience = (int)type.GetField("experience", System.Reflection.BindingFlags.Instance | 
@@ -234,6 +234,12 @@ public class CheckpointSelectionScreen : BaseUIPanel
             
             PlayerPrefs.SetInt("PlayerExperience", experience);
             PlayerPrefs.SetInt("PlayerExperienceToNextLevel", experienceToNextLevel);
+        }
+
+        // Persist equipped weapons through EquipmentManager
+        if (EquipmentManager.Instance != null)
+        {
+            EquipmentManager.Instance.SaveEquipment();
         }
         
         PlayerPrefs.Save();
