@@ -18,11 +18,11 @@ MonoBehaviour:
   objectives:
   - {fileID: 11400000, guid: 6ff63a6d8741d9144835253afb48fc78, type: 2}
   questRewards:
-  - item: {fileID: 11400000, guid: 580eb22ffbdbbd34fa9d21f62764cd4d, type: 2}
-    quantity: 100
+  - item: {fileID: 11400000, guid: b2faf88f30e0d3e4e98e6fea0c4d96fc, type: 2}
+    quantity: 1
   completionBehavior:
-    action: 3
-    customParameter: 
+    action: 5
+    customParameter: SpellbookUnlocker.UnlockSpellbook
     postCompletionDialogue: {fileID: 11400000, guid: 172fa6423f81bbb43a75ad722e4d8749, type: 2}
     teleportPosition: {x: 0, y: 0, z: 0}
     delayBeforeAction: 0

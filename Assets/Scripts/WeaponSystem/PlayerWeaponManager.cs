@@ -64,7 +64,7 @@ public class PlayerWeaponManager : MonoBehaviour
           
     }
 
-    void EquipSecondaryWeapon(int index)
+   public void EquipSecondaryWeapon(int index)
     {
         if (index < 0 || index >= weapons.Length || weapons[index] == null)
         {
@@ -72,6 +72,9 @@ public class PlayerWeaponManager : MonoBehaviour
             return;
         }
         
+        // Yeni secondary weapon indeksini güncelle
+        currentSecondaryWeaponIndex = index;
+
         // Only affect secondary weapons - disable all secondary weapons first
         for (int i = 0; i < weapons.Length; i++)
         {
