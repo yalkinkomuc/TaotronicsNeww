@@ -70,6 +70,7 @@ public class AdvancedInventoryUI : BaseUIPanel
     // Private fields
     private UI_MaterialDisplay[] materialDisplays;
     private bool isCollectiblesPage = false;
+    private bool hasBeenOpenedOnce = false; // Track if inventory was opened at least once
     
     // Public accessor for other systems
     public bool IsCollectiblesPage => isCollectiblesPage;
@@ -298,6 +299,37 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
     }
     
+    /// <summary>
+    /// Update all rune slots with current equipped runes
+    /// </summary>
+    [ContextMenu("Debug: Update Rune Slots")]
+    public void UpdateRuneSlots()
+    {
+        Debug.Log("[AdvancedInventoryUI] UpdateRuneSlots called");
+        
+        if (EquipmentManager.Instance == null)
+        {
+            Debug.LogWarning("[AdvancedInventoryUI] EquipmentManager.Instance is null - cannot update rune slots");
+            return;
+        }
+        
+        Debug.Log($"[AdvancedInventoryUI] RuneSlots array length: {(runeSlots != null ? runeSlots.Length : 0)}");
+        
+        for (int i = 0; i < runeSlots.Length; i++)
+        {
+            if (runeSlots[i] != null)
+            {
+                RuneData currentRune = EquipmentManager.Instance.GetEquippedRune(i);
+                runeSlots[i].UpdateRune(currentRune);
+                Debug.Log($"[AdvancedInventoryUI] Updated rune slot {i}: {(currentRune != null ? currentRune.itemName : "Empty")}");
+            }
+            else
+            {
+                Debug.LogWarning($"[AdvancedInventoryUI] RuneSlot {i} is null in runeSlots array!");
+            }
+        }
+    }
+    
     #endregion
     
     #region Public Methods
@@ -333,7 +365,15 @@ public class AdvancedInventoryUI : BaseUIPanel
         UpdateMaterialDisplays();
         UpdateStatsDisplay();
         UpdateEquipmentSlots();
+        UpdateRuneSlots(); // Update rune slots when inventory opens
         UpdateGearCapacity();
+        
+        // İlk açılışta rune'ları force refresh et (timing problemi için)
+        if (!hasBeenOpenedOnce)
+        {
+            hasBeenOpenedOnce = true;
+            StartCoroutine(ForceRefreshRunesOnFirstOpen());
+        }
         
         // Notify EquipmentUIManager that inventory is now open and slots are available
         if (EquipmentUIManager.Instance != null)
@@ -565,14 +605,59 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     private void OnRuneChanged(int slotIndex, RuneData rune)
     {
+        Debug.Log($"[AdvancedInventoryUI] OnRuneChanged called - Slot {slotIndex}: {(rune != null ? rune.itemName : "None")}");
+        
         UpdateStatsDisplay();
-        if (runeSlots != null && slotIndex >= 0 && slotIndex < runeSlots.Length)
+        if (runeSlots != null && slotIndex >= 0 && slotIndex < runeSlots.Length && runeSlots[slotIndex] != null)
         {
             runeSlots[slotIndex].UpdateRune(rune);
+            Debug.Log($"[AdvancedInventoryUI] Updated rune slot {slotIndex}");
+        }
+        else
+        {
+            Debug.LogWarning($"[AdvancedInventoryUI] Failed to update rune slot {slotIndex} - slot array length: {(runeSlots != null ? runeSlots.Length : 0)}");
         }
     }
     
     // DelayedEquipmentUpdate is no longer needed - EquipmentUIManager handles timing
+    
+    /// <summary>
+    /// İlk inventory açılışında rune'ları force refresh et (timing problemi çözümü)
+    /// </summary>
+    private System.Collections.IEnumerator ForceRefreshRunesOnFirstOpen()
+    {
+        // UI'ın tamamen hazır olması için biraz bekle
+        yield return new WaitForSeconds(0.1f);
+        
+        Debug.Log("[AdvancedInventoryUI] Force refreshing runes on first open...");
+        
+        // Rune'ları yeniden güncelle
+        UpdateRuneSlots();
+        
+        // Eğer hâlâ boşsa, EquipmentManager'dan direct olarak al
+        if (EquipmentManager.Instance != null)
+        {
+            bool anyRuneFound = false;
+            for (int i = 0; i < runeSlots.Length; i++)
+            {
+                RuneData currentRune = EquipmentManager.Instance.GetEquippedRune(i);
+                if (currentRune != null)
+                {
+                    anyRuneFound = true;
+                    if (runeSlots[i] != null)
+                    {
+                        runeSlots[i].UpdateRune(currentRune);
+                        Debug.Log($"[AdvancedInventoryUI] Force updated rune slot {i}: {currentRune.itemName}");
+                    }
+                }
+            }
+            
+            if (!anyRuneFound)
+            {
+                Debug.Log("[AdvancedInventoryUI] No runes found to display");
+            }
+        }
+    }
     
     #endregion
 } 

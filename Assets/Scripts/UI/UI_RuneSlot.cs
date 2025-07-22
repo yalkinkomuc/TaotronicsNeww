@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -25,11 +26,12 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
     public void Initialize(int index)
     {
         slotIndex = index;
-        UpdateRune(null);
+        UpdateRune(currentRune);
     }
     
     public void UpdateRune(RuneData rune)
     {
+        Debug.Log($"[UI_RuneSlot {slotIndex}] UpdateRune called with: {(rune != null ? rune.itemName : "null")}");
         currentRune = rune;
         
         if (rune != null)
@@ -38,12 +40,18 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
             runeIcon.sprite = rune.icon;
             runeIcon.color = equippedColor;
             
-            // Show enhancement level if enhanced
+            // Show enhancement level if enhanced (EquipmentManager'dan gerçek enhancement level'ını al)
             if (enhancementText != null)
             {
-                if (rune.enhancementLevel > 0)
+                int actualEnhancementLevel = 0;
+                if (EquipmentManager.Instance != null)
                 {
-                    enhancementText.text = $"+{rune.enhancementLevel}";
+                    actualEnhancementLevel = EquipmentManager.Instance.GetRuneEnhancementLevel(slotIndex);
+                }
+                
+                if (actualEnhancementLevel > 0)
+                {
+                    enhancementText.text = $"+{actualEnhancementLevel}";
                     enhancementText.gameObject.SetActive(true);
                 }
                 else
@@ -187,8 +195,15 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
         return currentRune?.runeType;
     }
 
+    private void Awake()
+    {
+        UpdateRune(null);
+    }
+
     private void Start()
     {
+        UpdateRune(currentRune);
+        
         if (openRuneInventoryButton != null)
         {
             openRuneInventoryButton.onClick.AddListener(OpenRuneInventoryPanel);
