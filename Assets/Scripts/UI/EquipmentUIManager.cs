@@ -29,15 +29,12 @@ public class EquipmentUIManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            //DontDestroyOnLoad(gameObject);
             
-            // Setup event listeners immediately
             SetupEventListeners();
         }
         else if (Instance != this)
         {
             Destroy(gameObject);
-            return;
         }
     }
     
@@ -49,23 +46,9 @@ public class EquipmentUIManager : MonoBehaviour
             StartCoroutine(DelayedSlotSearch());
         }
     }
-
-    private void OnEnable()
-    {
-        
-    }
-
-    private void OnDisable()
-    {
-        
-    }
-
+    
     private void SetupEventListeners()
     {
-        // Listen to weapon switching events - NO LONGER NEEDED
-        // PlayerWeaponManager.OnSecondaryWeaponChanged += OnSecondaryWeaponChanged;
-        
-        // Listen to equipment changes if EquipmentManager exists
         if (EquipmentManager.Instance != null)
         {
             EquipmentManager.OnEquipmentChanged += OnEquipmentChanged;
@@ -81,9 +64,6 @@ public class EquipmentUIManager : MonoBehaviour
         UpdateAllEquipmentSlots();
     }
     
-    /// <summary>
-    /// Retry slot search if initial search failed
-    /// </summary>
     private IEnumerator RetrySlotSearch()
     {
         currentRetryAttempts++;
@@ -104,9 +84,6 @@ public class EquipmentUIManager : MonoBehaviour
         UpdateAllEquipmentSlots();
     }
     
-    /// <summary>
-    /// Automatically find equipment slots in the scene
-    /// </summary>
     public void FindEquipmentSlots()
     {
         // Try multiple strategies to find AdvancedInventoryUI
@@ -191,9 +168,6 @@ public class EquipmentUIManager : MonoBehaviour
         Debug.Log("[EquipmentUIManager] Equipment slots manually assigned");
     }
     
-    /// <summary>
-    /// Update all equipment slots
-    /// </summary>
     public void UpdateAllEquipmentSlots()
     {
         UpdateEquipmentSlot(weaponSlot, "Main Weapon");
@@ -215,28 +189,10 @@ public class EquipmentUIManager : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Called when secondary weapon changes - NO LONGER NEEDED
-    /// </summary>
-    // private void OnSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)
-    // {
-    //     Debug.Log($"[EquipmentUIManager] Secondary weapon changed: Index {weaponIndex}, Weapon: {weaponStateMachine?.name}");
-        
-    //     // Update secondary weapon slot specifically
-    //     UpdateEquipmentSlot(secondaryWeaponSlot, "Secondary Weapon");
-        
-    //     // Also update main weapon slot if needed
-    //     UpdateEquipmentSlot(weaponSlot, "Main Weapon");
-    // }
-    
-    /// <summary>
-    /// Called when any equipment changes (if EquipmentManager is available)
-    /// </summary>
     private void OnEquipmentChanged(EquipmentSlot slot, EquipmentData equipment)
     {
         Debug.Log($"[EquipmentUIManager] Equipment changed in slot: {slot}");
         
-        // Update specific slot based on the changed equipment
         switch (slot)
         {
             case EquipmentSlot.MainWeapon:
@@ -254,29 +210,19 @@ public class EquipmentUIManager : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Force refresh all slots (useful for debugging or manual updates)
-    /// </summary>
     [ContextMenu("Force Refresh All Slots")]
     public void ForceRefreshAllSlots()
     {
-        Debug.Log("[EquipmentUIManager] Force refreshing all equipment slots");
-        
-        // Re-find slots if needed
         if (autoFindSlots && (weaponSlot == null || secondaryWeaponSlot == null))
         {
             FindEquipmentSlots();
         }
         
-        // Update all slots
         UpdateAllEquipmentSlots();
     }
     
     private void OnDestroy()
     {
-        // Unsubscribe from events
-        // PlayerWeaponManager.OnSecondaryWeaponChanged -= OnSecondaryWeaponChanged;
-        
         if (EquipmentManager.Instance != null)
         {
             EquipmentManager.OnEquipmentChanged -= OnEquipmentChanged;
@@ -288,22 +234,4 @@ public class EquipmentUIManager : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Check if all equipment slots are properly assigned
-    /// </summary>
-    public bool AreAllSlotsAssigned()
-    {
-        return weaponSlot != null && secondaryWeaponSlot != null && armorSlot != null && accessorySlot != null;
-    }
-    
-    /// <summary>
-    /// Get debug info about current slot assignments
-    /// </summary>
-    public string GetSlotDebugInfo()
-    {
-        return $"Weapon: {(weaponSlot != null ? "✓" : "✗")}, " +
-               $"Secondary: {(secondaryWeaponSlot != null ? "✓" : "✗")}, " +
-               $"Armor: {(armorSlot != null ? "✓" : "✗")}, " +
-               $"Accessory: {(accessorySlot != null ? "✓" : "✗")}";
-    }
 } 

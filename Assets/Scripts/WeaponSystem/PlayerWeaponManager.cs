@@ -19,33 +19,14 @@ public class PlayerWeaponManager : MonoBehaviour
     
     private Player player;
     private PlayerStats playerStats;
-
-    private void Awake()
-    {
-        Debug.Log(currentSecondaryWeaponIndex);
-        Debug.Log(GetCurrentSecondaryWeaponIndex());
-        
-        
-    }
-
-    private void Update()
-    {
-        Debug.Log(currentSecondaryWeaponIndex);
-        Debug.Log(GetCurrentSecondaryWeaponIndex());
-        int testIndex = PlayerPrefs.GetInt("EquippedSecondaryWeaponType", -1);
-        Debug.Log(testIndex);
-    }
-
+    
     void Start()
     {
         player = GetComponent<Player>();
         playerStats = GetComponent<PlayerStats>();
         int saved = PlayerPrefs.GetInt("EquippedSecondaryWeaponType", -1);
         Debug.Log($"START: Okunan secondary type = {(WeaponType)saved}");
-        
-        
-        
-        
+       
         InitializeAllWeapons();
         
         ActivatePrimaryWeapon(startingWeaponIndex);
@@ -118,7 +99,7 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             Debug.LogError($"Weapon at index {index} is not a secondary weapon!");
         }
-        // UpdateUISlots(); - NO LONGER NEEDED, EquipSecondaryByStateMachine handles it.
+        
     }
 
     // Dizideki ilk secondary silah index'ini döndür
@@ -134,15 +115,6 @@ public class PlayerWeaponManager : MonoBehaviour
         return -1;
     }
     
-    // private void UpdateUISlots() - NO LONGER NEEDED
-    // {
-    //     if (AdvancedInventoryUI.Instance != null)
-    //     {
-    //         AdvancedInventoryUI.Instance.UpdateEquipmentSlots();
-    //     }
-        
-    //     OnSecondaryWeaponChanged?.Invoke(currentSecondaryWeaponIndex, weapons[currentSecondaryWeaponIndex]);
-    // }
     public void RefreshWeaponVisibility()
     {
         ActivatePrimaryWeapon(GetCurrentPrimaryWeaponIndex());
@@ -201,11 +173,6 @@ public class PlayerWeaponManager : MonoBehaviour
                weapon is SpellbookWeaponStateMachine ||
                weapon is ShieldStateMachine;
     }
-    
-  
-    
-    // Get first secondary weapon index
-   
    
     public WeaponType[] GetEquippedWeaponTypes()
     {
@@ -240,24 +207,5 @@ public class PlayerWeaponManager : MonoBehaviour
         }
         return types;
     }
-
-    // Helper method to find weapon index by WeaponType
-    private int GetWeaponIndexByType(WeaponType type)
-    {
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            if (weapons[i] == null) continue;
-
-            // Sadece secondary silahlar taransın
-            if (!IsSecondaryWeapon(weapons[i])) continue;
-
-            if ((type == WeaponType.Boomerang && weapons[i] is BoomerangWeaponStateMachine) ||
-                (type == WeaponType.Spellbook && weapons[i] is SpellbookWeaponStateMachine) ||
-                (type == WeaponType.Shield && weapons[i] is ShieldStateMachine))
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
+    
 }
