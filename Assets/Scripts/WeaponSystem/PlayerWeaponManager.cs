@@ -13,6 +13,9 @@ public class PlayerWeaponManager : MonoBehaviour
     [SerializeField] public int startingWeaponIndex = 3; // Burning Sword ile başla
     private int currentPrimaryWeaponIndex = -1; // Aktif primary weapon index
     
+    // Weapon unlock tracking
+    private HashSet<int> unlockedWeaponIndices = new HashSet<int>();
+    
     // Public getter for UI access
     public int GetCurrentSecondaryWeaponIndex() => currentSecondaryWeaponIndex;
     public int GetCurrentPrimaryWeaponIndex() => currentPrimaryWeaponIndex >= 0 ? currentPrimaryWeaponIndex : startingWeaponIndex;
@@ -24,52 +27,64 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         player = GetComponent<Player>();
         playerStats = GetComponent<PlayerStats>();
-        int saved = PlayerPrefs.GetInt("EquippedSecondaryWeaponType", -1);
-        Debug.Log($"START: Okunan secondary type = {(WeaponType)saved}");
-       
+        
         InitializeAllWeapons();
         
-        ActivatePrimaryWeapon(startingWeaponIndex);
-        
-        if (currentSecondaryWeaponIndex != -1)
+        // İlk giriş kontrolü - sadece ilk girişte başlangıç silahları equip et
+        if (EquipmentManager.IsFirstTimePlayer())
         {
-            EquipSecondaryWeapon(currentSecondaryWeaponIndex);
+            Debug.Log("[PlayerWeaponManager] İlk giriş tespit edildi - başlangıç silahları equip ediliyor");
+            
+            // Sadece starting weapon'ı unlock et ve aktif et
+            UnlockWeapon(startingWeaponIndex);
+            ActivatePrimaryWeapon(startingWeaponIndex);
+            
+            // İlk girişte secondary weapon yok!
+            currentSecondaryWeaponIndex = -1;
+            
+            // İlk setup tamamlandı, mark as started
+            EquipmentManager.MarkGameAsStarted();
+            
+            // İlk equip durumunu kaydet
+            SaveWeaponState();
+        }
+        else
+        {
+            Debug.Log("[PlayerWeaponManager] Daha önce oynanan oyun - kaydedilmiş durum yükleniyor");
+            LoadWeaponState();
         }
         
         if (BlacksmithManager.Instance != null && playerStats != null)
         {
             BlacksmithManager.Instance.ApplyWeaponUpgrades(playerStats);
         }
-        
     }
 
    public void EquipSecondaryWeapon(int index)
     {
-        // Eğer gönderilen index geçersizse veya secondary silah değilse ilk geçerli secondary'yi bul
-        if (index < 0 || index >= weapons.Length || weapons[index] == null || !IsSecondaryWeapon(weapons[index]))
+        // Eğer gönderilen index geçersizse veya secondary silah değilse veya unlock edilmemişse ilk geçerli secondary'yi bul
+        if (index < 0 || index >= weapons.Length || weapons[index] == null || !IsSecondaryWeapon(weapons[index]) || !IsWeaponUnlocked(index))
         {
-            index = GetFirstSecondaryWeaponIndex();
+            index = GetFirstUnlockedSecondaryWeaponIndex();
         }
 
-        // Hâlâ bulunamadıysa çık
+        // Hâlâ bulunamadıysa secondary weapon yok demektir
         if (index == -1)
         {
-            Debug.LogWarning("No secondary weapon found to equip!");
+            Debug.Log("No unlocked secondary weapon found!");
+            currentSecondaryWeaponIndex = -1;
+            
+            // Tüm secondary silahları deaktif et
+            DisableAllSecondaryWeapons();
             return;
         }
 
         currentSecondaryWeaponIndex = index;
  
         // Only affect secondary weapons - disable all secondary weapons first
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
-            {
-                weapons[i].gameObject.SetActive(false);
-            }
-        }
+        DisableAllSecondaryWeapons();
         
-        if (IsSecondaryWeapon(weapons[index]))
+        if (IsSecondaryWeapon(weapons[index]) && IsWeaponUnlocked(index))
         {
             weapons[index].gameObject.SetActive(true);
             
@@ -94,20 +109,22 @@ public class PlayerWeaponManager : MonoBehaviour
                     player.UpdateLastActiveWeapon(WeaponState.Idle);
                 }
             }
+            
+            // Save weapon state after equipping secondary weapon
+            OnWeaponEquipped();
         }
         else
         {
-            Debug.LogError($"Weapon at index {index} is not a secondary weapon!");
+            Debug.LogError($"[PlayerWeaponManager] Cannot equip weapon at index {index} - not secondary or not unlocked");
         }
-        
     }
-
-    // Dizideki ilk secondary silah index'ini döndür
-    private int GetFirstSecondaryWeaponIndex()
+    
+    // Dizideki ilk unlock edilmiş secondary silah index'ini döndür
+    private int GetFirstUnlockedSecondaryWeaponIndex()
     {
         for (int i = 0; i < weapons.Length; i++)
         {
-            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
+            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]) && IsWeaponUnlocked(i))
             {
                 return i;
             }
@@ -120,8 +137,10 @@ public class PlayerWeaponManager : MonoBehaviour
         ActivatePrimaryWeapon(GetCurrentPrimaryWeaponIndex());
         EquipSecondaryWeapon(GetCurrentSecondaryWeaponIndex());
     }
+    
     private void InitializeAllWeapons()
     {
+        // Tüm silahları deaktif et
         for (int i = 0; i < weapons.Length; i++)
         {
             if (weapons[i] != null)
@@ -129,7 +148,11 @@ public class PlayerWeaponManager : MonoBehaviour
                 weapons[i].gameObject.SetActive(false);
             }
         }
+        
+        // Unlock durumlarını yükle
+        LoadUnlockStates();
     }
+    
     public void ActivatePrimaryWeapon(int primaryIndex)
     {
         if (primaryIndex < 0 || primaryIndex >= weapons.Length || weapons[primaryIndex] == null)
@@ -145,6 +168,9 @@ public class PlayerWeaponManager : MonoBehaviour
         currentPrimaryWeaponIndex = primaryIndex;
         
         Debug.Log($"Activated primary weapon: {weapons[primaryIndex].name}");
+        
+        // Save weapon state after activation
+        OnWeaponEquipped();
     }
     
    
@@ -208,4 +234,197 @@ public class PlayerWeaponManager : MonoBehaviour
         return types;
     }
     
+    /// <summary>
+    /// Save current weapon state to PlayerPrefs
+    /// </summary>
+    public void SaveWeaponState()
+    {
+        // Save primary weapon index
+        PlayerPrefs.SetInt("CurrentPrimaryWeaponIndex", currentPrimaryWeaponIndex);
+        
+        // Save secondary weapon index
+        PlayerPrefs.SetInt("CurrentSecondaryWeaponIndex", currentSecondaryWeaponIndex);
+        
+        // Save current weapon types for EquipmentManager compatibility
+        if (currentPrimaryWeaponIndex >= 0 && currentPrimaryWeaponIndex < weapons.Length && weapons[currentPrimaryWeaponIndex] != null)
+        {
+            WeaponType primaryType = GetWeaponTypeFromIndex(currentPrimaryWeaponIndex);
+            PlayerPrefs.SetInt("EquippedMainWeaponType", (int)primaryType);
+        }
+        
+        if (currentSecondaryWeaponIndex >= 0 && currentSecondaryWeaponIndex < weapons.Length && weapons[currentSecondaryWeaponIndex] != null)
+        {
+            WeaponType secondaryType = GetWeaponTypeFromIndex(currentSecondaryWeaponIndex);
+            PlayerPrefs.SetInt("EquippedSecondaryWeaponType", (int)secondaryType);
+        }
+        
+        PlayerPrefs.Save();
+        Debug.Log($"[PlayerWeaponManager] Weapon state saved - Primary: {currentPrimaryWeaponIndex}, Secondary: {currentSecondaryWeaponIndex}");
+    }
+    
+    /// <summary>
+    /// Load weapon state from PlayerPrefs
+    /// </summary>
+    public void LoadWeaponState()
+    {
+        // Load primary weapon index
+        int savedPrimaryIndex = PlayerPrefs.GetInt("CurrentPrimaryWeaponIndex", startingWeaponIndex);
+        
+        // Load secondary weapon index
+        int savedSecondaryIndex = PlayerPrefs.GetInt("CurrentSecondaryWeaponIndex", -1);
+        
+        // Validate loaded indices
+        if (savedPrimaryIndex >= 0 && savedPrimaryIndex < weapons.Length && weapons[savedPrimaryIndex] != null && IsPrimaryWeapon(weapons[savedPrimaryIndex]))
+        {
+            ActivatePrimaryWeapon(savedPrimaryIndex);
+        }
+        else
+        {
+            Debug.LogWarning($"[PlayerWeaponManager] Invalid primary weapon index {savedPrimaryIndex}, using default");
+            ActivatePrimaryWeapon(startingWeaponIndex);
+        }
+        
+        if (savedSecondaryIndex >= 0 && savedSecondaryIndex < weapons.Length && weapons[savedSecondaryIndex] != null && IsSecondaryWeapon(weapons[savedSecondaryIndex]) && IsWeaponUnlocked(savedSecondaryIndex))
+        {
+            EquipSecondaryWeapon(savedSecondaryIndex);
+        }
+        else
+        {
+            // No valid unlocked secondary weapon saved, equip first available unlocked
+            int firstUnlockedSecondaryIndex = GetFirstUnlockedSecondaryWeaponIndex();
+            if (firstUnlockedSecondaryIndex != -1)
+            {
+                EquipSecondaryWeapon(firstUnlockedSecondaryIndex);
+            }
+            else
+            {
+                // Hiç unlock edilmiş secondary weapon yok
+                currentSecondaryWeaponIndex = -1;
+                Debug.Log("[PlayerWeaponManager] No unlocked secondary weapons found during load");
+            }
+        }
+        
+        Debug.Log($"[PlayerWeaponManager] Weapon state loaded - Primary: {currentPrimaryWeaponIndex}, Secondary: {currentSecondaryWeaponIndex}");
+    }
+    
+    /// <summary>
+    /// Get WeaponType from weapon index
+    /// </summary>
+    private WeaponType GetWeaponTypeFromIndex(int index)
+    {
+        if (index < 0 || index >= weapons.Length || weapons[index] == null)
+            return WeaponType.Sword; // fallback
+        
+        var weapon = weapons[index];
+        if (weapon is SwordWeaponStateMachine)
+            return WeaponType.Sword;
+        else if (weapon is BurningSwordStateMachine)
+            return WeaponType.BurningSword;
+        else if (weapon is HammerSwordStateMachine)
+            return WeaponType.Hammer;
+        else if (weapon is BoomerangWeaponStateMachine)
+            return WeaponType.Boomerang;
+        else if (weapon is SpellbookWeaponStateMachine)
+            return WeaponType.Spellbook;
+        else if (weapon is ShieldStateMachine)
+            return WeaponType.Shield;
+        
+        return WeaponType.Sword; // fallback
+    }
+    
+    /// <summary>
+    /// Called when equipment changes - save the new state
+    /// </summary>
+    public void OnWeaponEquipped()
+    {
+        SaveWeaponState();
+        
+        // Also update EquipmentManager
+        if (EquipmentManager.Instance != null)
+        {
+            EquipmentManager.Instance.SaveEquipment();
+        }
+    }
+    
+    /// <summary>
+    /// Unlock a weapon by index
+    /// </summary>
+    public void UnlockWeapon(int weaponIndex)
+    {
+        if (weaponIndex >= 0 && weaponIndex < weapons.Length && weapons[weaponIndex] != null)
+        {
+            unlockedWeaponIndices.Add(weaponIndex);
+            Debug.Log($"[PlayerWeaponManager] Unlocked weapon: {weapons[weaponIndex].name}");
+            
+            // Save unlock state
+            SaveUnlockStates();
+        }
+    }
+    
+    /// <summary>
+    /// Check if a weapon is unlocked
+    /// </summary>
+    public bool IsWeaponUnlocked(int weaponIndex)
+    {
+        return unlockedWeaponIndices.Contains(weaponIndex);
+    }
+    
+    /// <summary>
+    /// Get all unlocked weapon indices
+    /// </summary>
+    public HashSet<int> GetUnlockedWeaponIndices()
+    {
+        return new HashSet<int>(unlockedWeaponIndices);
+    }
+    
+    /// <summary>
+    /// Disable all secondary weapons
+    /// </summary>
+    private void DisableAllSecondaryWeapons()
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            if (weapons[i] != null && IsSecondaryWeapon(weapons[i]))
+            {
+                weapons[i].gameObject.SetActive(false);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Save weapon unlock states to PlayerPrefs
+    /// </summary>
+    private void SaveUnlockStates()
+    {
+        // Save unlock states as comma-separated string
+        string unlockedIndices = string.Join(",", unlockedWeaponIndices);
+        PlayerPrefs.SetString("UnlockedWeapons", unlockedIndices);
+        PlayerPrefs.Save();
+        
+        Debug.Log($"[PlayerWeaponManager] Saved unlock states: {unlockedIndices}");
+    }
+    
+    /// <summary>
+    /// Load weapon unlock states from PlayerPrefs
+    /// </summary>
+    private void LoadUnlockStates()
+    {
+        unlockedWeaponIndices.Clear();
+        
+        string unlockedIndices = PlayerPrefs.GetString("UnlockedWeapons", "");
+        
+        if (!string.IsNullOrEmpty(unlockedIndices))
+        {
+            string[] indices = unlockedIndices.Split(',');
+            foreach (string indexStr in indices)
+            {
+                if (int.TryParse(indexStr, out int index))
+                {
+                    unlockedWeaponIndices.Add(index);
+                }
+            }
+        }
+        
+        Debug.Log($"[PlayerWeaponManager] Loaded unlock states: {unlockedIndices}");
+    }
 }

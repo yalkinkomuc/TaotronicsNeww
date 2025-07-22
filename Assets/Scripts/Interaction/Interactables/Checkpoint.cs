@@ -260,66 +260,39 @@ public class Checkpoint : MonoBehaviour, IInteractable
     {
         Player player = PlayerManager.instance?.player;
         if (player == null) return;
+        
         // Persist equipped weapons using EquipmentManager if available
         if (EquipmentManager.Instance != null)
         {
             EquipmentManager.Instance.SaveEquipment();
         }
- 
-        // Silah durumlarını kaydet
-        if (player.boomerangWeapon != null)
-            PlayerPrefs.SetInt("HasBoomerang", player.boomerangWeapon.gameObject.activeInHierarchy ? 1 : 0);
-
-        if (player.spellbookWeapon != null)
-            PlayerPrefs.SetInt("HasSpellbook", player.spellbookWeapon.gameObject.activeInHierarchy ? 1 : 0);
-
-        if (player.swordWeapon != null)
-            PlayerPrefs.SetInt("HasSword", player.swordWeapon.gameObject.activeInHierarchy ? 1 : 0);
         
-        if (player.burningSword != null)
-            PlayerPrefs.SetInt ("HasBurningSword", player.burningSword.gameObject.activeInHierarchy ? 1 : 0);
-        
-        if (player.hammer != null)
-            PlayerPrefs.SetInt ("HasHammer", player.hammer.gameObject.activeInHierarchy ? 1 : 0);
+        // PlayerWeaponManager unlock durumları zaten PlayerWeaponManager.SaveUnlockStates() ile kaydediliyor
+        // Eski silah durumu kaydetme sistemi kaldırıldı - yeni unlock sistemi kullanılıyor
+        PlayerWeaponManager weaponManager = player.GetComponentInChildren<PlayerWeaponManager>();
+        if (weaponManager != null)
+        {
+            weaponManager.SaveWeaponState();
+        }
     }
 
     public static void LoadItemStates(Player player)
     {
         if (player == null) return;
 
+        // Silah durumları artık PlayerWeaponManager unlock sistemi ile yönetiliyor
+        // LoadWeaponState() metodu zaten çağrıldığı için burada ek bir işlem yapmaya gerek yok
         
-
-        // Bumerang durumunu yükle
-        if (player.boomerangWeapon != null)
+        // PlayerWeaponManager unlock durumlarını yükle
+        PlayerWeaponManager weaponManager = player.GetComponentInChildren<PlayerWeaponManager>();
+        if (weaponManager != null)
         {
-            bool hasBoomerang = PlayerPrefs.GetInt("HasBoomerang", 0) == 1;
-            player.boomerangWeapon.gameObject.SetActive(hasBoomerang);
+            weaponManager.LoadWeaponState();
+            Debug.Log("[Checkpoint] Weapon states loaded via PlayerWeaponManager unlock system");
         }
-
-        // Spellbook durumunu yükle
-        if (player.spellbookWeapon != null)
+        else
         {
-            bool hasSpellbook = PlayerPrefs.GetInt("HasSpellbook", 0) == 1;
-            player.spellbookWeapon.gameObject.SetActive(hasSpellbook);
-        }
-
-        // Kılıç durumunu yükle
-        if (player.swordWeapon != null)
-        {
-            bool hasSword = PlayerPrefs.GetInt("HasSword", 0) == 1;
-            player.swordWeapon.gameObject.SetActive(hasSword);
-        }
-
-        if (player.burningSword != null)
-        {
-            bool hasBurningSword = PlayerPrefs.GetInt("HasBurningSword", 0) == 1;
-            player.burningSword.gameObject.SetActive(hasBurningSword);
-        }
-        
-        if (player.hammer != null)
-        {
-            bool hasHammer= PlayerPrefs.GetInt("HasHammer", 0) == 1;
-            player.burningSword.gameObject.SetActive(hasHammer);
+            Debug.LogWarning("[Checkpoint] PlayerWeaponManager not found during LoadItemStates");
         }
     }
 

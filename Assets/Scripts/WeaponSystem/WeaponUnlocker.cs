@@ -1,0 +1,231 @@
+using System.Linq;
+using UnityEngine;
+
+/// <summary>
+/// Quest tamamlandığında silahları otomatik olarak oyuncuya unlock eder.
+/// Artık sadece spellbook değil, tüm silahlar için unlock methodları içerir.
+/// Sahneye manuel eklenen silahları aktif hale getirir.
+/// "RunCustomAction" completion davranışı ile tetiklenmesi amaçlanmıştır.
+/// </summary>
+public class WeaponUnlocker : MonoBehaviour
+{
+    /// <summary>
+    /// Quest tamamlandığında Spellbook silahını unlock eder.
+    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
+    /// </summary>
+    public void UnlockSpellbook()
+    {
+        UnlockWeapon<SpellbookWeaponStateMachine>("Spellbook", SecondaryWeaponType.Spellbook, true);
+    }
+
+    /// <summary>
+    /// Quest tamamlandığında Boomerang silahını unlock eder.
+    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
+    /// </summary>
+    public void UnlockBoomerang()
+    {
+        UnlockWeapon<BoomerangWeaponStateMachine>("Boomerang", SecondaryWeaponType.Boomerang, true);
+    }
+
+    /// <summary>
+    /// Quest tamamlandığında Shield silahını unlock eder.
+    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
+    /// </summary>
+    public void UnlockShield()
+    {
+        UnlockWeapon<ShieldStateMachine>("Shield", SecondaryWeaponType.Shield, true);
+    }
+
+    /// <summary>
+    /// Quest tamamlandığında Burning Sword silahını unlock eder.
+    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
+    /// </summary>
+    public void UnlockBurningSword()
+    {
+        UnlockWeapon<BurningSwordStateMachine>("Burning Sword", null, false);
+    }
+
+    /// <summary>
+    /// Quest tamamlandığında Hammer silahını unlock eder.
+    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
+    /// </summary>
+    public void UnlockHammer()
+    {
+        UnlockWeapon<HammerSwordStateMachine>("Hammer", null, false);
+    }
+
+    /// <summary>
+    /// Quest tamamlandığında Sword silahını unlock eder.
+    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
+    /// </summary>
+    public void UnlockSword()
+    {
+        UnlockWeapon<SwordWeaponStateMachine>("Sword", null, false);
+    }
+
+    /// <summary>
+    /// Genel silah unlock metodu - tüm silahlar için ortak mantık
+    /// </summary>
+    /// <typeparam name="T">Silah StateMachine tipi</typeparam>
+    /// <param name="weaponName">Silah adı (log için)</param>
+    /// <param name="secondaryType">Secondary weapon ise tipi, primary weapon ise null</param>
+    /// <param name="isSecondary">Secondary weapon mi?</param>
+    private void UnlockWeapon<T>(string weaponName, SecondaryWeaponType? secondaryType, bool isSecondary) where T : WeaponStateMachine
+    {
+        // 1) Player ve temel referansları bul
+        Player player = FindFirstObjectByType<Player>();
+        if (player == null)
+        {
+            Debug.LogError($"[WeaponUnlocker] Player bulunamadı! {weaponName} unlock edilemedi.");
+            return;
+        }
+
+        // PlayerWeaponManager aynı GameObject'te olmayabilir; sahnede arayalım
+        PlayerWeaponManager weaponManager = player.GetComponentInChildren<PlayerWeaponManager>();
+        if (weaponManager == null)
+        {
+            Debug.LogError($"[WeaponUnlocker] PlayerWeaponManager bulunamadı! {weaponName} unlock edilemedi.");
+            return;
+        }
+
+        // 2) Sahneye manuel eklenen silahı bul
+        T weaponStateMachine = null;
+        int weaponIndex = -1;
+        
+        // Weapons dizisinde ilgili silahı ara
+        for (int i = 0; i < weaponManager.weapons.Length; i++)
+        {
+            if (weaponManager.weapons[i] is T)
+            {
+                weaponStateMachine = weaponManager.weapons[i] as T;
+                weaponIndex = i;
+                break;
+            }
+        }
+
+        if (weaponStateMachine == null)
+        {
+            Debug.LogError($"[WeaponUnlocker] Sahneye manuel eklenen {weaponName} silahı bulunamadı! Lütfen Player hierarchy'sinde {weaponName} GameObject'ini manuel olarak ekleyin ve PlayerWeaponManager'ın weapons dizisine atayın.");
+            return;
+        }
+
+        // 3) Silahı unlock et
+        weaponManager.UnlockWeapon(weaponIndex);
+        
+        // 4) Secondary weapon ise kuşan, primary weapon ise sadece unlock et
+        if (isSecondary)
+        {
+            weaponManager.EquipSecondaryWeapon(weaponIndex);
+        }
+
+        // 5) EquipmentManager'a bildir (stats güncellensin)
+        if (EquipmentManager.Instance != null && BlacksmithManager.Instance != null)
+        {
+            if (isSecondary && secondaryType.HasValue)
+            {
+                // Secondary weapon için SecondaryWeaponData'dan ara
+                var secondaryWeaponData = BlacksmithManager.Instance.secondaryWeaponDataBase?.Find(s => s.secondaryWeaponType == secondaryType.Value);
+                
+                if (secondaryWeaponData != null)
+                {
+                    Debug.Log($"[WeaponUnlocker] {weaponName} SecondaryWeaponData bulundu: {secondaryWeaponData.itemName}");
+                    bool equipResult = EquipmentManager.Instance.EquipItem(secondaryWeaponData);
+                    Debug.Log($"[WeaponUnlocker] EquipmentManager.EquipItem sonucu: {equipResult}");
+                    
+                    if (!equipResult)
+                    {
+                        Debug.LogError($"[WeaponUnlocker] {weaponName} EquipItem başarısız oldu!");
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"[WeaponUnlocker] BlacksmithManager.secondaryWeaponDataBase'de {weaponName} bulunamadı!");
+                    LogSecondaryWeaponDatabase();
+                }
+            }
+            else
+            {
+                // Primary weapon için WeaponData'dan ara
+                var allWeapons = BlacksmithManager.Instance.GetAllWeapons();
+                if (allWeapons != null)
+                {
+                    WeaponType targetWeaponType = GetWeaponTypeFromStateMachine(weaponStateMachine);
+                    var weaponData = allWeapons.Find(w => w.weaponType == targetWeaponType);
+                    
+                    if (weaponData != null)
+                    {
+                        Debug.Log($"[WeaponUnlocker] {weaponName} WeaponData bulundu: {weaponData.itemName}");
+                        bool equipResult = EquipmentManager.Instance.EquipItem(weaponData);
+                        Debug.Log($"[WeaponUnlocker] EquipmentManager.EquipItem sonucu: {equipResult}");
+                        
+                        if (!equipResult)
+                        {
+                            Debug.LogError($"[WeaponUnlocker] {weaponName} EquipItem başarısız oldu!");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"[WeaponUnlocker] BlacksmithManager.weaponDatabase'de {weaponName} bulunamadı!");
+                    }
+                }
+            }
+        }
+
+        Debug.Log($"[WeaponUnlocker] {weaponName} başarıyla unlock edildi ve aktif hale getirildi.");
+    }
+
+    /// <summary>
+    /// WeaponStateMachine'den WeaponType'ı belirle
+    /// </summary>
+    private WeaponType GetWeaponTypeFromStateMachine(WeaponStateMachine stateMachine)
+    {
+        if (stateMachine == null) return WeaponType.Sword; // Default fallback
+        
+        // Determine weapon type based on state machine type
+        if (stateMachine is SwordWeaponStateMachine)
+        {
+            return WeaponType.Sword;
+        }
+        else if (stateMachine is BurningSwordStateMachine)
+        {
+            return WeaponType.BurningSword;
+        }
+        else if (stateMachine is HammerSwordStateMachine)
+        {
+            return WeaponType.Hammer;
+        }
+        else if (stateMachine is BoomerangWeaponStateMachine)
+        {
+            return WeaponType.Boomerang;
+        }
+        else if (stateMachine is SpellbookWeaponStateMachine)
+        {
+            return WeaponType.Spellbook;
+        }
+        else if (stateMachine is ShieldStateMachine)
+        {
+            return WeaponType.Shield;
+        }
+        
+        return WeaponType.Sword; // Default fallback
+    }
+
+    /// <summary>
+    /// Debug: SecondaryWeaponDataBase'deki tüm itemları listele
+    /// </summary>
+    private void LogSecondaryWeaponDatabase()
+    {
+        if (BlacksmithManager.Instance.secondaryWeaponDataBase != null)
+        {
+            Debug.Log($"[WeaponUnlocker] SecondaryWeaponDataBase'de toplam {BlacksmithManager.Instance.secondaryWeaponDataBase.Count} item var:");
+            foreach (var item in BlacksmithManager.Instance.secondaryWeaponDataBase)
+            {
+                Debug.Log($"  - {item.itemName} (Tip: {item.secondaryWeaponType})");
+            }
+        }
+        else
+        {
+            Debug.LogError("[WeaponUnlocker] BlacksmithManager.secondaryWeaponDataBase null!");
+        }
+    }
+} 

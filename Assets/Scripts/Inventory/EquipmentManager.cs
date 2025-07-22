@@ -58,6 +58,12 @@ public class EquipmentManager : MonoBehaviour
         // PlayerWeaponManager.OnSecondaryWeaponChanged += OnPlayerSecondaryWeaponChanged;
         //
         CalculateAllStats();
+        
+        // Save initial equipment state if this is first time
+        if (IsFirstTimePlayer())
+        {
+            SaveEquipment();
+        }
     }
     
     private void InitializeStats()
@@ -497,7 +503,7 @@ public class EquipmentManager : MonoBehaviour
     #region Save/Load
 
     /// <summary>
-    /// Persist currently equipped items (only main & secondary weapons for now).
+    /// Persist currently equipped items to PlayerPrefs.
     /// </summary>
     public void SaveEquipment()
     {
@@ -514,15 +520,44 @@ public class EquipmentManager : MonoBehaviour
         // SECONDARY WEAPON
         if (currentSecondaryWeapon != null)
         {
-            // SecondaryWeaponData mı WeaponData mı kontrol et
-            if (currentSecondaryWeapon is SecondaryWeaponData secondaryData)
+            WeaponType secType;
+            if (currentSecondaryWeapon is WeaponData weaponData)
             {
-                PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)GetWeaponTypeFromSecondaryType(secondaryData.secondaryWeaponType));
+                secType = weaponData.weaponType;
             }
-            else if (currentSecondaryWeapon is WeaponData weaponData)
+            else if (currentSecondaryWeapon is SecondaryWeaponData secData)
             {
-                PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)weaponData.weaponType);
+                secType = MapSecondaryToWeaponType(secData.secondaryWeaponType);
             }
+            else
+            {
+                secType = WeaponType.Boomerang; // fallback
+            }
+            PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)secType);
+        }
+        else
+        {
+            PlayerPrefs.DeleteKey(PREF_SECONDARY_WEAPON_TYPE);
+        }
+
+        // ARMOR (for future implementation)
+        if (currentArmor != null)
+        {
+            PlayerPrefs.SetString("EquippedArmor", currentArmor.itemName);
+        }
+        else
+        {
+            PlayerPrefs.DeleteKey("EquippedArmor");
+        }
+
+        // ACCESSORY (for future implementation)
+        if (currentAccessory != null)
+        {
+            PlayerPrefs.SetString("EquippedAccessory", currentAccessory.itemName);
+        }
+        else
+        {
+            PlayerPrefs.DeleteKey("EquippedAccessory");
         }
 
         PlayerPrefs.Save();
@@ -635,6 +670,23 @@ public class EquipmentManager : MonoBehaviour
         // Her durumda tipi kaydet – WeaponData ya da SecondaryWeaponData fark etmez
         WeaponType secType = GetWeaponTypeFromStateMachine(wsm);
         PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)secType);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// Check if this is the first time the game is being played
+    /// </summary>
+    public static bool IsFirstTimePlayer()
+    {
+        return !PlayerPrefs.HasKey("GameStarted");
+    }
+
+    /// <summary>
+    /// Mark that the game has been started at least once
+    /// </summary>
+    public static void MarkGameAsStarted()
+    {
+        PlayerPrefs.SetInt("GameStarted", 1);
         PlayerPrefs.Save();
     }
 } 

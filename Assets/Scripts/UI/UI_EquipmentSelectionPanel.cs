@@ -278,6 +278,12 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 var weaponStateMachine = weaponManager.weapons[i];
                 if (weaponStateMachine == null) continue;
 
+                // **YENİ**: Sadece unlock edilmiş silahları göster
+                if (!weaponManager.IsWeaponUnlocked(i))
+                {
+                    continue; // Unlock edilmemiş silahları atla
+                }
+
                 WeaponData weapon = GetWeaponDataFromStateMachine(weaponStateMachine);
                 if (weapon == null) continue;
 
