@@ -462,9 +462,40 @@ public class EquipmentManager : MonoBehaviour
     
     /// <summary>
     /// Get currently equipped main weapon (public getter)
+    /// Real-time'da PlayerWeaponManager'dan aktif weapon'ı alır
     /// </summary>
     public WeaponData GetCurrentMainWeapon()
     {
+        // Real-time olarak PlayerWeaponManager'dan aktif weapon'ı al
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        if (weaponManager != null && weaponManager.weapons != null)
+        {
+            // Aktif primary weapon index'ini al
+            int currentPrimaryIndex = weaponManager.GetCurrentPrimaryWeaponIndex();
+            
+            if (currentPrimaryIndex >= 0 && currentPrimaryIndex < weaponManager.weapons.Length)
+            {
+                WeaponStateMachine activeWeapon = weaponManager.weapons[currentPrimaryIndex];
+                if (activeWeapon != null)
+                {
+                    // StateMachine'den WeaponType belirle
+                    WeaponType weaponType = GetWeaponTypeFromStateMachine(activeWeapon);
+                    
+                    // BlacksmithManager'dan WeaponData'yı al
+                    if (BlacksmithManager.Instance != null)
+                    {
+                        var weapons = BlacksmithManager.Instance.GetAllWeapons();
+                        var weaponData = weapons?.Find(w => w.weaponType == weaponType);
+                        if (weaponData != null)
+                        {
+                            return weaponData;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Fallback: cached value
         return currentWeapon as WeaponData;
     }
     
@@ -478,9 +509,68 @@ public class EquipmentManager : MonoBehaviour
     
     /// <summary>
     /// Get currently equipped secondary weapon as WeaponData (backward compatibility)
+    /// Real-time'da PlayerWeaponManager'dan aktif secondary weapon'ı alır
     /// </summary>
     public WeaponData GetCurrentSecondaryWeaponAsWeaponData()
     {
+        // Real-time olarak PlayerWeaponManager'dan aktif secondary weapon'ı al
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        if (weaponManager != null && weaponManager.weapons != null)
+        {
+            // Aktif secondary weapon index'ini al
+            int currentSecondaryIndex = weaponManager.GetCurrentSecondaryWeaponIndex();
+            
+            if (currentSecondaryIndex >= 0 && currentSecondaryIndex < weaponManager.weapons.Length)
+            {
+                WeaponStateMachine activeSecondaryWeapon = weaponManager.weapons[currentSecondaryIndex];
+                if (activeSecondaryWeapon != null)
+                {
+                    // StateMachine'den WeaponType belirle
+                    WeaponType weaponType = GetWeaponTypeFromStateMachine(activeSecondaryWeapon);
+                    
+                    // BlacksmithManager'dan SecondaryWeaponData veya WeaponData'yı al
+                    if (BlacksmithManager.Instance != null)
+                    {
+                        // Önce secondary weapon data'da ara
+                        if (BlacksmithManager.Instance.secondaryWeaponDataBase != null)
+                        {
+                            SecondaryWeaponType secType = weaponType switch
+                            {
+                                WeaponType.Boomerang => SecondaryWeaponType.Boomerang,
+                                WeaponType.Spellbook => SecondaryWeaponType.Spellbook,
+                                WeaponType.Shield => SecondaryWeaponType.Shield,
+                                _ => SecondaryWeaponType.Boomerang
+                            };
+                            
+                            var secondaryWeaponData = BlacksmithManager.Instance.secondaryWeaponDataBase
+                                .Find(s => s.secondaryWeaponType == secType);
+                            
+                            if (secondaryWeaponData != null)
+                            {
+                                // SecondaryWeaponData'yı WeaponData'ya cast edemeyiz
+                                // Bunun yerine weapon database'den eşleşen WeaponData'yı bulalım
+                                var weapons = BlacksmithManager.Instance.GetAllWeapons();
+                                var weaponDatas = weapons?.Find(w => w.weaponType == weaponType);
+                                if (weaponDatas != null)
+                                {
+                                    return weaponDatas;
+                                }
+                            }
+                        }
+                        
+                        // Fallback: weapon database'den ara
+                        var allWeapons = BlacksmithManager.Instance.GetAllWeapons();
+                        var weaponData = allWeapons?.Find(w => w.weaponType == weaponType);
+                        if (weaponData != null)
+                        {
+                            return weaponData;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Fallback: cached value
         return currentSecondaryWeapon as WeaponData;
     }
     
