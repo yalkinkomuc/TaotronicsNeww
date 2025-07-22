@@ -171,7 +171,23 @@ public class WeaponUnlocker : MonoBehaviour
             }
         }
 
+        // 6) UI Equipment Selection Panel'i güncelle (eğer açıksa)
+        RefreshEquipmentSelectionPanel(isSecondary);
+
         Debug.Log($"[WeaponUnlocker] {weaponName} başarıyla unlock edildi ve aktif hale getirildi.");
+    }
+
+    /// <summary>
+    /// Quest tamamlandıktan sonra Equipment Selection Panel'inin güncellenmesini sağlar
+    /// </summary>
+    private void RefreshEquipmentSelectionPanel(bool isSecondaryWeapon)
+    {
+        // UI_EquipmentSelectionPanel instance'ını kontrol et ve refresh et
+        if (UI_EquipmentSelectionPanel.Instance != null)
+        {
+            Debug.Log("[WeaponUnlocker] Equipment Selection Panel güncelleniyor...");
+            UI_EquipmentSelectionPanel.Instance.RefreshCurrentPanel();
+        }
     }
 
     /// <summary>

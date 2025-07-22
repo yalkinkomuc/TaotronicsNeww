@@ -120,6 +120,22 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         onItemSelected = null;
     }
     
+    /// <summary>
+    /// Eğer panel açıksa mevcut slot türü ile paneli yeniden populate eder
+    /// Quest tamamlandıktan sonra yeni unlock edilen silahları göstermek için kullanılır
+    /// </summary>
+    public void RefreshCurrentPanel()
+    {
+        // Panel açık değilse refresh etmeye gerek yok
+        if (selectionPanel == null || !selectionPanel.activeInHierarchy)
+        {
+            return;
+        }
+        
+        Debug.Log($"[UI_EquipmentSelectionPanel] Panel refreshing for slot: {currentSlotType}");
+        PopulateItems(currentSlotType);
+    }
+    
     private void PositionPanel(Vector3 screenPosition)
     {
         if (selectionPanel == null) return;
@@ -206,10 +222,11 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 CreateSelectionSlot(equipment);
             }
             
-            // If no items available, show empty message
+            // Eğer hiç item yoksa, boş panel bırak
+            // CreateEmptySlot() çağrılmasın
             if (matchingItems.Count == 0)
             {
-                CreateEmptySlot();
+                Debug.Log($"[UI_EquipmentSelectionPanel] No available items for {slotType} - panel will remain empty");
             }
         }
     }
@@ -224,10 +241,11 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             CreateWeaponSelectionSlot(weapon);
         }
         
-        // If no weapons available, show empty message
+        // Eğer hiç silah yoksa (sadece equipped olan varsa), boş panel bırak
+        // CreateEmptySlot() çağrılmasın - kullanıcı hiçbir slot görmemeli
         if (matchingWeapons.Count == 0)
         {
-            CreateEmptySlot();
+            Debug.Log($"[UI_EquipmentSelectionPanel] No available weapons for {slotType} - panel will remain empty");
         }
     }
     
@@ -265,10 +283,12 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 if (slotType == EquipmentSlot.MainWeapon)
                 {
                     equippedWeapon = EquipmentManager.Instance.GetCurrentMainWeapon();
+                    Debug.Log($"[UI_EquipmentSelectionPanel] Equipped main weapon: {(equippedWeapon != null ? equippedWeapon.weaponType.ToString() : "null")}");
                 }
                 else if (slotType == EquipmentSlot.SecondaryWeapon)
                 {
                     equippedWeapon = EquipmentManager.Instance.GetCurrentSecondaryWeaponAsWeaponData();
+                    Debug.Log($"[UI_EquipmentSelectionPanel] Equipped secondary weapon: {(equippedWeapon != null ? equippedWeapon.weaponType.ToString() : "null")}");
                 }
             }
             
@@ -299,7 +319,12 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                     // Don't add if this weapon is currently equipped
                     if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
                     {
+                        Debug.Log($"[UI_EquipmentSelectionPanel] Adding main weapon: {weapon.weaponType} to selection");
                         matchingWeapons.Add(weapon);
+                    }
+                    else
+                    {
+                        Debug.Log($"[UI_EquipmentSelectionPanel] Filtering out equipped main weapon: {weapon.weaponType}");
                     }
                 }
                 // Secondary weapons: Boomerang, Spellbook, Shield
@@ -310,11 +335,18 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                     // Don't add if this weapon is currently equipped
                     if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
                     {
+                        Debug.Log($"[UI_EquipmentSelectionPanel] Adding secondary weapon: {weapon.weaponType} to selection");
                         matchingWeapons.Add(weapon);
+                    }
+                    else
+                    {
+                        Debug.Log($"[UI_EquipmentSelectionPanel] Filtering out equipped secondary weapon: {weapon.weaponType}");
                     }
                 }
             }
         }
+        
+        Debug.Log($"[UI_EquipmentSelectionPanel] Total matching weapons for {slotType}: {matchingWeapons.Count}");
         
         // Sort by rarity and level
         return matchingWeapons.OrderByDescending(w => w.rarity)
