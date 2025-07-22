@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -184,8 +185,6 @@ public class BlacksmithUI : BaseUIPanel
             return;
         }
         
-        
-        
         // Clear existing buttons
         foreach (Transform child in weaponButtonContainer)
         {
@@ -193,18 +192,18 @@ public class BlacksmithUI : BaseUIPanel
         }
         weaponButtons.Clear();
         
-        // Get weapons from blacksmith manager
-        List<WeaponData> weapons = BlacksmithManager.Instance.GetAllWeapons();
+        // Get only unlocked weapons from PlayerWeaponManager
+        List<WeaponData> unlockedWeapons = GetUnlockedWeapons();
         
         // Silah listesi null kontrolü
-        if (weapons == null || weapons.Count == 0)
+        if (unlockedWeapons == null || unlockedWeapons.Count == 0)
         {
-            Debug.LogError("Silah listesi boş veya null!");
+            Debug.LogWarning("Unlocked silah bulunamadı!");
             return;
         }
         
-        // Create buttons for each weapon
-        foreach (WeaponData weapon in weapons)
+        // Create buttons for each unlocked weapon
+        foreach (WeaponData weapon in unlockedWeapons)
         {
             // Her silah için null kontrolü yap
             if (weapon == null)
@@ -550,5 +549,82 @@ public class BlacksmithUI : BaseUIPanel
             // Use WeaponDamageManager to get current damage range for specific weapon
             return WeaponDamageManager.GetWeaponDamageRangeString(weapon.weaponType, playerStats);
         }
+    }
+    
+    /// <summary>
+    /// Get only unlocked weapons from PlayerWeaponManager, similar to UI_EquipmentSelectionPanel
+    /// </summary>
+    private List<WeaponData> GetUnlockedWeapons()
+    {
+        List<WeaponData> unlockedWeapons = new List<WeaponData>();
+        
+        // PlayerWeaponManager'dan unlocked silahları al
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        if (weaponManager == null || weaponManager.weapons == null)
+        {
+            Debug.LogWarning("PlayerWeaponManager bulunamadı!");
+            return unlockedWeapons;
+        }
+        
+        // Iterate through the entire weapons array
+        for (int i = 0; i < weaponManager.weapons.Length; i++)
+        {
+            var weaponStateMachine = weaponManager.weapons[i];
+            if (weaponStateMachine == null) continue;
+
+            // Sadece unlock edilmiş silahları kontrol et
+            if (!weaponManager.IsWeaponUnlocked(i))
+            {
+                continue; // Unlock edilmemiş silahları atla
+            }
+
+            WeaponData weapon = GetWeaponDataFromStateMachine(weaponStateMachine);
+            if (weapon != null)
+            {
+                unlockedWeapons.Add(weapon);
+            }
+        }
+        
+        // Sort by weapon type and rarity for consistent UI
+        return unlockedWeapons.OrderBy(w => w.weaponType)
+                             .ThenByDescending(w => w.rarity)
+                             .ToList();
+    }
+    
+    /// <summary>
+    /// Convert WeaponStateMachine to WeaponData asset from BlacksmithManager
+    /// </summary>
+    private WeaponData GetWeaponDataFromStateMachine(WeaponStateMachine weaponStateMachine)
+    {
+        // 1) WeaponType'i belirle
+        WeaponType weaponType;
+        if (weaponStateMachine is SwordWeaponStateMachine)
+            weaponType = WeaponType.Sword;
+        else if (weaponStateMachine is BurningSwordStateMachine)
+            weaponType = WeaponType.BurningSword;
+        else if (weaponStateMachine is HammerSwordStateMachine)
+            weaponType = WeaponType.Hammer;
+        else if (weaponStateMachine is BoomerangWeaponStateMachine)
+            weaponType = WeaponType.Boomerang;
+        else if (weaponStateMachine is SpellbookWeaponStateMachine)
+            weaponType = WeaponType.Spellbook;
+        else if (weaponStateMachine is ShieldStateMachine)
+            weaponType = WeaponType.Shield;
+        else
+            return null; // bilinmeyen
+
+        // 2) BlacksmithManager'dan gerçek asset'i almaya çalış
+        if (BlacksmithManager.Instance != null)
+        {
+            var weaponAsset = BlacksmithManager.Instance.GetAllWeapons()
+                                .Find(w => w != null && w.weaponType == weaponType);
+            if (weaponAsset != null)
+            {
+                return weaponAsset; // Gerçek referansı döndür
+            }
+        }
+
+        Debug.LogWarning($"WeaponData asset not found for weapon type: {weaponType}");
+        return null;
     }
 } 
