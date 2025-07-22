@@ -9,7 +9,7 @@ public class EquipmentManager : MonoBehaviour
     [Header("Equipment Slots")]
     [SerializeField] private WeaponData currentWeapon;
     [SerializeField] private ArmorData currentArmor;
-    [SerializeField] private WeaponData currentSecondaryWeapon;
+    [SerializeField] private EquipmentData currentSecondaryWeapon; // WeaponData veya SecondaryWeaponData olabilir
     [SerializeField] private AccessoryData currentAccessory;
     
     [Header("Rune Slots")]
@@ -107,7 +107,7 @@ public class EquipmentManager : MonoBehaviour
                 currentArmor = equipment as ArmorData;
                 break;
             case EquipmentSlot.SecondaryWeapon:
-                currentSecondaryWeapon = equipment as WeaponData;
+                currentSecondaryWeapon = equipment; // Artık EquipmentData, cast gerek yok
                 
                 PlayerPrefs.Save();
                 break;
@@ -465,9 +465,31 @@ public class EquipmentManager : MonoBehaviour
     /// <summary>
     /// Get currently equipped secondary weapon (public getter)
     /// </summary>
-    public WeaponData GetCurrentSecondaryWeapon()
+    public EquipmentData GetCurrentSecondaryWeapon()
     {
         return currentSecondaryWeapon;
+    }
+    
+    /// <summary>
+    /// Get currently equipped secondary weapon as WeaponData (backward compatibility)
+    /// </summary>
+    public WeaponData GetCurrentSecondaryWeaponAsWeaponData()
+    {
+        return currentSecondaryWeapon as WeaponData;
+    }
+    
+    /// <summary>
+    /// Convert SecondaryWeaponType to WeaponType for saving
+    /// </summary>
+    private WeaponType GetWeaponTypeFromSecondaryType(SecondaryWeaponType secondaryType)
+    {
+        return secondaryType switch
+        {
+            SecondaryWeaponType.Spellbook => WeaponType.Spellbook,
+            SecondaryWeaponType.Boomerang => WeaponType.Boomerang,
+            SecondaryWeaponType.Shield => WeaponType.Shield,
+            _ => WeaponType.Spellbook // Default fallback
+        };
     }
     
     #endregion
@@ -492,7 +514,15 @@ public class EquipmentManager : MonoBehaviour
         // SECONDARY WEAPON
         if (currentSecondaryWeapon != null)
         {
-            PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)currentSecondaryWeapon.weaponType);
+            // SecondaryWeaponData mı WeaponData mı kontrol et
+            if (currentSecondaryWeapon is SecondaryWeaponData secondaryData)
+            {
+                PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)GetWeaponTypeFromSecondaryType(secondaryData.secondaryWeaponType));
+            }
+            else if (currentSecondaryWeapon is WeaponData weaponData)
+            {
+                PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)weaponData.weaponType);
+            }
         }
 
         PlayerPrefs.Save();

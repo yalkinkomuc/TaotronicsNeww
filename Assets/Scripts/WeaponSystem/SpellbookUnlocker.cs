@@ -75,13 +75,37 @@ public class SpellbookUnlocker : MonoBehaviour
         // 6) EquipmentManager'a bildir (stats güncellensin)
         if (EquipmentManager.Instance != null && BlacksmithManager.Instance != null)
         {
-            var spellbookData = BlacksmithManager.Instance.GetAllWeapons()
-                                .Find(w => w.weaponType == WeaponType.Spellbook);
-            if (spellbookData != null)
+            // Spellbook SecondaryWeaponData olarak tanımlanmış, direkt oradan ara
+            var spellbookSecondaryData = BlacksmithManager.Instance.secondaryWeaponDataBase?.Find(s => s.secondaryWeaponType == SecondaryWeaponType.Spellbook);
+            
+            if (spellbookSecondaryData != null)
             {
-                // Spellbook asset'inde slot yanlış tanımlı ise düzelt
-                spellbookData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
-                EquipmentManager.Instance.EquipItem(spellbookData);
+                Debug.Log($"[SpellbookUnlocker] Spellbook SecondaryWeaponData bulundu: {spellbookSecondaryData.itemName}");
+                bool equipResult = EquipmentManager.Instance.EquipItem(spellbookSecondaryData);
+                Debug.Log($"[SpellbookUnlocker] EquipmentManager.EquipItem sonucu: {equipResult}");
+                
+                if (!equipResult)
+                {
+                    Debug.LogError("[SpellbookUnlocker] EquipItem başarısız oldu!");
+                }
+            }
+            else
+            {
+                Debug.LogError("[SpellbookUnlocker] BlacksmithManager.secondaryWeaponDataBase'de Spellbook bulunamadı!");
+                
+                // Debug: SecondaryWeaponDataBase'deki tüm itemları listele
+                if (BlacksmithManager.Instance.secondaryWeaponDataBase != null)
+                {
+                    Debug.Log($"[SpellbookUnlocker] SecondaryWeaponDataBase'de toplam {BlacksmithManager.Instance.secondaryWeaponDataBase.Count} item var:");
+                    foreach (var item in BlacksmithManager.Instance.secondaryWeaponDataBase)
+                    {
+                        Debug.Log($"  - {item.itemName} (Tip: {item.secondaryWeaponType})");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("[SpellbookUnlocker] BlacksmithManager.secondaryWeaponDataBase null!");
+                }
             }
         }
 

@@ -268,7 +268,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 }
                 else if (slotType == EquipmentSlot.SecondaryWeapon)
                 {
-                    equippedWeapon = EquipmentManager.Instance.GetCurrentSecondaryWeapon();
+                    equippedWeapon = EquipmentManager.Instance.GetCurrentSecondaryWeaponAsWeaponData();
                 }
             }
             

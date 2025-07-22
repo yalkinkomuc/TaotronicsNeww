@@ -147,7 +147,7 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         return null; // No EquipmentManager available
     }
     
-    private WeaponData GetEquippedSecondaryWeapon()
+    private EquipmentData GetEquippedSecondaryWeapon()
     {
         // Use EquipmentManager as the single source of truth
         if (EquipmentManager.Instance != null)
