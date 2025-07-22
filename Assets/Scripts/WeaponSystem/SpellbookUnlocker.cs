@@ -50,7 +50,7 @@ public class SpellbookUnlocker : MonoBehaviour
         }
 
         // 3) Instantiate ve Player'ın child'ı yap
-        GameObject spellbookGO = Instantiate(prefab, player.transform);
+        GameObject spellbookGO = Instantiate(prefab, player.weaponHolderTranform);
         spellbookGO.name = "Spellbook"; // sahnede temiz isim
 
         SpellbookWeaponStateMachine spellbookSM = spellbookGO.GetComponent<SpellbookWeaponStateMachine>();

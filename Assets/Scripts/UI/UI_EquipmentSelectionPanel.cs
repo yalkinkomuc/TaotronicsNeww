@@ -272,40 +272,39 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 }
             }
             
-            foreach (var weaponStateMachine in weaponManager.weapons)
+            // Iterate through the entire weapons array (include last index)
+            for (int i = 0; i < weaponManager.weapons.Length; i++)
             {
-                if (weaponStateMachine != null)
+                var weaponStateMachine = weaponManager.weapons[i];
+                if (weaponStateMachine == null) continue;
+
+                WeaponData weapon = GetWeaponDataFromStateMachine(weaponStateMachine);
+                if (weapon == null) continue;
+
+                // Check if weapon type matches slot type
+                bool isMainWeapon = slotType == EquipmentSlot.MainWeapon;
+                bool isSecondaryWeapon = slotType == EquipmentSlot.SecondaryWeapon;
+                
+                // Main weapons: Sword, BurningSword, Hammer
+                if (isMainWeapon && (weapon.weaponType == WeaponType.Sword || 
+                                    weapon.weaponType == WeaponType.BurningSword || 
+                                    weapon.weaponType == WeaponType.Hammer))
                 {
-                    // Get WeaponData from the weapon state machine
-                    WeaponData weapon = GetWeaponDataFromStateMachine(weaponStateMachine);
-                    if (weapon != null)
+                    // Don't add if this weapon is currently equipped
+                    if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
                     {
-                        // Check if weapon type matches slot type
-                        bool isMainWeapon = slotType == EquipmentSlot.MainWeapon;
-                        bool isSecondaryWeapon = slotType == EquipmentSlot.SecondaryWeapon;
-                        
-                        // Main weapons: Sword, BurningSword, Hammer
-                        if (isMainWeapon && (weapon.weaponType == WeaponType.Sword || 
-                                            weapon.weaponType == WeaponType.BurningSword || 
-                                            weapon.weaponType == WeaponType.Hammer))
-                        {
-                            // Don't add if this weapon is currently equipped
-                            if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
-                            {
-                                matchingWeapons.Add(weapon);
-                            }
-                        }
-                        // Secondary weapons: Boomerang, Spellbook, Shield
-                        else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 
-                                                      weapon.weaponType == WeaponType.Spellbook ||
-                                                      weapon.weaponType == WeaponType.Shield))
-                        {
-                            // Don't add if this weapon is currently equipped
-                            if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
-                            {
-                                matchingWeapons.Add(weapon);
-                            }
-                        }
+                        matchingWeapons.Add(weapon);
+                    }
+                }
+                // Secondary weapons: Boomerang, Spellbook, Shield
+                else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 
+                                              weapon.weaponType == WeaponType.Spellbook ||
+                                              weapon.weaponType == WeaponType.Shield))
+                {
+                    // Don't add if this weapon is currently equipped
+                    if (equippedWeapon == null || weapon.weaponType != equippedWeapon.weaponType)
+                    {
+                        matchingWeapons.Add(weapon);
                     }
                 }
             }

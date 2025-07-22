@@ -14,6 +14,8 @@ public class Player : Entity
     [HideInInspector]
     public HealthBar healthBar;
 
+    public Transform weaponHolderTranform;
+
 
     [Header("AttackDetails")] 
     //public Vector2[] attackMovement;
