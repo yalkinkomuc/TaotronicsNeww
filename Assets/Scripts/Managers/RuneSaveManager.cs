@@ -30,6 +30,26 @@ public class RuneSaveManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private void OnEnable()
+    {
+        // Rune değişikliklerini dinle ve kaydet
+        EquipmentManager.OnRuneChanged += HandleRuneChange;
+    }
+
+    private void OnDisable()
+    {
+        EquipmentManager.OnRuneChanged -= HandleRuneChange;
+    }
+
+    private void HandleRuneChange(int slotIndex, RuneData rune)
+    {
+        // Sadece yükleme tamamlandıktan sonra kaydetmeyi tetikle
+        if (hasLoadedOnce)
+        {
+            SaveEquippedRunes();
+        }
+    }
     
     private void Start()
     {
@@ -119,7 +139,11 @@ public class RuneSaveManager : MonoBehaviour
         {
             if (enableDebugLogs)
                 Debug.Log("[RuneSaveManager] First time player - saving initial equipment state after rune load");
-            equipmentManager.SaveEquipment();
+            
+            // Hem ekipmanları hem de rune'ları kaydet
+            EquipmentManager.Instance.SaveEquipment();
+            SaveEquippedRunes(); // Rune'ları da ilk defa kaydet
+
             EquipmentManager.MarkGameAsStarted();
         }
         
@@ -163,12 +187,6 @@ public class RuneSaveManager : MonoBehaviour
         
         if (enableDebugLogs)
             Debug.Log("[RuneSaveManager] UI notification completed");
-            
-        // RuneSaveManager işini tamamladı - EquipmentManager'a normal save yapabileceğini bildir
-        if (EquipmentManager.Instance != null)
-        {
-            EquipmentManager.Instance.MarkRuneLoadingCompleted();
-        }
     }
     
     /// <summary>
@@ -200,8 +218,43 @@ public class RuneSaveManager : MonoBehaviour
         return null;
     }
     
-    // NOTE: Saving is handled by EquipmentManager directly
-    
+    /// <summary>
+    /// Takılı olan tüm rune'ları PlayerPrefs'e kaydeder.
+    /// </summary>
+    public void SaveEquippedRunes()
+    {
+        if (EquipmentManager.Instance == null)
+        {
+            Debug.LogWarning("[RuneSaveManager] EquipmentManager not found, cannot save runes.");
+            return;
+        }
+
+        if (enableDebugLogs)
+            Debug.Log($"[RuneSaveManager] 💾 SAVING RUNES...");
+            
+        for (int i = 0; i < 6; i++) // Assuming 6 rune slots
+        {
+            RuneData rune = EquipmentManager.Instance.GetEquippedRune(i);
+            if (rune != null)
+            {
+                int enhancementLevel = EquipmentManager.Instance.GetRuneEnhancementLevel(i);
+                PlayerPrefs.SetString($"EquippedRune_{i}", rune.itemName);
+                PlayerPrefs.SetInt($"EquippedRune_{i}_Enhancement", enhancementLevel);
+                if (enableDebugLogs)
+                    Debug.Log($"[RuneSaveManager] ✅ SAVED rune at slot {i}: '{rune.itemName}' with enhancement +{enhancementLevel}");
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey($"EquippedRune_{i}");
+                PlayerPrefs.DeleteKey($"EquippedRune_{i}_Enhancement");
+            }
+        }
+        
+        PlayerPrefs.Save();
+        if (enableDebugLogs)
+            Debug.Log("[RuneSaveManager] Runes saved to PlayerPrefs.");
+    }
+
     /// <summary>
     /// Debug: Print all equipped runes
     /// </summary>

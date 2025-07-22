@@ -98,32 +98,12 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
             }
         }
         
-        UpdateSlotVisuals();
         if (runeNameText != null)
         {
             runeNameText.text = rune != null ? rune.itemName : "";
             runeNameText.gameObject.SetActive(rune != null);
         }
     }
-    
-    private void UpdateSlotVisuals()
-    {
-        // Update background based on rune rarity
-        if (backgroundImage != null)
-        {
-            if (currentRune != null)
-            {
-                // Set background color based on item rarity
-                backgroundImage.color = GetRarityColor(currentRune.rarity);
-            }
-            else
-            {
-                // Default background for empty slot
-                backgroundImage.color = Color.gray;
-            }
-        }
-    }
-    
     private Color GetRuneTypeColor(RuneType runeType)
     {
         return runeType switch

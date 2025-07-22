@@ -368,12 +368,12 @@ public class AdvancedInventoryUI : BaseUIPanel
         UpdateRuneSlots(); // Update rune slots when inventory opens
         UpdateGearCapacity();
         
-        // İlk açılışta rune'ları force refresh et (timing problemi için)
-        if (!hasBeenOpenedOnce)
-        {
-            hasBeenOpenedOnce = true;
-            StartCoroutine(ForceRefreshRunesOnFirstOpen());
-        }
+        // İlk açılışta rune'ları force refresh et (timing problemi için) - ARTIK GEREKLİ DEĞİL
+        // if (!hasBeenOpenedOnce)
+        // {
+        //     hasBeenOpenedOnce = true;
+        //     StartCoroutine(ForceRefreshRunesOnFirstOpen());
+        // }
         
         // Notify EquipmentUIManager that inventory is now open and slots are available
         if (EquipmentUIManager.Instance != null)
@@ -624,40 +624,40 @@ public class AdvancedInventoryUI : BaseUIPanel
     /// <summary>
     /// İlk inventory açılışında rune'ları force refresh et (timing problemi çözümü)
     /// </summary>
-    private System.Collections.IEnumerator ForceRefreshRunesOnFirstOpen()
-    {
-        // UI'ın tamamen hazır olması için biraz bekle
-        yield return new WaitForSeconds(0.1f);
+    // private System.Collections.IEnumerator ForceRefreshRunesOnFirstOpen()
+    // {
+    //     // UI'ın tamamen hazır olması için biraz bekle
+    //     yield return new WaitForSeconds(0.1f);
         
-        Debug.Log("[AdvancedInventoryUI] Force refreshing runes on first open...");
+    //     Debug.Log("[AdvancedInventoryUI] Force refreshing runes on first open...");
         
-        // Rune'ları yeniden güncelle
-        UpdateRuneSlots();
+    //     // Rune'ları yeniden güncelle
+    //     UpdateRuneSlots();
         
-        // Eğer hâlâ boşsa, EquipmentManager'dan direct olarak al
-        if (EquipmentManager.Instance != null)
-        {
-            bool anyRuneFound = false;
-            for (int i = 0; i < runeSlots.Length; i++)
-            {
-                RuneData currentRune = EquipmentManager.Instance.GetEquippedRune(i);
-                if (currentRune != null)
-                {
-                    anyRuneFound = true;
-                    if (runeSlots[i] != null)
-                    {
-                        runeSlots[i].UpdateRune(currentRune);
-                        Debug.Log($"[AdvancedInventoryUI] Force updated rune slot {i}: {currentRune.itemName}");
-                    }
-                }
-            }
+    //     // Eğer hâlâ boşsa, EquipmentManager'dan direct olarak al
+    //     if (EquipmentManager.Instance != null)
+    //     {
+    //         bool anyRuneFound = false;
+    //         for (int i = 0; i < runeSlots.Length; i++)
+    //         {
+    //             RuneData currentRune = EquipmentManager.Instance.GetEquippedRune(i);
+    //             if (currentRune != null)
+    //             {
+    //                 anyRuneFound = true;
+    //                 if (runeSlots[i] != null)
+    //                 {
+    //                     runeSlots[i].UpdateRune(currentRune);
+    //                     Debug.Log($"[AdvancedInventoryUI] Force updated rune slot {i}: {currentRune.itemName}");
+    //                 }
+    //             }
+    //         }
             
-            if (!anyRuneFound)
-            {
-                Debug.Log("[AdvancedInventoryUI] No runes found to display");
-            }
-        }
-    }
+    //         if (!anyRuneFound)
+    //         {
+    //             Debug.Log("[AdvancedInventoryUI] No runes found to display");
+    //         }
+    //     }
+    // }
     
     #endregion
 } 

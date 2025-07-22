@@ -31,7 +31,7 @@ public class EquipmentManager : MonoBehaviour
     private Dictionary<StatType, int> totalStats = new Dictionary<StatType, int>();
     
     // RuneSaveManager coordination
-    private bool runesLoadingCompleted = false;
+    // private bool runesLoadingCompleted = false; // Artık RuneSaveManager tarafından yönetiliyor
     
     private void Awake()
     {
@@ -116,7 +116,7 @@ public class EquipmentManager : MonoBehaviour
             case EquipmentSlot.SecondaryWeapon:
                 currentSecondaryWeapon = equipment; // Artık EquipmentData, cast gerek yok
                 
-                PlayerPrefs.Save();
+                // PlayerPrefs.Save(); // SaveEquipment içinde yapılacak
                 break;
             case EquipmentSlot.Accessory:
                 currentAccessory = equipment as AccessoryData;
@@ -186,7 +186,7 @@ public class EquipmentManager : MonoBehaviour
         // Unequip previous rune if exists
         if (equippedRunes[slotIndex] != null)
         {
-            UnequipRune(slotIndex);
+            UnequipRune(slotIndex); // Bu zaten event'i tetikler, ekstra işleme gerek yok
         }
         
         equippedRunes[slotIndex] = rune;
@@ -198,7 +198,7 @@ public class EquipmentManager : MonoBehaviour
         OnRuneChanged?.Invoke(slotIndex, rune);
         
         // Save equipment after equipping rune
-        SaveEquipment();
+        // SaveEquipment(); // Artık RuneSaveManager dinliyor ve kaydediyor
         
         Debug.Log($"[EquipmentManager] ✅ RUNE EQUIPPED: {rune.itemName} in slot {slotIndex} with enhancement +{rune.enhancementLevel}");
         return true;
@@ -224,7 +224,7 @@ public class EquipmentManager : MonoBehaviour
         OnRuneChanged?.Invoke(slotIndex, null);
         
         // Save equipment after unequipping rune
-        SaveEquipment();
+        // SaveEquipment(); // Artık RuneSaveManager dinliyor ve kaydediyor
         
         Debug.Log($"[EquipmentManager] ❌ RUNE UNEQUIPPED: {unequippedRune.itemName} from slot {slotIndex}");
         return unequippedRune;
@@ -296,11 +296,11 @@ public class EquipmentManager : MonoBehaviour
     /// <summary>
     /// RuneSaveManager için - Rune yükleme tamamlandığını bildir
     /// </summary>
-    public void MarkRuneLoadingCompleted()
-    {
-        runesLoadingCompleted = true;
-        Debug.Log("[EquipmentManager] ✅ Rune loading marked as completed - save operations now allowed");
-    }
+    // public void MarkRuneLoadingCompleted() // Gerek Kalmadı
+    // {
+    //     runesLoadingCompleted = true;
+    //     Debug.Log("[EquipmentManager] ✅ Rune loading marked as completed - save operations now allowed");
+    // }
     
     /// <summary>
     /// RuneSaveManager için - Rune array'ini temizle ve yeniden set et
@@ -333,9 +333,6 @@ public class EquipmentManager : MonoBehaviour
         
         // Recalculate stats
         CalculateAllStats();
-        
-        // Mark rune loading as completed
-        runesLoadingCompleted = true;
         
         Debug.Log("[EquipmentManager] Runes set by RuneSaveManager and stats recalculated");
     }
@@ -720,13 +717,8 @@ public class EquipmentManager : MonoBehaviour
     /// </summary>
     public void SaveEquipment()
     {
-        Debug.Log("[EquipmentManager] SaveEquipment called - starting save process...");
+        Debug.Log("[EquipmentManager] SaveEquipment called - saving WEAPONS/ARMOR only...");
         
-        // RuneSaveManager henüz rune'ları yüklemediyse, sadece weapon'ları kaydet
-        if (!runesLoadingCompleted)
-        {
-            Debug.LogWarning("[EquipmentManager] ⏳ Runes not loaded yet - skipping rune save to prevent clearing");
-        }
         // MAIN WEAPON
         if (currentWeapon != null)
         {
@@ -780,42 +772,8 @@ public class EquipmentManager : MonoBehaviour
             PlayerPrefs.DeleteKey("EquippedAccessory");
         }
 
-        // RUNES - Rune'ları kaydet (sadece yükleme tamamlandıysa)
-        if (runesLoadingCompleted)
-        {
-            Debug.Log($"[EquipmentManager] 💾 SAVING RUNES: {equippedRunes.Length} slots...");
-            
-            int runeCount = 0;
-            for (int i = 0; i < equippedRunes.Length; i++)
-            {
-                if (equippedRunes[i] != null) runeCount++;
-            }
-            Debug.Log($"[EquipmentManager] 📊 Total equipped runes: {runeCount}");
-            
-            for (int i = 0; i < equippedRunes.Length; i++)
-            {
-                if (equippedRunes[i] != null)
-                {
-                    int enhancementLevel = runeEnhancementLevels.ContainsKey(i) ? runeEnhancementLevels[i] : equippedRunes[i].enhancementLevel;
-                    PlayerPrefs.SetString($"EquippedRune_{i}", equippedRunes[i].itemName);
-                    PlayerPrefs.SetInt($"EquippedRune_{i}_Enhancement", enhancementLevel);
-                    Debug.Log($"[EquipmentManager] ✅ SAVED rune at slot {i}: '{equippedRunes[i].itemName}' with enhancement +{enhancementLevel}");
-                }
-                else
-                {
-                    PlayerPrefs.DeleteKey($"EquippedRune_{i}");
-                    PlayerPrefs.DeleteKey($"EquippedRune_{i}_Enhancement");
-                    Debug.Log($"[EquipmentManager] ❌ CLEARED rune slot {i} (was empty)");
-                }
-            }
-        }
-        else
-        {
-            Debug.Log($"[EquipmentManager] ⏸️ SKIPPING RUNE SAVE - waiting for RuneSaveManager to load runes first");
-        }
-
         PlayerPrefs.Save();
-        Debug.Log("[EquipmentManager] Equipment and runes saved to PlayerPrefs");
+        Debug.Log("[EquipmentManager] Equipment (weapons/armor) saved to PlayerPrefs. Runes are saved by RuneSaveManager.");
     }
 
     /// <summary>
