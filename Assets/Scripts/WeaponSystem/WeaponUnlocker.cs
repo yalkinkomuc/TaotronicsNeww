@@ -39,6 +39,13 @@ public class WeaponUnlocker : MonoBehaviour
     {
         UnlockWeapon<SwordWeaponStateMachine>("Sword", null, false);
     }
+    
+    [ContextMenu("UnlockIceHammer")]
+    public void UnlockIceHammer()
+    {
+        UnlockWeapon<IceHammerStateMachine>("IceHammer", null, false);
+    }
+    
 
    
     private void UnlockWeapon<T>(string weaponName, SecondaryWeaponType? secondaryType, bool isSecondary) where T : WeaponStateMachine
@@ -180,6 +187,10 @@ public class WeaponUnlocker : MonoBehaviour
         else if (stateMachine is HammerSwordStateMachine)
         {
             return WeaponType.Hammer;
+        }
+        else if (stateMachine is IceHammerStateMachine)
+        {
+            return WeaponType.IceHammer;
         }
         else if (stateMachine is BoomerangWeaponStateMachine)
         {

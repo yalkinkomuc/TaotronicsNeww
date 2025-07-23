@@ -197,4 +197,5 @@ public enum WeaponType
     BurningSword=3,
     Hammer=4,
     Shield=5,
+    IceHammer =6
 } 

@@ -442,6 +442,10 @@ public class EquipmentManager : MonoBehaviour
         {
             return WeaponType.Hammer;
         }
+        else if (stateMachine is IceHammerStateMachine)
+        {
+            return WeaponType.IceHammer;
+        }
         else if (stateMachine is BoomerangWeaponStateMachine)
         {
             return WeaponType.Boomerang;
@@ -491,6 +495,10 @@ public class EquipmentManager : MonoBehaviour
         else if (stateMachine is HammerSwordStateMachine)
         {
             return allWeapons.Find(w => w.weaponType == WeaponType.Hammer);
+        }
+        else if (stateMachine is IceHammerStateMachine)
+        {
+            return allWeapons.Find(w => w.weaponType == WeaponType.IceHammer);
         }
         
         return null;
@@ -769,7 +777,7 @@ public class EquipmentManager : MonoBehaviour
 
     private bool IsPrimaryWeaponType(WeaponType type)
     {
-        return type == WeaponType.Sword || type == WeaponType.BurningSword || type == WeaponType.Hammer;
+        return type == WeaponType.Sword || type == WeaponType.BurningSword || type == WeaponType.Hammer || type == WeaponType.IceHammer;
     }
 
     private bool IsSecondaryWeaponType(WeaponType type)

@@ -22,6 +22,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       {
          { WeaponType.Sword, new SwordAttackHandler() },
          { WeaponType.Hammer, new HammerAttackHandler() },
+         { WeaponType.IceHammer ,new IceHammerAttackHandler()},
          { WeaponType.BurningSword, new BurningSwordAttackHandler() }
       };
    }
@@ -202,6 +203,10 @@ public class PlayerAnimTriggers : MonoBehaviour
       {
          return WeaponType.BurningSword;
       }
+      else if (player.iceHammer != null && player.iceHammer.gameObject.activeInHierarchy)
+      {
+         return WeaponType.IceHammer;
+      }
       else
       {
          // Default to Sword if no specific weapon is active
@@ -351,6 +356,11 @@ public class PlayerAnimTriggers : MonoBehaviour
          if (player.hammer != null)
          {
             player.hammer.animator.speed = 0;
+         }
+
+         if (player.iceHammer != null)
+         {
+            player.iceHammer.animator.speed = 0;
          }
 
          if (player.burningSword != null)

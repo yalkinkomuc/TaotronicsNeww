@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class HammerAttackHandler : BaseWeaponAttackHandler
+public class IceHammerAttackHandler : BaseWeaponAttackHandler
 {
     public override WeaponType GetWeaponType()
     {
-        return WeaponType.Hammer;
+        return WeaponType.IceHammer;
     }
     
     protected override void HandleWeaponSpecificAttack(Player player, Enemy enemy, IWeaponAttackState weaponAttackState, float baseDamage, bool isCritical)
@@ -32,5 +32,4 @@ public class HammerAttackHandler : BaseWeaponAttackHandler
             enemy.ApplyComboKnockback(player.transform.position, comboCounter, knockbackMultiplier);
         }
     }
-    
-} 
+}
