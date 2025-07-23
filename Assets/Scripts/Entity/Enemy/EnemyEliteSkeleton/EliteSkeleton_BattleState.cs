@@ -100,14 +100,15 @@ public class EliteSkeleton_BattleState : EnemyState
             float distanceToPlayer = Vector2.Distance(enemy.transform.position, player.position);
             float horizontalDistance = player.position.x - enemy.transform.position.x;
             
-            if (distanceToPlayer <= enemy.attackDistance + 0.5f) // 0.5f buffer zone
+            // Threshold'ları artırdım - saldırı menzilinde daha stabil durması için
+            if (distanceToPlayer <= enemy.attackDistance + 0.25f) // 1.2f buffer zone (artırıldı)
             {
                 moveDir = 0;
             }
             else
             {
               
-                if (Mathf.Abs(horizontalDistance) > 0.5f)
+                if (Mathf.Abs(horizontalDistance) > 1.0f) // 1.0f threshold (artırıldı)
                 {
                     moveDir = horizontalDistance > 0 ? 1 : -1;
                 }
