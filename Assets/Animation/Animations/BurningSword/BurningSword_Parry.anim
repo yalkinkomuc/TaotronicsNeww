@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Player_Block
+  m_Name: BurningSword_Parry
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,9 +21,9 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -2144695504154751331, guid: 109d8531802d9d443b2c5df1a09e5ed5, type: 3}
+      value: {fileID: 6884883220960244303, guid: 335b306fbfb95784495b9cb56c18e334, type: 3}
     - time: 0.14285715
-      value: {fileID: 759992743279150494, guid: 109d8531802d9d443b2c5df1a09e5ed5, type: 3}
+      value: {fileID: 2896211779600146378, guid: 335b306fbfb95784495b9cb56c18e334, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -46,8 +46,8 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -2144695504154751331, guid: 109d8531802d9d443b2c5df1a09e5ed5, type: 3}
-    - {fileID: 759992743279150494, guid: 109d8531802d9d443b2c5df1a09e5ed5, type: 3}
+    - {fileID: 6884883220960244303, guid: 335b306fbfb95784495b9cb56c18e334, type: 3}
+    - {fileID: 2896211779600146378, guid: 335b306fbfb95784495b9cb56c18e334, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

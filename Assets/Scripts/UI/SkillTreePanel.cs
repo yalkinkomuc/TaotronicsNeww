@@ -542,12 +542,6 @@ public class SkillTreePanel : BaseUIPanel
                     // Time.timeScale = 0 olsa bile çalışması için unscaledDeltaTime kullan
                     holdTime += Time.unscaledDeltaTime;
                     
-                    // Her 0.2 saniyede bir progress log'u (unscaledDeltaTime ile)
-                    if (holdTime % 0.2f < Time.unscaledDeltaTime)
-                    {
-                       
-                    }
-                    
                     if (holdTime >= requiredHoldTime)
                     {
                       

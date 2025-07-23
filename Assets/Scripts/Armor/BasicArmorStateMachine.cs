@@ -55,7 +55,6 @@ public class BasicArmorStateMachine : ArmorStateMachine
             case ArmorState.Dash:
                 animator.SetBool("ArmorDash", true);
                 break;
-
             case ArmorState.Jump:
                 animator.SetBool("ArmorJump", true);
                 break;
