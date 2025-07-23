@@ -70,13 +70,12 @@ public class AdvancedInventoryUI : BaseUIPanel
     // Private fields
     private UI_MaterialDisplay[] materialDisplays;
     private bool isCollectiblesPage = false;
-    private bool hasBeenOpenedOnce = false; // Track if inventory was opened at least once
     
     // Public accessor for other systems
     public bool IsCollectiblesPage => isCollectiblesPage;
     public bool IsInventoryOpen => gameObject.activeInHierarchy;
     
-    private void Awake()
+    private new void Awake()
     {
         if (Instance == null)
         {

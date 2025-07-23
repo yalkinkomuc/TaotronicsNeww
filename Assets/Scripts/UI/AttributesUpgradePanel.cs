@@ -109,7 +109,7 @@ public class AttributesUpgradePanel : BaseUIPanel
         }
     }
     
-    private void Update()
+    private new void Update()
     {
         if (!isVisible) return;
         
@@ -474,7 +474,7 @@ public class AttributesUpgradePanel : BaseUIPanel
         }
         else
         {
-            Debug.LogError("AttributesUpgradePanel: UIInputBlocker not found! Gameplay input NOT enabled!");
+            Debug.LogError("AttributesUpgradePanel: UIInputBlocker not fousnd! Gameplay input NOT enabled!");
         }
     }
     

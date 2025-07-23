@@ -7,7 +7,6 @@ public class NoteManager : MonoBehaviour
     [SerializeField] private List<NoteTextData> allNotes = new List<NoteTextData>();
     
     [Header("Note Collection")]
-    [SerializeField] private bool showNoteCollection = true;
     [SerializeField] private GameObject noteCollectionUI;
     
     [Header("Tab Integration")]

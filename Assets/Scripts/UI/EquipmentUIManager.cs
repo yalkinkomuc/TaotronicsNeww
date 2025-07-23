@@ -83,6 +83,7 @@ public class EquipmentUIManager : MonoBehaviour
         UpdateAllEquipmentSlots();
     }
     
+    // ReSharper disable Unity.PerformanceAnalysis
     public void FindEquipmentSlots()
     {
         // Try multiple strategies to find AdvancedInventoryUI

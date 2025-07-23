@@ -7,6 +7,7 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager instance;
     public Player player;
 
+    [Obsolete("Obsolete")]
     private void Awake()
     {
         if (instance == null)
@@ -34,6 +35,7 @@ public class PlayerManager : MonoBehaviour
         }
     }
     
+    [Obsolete("Obsolete")]
     private void OnDestroy()
     {
         // Unsubscribe from events
@@ -44,6 +46,7 @@ public class PlayerManager : MonoBehaviour
     }
     
     // Called when a scene is loaded
+    [Obsolete("Obsolete")]
     private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
         

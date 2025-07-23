@@ -137,7 +137,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
         }
     }
     
-    public void ShowPanel()
+    public new void ShowPanel()
     {
         Canvas canvas = GetComponent<Canvas>();
         if (canvas != null)

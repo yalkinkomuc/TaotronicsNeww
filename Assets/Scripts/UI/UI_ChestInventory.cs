@@ -59,14 +59,8 @@ public class UI_ChestInventory : BaseUIPanel
         }
     }
 
-    private void Update()
+    private new void Update()
     {
-        // ESC tuşuna basıldığında sandığı kapat
-        if (Input.GetKeyDown(KeyCode.Escape) && gameObject.activeInHierarchy)
-        {
-            CloseChest();
-        }
-        
         // R tuşuna basıldığında tüm itemleri al
         if (Input.GetKeyDown(KeyCode.R) && gameObject.activeInHierarchy)
         {
@@ -81,7 +75,7 @@ public class UI_ChestInventory : BaseUIPanel
     {
         if (chest == null)
         {
-            Debug.LogError("OpenChest: chest parameter is null!");
+            Debug.LogError("OpenChest: schest parameter is null!");
             return;
         }
         

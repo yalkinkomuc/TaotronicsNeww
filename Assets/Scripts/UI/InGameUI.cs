@@ -10,6 +10,7 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private bool enableUIDebug = false;
     [SerializeField] private KeyCode debugKey = KeyCode.F12;
     
+    [Obsolete("Obsolete")]
     private void Update()
     {
         // UI debug tuşu kontrolü

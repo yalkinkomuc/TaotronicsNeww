@@ -221,7 +221,9 @@ public class Player : Entity
         base.Awake();
         
         // Check if there's already a player in the scene (duplicate prevention)
+#pragma warning disable CS0618 // Type or member is obsolete
         Player[] existingPlayers = FindObjectsOfType<Player>();
+#pragma warning restore CS0618 // Type or member is obsolete
         if (existingPlayers.Length > 1)
         {
             // If this is not the first player, destroy this instance
