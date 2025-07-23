@@ -72,6 +72,7 @@ public class SkillTreePanel : BaseUIPanel
     
     protected override void OnEnable()
     {
+        Debug.Log("[SkillTree] OnEnable called - SkillTreePanel activated");
         
         // UIInputBlocker'a ekle (sadece aktif olduğunda)
         if (UIInputBlocker.instance != null)
@@ -79,13 +80,18 @@ public class SkillTreePanel : BaseUIPanel
             UIInputBlocker.instance.AddPanel(gameObject);
             if (skillScreenPanel != null)
                 UIInputBlocker.instance.AddPanel(skillScreenPanel);
+            Debug.Log("[SkillTree] Added panels to UIInputBlocker");
         }
-        
+        else
+        {
+            Debug.LogWarning("[SkillTree] UIInputBlocker.instance is null!");
+        }
 
         
         SetupButtons(); // HER AÇILIŞTA BUTTON'LARI SETUP ET!
         UpdateShardCount();
         UpdateAllSkillButtons();
+        Debug.Log("[SkillTree] OnEnable setup complete");
     }
     
     private void InitializeSkillMapping()
@@ -136,12 +142,14 @@ public class SkillTreePanel : BaseUIPanel
     
     private void SetupButtons()
     {
+        Debug.Log("[SkillTree] SetupButtons called");
         
         if (unlockSkillButton != null)
         {
             unlockSkillButton.onClick.RemoveAllListeners();
             unlockSkillButton.onClick.AddListener(OpenSkillPanel);
             unlockSkillButton.interactable = true; // ZORLA AKTİF YAP
+            
         }
         
         if (resetButton != null)
@@ -149,6 +157,7 @@ public class SkillTreePanel : BaseUIPanel
             resetButton.onClick.RemoveAllListeners();
             resetButton.onClick.AddListener(ResetUI);
             resetButton.interactable = true; // ZORLA AKTİF YAP
+            
         }
         
         if (closeButton != null)
@@ -156,7 +165,10 @@ public class SkillTreePanel : BaseUIPanel
             closeButton.onClick.RemoveAllListeners();
             closeButton.onClick.AddListener(ClosePanel);
             closeButton.interactable = true; // ZORLA AKTİF YAP
+            
         }
+        
+        
         
         
         foreach (var kvp in buttonToSkillID)
@@ -166,6 +178,7 @@ public class SkillTreePanel : BaseUIPanel
             
             if (button != null)
             {
+                
                 
                 button.onClick.RemoveAllListeners();
                 // ZORLA HER BUTTON'U AKTİF YAP
@@ -214,6 +227,7 @@ public class SkillTreePanel : BaseUIPanel
                 trigger.triggers.Add(pointerExit);
                 
                 // BASILI TUTMA SİSTEMİ EKLE!
+                
                 AddHoldToUnlockEvents(button, skillID);
                 
             }
@@ -300,7 +314,13 @@ public class SkillTreePanel : BaseUIPanel
     
     private void UnlockSkill(string skillID)
     {
-        if (SkillManager.Instance == null) return;
+        Debug.Log($"[SkillTree] UnlockSkill called for: {skillID}");
+        
+        if (SkillManager.Instance == null) 
+        {
+            Debug.LogError("[SkillTree] SkillManager.Instance is null!");
+            return;
+        }
         
         // Check if already unlocked
         if (SkillManager.Instance.IsSkillUnlocked(skillID))
@@ -310,12 +330,16 @@ public class SkillTreePanel : BaseUIPanel
         
         // Check if we have enough shards
         int cost = skillCosts.ContainsKey(skillID) ? skillCosts[skillID] : 50;
-        if (SkillManager.Instance.GetShardCount() < cost)
+        int currentShards = SkillManager.Instance.GetShardCount();
+         
+        if (currentShards < cost)
         {
+            Debug.LogWarning($"[SkillTree] Not enough shards! Need {cost}, have {currentShards}");
             return;
         }
         
         // Unlock the skill
+       
         bool success = SkillManager.Instance.UnlockSkill(skillID, cost);
         
         if (success)
@@ -326,7 +350,7 @@ public class SkillTreePanel : BaseUIPanel
         }
         else
         {
-            Debug.LogWarning($"Failed to unlock skill: {skillID}");
+            Debug.LogError($"[SkillTree] Failed to unlock skill: {skillID}");
         }
     }
     
@@ -457,18 +481,25 @@ public class SkillTreePanel : BaseUIPanel
     {
         bool isHolding = false;
         float holdTime = 0f;
-        float requiredHoldTime = 2.0f; // 2 saniye basılı tut
+        float requiredHoldTime = 1.0f; // 1 saniye basılı tut
+        
+       
         
         EventTrigger trigger = button.GetComponent<EventTrigger>();
         if (trigger == null)
         {
             trigger = button.gameObject.AddComponent<EventTrigger>();
         }
+      
+        
+        
+        
         
         // Pointer Down Event (basılı tutma başlangıcı)
         EventTrigger.Entry pointerDown = new EventTrigger.Entry();
         pointerDown.eventID = EventTriggerType.PointerDown;
         pointerDown.callback.AddListener((data) => {
+            Debug.Log($"[SkillTree] POINTER DOWN detected for {skillID}");
             isHolding = true;
             holdTime = 0f;
         });
@@ -478,6 +509,7 @@ public class SkillTreePanel : BaseUIPanel
         EventTrigger.Entry pointerUp = new EventTrigger.Entry();
         pointerUp.eventID = EventTriggerType.PointerUp;
         pointerUp.callback.AddListener((data) => {
+            Debug.Log($"[SkillTree] POINTER UP detected for {skillID}. Was holding: {isHolding}, Hold time: {holdTime}");
             if (isHolding)
             {
                 isHolding = false;
@@ -485,6 +517,18 @@ public class SkillTreePanel : BaseUIPanel
             }
         });
         trigger.triggers.Add(pointerUp);
+        
+        // Pointer Exit Event (mouse cursor button'dan çıktığında)
+        EventTrigger.Entry pointerExit = new EventTrigger.Entry();
+        pointerExit.eventID = EventTriggerType.PointerExit;
+        pointerExit.callback.AddListener((data) => {
+            if (isHolding)
+            {
+                isHolding = false;
+                holdTime = 0f;
+            }
+        });
+        trigger.triggers.Add(pointerExit);
         
         // Hold timer coroutine
         StartCoroutine(HoldTimerCoroutine());
@@ -495,10 +539,18 @@ public class SkillTreePanel : BaseUIPanel
             {
                 if (isHolding)
                 {
-                    holdTime += Time.deltaTime;
+                    // Time.timeScale = 0 olsa bile çalışması için unscaledDeltaTime kullan
+                    holdTime += Time.unscaledDeltaTime;
+                    
+                    // Her 0.2 saniyede bir progress log'u (unscaledDeltaTime ile)
+                    if (holdTime % 0.2f < Time.unscaledDeltaTime)
+                    {
+                       
+                    }
                     
                     if (holdTime >= requiredHoldTime)
                     {
+                      
                         UnlockSkill(skillID);
                         isHolding = false;
                         holdTime = 0f;

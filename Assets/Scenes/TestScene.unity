@@ -17430,46 +17430,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 286278461}
   m_CullTransparentMesh: 1
---- !u!1 &294279675
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 294279676}
-  - component: {fileID: 294279677}
-  m_Layer: 0
-  m_Name: AudioManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &294279676
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 294279675}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1683066506}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!81 &294279677
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 294279675}
-  m_Enabled: 1
 --- !u!1 &303049490
 GameObject:
   m_ObjectHideFlags: 0
@@ -17657,10 +17617,6 @@ PrefabInstance:
     - target: {fileID: 3032671044708449667, guid: f9c8f23692b278240b765d23b0f83bf4, type: 3}
       propertyPath: m_Name
       value: Boomerang
-      objectReference: {fileID: 0}
-    - target: {fileID: 3032671044708449667, guid: f9c8f23692b278240b765d23b0f83bf4, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -27947,7 +27903,7 @@ MonoBehaviour:
     baseCooldown: 2
     cooldownTimer: 0
     manaCost: 1
-    isUnlocked: 1
+    isUnlocked: 0
     skillPrefab: {fileID: 32532192634965339, guid: d711ff0061d76a746aa147d9a1b07228, type: 3}
   - skillID: earth_push
     skillType: 2
@@ -27992,7 +27948,7 @@ MonoBehaviour:
     baseCooldown: 2
     cooldownTimer: 0
     manaCost: 30
-    isUnlocked: 1
+    isUnlocked: 0
     skillPrefab: {fileID: 27853844425704398, guid: 9fb377ec49b33874bb0087bb919fe3d6, type: 3}
   globalCooldownReduction: 0
 --- !u!1 &1032048683
@@ -28695,10 +28651,6 @@ PrefabInstance:
     - target: {fileID: 770610726131400552, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
       propertyPath: m_Name
       value: Spellbook
-      objectReference: {fileID: 0}
-    - target: {fileID: 770610726131400552, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7123588621038388202, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
       propertyPath: m_LocalPosition.x
@@ -34916,7 +34868,6 @@ Transform:
   - {fileID: 796560023}
   - {fileID: 1580395270}
   - {fileID: 513186297}
-  - {fileID: 294279676}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1683066507
@@ -41393,7 +41344,7 @@ Transform:
   m_GameObject: {fileID: 6603670244354105860}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.044, y: -0.301, z: 0}
+  m_LocalPosition: {x: -0.044, y: -0.379, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -41513,10 +41464,6 @@ PrefabInstance:
     - target: {fileID: 678572023270907210, guid: a37dbc267f2733545b5af02ae357c3f9, type: 3}
       propertyPath: m_Name
       value: Sword
-      objectReference: {fileID: 0}
-    - target: {fileID: 678572023270907210, guid: a37dbc267f2733545b5af02ae357c3f9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2410878840005011983, guid: a37dbc267f2733545b5af02ae357c3f9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -41720,10 +41667,6 @@ PrefabInstance:
     - target: {fileID: 5188635493186575689, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
       propertyPath: m_Name
       value: BurningSword
-      objectReference: {fileID: 0}
-    - target: {fileID: 5188635493186575689, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8442360767663441756, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42065,10 +42008,6 @@ PrefabInstance:
     - target: {fileID: 3297799702818054646, guid: 0b97c4edf7708bf4d993507e1fc10ffe, type: 3}
       propertyPath: m_Name
       value: Hammer
-      objectReference: {fileID: 0}
-    - target: {fileID: 3297799702818054646, guid: 0b97c4edf7708bf4d993507e1fc10ffe, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
