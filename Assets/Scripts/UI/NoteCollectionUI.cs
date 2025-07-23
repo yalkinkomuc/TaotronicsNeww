@@ -94,7 +94,7 @@ public class NoteCollectionUI : BaseUIPanel
         SelectNote(noteData);
     }
     
-    void Update()
+     void  Update()
     {
         GameObject selectedObj = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
         if (selectedObj != null)

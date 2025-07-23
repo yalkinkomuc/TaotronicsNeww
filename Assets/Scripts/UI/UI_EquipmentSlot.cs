@@ -60,11 +60,6 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
             currentEquipment = GetEquippedItem();
         }
         
-        if (slotType == EquipmentSlot.SecondaryWeapon)
-        {
-            Debug.Log($"[SecondaryWeapon] UpdateSlotDisplay - Equipment: {currentEquipment?.itemName ?? "null"}");
-        }
-        
         if (currentEquipment != null)
         {
             ShowEquippedItem();
@@ -191,13 +186,10 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         // If we have a selection callback, this is a selection slot
         if (onEquipmentSelected != null)
         {
-            Debug.Log($"Clicked on selection slot with equipment: {currentEquipment?.itemName ?? "null"}");
             onEquipmentSelected?.Invoke(currentEquipment);
         }
         else
         {
-            // This is a regular equipment slot, open selection panel
-            Debug.Log($"Clicked on {slotType} slot - Opening selection panel");
             OpenEquipmentSelectionPanel();
         }
     }
@@ -224,9 +216,6 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private void OnEquipmentSelected(EquipmentData selectedEquipment)
     {
-        Debug.Log($"Equipment selected: {selectedEquipment.itemName} for slot {slotType}");
-        
-        // For now, just update the display
         // TODO: Integrate with EquipmentManager when it's ready
         currentEquipment = selectedEquipment;
         UpdateSlotDisplay();

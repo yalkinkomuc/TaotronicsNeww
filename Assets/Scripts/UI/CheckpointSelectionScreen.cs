@@ -103,8 +103,6 @@ public class CheckpointSelectionScreen : BaseUIPanel
             return;
         }
         
-        // AttributesUpgradePanel'i göster ve playerStats'i ver
-        Debug.Log($"AttributesUpgradePanel açılıyor - Level: {playerStats.GetLevel()}, SP: {playerStats.AvailableSkillPoints}");
         upgradePanel.gameObject.SetActive(true);
         upgradePanel.Show(playerStats);
         
@@ -145,8 +143,6 @@ public class CheckpointSelectionScreen : BaseUIPanel
         if (canvas != null)
             canvas.sortingOrder = 100;
         
-        Debug.Log("CheckpointSelectionScreen: ShowPanel called");
-        
         // Panel'i göster
         gameObject.SetActive(true);
         
@@ -172,7 +168,6 @@ public class CheckpointSelectionScreen : BaseUIPanel
                 Player player = PlayerManager.instance?.player;
                 if (player != null && player.playerInput != null)
                 {
-                    Debug.Log("CheckpointSelectionScreen: Player ready, ensuring input blocking");
                     UIInputBlocker.instance.AddPanel(gameObject);
                     UIInputBlocker.instance.DisableGameplayInput();
                     yield break; // Success, exit
@@ -181,7 +176,6 @@ public class CheckpointSelectionScreen : BaseUIPanel
             
             yield return new WaitForSeconds(0.1f);
             retryCount++;
-            Debug.Log($"CheckpointSelectionScreen: Waiting for Player to be ready... Attempt {retryCount}");
         }
         
         Debug.LogError("CheckpointSelectionScreen: Failed to setup input blocking - Player not ready!");
@@ -195,7 +189,6 @@ public class CheckpointSelectionScreen : BaseUIPanel
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
             UIInputBlocker.instance.EnableGameplayInput(true);
-            Debug.Log("CheckpointSelectionScreen: Panel closed, gameplay input enabled");
         }
     }
     
@@ -254,7 +247,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
         PlayerStats playerStats = player.GetComponent<PlayerStats>();
         if (playerStats != null)
         {
-            // Debug amacıyla önceki değerleri logla
+           
             float oldMaxHealth = playerStats.maxHealth.GetValue();
             
             // SADECE seviyeyi, deneyimi ve skill puanlarını yükle, stat değerlerini modifiye etme
@@ -309,10 +302,6 @@ public class CheckpointSelectionScreen : BaseUIPanel
             {
                 manaBar.UpdateManaBar(playerStats.currentMana, playerStats.maxMana.GetValue());
             }
-                
-            // Rest açık bir şekilde logla
-            Debug.Log($"<color=green>OYUNCU REST YAPTI!</color> Can: {playerStats.currentHealth:F0}/{maxHealthValue:F0} (FULL CAN)");
-            Debug.Log($"<color=blue>Önceki Max Health: {oldMaxHealth:F0}, Yeni Max Health: {maxHealthValue:F0}</color>");
             
             // UI'ı güncelle
             playerStats.UpdateLevelUI();
@@ -334,10 +323,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
             
             if (player.healthBar != null)
                 player.healthBar.UpdateHealthBar(player.stats.currentHealth, player.stats.maxHealth.GetValue());
-                
-            // Rest açık bir şekilde logla
-            Debug.Log($"<color=green>CHECKPOINT'TE İYİLEŞME!</color> Can: {player.stats.currentHealth:F0}/{roundedMaxHealth:F0} (FULL CAN)");
-            Debug.Log($"<color=blue>Max Health: {roundedMaxHealth:F0}</color>");
+            
         }
     }
     

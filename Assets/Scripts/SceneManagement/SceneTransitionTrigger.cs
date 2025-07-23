@@ -67,7 +67,6 @@ public class SceneTransitionTrigger : MonoBehaviour
             }
         }
         
-        Debug.Log($"Trigger '{gameObject.name}' için otomatik spawn point atandı: {spawnPointName}");
     }
     
     private void OnTriggerEnter2D(Collider2D other)
@@ -104,8 +103,6 @@ public class SceneTransitionTrigger : MonoBehaviour
         PlayerPrefs.SetString("TargetSpawnPointName", spawnPointName);
         PlayerPrefs.SetInt("UseNamedSpawnPoint", 1);
         PlayerPrefs.Save();
-        
-        Debug.Log($"Kaydedilen spawn noktası adı: {spawnPointName}");
     }
     
     private void SavePlayerPosition()

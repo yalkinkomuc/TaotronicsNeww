@@ -86,9 +86,7 @@ public class EliteSkeleton_Enemy : Enemy, IParryable
         {
             entityFX.StartCoroutine("HitFX");
         }
-        
-        Debug.Log("Elite Skeleton was parried!");
-        
+      
         // Parry knockback'i uygula - düşmanın her zaman arkaya (baktığı yönün tersine) doğru savrulması için
         Vector2 parryKnockbackForce = new Vector2(knockbackDirection.x * -facingdir * 1.5f, knockbackDirection.y * 0.8f);
         

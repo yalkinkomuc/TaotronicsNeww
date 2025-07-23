@@ -209,7 +209,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       }
    }
 
-   // Debug amaçlı - saldırı kutusunu görmek için
+   
    private void OnDrawGizmosSelected()
    {
       if (!Application.isPlaying) return;
@@ -331,8 +331,6 @@ public class PlayerAnimTriggers : MonoBehaviour
          // SkillManager kontrolü - Fire Spell açık mı?
          if (SkillManager.Instance != null && !SkillManager.Instance.IsSkillUnlocked("FireSpell"))
          {
-            // Fire Spell açık değilse animasyonu durdurma ve idle state'ine geç
-            Debug.Log("Fire Spell not unlocked, cancelling animation!");
             player.stateMachine.ChangeState(player.idleState);
             return;
          }
@@ -411,8 +409,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       float explosionDamage = player.lastHammerCombo3Damage * 0.25f;
 
       enemy.stats.TakeDamage(explosionDamage, CharacterStats.DamageType.Physical);
-      Debug.Log($"Hammer Explosion hit: {enemy.name} for {explosionDamage} damage");
-
+      
       if (enemy.rb != null && enemy.rb.bodyType != RigidbodyType2D.Static)
       {
          float knockbackMultiplier = 1.0f;

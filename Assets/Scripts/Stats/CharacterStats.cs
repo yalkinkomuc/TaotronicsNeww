@@ -213,13 +213,6 @@ public class CharacterStats : MonoBehaviour
         if (isInvincible)
             return;
         
-        // Debug the incoming damage for testing
-        Debug.Log($"Raw incoming damage from source: {(damageSource != null ? damageSource.GetValue() : _damage)}");
-        
-        // Debug bilgisi - defans değerleri
-        Debug.Log($"Defense stat value: {defenseStat}");
-        Debug.Log($"Defense attribute: {defense}");
-        
         // Determine base damage amount
         float rawDamage = damageSource != null ? damageSource.GetValue() : _damage;
         
@@ -249,7 +242,6 @@ public class CharacterStats : MonoBehaviour
                 // Her 1 defans puanı için %1 hasar azaltma (linear)
                 // Maximum reduction capped at 80%
                 reductionPercent = Mathf.Clamp(defense * 0.01f, 0f, 0.8f);
-                Debug.Log($"Damage reduction from defense: {reductionPercent * 100}%");
                 break;
         }
         
@@ -268,7 +260,6 @@ public class CharacterStats : MonoBehaviour
         
         // Ensure minimum damage of 1 and round damage to nearest integer for cleaner UI
         float roundedDamage = Mathf.Max(1, Mathf.Round(finalDamage));
-        Debug.Log($"Final damage after reductions: {roundedDamage}");
         
         currentHealth -= roundedDamage;
 

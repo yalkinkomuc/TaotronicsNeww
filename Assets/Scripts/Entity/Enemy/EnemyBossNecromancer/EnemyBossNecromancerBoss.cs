@@ -46,8 +46,7 @@ public class EnemyBossNecromancerBoss : Enemy
 
     private GameObject arena;
 
-    [Header("Debug")]
-    [SerializeField] private bool debugMode = false;  // Hata ayıklama için eklendi
+    
 
     //private bool isSpawningSkeletons = false; // Spawn işlemi kontrolü için
 
@@ -108,8 +107,7 @@ public class EnemyBossNecromancerBoss : Enemy
         foreach (var skeleton in skeletonsToRemove)
         {
             summonedSkeletons.Remove(skeleton);
-            if (debugMode)
-                Debug.Log("İskelet listeden kaldırıldı");
+            
         }
     }
 
@@ -117,16 +115,13 @@ public class EnemyBossNecromancerBoss : Enemy
     public bool CanCastSpell()
     {
         bool canCast = spellCooldownTimer <= 0;
-        if (debugMode)
-            Debug.Log($"CanCastSpell: {canCast} (cooldown={spellCooldownTimer.ToString("F1")})");
+        
         return canCast;
     }
 
     public bool CanSummon()
     {
         bool canSpawn = summonCooldownTimer <= 0 && summonedSkeletons.Count < maxSkeletons;
-        if (debugMode)
-            Debug.Log($"CanSummon: {canSpawn} (cooldown={summonCooldownTimer.ToString("F1")}, count={summonedSkeletons.Count}, max={maxSkeletons})");
         return canSpawn;
     }
 
@@ -138,7 +133,6 @@ public class EnemyBossNecromancerBoss : Enemy
         {
             if (hit != null && hit.gameObject != gameObject && !hit.CompareTag("Ground") && !hit.CompareTag("Platform") && !hit.isTrigger)
             {
-                Debug.Log($"[SomethingIsAround] Engel bulundu: {hit.gameObject.name}");
                 return true;
             }
         }
@@ -242,15 +236,12 @@ public class EnemyBossNecromancerBoss : Enemy
     {
         if (!ignoreCooldown && spawnEffectCooldownTimer > 0)
         {
-            if (debugMode)
-                Debug.Log($"Spawn efekti cooldown: {spawnEffectCooldownTimer}");
             return;
         }
 
         if (summonedSkeletons.Count >= maxSkeletons)
         {
-            if (debugMode)
-                Debug.Log($"Maksimum iskelet sayısına ulaşıldı: {summonedSkeletons.Count}/{maxSkeletons}");
+           
             return;
         }
 
@@ -279,8 +270,6 @@ public class EnemyBossNecromancerBoss : Enemy
                     }
                     else
                     {
-                        if (debugMode)
-                            Debug.LogError("SkeletonSpawnEffect component bulunamadı!");
                         Destroy(effect);
                     }
                     return;
@@ -305,22 +294,17 @@ public class EnemyBossNecromancerBoss : Enemy
             if (hit.collider != null)
             {
                 Vector2 spawnPos = new Vector2(x, hit.point.y + offset);
-                Debug.Log($"[FindPosition] Deneme {i+1}: Ground bulundu! Collider: {hit.collider.name}, Pozisyon: {spawnPos}");
+              
                 bool somethingAround = SomethingIsAround();
-                Debug.Log($"[FindPosition] SomethingIsAround sonucu: {somethingAround}");
+               
                 if (!somethingAround)
                 {
                     transform.position = spawnPos;
-                    Debug.Log($"[FindPosition] Boss yeni pozisyona ışınlandı: {spawnPos}");
+                    
                     return;
                 }
             }
-            else
-            {
-                Debug.Log($"[FindPosition] Deneme {i+1}: Ground bulunamadı. RayOrigin: {rayOrigin}, RayLength: {rayLength}");
-            }
         }
-        Debug.LogError("Uygun pozisyon bulunamadı, boss arenada spawn edilemiyor!");
     }
 
     protected override void OnDrawGizmos()

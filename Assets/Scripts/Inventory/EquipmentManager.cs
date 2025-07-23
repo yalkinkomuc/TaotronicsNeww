@@ -128,8 +128,6 @@ public class EquipmentManager : MonoBehaviour
         
         CalculateAllStats();
         OnEquipmentChanged?.Invoke(equipment.equipmentSlot, equipment);
-        
-        Debug.Log($"Equipped {equipment.itemName} in {equipment.equipmentSlot} slot");
         return true;
     }
     
@@ -157,8 +155,6 @@ public class EquipmentManager : MonoBehaviour
         
         CalculateAllStats();
         OnEquipmentChanged?.Invoke(slot, null);
-        
-        Debug.Log($"Unequipped {unequippedItem.itemName} from {slot} slot");
         return unequippedItem;
     }
     
@@ -196,11 +192,6 @@ public class EquipmentManager : MonoBehaviour
         
         CalculateAllStats();
         OnRuneChanged?.Invoke(slotIndex, rune);
-        
-        // Save equipment after equipping rune
-        // SaveEquipment(); // Artık RuneSaveManager dinliyor ve kaydediyor
-        
-        Debug.Log($"[EquipmentManager] ✅ RUNE EQUIPPED: {rune.itemName} in slot {slotIndex} with enhancement +{rune.enhancementLevel}");
         return true;
     }
     
@@ -223,10 +214,6 @@ public class EquipmentManager : MonoBehaviour
         CalculateAllStats();
         OnRuneChanged?.Invoke(slotIndex, null);
         
-        // Save equipment after unequipping rune
-        // SaveEquipment(); // Artık RuneSaveManager dinliyor ve kaydediyor
-        
-        Debug.Log($"[EquipmentManager] ❌ RUNE UNEQUIPPED: {unequippedRune.itemName} from slot {slotIndex}");
         return unequippedRune;
     }
     
@@ -260,72 +247,42 @@ public class EquipmentManager : MonoBehaviour
     [ContextMenu("Debug: Print Equipped Runes")]
     public void DebugPrintEquippedRunes()
     {
-        Debug.Log("[EquipmentManager] === EQUIPPED RUNES DEBUG ===");
-        for (int i = 0; i < equippedRunes.Length; i++)
+           for (int i = 0; i < equippedRunes.Length; i++)
         {
             if (equippedRunes[i] != null)
             {
                 int enhancement = GetRuneEnhancementLevel(i);
-                Debug.Log($"Slot {i}: {equippedRunes[i].itemName} (+{enhancement})");
-            }
-            else
-            {
-                Debug.Log($"Slot {i}: Empty");
+                
             }
         }
-        Debug.Log("[EquipmentManager] === END DEBUG ===");
     }
     
-    /// <summary>
-    /// RuneSaveManager için - UI'ya tüm rune'ları bildir
-    /// </summary>
     public void NotifyUIAboutAllRunes()
     {
-        Debug.Log("[EquipmentManager] NotifyUIAboutAllRunes called");
-        
         for (int i = 0; i < equippedRunes.Length; i++)
         {
             if (equippedRunes[i] != null)
             {
                 OnRuneChanged?.Invoke(i, equippedRunes[i]);
-                Debug.Log($"[EquipmentManager] Notified UI about rune at slot {i}: {equippedRunes[i].itemName}");
             }
         }
     }
     
-    /// <summary>
-    /// RuneSaveManager için - Rune yükleme tamamlandığını bildir
-    /// </summary>
-    // public void MarkRuneLoadingCompleted() // Gerek Kalmadı
-    // {
-    //     runesLoadingCompleted = true;
-    //     Debug.Log("[EquipmentManager] ✅ Rune loading marked as completed - save operations now allowed");
-    // }
-    
-    /// <summary>
-    /// RuneSaveManager için - Rune array'ini temizle ve yeniden set et
-    /// SADECE OYUN BAŞINDA KULLANILMALI! Normal equip/unequip için EquipRune/UnequipRune kullan
-    /// </summary>
     public void SetLoadedRunes(RuneData[] loadedRunes, Dictionary<int, int> loadedEnhancements)
     {
         if (loadedRunes == null || loadedEnhancements == null) return;
         
-        Debug.Log("[EquipmentManager] SetLoadedRunes called - replacing all runes with loaded data");
-        
-        // Clear existing
         for (int i = 0; i < equippedRunes.Length; i++)
         {
             equippedRunes[i] = null;
         }
         runeEnhancementLevels.Clear();
         
-        // Set new runes
         for (int i = 0; i < loadedRunes.Length && i < equippedRunes.Length; i++)
         {
             equippedRunes[i] = loadedRunes[i];
         }
         
-        // Set enhancement levels
         foreach (var kvp in loadedEnhancements)
         {
             runeEnhancementLevels[kvp.Key] = kvp.Value;
@@ -334,7 +291,6 @@ public class EquipmentManager : MonoBehaviour
         // Recalculate stats
         CalculateAllStats();
         
-        Debug.Log("[EquipmentManager] Runes set by RuneSaveManager and stats recalculated");
     }
     
     #endregion
@@ -415,15 +371,12 @@ public class EquipmentManager : MonoBehaviour
     
     #region Weapon Integration
     
-    /// <summary>
-    /// Initialize weapon references from existing systems
-    /// </summary>
     private void InitializeWeaponReferences()
     {
-        // Attempt to restore previously saved equipment first
+        
         LoadEquipment();
 
-        // Get current equipped weapons from PlayerWeaponManager
+       
         PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
         
         if (weaponManager != null && weaponManager.weapons != null && weaponManager.weapons.Length > 0)
@@ -446,7 +399,6 @@ public class EquipmentManager : MonoBehaviour
                         if (primaryWeaponData != null && currentWeapon == null)
                         {
                             currentWeapon = primaryWeaponData;
-                            Debug.Log($"[EquipmentManager] Auto-equipped primary weapon: {primaryWeaponData.itemName} (Type: {primaryWeaponType})");
                         }
                     }
                 }
@@ -464,13 +416,10 @@ public class EquipmentManager : MonoBehaviour
                 if (sword != null)
                 {
                     currentWeapon = sword;
-                    Debug.Log($"[EquipmentManager] Fallback: Auto-equipped main weapon: {sword.itemName}");
                 }
                 
             }
         }
-        
-        Debug.Log($"[EquipmentManager] Weapon references initialized - Main: {currentWeapon?.itemName}, Secondary: {currentSecondaryWeapon?.itemName}");
     }
     
     /// <summary>
@@ -509,39 +458,6 @@ public class EquipmentManager : MonoBehaviour
         return WeaponType.Sword; // Default fallback
     }
     
-    /// <summary>
-    /// Called when PlayerWeaponManager switches secondary weapon
-    /// </summary>
-    // private void OnPlayerSecondaryWeaponChanged(int weaponIndex, WeaponStateMachine weaponStateMachine)
-    // {
-    //     Debug.Log($"[EquipmentManager] PlayerWeaponManager switched to weapon index {weaponIndex}");
-    //     
-    //     // Determine new secondary weapon data based on state machine type
-    //     EquipmentData newSecondaryEquipment = GetEquipmentDataFromStateMachine(weaponStateMachine);
-    //     WeaponData newSecondaryWeapon = newSecondaryEquipment as WeaponData;
-    //     WeaponType newSecType = GetWeaponTypeFromStateMachine(weaponStateMachine);
-    //     
-    //     if (newSecondaryWeapon != null && newSecondaryWeapon != currentSecondaryWeapon)
-    //     {
-    //         // Update secondary weapon without going through EquipItem (to avoid conflicts)
-    //         var previousWeapon = currentSecondaryWeapon;
-    //         currentSecondaryWeapon = newSecondaryWeapon;
-    //         
-    //         // Recalculate stats and fire events
-    //         CalculateAllStats();
-    //         OnEquipmentChanged?.Invoke(EquipmentSlot.SecondaryWeapon, newSecondaryWeapon);
-    //         
-    //         Debug.Log($"[EquipmentManager] Secondary weapon updated: {previousWeapon?.itemName} → {newSecondaryWeapon.itemName}");
-    //     }
-    //
-    //     // Persist type regardless of whether WeaponData asset exists (covers Shield etc.)
-    //     PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)newSecType);
-    //     PlayerPrefs.Save();
-    // }
-    
-    /// <summary>
-    /// Get WeaponData from a WeaponStateMachine
-    /// </summary>
     private EquipmentData GetEquipmentDataFromStateMachine(WeaponStateMachine stateMachine)
     {
         if (stateMachine == null || BlacksmithManager.Instance == null) return null;
@@ -580,10 +496,6 @@ public class EquipmentManager : MonoBehaviour
         return null;
     }
     
-    /// <summary>
-    /// Get currently equipped main weapon (public getter)
-    /// Real-time'da PlayerWeaponManager'dan aktif weapon'ı alır
-    /// </summary>
     public WeaponData GetCurrentMainWeapon()
     {
         // Real-time olarak PlayerWeaponManager'dan aktif weapon'ı al
@@ -614,23 +526,15 @@ public class EquipmentManager : MonoBehaviour
                 }
             }
         }
-        
-        // Fallback: cached value
         return currentWeapon as WeaponData;
     }
     
-    /// <summary>
-    /// Get currently equipped secondary weapon (public getter)
-    /// </summary>
+    
     public EquipmentData GetCurrentSecondaryWeapon()
     {
         return currentSecondaryWeapon;
     }
     
-    /// <summary>
-    /// Get currently equipped secondary weapon as WeaponData (backward compatibility)
-    /// Real-time'da PlayerWeaponManager'dan aktif secondary weapon'ı alır
-    /// </summary>
     public WeaponData GetCurrentSecondaryWeaponAsWeaponData()
     {
         // Real-time olarak PlayerWeaponManager'dan aktif secondary weapon'ı al
@@ -693,10 +597,6 @@ public class EquipmentManager : MonoBehaviour
         // Fallback: cached value
         return currentSecondaryWeapon as WeaponData;
     }
-    
-    /// <summary>
-    /// Convert SecondaryWeaponType to WeaponType for saving
-    /// </summary>
     private WeaponType GetWeaponTypeFromSecondaryType(SecondaryWeaponType secondaryType)
     {
         return secondaryType switch
@@ -717,8 +617,6 @@ public class EquipmentManager : MonoBehaviour
     /// </summary>
     public void SaveEquipment()
     {
-        Debug.Log("[EquipmentManager] SaveEquipment called - saving WEAPONS/ARMOR only...");
-        
         // MAIN WEAPON
         if (currentWeapon != null)
         {
@@ -773,16 +671,10 @@ public class EquipmentManager : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-        Debug.Log("[EquipmentManager] Equipment (weapons/armor) saved to PlayerPrefs. Runes are saved by RuneSaveManager.");
     }
-
-    /// <summary>
-    /// Load previously equipped items from PlayerPrefs (must be called after BlacksmithManager is ready).
-    /// </summary>
+    
     public void LoadEquipment()
     {
-        Debug.Log("[EquipmentManager] LoadEquipment called - starting load process...");
-        
         if (BlacksmithManager.Instance == null) 
         {
             Debug.LogWarning("[EquipmentManager] BlacksmithManager.Instance is null - cannot load equipment");
@@ -817,27 +709,10 @@ public class EquipmentManager : MonoBehaviour
                 currentSecondaryWeapon = secondaryWeaponData;
             }
         }
-
-        // NOTE: Rune loading is now handled by RuneSaveManager to avoid timing issues
-
-        Debug.Log("[EquipmentManager] Equipment (weapons only) loaded from PlayerPrefs");
     }
-    
-    // NOTE: LoadRuneFromResources moved to RuneSaveManager
-    
-    // NOTE: UI notification is now handled by RuneSaveManager
-    
+   
     #endregion
     
-    // private void OnDestroy()
-    // {
-    //     // Unsubscribe from events
-    //     PlayerWeaponManager.OnSecondaryWeaponChanged -= OnPlayerSecondaryWeaponChanged;
-    // }
-
-    /// <summary>
-    /// Ensure only correct item categories are equipped into each slot.
-    /// </summary>
     private bool IsItemCompatibleWithSlot(EquipmentData equipment, EquipmentSlot targetSlot)
     {
         switch (targetSlot)
@@ -895,23 +770,17 @@ public class EquipmentManager : MonoBehaviour
         if (data != null)
             EquipItem(data);           // Böylece tek olay tetiklenir
 
-        // Her durumda tipi kaydet – WeaponData ya da SecondaryWeaponData fark etmez
+        
         WeaponType secType = GetWeaponTypeFromStateMachine(wsm);
         PlayerPrefs.SetInt(PREF_SECONDARY_WEAPON_TYPE, (int)secType);
         PlayerPrefs.Save();
     }
-
-    /// <summary>
-    /// Check if this is the first time the game is being played
-    /// </summary>
+    
     public static bool IsFirstTimePlayer()
     {
         return !PlayerPrefs.HasKey("GameStarted");
     }
-
-    /// <summary>
-    /// Mark that the game has been started at least once
-    /// </summary>
+    
     public static void MarkGameAsStarted()
     {
         PlayerPrefs.SetInt("GameStarted", 1);

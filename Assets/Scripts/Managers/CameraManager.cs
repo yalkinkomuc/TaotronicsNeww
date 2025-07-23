@@ -133,7 +133,6 @@ public class CameraManager : MonoBehaviour
         
         if (mainCamera == null)
         {
-            Debug.Log("Creating new Main Camera");
             GameObject cameraObj = new GameObject("Main Camera");
             mainCamera = cameraObj.AddComponent<Camera>();
             mainCamera.tag = "MainCamera";

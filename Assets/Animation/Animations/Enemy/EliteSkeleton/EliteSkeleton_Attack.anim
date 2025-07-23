@@ -86,7 +86,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.2
-    functionName: OpenParryWindow
+    functionName: AttackTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -100,6 +100,13 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.26666668
+    functionName: OpenParryWindow
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.33333334
     functionName: AttackTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -107,21 +114,21 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.33333334
+    functionName: CloseParryWindow
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.4
     functionName: AnimationTrigger
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.33333334
+  - time: 0.4
     functionName: DisableAttackCollider
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.33333334
-    functionName: CloseParryWindow
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

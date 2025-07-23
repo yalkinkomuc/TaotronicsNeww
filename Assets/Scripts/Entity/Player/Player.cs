@@ -860,11 +860,7 @@ public class Player : Entity
     {
         if (isInvulnerable)
             return;
-            
-        // Debug log for damage tracking
-        Debug.Log($"Player taking damage! isKnocked: {isKnocked}");
-            
-        // Show visual feedback
+        
         entityFX.StartCoroutine("HitFX");
         
         // Players don't get knocked back anymore - removed knockback application

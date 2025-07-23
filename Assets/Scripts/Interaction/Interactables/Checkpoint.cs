@@ -288,7 +288,6 @@ public class Checkpoint : MonoBehaviour, IInteractable
         if (weaponManager != null)
         {
             weaponManager.LoadWeaponState();
-            Debug.Log("[Checkpoint] Weapon states loaded via PlayerWeaponManager unlock system");
         }
         else
         {

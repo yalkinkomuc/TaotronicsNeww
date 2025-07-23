@@ -157,34 +157,30 @@ public class TabManager : MonoBehaviour
         // Early exit if no input - avoid expensive checks
         if (!leftPressed && !rightPressed) return;
         
-        // Only run expensive blocking checks when input is detected
-        Debug.Log($"TabManager: Input detected! Left: {leftPressed}, Right: {rightPressed}");
+        
+       
         bool allowed = IsTabSwitchingAllowed();
-        Debug.Log($"TabManager: IsTabSwitchingAllowed returned: {allowed}");
+       
         
         if (!allowed)
         {
-            Debug.Log("TabManager: Tab switching BLOCKED!");
+           
             return;
         }
 
-        Debug.Log($"TabManager: Tab switching ALLOWED! Current tab: {currentTabIndex}, Total tabs: {tabs.Count}");
-
+     
         if (leftPressed)
         {
-            Debug.Log("TabManager: Switching to PREVIOUS tab");
             SwitchToPreviousTab();
         }
         else if (rightPressed)
         {
-            Debug.Log("TabManager: Switching to NEXT tab");
             SwitchToNextTab();
         }
     }
     
     private bool IsTabSwitchingAllowed()
     {
-        Debug.Log("=== TabManager: IsTabSwitchingAllowed() CHECK START ===");
         
         // Check if TabManager itself has any active tabs (this is the correct logic!)
         bool hasActiveTab = false;
@@ -193,18 +189,15 @@ public class TabManager : MonoBehaviour
             if (tab.tabPanel != null && tab.tabPanel.activeInHierarchy)
             {
                 hasActiveTab = true;
-                Debug.Log($"✅ Found active tab: {tab.tabName} ({tab.tabPanel.name})");
                 break;
             }
         }
         
         if (!hasActiveTab)
         {
-            Debug.Log("❌ BLOCKED: No active tabs found in TabManager");
             return false;
         }
         
-        Debug.Log("✅ TabManager has active tabs");
         
         // Check for blocking panels that should prevent tab switching
         
@@ -212,48 +205,36 @@ public class TabManager : MonoBehaviour
         CheckpointSelectionScreen checkpointScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
         if (checkpointScreen != null && checkpointScreen.gameObject.activeInHierarchy)
         {
-            Debug.Log("❌ BLOCKED: CheckpointSelectionScreen is active");
             return false;
         }
-        Debug.Log("✅ CheckpointSelectionScreen check passed");
         
         // Skill Tree Panel (usually named SkillTreePanel)
         GameObject skillTreePanel = GameObject.Find("SkillTreePanel");
         if (skillTreePanel != null && skillTreePanel.activeInHierarchy)
         {
-            Debug.Log("❌ BLOCKED: SkillTreePanel is active");
             return false;
         }
-        Debug.Log("✅ SkillTreePanel check passed");
         
         // Attributes Upgrade Panel
         AttributesUpgradePanel upgradePanel = FindFirstObjectByType<AttributesUpgradePanel>();
         if (upgradePanel != null && upgradePanel.gameObject.activeInHierarchy)
         {
-            Debug.Log("❌ BLOCKED: AttributesUpgradePanel is active");
             return false;
         }
-        Debug.Log("✅ AttributesUpgradePanel check passed");
         
         // Equipment Selection Panel (within inventory)
         UI_EquipmentSelectionPanel equipmentSelection = FindFirstObjectByType<UI_EquipmentSelectionPanel>();
         if (equipmentSelection != null && equipmentSelection.gameObject.activeInHierarchy)
         {
-            Debug.Log("❌ BLOCKED: UI_EquipmentSelectionPanel is active");
             return false;
         }
-        Debug.Log("✅ UI_EquipmentSelectionPanel check passed");
         
         // Dialogue System
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
         {
-            Debug.Log("❌ BLOCKED: DialogueManager is active");
             return false;
         }
-        Debug.Log("✅ DialogueManager check passed");
         
-        // All checks passed - tab switching is allowed
-        Debug.Log("🎉 ALL CHECKS PASSED - Tab switching ALLOWED!");
         return true;
     }
     
@@ -279,7 +260,6 @@ public class TabManager : MonoBehaviour
         if (tabs.Count <= 1) return;
         
         int nextIndex = (currentTabIndex + 1) % tabs.Count;
-        Debug.Log($"SwitchToNextTab: {currentTabIndex} -> {nextIndex} (Total: {tabs.Count})");
         SelectTab(nextIndex);
         PlayTabSwitchSound();
     }
@@ -289,7 +269,6 @@ public class TabManager : MonoBehaviour
         if (tabs.Count <= 1) return;
         
         int prevIndex = (currentTabIndex - 1 + tabs.Count) % tabs.Count;
-        Debug.Log($"SwitchToPreviousTab: {currentTabIndex} -> {prevIndex} (Total: {tabs.Count})");
         SelectTab(prevIndex);
         PlayTabSwitchSound();
     }

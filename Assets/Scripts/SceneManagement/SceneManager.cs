@@ -25,7 +25,6 @@ public class SceneManager : MonoBehaviour
                 
                 if (checkpointSceneIndex != currentSceneIndex)
                 {
-                    Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
                     UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
                 }
             }
@@ -98,7 +97,6 @@ public class SceneManager : MonoBehaviour
                     // Named spawn point bayrağını sıfırla
                     ClearSpawnPrefs("UseNamedSpawnPoint");
                     
-                    Debug.Log($"Oyuncu spawn noktasına yerleştirildi: {spawnPointName}");
                     return;
                 }
                 else
@@ -186,8 +184,6 @@ public class SceneManager : MonoBehaviour
         
         player.ResetPlayerFacing();
         player.ShowWeapons();
-        
-        Debug.Log($"Player spawned at: {position}");
     }
     
     // Spawn işleminden sonra kamerayı güncelle
@@ -201,8 +197,6 @@ public class SceneManager : MonoBehaviour
             {
                 virtualCamera.Follow = player.transform;
                 virtualCamera.LookAt = null; // LookAt'ı temizle
-                
-                Debug.Log("Camera updated to follow player after spawn");
             }
             
             // SceneBoundary'yi bul ve kameraya bildir
@@ -210,7 +204,6 @@ public class SceneManager : MonoBehaviour
             if (boundary != null)
             {
                 CameraManager.instance.RegisterSceneBoundary(boundary);
-                Debug.Log("Camera boundaries updated after spawn");
             }
         }
         else
@@ -319,7 +312,6 @@ public class SceneManager : MonoBehaviour
         if (PlayerPrefs.GetInt("CheckpointActivated", 0) == 1)
         {
             int checkpointSceneIndex = PlayerPrefs.GetInt("CheckpointSceneIndex", 0);
-            Debug.Log($"Loading checkpoint scene: {checkpointSceneIndex}");
             UnityEngine.SceneManagement.SceneManager.LoadScene(checkpointSceneIndex);
         }
     }

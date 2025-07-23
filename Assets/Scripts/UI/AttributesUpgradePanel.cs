@@ -162,7 +162,6 @@ public class AttributesUpgradePanel : BaseUIPanel
         {
             inputBlocker.AddPanel(gameObject);
             inputBlocker.EnableGameplayInput(false);
-            Debug.Log("AttributesUpgradePanel: Gameplay input DISABLED");
         }
         else
         {
@@ -176,7 +175,6 @@ public class AttributesUpgradePanel : BaseUIPanel
         // Update level display
         if (levelText) levelText.text = playerStats.GetLevel().ToString();
         
-        Debug.Log($"AttributesUpgradePanel opened - Level: {playerStats.GetLevel()}, SP: {playerStats.AvailableSkillPoints}");
     }
     
     private UIInputBlocker FindInputBlocker()
@@ -202,8 +200,7 @@ public class AttributesUpgradePanel : BaseUIPanel
         tempDefense = playerStats.Defense;
         tempLuck = playerStats.Luck;
         tempSkillPoints = playerStats.AvailableSkillPoints;
-        
-        Debug.Log($"Loaded attributes: Vit={tempVitality}, Might={tempMight}, Mind={tempMind}, Def={tempDefense}, Luck={tempLuck}, SP={tempSkillPoints}");
+       
     }
     
     private void UpdateAttributeUI()
@@ -426,7 +423,6 @@ public class AttributesUpgradePanel : BaseUIPanel
         int defenseDiff = tempDefense - playerStats.Defense;
         int luckDiff = tempLuck - playerStats.Luck;
         
-        Debug.Log($"Applying changes: Vit +{vitalityDiff}, Might +{mightDiff}, Mind +{mindDiff}, Def +{defenseDiff}, Luck +{luckDiff}");
         
         // Apply increases to actual player stats
         // Each method already properly updates health percentage and health bar UI
@@ -452,7 +448,6 @@ public class AttributesUpgradePanel : BaseUIPanel
         UpdateAttributeUI();
         UpdateStatPreview();
         
-        Debug.Log("Attributes reset successfully");
     }
     
     private void CancelChanges()
@@ -462,7 +457,6 @@ public class AttributesUpgradePanel : BaseUIPanel
         UpdateAttributeUI();
         UpdateStatPreview();
         
-        Debug.Log("Changes canceled");
     }
     
     public void ClosePanel()
@@ -477,7 +471,6 @@ public class AttributesUpgradePanel : BaseUIPanel
         {
             inputBlocker.RemovePanel(gameObject);
             inputBlocker.EnableGameplayInput(true);
-            Debug.Log("AttributesUpgradePanel: Gameplay input ENABLED");
         }
         else
         {

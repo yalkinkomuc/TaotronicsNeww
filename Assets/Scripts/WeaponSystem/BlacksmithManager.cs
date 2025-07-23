@@ -89,8 +89,6 @@ public class BlacksmithManager : MonoBehaviour
         // Upgrade the weapon (modify the ScriptableObject directly)
         weapon.level++;
         
-        // Apply the upgrade effect
-        ApplyWeaponUpgrades(playerStats);
         
         // Save the changes
         SaveWeaponData();
@@ -98,17 +96,7 @@ public class BlacksmithManager : MonoBehaviour
         return true;
     }
     
-    // Apply weapon upgrades - now only handles weapon level increases
-    // Actual damage calculation is handled by WeaponDamageManager
-    public void ApplyWeaponUpgrades(PlayerStats playerStats)
-    {
-        // This method is now deprecated - weapon damage is calculated
-        // directly from WeaponData when attacks are performed
-        // Only weapon levels are stored and managed here
-        Debug.Log("WeaponData levels updated. Damage will be calculated from WeaponData directly.");
-    }
     
-    // Save weapon data to PlayerPrefs
     private void SaveWeaponData()
     {
         foreach (var weapon in weaponDatabase)

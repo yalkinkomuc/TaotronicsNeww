@@ -19,8 +19,6 @@ public class PlayerSuccesfulParryState : PlayerState
         // Animasyon süresine göre state süresini ayarla
         stateTimer = animationDuration;
         
-        Debug.Log("i enter scfparry");
-        
         // Block durumunda hasar almayı engelle
         player.stats.MakeInvincible(true);
         
@@ -57,7 +55,6 @@ public class PlayerSuccesfulParryState : PlayerState
         // Başarılı parry sonrası invulnerability ver
         player.SetTemporaryInvulnerability(parryInvulnerabilityDuration);
         
-        Debug.Log("i exit scfparry");
     }
     
     private void ProcessSuccessfulParry()

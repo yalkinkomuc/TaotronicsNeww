@@ -383,12 +383,9 @@ public class UIInputBlocker : MonoBehaviour
         Player player = PlayerManager.instance?.player;
         if (player != null)
         {
-            Debug.Log($"UIInputBlocker: Player found: {player.name}");
             IPlayerInput playerInput = player.playerInput;
             if (playerInput != null)
             {
-                Debug.Log("UIInputBlocker: PlayerInput found, disabling gameplay input");
-                // Only disable gameplay inputs
                 playerInput.DisableGameplayInput();
             }
             else
@@ -460,7 +457,6 @@ public class UIInputBlocker : MonoBehaviour
             IPlayerInput playerInput = player.playerInput;
             if (playerInput != null)
             {
-                Debug.Log("UIInputBlocker: PlayerInput found, enabling all input");
                 // Enable all inputs
                 playerInput.EnableGameplayInput();
             }
@@ -473,10 +469,6 @@ public class UIInputBlocker : MonoBehaviour
             SetUIBlockerVisibility(false);
             // Oyun devam etsin
             Time.timeScale = 1f;
-        }
-        else
-        {
-            Debug.Log($"UIInputBlocker: Still {activePanelCount} active panels, input remains disabled");
         }
     }
     

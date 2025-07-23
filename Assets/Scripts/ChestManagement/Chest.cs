@@ -270,8 +270,6 @@ public class Chest : MonoBehaviour, IInteractable
         PlayerPrefs.SetInt(prefsKey, 1);
         PlayerPrefs.Save();
         
-        // İtem durumunu kontrol et
-        Debug.Log("Sandık açılıyor, item sayısı: " + itemsInChest.Count);
     }
     
     // Animation Event ile çağrılacak metod
@@ -320,7 +318,6 @@ public class Chest : MonoBehaviour, IInteractable
             {
                 GameObject chestUIObj = Instantiate(chestUIPrefab);
                 DontDestroyOnLoad(chestUIObj);
-                Debug.Log("UI_ChestInventory prefabı başarıyla yüklendi ve instantiate edildi.");
                 
                 // Bir süre bekleyip tekrar deneyelim
                 Invoke("TryOpenChestUIAgain", 0.1f);
@@ -342,7 +339,6 @@ public class Chest : MonoBehaviour, IInteractable
     {
         if (UI_ChestInventory.Instance != null)
         {
-            Debug.Log("UI_ChestInventory.Instance başarıyla bulundu, sandık açılıyor...");
             UI_ChestInventory.Instance.OpenChest(this);
         }
         else
@@ -406,13 +402,9 @@ public class Chest : MonoBehaviour, IInteractable
             return;
         }
         
-        Debug.Log("--- ITEM ALINIYOR ---");
-        Debug.Log($"Item: {itemName}, Sayı: {count}, SkillShard mi: {(itemData is SkillShard ? "EVET" : "HAYIR")}");
-        
         // Envantere ekle
         for (int i = 0; i < count; i++)
         {
-            Debug.Log($"Envantere ekleniyor ({i+1}/{count}): " + itemData.itemName);
             Inventory.instance.AddItem(itemData);
             
             if (itemData is SkillShard)
@@ -421,7 +413,6 @@ public class Chest : MonoBehaviour, IInteractable
                 if (SkillManager.Instance != null)
                 {
                     SkillManager.Instance.AddShards(shard.GetShardValue());
-                    Debug.Log("Sandıktan Skill Shard toplandı: +" + shard.GetShardValue() + " shards");
                 }
                 else
                 {
@@ -457,8 +448,6 @@ public class Chest : MonoBehaviour, IInteractable
             }
         }
         
-        Debug.Log($"Toplam {itemsToRemove.Count} adet {itemName} kaldırılacak");
-        
         // Görünmez yap ve listeden çıkar
         foreach (GameObject obj in itemsToRemove)
         {
@@ -471,14 +460,11 @@ public class Chest : MonoBehaviour, IInteractable
         stackedItems.Remove(itemName);
         itemReferences.Remove(itemName);
         
-        Debug.Log($"TAMAMLANDI: Item stack alındı ({count}x {itemName}), kalan unique item sayısı: {stackedItems.Count}");
     }
     
     // Tüm itemleri envantere aktarma
     public void TakeAllItems()
     {
-        Debug.Log("TakeAllItems çağrıldı, item sayısı: " + itemsInChest.Count);
-        
         if (itemsInChest.Count == 0) return;
         
         // Inventory instance kontrol
@@ -489,12 +475,6 @@ public class Chest : MonoBehaviour, IInteractable
         }
         
         Dictionary<string, int> itemsToAdd = new Dictionary<string, int>(stackedItems);
-        Debug.Log($"Toplam {itemsToAdd.Count} farklı item türü alınacak. Stack sayıları:");
-        
-        foreach (var pair in itemsToAdd)
-        {
-            Debug.Log($"  - {pair.Key}: {pair.Value} adet");
-        }
         
         foreach (var pair in itemsToAdd)
         {
@@ -528,12 +508,9 @@ public class Chest : MonoBehaviour, IInteractable
                 continue;
             }
             
-            Debug.Log($"--- {itemName} ENVANTERİNE EKLENİYOR (x{count}) ---");
-            
             // Envantere ekle
             for (int i = 0; i < count; i++)
             {
-                Debug.Log($"Envantere ekleniyor ({i+1}/{count}): " + itemData.itemName);
                 Inventory.instance.AddItem(itemData);
                 
                 if (itemData is SkillShard)
@@ -542,7 +519,6 @@ public class Chest : MonoBehaviour, IInteractable
                     if (SkillManager.Instance != null)
                     {
                         SkillManager.Instance.AddShards(shard.GetShardValue());
-                        Debug.Log("Sandıktan Skill Shard toplandı: +" + shard.GetShardValue() + " shards");
                     }
                     else
                     {
@@ -577,9 +553,6 @@ public class Chest : MonoBehaviour, IInteractable
                     }
                 }
             }
-            
-            Debug.Log($"Toplam {itemsToRemove.Count} adet {itemName} nesnesi kaldırılacak");
-            
             // Görünmez yap ve listeden çıkar
             foreach (GameObject obj in itemsToRemove)
             {
@@ -593,7 +566,6 @@ public class Chest : MonoBehaviour, IInteractable
         stackedItems.Clear();
         itemReferences.Clear();
         
-        Debug.Log("Sandık tamamen boşaltıldı. Tüm itemler envantere eklendi.");
     }
     
     // UI için stack bilgisini döndür
@@ -652,7 +624,6 @@ public class Chest : MonoBehaviour, IInteractable
         // Stack bilgisini yenile
         ProcessChestItems();
         
-        Debug.Log("Sandık sıfırlandı, item sayısı: " + itemsInChest.Count);
     }
     
     // Sandık ID'sini döndür

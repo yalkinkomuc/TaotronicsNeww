@@ -77,7 +77,6 @@ public class EquipmentUIManager : MonoBehaviour
         // Wait a bit longer before retrying
         yield return new WaitForSeconds(2f);
         
-        Debug.Log($"[EquipmentUIManager] Retrying slot search (attempt {currentRetryAttempts}/{maxRetryAttempts})...");
         FindEquipmentSlots();
         
         // Update slots after finding them
@@ -93,17 +92,12 @@ public class EquipmentUIManager : MonoBehaviour
         if (AdvancedInventoryUI.Instance != null)
         {
             inventoryUI = AdvancedInventoryUI.Instance;
-            Debug.Log("[EquipmentUIManager] Found AdvancedInventoryUI via Instance");
         }
         
         // Strategy 2: Try to find via FindFirstObjectByType (includes inactive objects)
         if (inventoryUI == null)
         {
             inventoryUI = FindFirstObjectByType<AdvancedInventoryUI>();
-            if (inventoryUI != null)
-            {
-                Debug.Log("[EquipmentUIManager] Found AdvancedInventoryUI via FindFirstObjectByType");
-            }
         }
         
         // Strategy 3: Try to find via FindObjectsOfType (includes inactive objects)
@@ -113,7 +107,6 @@ public class EquipmentUIManager : MonoBehaviour
             if (allInventoryUIs.Length > 0)
             {
                 inventoryUI = allInventoryUIs[0];
-                Debug.Log("[EquipmentUIManager] Found AdvancedInventoryUI via FindObjectsOfType");
             }
         }
         
@@ -130,19 +123,15 @@ public class EquipmentUIManager : MonoBehaviour
                 {
                     case EquipmentSlot.MainWeapon:
                         weaponSlot = slot;
-                        Debug.Log("[EquipmentUIManager] Found main weapon slot");
                         break;
                     case EquipmentSlot.SecondaryWeapon:
                         secondaryWeaponSlot = slot;
-                        Debug.Log("[EquipmentUIManager] Found secondary weapon slot");
                         break;
                     case EquipmentSlot.Armor:
                         armorSlot = slot;
-                        Debug.Log("[EquipmentUIManager] Found armor slot");
                         break;
                     case EquipmentSlot.Accessory:
                         accessorySlot = slot;
-                        Debug.Log("[EquipmentUIManager] Found accessory slot");
                         break;
                 }
             }
@@ -164,8 +153,6 @@ public class EquipmentUIManager : MonoBehaviour
         secondaryWeaponSlot = secondary;
         armorSlot = armor;
         accessorySlot = accessory;
-        
-        Debug.Log("[EquipmentUIManager] Equipment slots manually assigned");
     }
     
     public void UpdateAllEquipmentSlots()
@@ -181,7 +168,6 @@ public class EquipmentUIManager : MonoBehaviour
         if (slot != null)
         {
             slot.UpdateSlotDisplay();
-            Debug.Log($"[EquipmentUIManager] Updated {slotName} slot");
         }
         else
         {
@@ -191,8 +177,6 @@ public class EquipmentUIManager : MonoBehaviour
     
     private void OnEquipmentChanged(EquipmentSlot slot, EquipmentData equipment)
     {
-        Debug.Log($"[EquipmentUIManager] Equipment changed in slot: {slot}");
-        
         switch (slot)
         {
             case EquipmentSlot.MainWeapon:

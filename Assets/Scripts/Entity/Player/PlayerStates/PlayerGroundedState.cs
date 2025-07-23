@@ -47,7 +47,6 @@ public class PlayerGroundedState : PlayerState
                 stateMachine.ChangeState(player.attackState);
             }
             
-            Debug.Log(IsHammerActive());
         }
 
        

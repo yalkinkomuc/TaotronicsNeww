@@ -33,8 +33,6 @@ public class PlayerWeaponManager : MonoBehaviour
         // İlk giriş kontrolü - sadece ilk girişte başlangıç silahları equip et
         if (EquipmentManager.IsFirstTimePlayer())
         {
-            Debug.Log("[PlayerWeaponManager] İlk giriş tespit edildi - başlangıç silahları equip ediliyor");
-            
             // Sadece starting weapon'ı unlock et ve aktif et
             UnlockWeapon(startingWeaponIndex);
             ActivatePrimaryWeapon(startingWeaponIndex);
@@ -50,14 +48,9 @@ public class PlayerWeaponManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[PlayerWeaponManager] Daha önce oynanan oyun - kaydedilmiş durum yükleniyor");
             LoadWeaponState();
         }
         
-        if (BlacksmithManager.Instance != null && playerStats != null)
-        {
-            BlacksmithManager.Instance.ApplyWeaponUpgrades(playerStats);
-        }
     }
 
    public void EquipSecondaryWeapon(int index)
@@ -71,7 +64,6 @@ public class PlayerWeaponManager : MonoBehaviour
         // Hâlâ bulunamadıysa secondary weapon yok demektir
         if (index == -1)
         {
-            Debug.Log("No unlocked secondary weapon found!");
             currentSecondaryWeaponIndex = -1;
             
             // Tüm secondary silahları deaktif et
@@ -167,8 +159,6 @@ public class PlayerWeaponManager : MonoBehaviour
         
         currentPrimaryWeaponIndex = primaryIndex;
         
-        Debug.Log($"Activated primary weapon: {weapons[primaryIndex].name}");
-        
         // Save weapon state after activation
         OnWeaponEquipped();
     }
@@ -259,7 +249,6 @@ public class PlayerWeaponManager : MonoBehaviour
         }
         
         PlayerPrefs.Save();
-        Debug.Log($"[PlayerWeaponManager] Weapon state saved - Primary: {currentPrimaryWeaponIndex}, Secondary: {currentSecondaryWeaponIndex}");
     }
     
     /// <summary>
@@ -300,11 +289,8 @@ public class PlayerWeaponManager : MonoBehaviour
             {
                 // Hiç unlock edilmiş secondary weapon yok
                 currentSecondaryWeaponIndex = -1;
-                Debug.Log("[PlayerWeaponManager] No unlocked secondary weapons found during load");
             }
         }
-        
-        Debug.Log($"[PlayerWeaponManager] Weapon state loaded - Primary: {currentPrimaryWeaponIndex}, Secondary: {currentSecondaryWeaponIndex}");
     }
     
     /// <summary>
@@ -346,24 +332,17 @@ public class PlayerWeaponManager : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Unlock a weapon by index
-    /// </summary>
+   
     public void UnlockWeapon(int weaponIndex)
     {
         if (weaponIndex >= 0 && weaponIndex < weapons.Length && weapons[weaponIndex] != null)
         {
             unlockedWeaponIndices.Add(weaponIndex);
-            Debug.Log($"[PlayerWeaponManager] Unlocked weapon: {weapons[weaponIndex].name}");
-            
-            // Save unlock state
             SaveUnlockStates();
         }
     }
     
-    /// <summary>
-    /// Check if a weapon is unlocked
-    /// </summary>
+    
     public bool IsWeaponUnlocked(int weaponIndex)
     {
         return unlockedWeaponIndices.Contains(weaponIndex);
@@ -400,8 +379,6 @@ public class PlayerWeaponManager : MonoBehaviour
         string unlockedIndices = string.Join(",", unlockedWeaponIndices);
         PlayerPrefs.SetString("UnlockedWeapons", unlockedIndices);
         PlayerPrefs.Save();
-        
-        Debug.Log($"[PlayerWeaponManager] Saved unlock states: {unlockedIndices}");
     }
     
     /// <summary>
@@ -424,7 +401,5 @@ public class PlayerWeaponManager : MonoBehaviour
                 }
             }
         }
-        
-        Debug.Log($"[PlayerWeaponManager] Loaded unlock states: {unlockedIndices}");
     }
 }

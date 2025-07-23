@@ -10,8 +10,6 @@ public class RuneSaveManager : MonoBehaviour
 {
     public static RuneSaveManager Instance { get; private set; }
     
-    [Header("Debug")]
-    [SerializeField] private bool enableDebugLogs = true;
     
     private bool hasLoadedOnce = false; // Sadece 1 kere yüklesin
     
@@ -20,10 +18,9 @@ public class RuneSaveManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             
-            if (enableDebugLogs)
-                Debug.Log("[RuneSaveManager] Initialized - DontDestroyOnLoad active");
+           
         }
         else
         {
@@ -65,8 +62,6 @@ public class RuneSaveManager : MonoBehaviour
         // EquipmentManager'ın hazır olmasını bekle
         yield return new WaitUntil(() => EquipmentManager.Instance != null);
         
-        if (enableDebugLogs)
-            Debug.Log("[RuneSaveManager] EquipmentManager found, loading runes...");
         
         LoadRunes();
         
@@ -81,8 +76,6 @@ public class RuneSaveManager : MonoBehaviour
     {
         if (hasLoadedOnce)
         {
-            if (enableDebugLogs)
-                Debug.Log("[RuneSaveManager] Already loaded runes once, skipping...");
             return;
         }
         
@@ -93,9 +86,6 @@ public class RuneSaveManager : MonoBehaviour
         }
         
         hasLoadedOnce = true;
-        
-        if (enableDebugLogs)
-            Debug.Log("[RuneSaveManager] Loading runes from PlayerPrefs...");
         
         var equipmentManager = EquipmentManager.Instance;
         
@@ -121,8 +111,6 @@ public class RuneSaveManager : MonoBehaviour
                         loadedEnhancements[i] = enhancementLevel;
                     }
                     
-                    if (enableDebugLogs)
-                        Debug.Log($"[RuneSaveManager] Loaded rune at slot {i}: {runeName} (+{enhancementLevel})");
                 }
                 else
                 {
@@ -137,8 +125,7 @@ public class RuneSaveManager : MonoBehaviour
         // İlk girişse initial save yap (rune'lar yüklendikten sonra)
         if (EquipmentManager.IsFirstTimePlayer())
         {
-            if (enableDebugLogs)
-                Debug.Log("[RuneSaveManager] First time player - saving initial equipment state after rune load");
+            
             
             // Hem ekipmanları hem de rune'ları kaydet
             EquipmentManager.Instance.SaveEquipment();
@@ -146,9 +133,6 @@ public class RuneSaveManager : MonoBehaviour
 
             EquipmentManager.MarkGameAsStarted();
         }
-        
-        if (enableDebugLogs)
-            Debug.Log("[RuneSaveManager] Runes loaded and stats recalculated");
     }
     
     /// <summary>
@@ -164,8 +148,6 @@ public class RuneSaveManager : MonoBehaviour
         {
             if (AdvancedInventoryUI.Instance != null)
             {
-                if (enableDebugLogs)
-                    Debug.Log("[RuneSaveManager] UI ready, notifying about loaded runes...");
                 break;
             }
             
@@ -185,8 +167,6 @@ public class RuneSaveManager : MonoBehaviour
             EquipmentManager.Instance.NotifyUIAboutAllRunes();
         }
         
-        if (enableDebugLogs)
-            Debug.Log("[RuneSaveManager] UI notification completed");
     }
     
     /// <summary>
@@ -228,10 +208,7 @@ public class RuneSaveManager : MonoBehaviour
             Debug.LogWarning("[RuneSaveManager] EquipmentManager not found, cannot save runes.");
             return;
         }
-
-        if (enableDebugLogs)
-            Debug.Log($"[RuneSaveManager] 💾 SAVING RUNES...");
-            
+        
         for (int i = 0; i < 6; i++) // Assuming 6 rune slots
         {
             RuneData rune = EquipmentManager.Instance.GetEquippedRune(i);
@@ -240,8 +217,7 @@ public class RuneSaveManager : MonoBehaviour
                 int enhancementLevel = EquipmentManager.Instance.GetRuneEnhancementLevel(i);
                 PlayerPrefs.SetString($"EquippedRune_{i}", rune.itemName);
                 PlayerPrefs.SetInt($"EquippedRune_{i}_Enhancement", enhancementLevel);
-                if (enableDebugLogs)
-                    Debug.Log($"[RuneSaveManager] ✅ SAVED rune at slot {i}: '{rune.itemName}' with enhancement +{enhancementLevel}");
+               
             }
             else
             {
@@ -251,8 +227,6 @@ public class RuneSaveManager : MonoBehaviour
         }
         
         PlayerPrefs.Save();
-        if (enableDebugLogs)
-            Debug.Log("[RuneSaveManager] Runes saved to PlayerPrefs.");
     }
 
     /// <summary>

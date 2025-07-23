@@ -31,7 +31,6 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
     
     public void UpdateRune(RuneData rune)
     {
-        Debug.Log($"[UI_RuneSlot {slotIndex}] UpdateRune called with: {(rune != null ? rune.itemName : "null")}");
         currentRune = rune;
         
         if (rune != null)

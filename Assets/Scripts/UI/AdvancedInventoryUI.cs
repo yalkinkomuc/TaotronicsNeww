@@ -81,7 +81,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+           // DontDestroyOnLoad(gameObject);
             
             // Setup critical event listeners that need to work even when inventory is closed
             SetupCriticalEventListeners();
@@ -305,7 +305,6 @@ public class AdvancedInventoryUI : BaseUIPanel
     [ContextMenu("Debug: Update Rune Slots")]
     public void UpdateRuneSlots()
     {
-        Debug.Log("[AdvancedInventoryUI] UpdateRuneSlots called");
         
         if (EquipmentManager.Instance == null)
         {
@@ -313,7 +312,6 @@ public class AdvancedInventoryUI : BaseUIPanel
             return;
         }
         
-        Debug.Log($"[AdvancedInventoryUI] RuneSlots array length: {(runeSlots != null ? runeSlots.Length : 0)}");
         
         for (int i = 0; i < runeSlots.Length; i++)
         {
@@ -321,7 +319,6 @@ public class AdvancedInventoryUI : BaseUIPanel
             {
                 RuneData currentRune = EquipmentManager.Instance.GetEquippedRune(i);
                 runeSlots[i].UpdateRune(currentRune);
-                Debug.Log($"[AdvancedInventoryUI] Updated rune slot {i}: {(currentRune != null ? currentRune.itemName : "Empty")}");
             }
             else
             {
@@ -339,7 +336,6 @@ public class AdvancedInventoryUI : BaseUIPanel
         // DOĞRU MANTIK: Başka blocking paneller açıksa inventory açılamaz!
         if (IsAnyBlockingPanelOpen())
         {
-            Debug.Log("AdvancedInventoryUI: BLOCKED! Cannot open inventory while other panels are active");
             return;
         }
         
@@ -394,7 +390,6 @@ public class AdvancedInventoryUI : BaseUIPanel
         CheckpointSelectionScreen checkpointScreen = FindFirstObjectByType<CheckpointSelectionScreen>();
         if (checkpointScreen != null && checkpointScreen.gameObject.activeInHierarchy)
         {
-            Debug.Log("AdvancedInventoryUI: CheckpointSelectionScreen is open - blocking inventory");
             return true;
         }
         
@@ -402,7 +397,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         SkillTreePanel skillTreePanel = FindFirstObjectByType<SkillTreePanel>();
         if (skillTreePanel != null && skillTreePanel.gameObject.activeInHierarchy)
         {
-            Debug.Log("AdvancedInventoryUI: SkillTreePanel is open - blocking inventory");
+        
             return true;
         }
         
@@ -410,7 +405,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         AttributesUpgradePanel upgradePanel = FindFirstObjectByType<AttributesUpgradePanel>();
         if (upgradePanel != null && upgradePanel.gameObject.activeInHierarchy)
         {
-            Debug.Log("AdvancedInventoryUI: AttributesUpgradePanel is open - blocking inventory");
+            
             return true;
         }
         
@@ -418,7 +413,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         UI_EquipmentSelectionPanel equipmentSelection = FindFirstObjectByType<UI_EquipmentSelectionPanel>();
         if (equipmentSelection != null && equipmentSelection.gameObject.activeInHierarchy)
         {
-            Debug.Log("AdvancedInventoryUI: UI_EquipmentSelectionPanel is open - blocking inventory");
+            
             return true;
         }
         
@@ -426,14 +421,12 @@ public class AdvancedInventoryUI : BaseUIPanel
         UI_ChestInventory chestUI = FindFirstObjectByType<UI_ChestInventory>();
         if (chestUI != null && chestUI.gameObject.activeInHierarchy)
         {
-            Debug.Log("AdvancedInventoryUI: UI_ChestInventory is open - blocking inventory");
             return true;
         }
         
         // Dialogue System
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
         {
-            Debug.Log("AdvancedInventoryUI: DialogueManager is active - blocking inventory");
             return true;
         }
         
@@ -605,13 +598,11 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     private void OnRuneChanged(int slotIndex, RuneData rune)
     {
-        Debug.Log($"[AdvancedInventoryUI] OnRuneChanged called - Slot {slotIndex}: {(rune != null ? rune.itemName : "None")}");
         
         UpdateStatsDisplay();
         if (runeSlots != null && slotIndex >= 0 && slotIndex < runeSlots.Length && runeSlots[slotIndex] != null)
         {
             runeSlots[slotIndex].UpdateRune(rune);
-            Debug.Log($"[AdvancedInventoryUI] Updated rune slot {slotIndex}");
         }
         else
         {
@@ -619,45 +610,6 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
     }
     
-    // DelayedEquipmentUpdate is no longer needed - EquipmentUIManager handles timing
-    
-    /// <summary>
-    /// İlk inventory açılışında rune'ları force refresh et (timing problemi çözümü)
-    /// </summary>
-    // private System.Collections.IEnumerator ForceRefreshRunesOnFirstOpen()
-    // {
-    //     // UI'ın tamamen hazır olması için biraz bekle
-    //     yield return new WaitForSeconds(0.1f);
-        
-    //     Debug.Log("[AdvancedInventoryUI] Force refreshing runes on first open...");
-        
-    //     // Rune'ları yeniden güncelle
-    //     UpdateRuneSlots();
-        
-    //     // Eğer hâlâ boşsa, EquipmentManager'dan direct olarak al
-    //     if (EquipmentManager.Instance != null)
-    //     {
-    //         bool anyRuneFound = false;
-    //         for (int i = 0; i < runeSlots.Length; i++)
-    //         {
-    //             RuneData currentRune = EquipmentManager.Instance.GetEquippedRune(i);
-    //             if (currentRune != null)
-    //             {
-    //                 anyRuneFound = true;
-    //                 if (runeSlots[i] != null)
-    //                 {
-    //                     runeSlots[i].UpdateRune(currentRune);
-    //                     Debug.Log($"[AdvancedInventoryUI] Force updated rune slot {i}: {currentRune.itemName}");
-    //                 }
-    //             }
-    //         }
-            
-    //         if (!anyRuneFound)
-    //         {
-    //             Debug.Log("[AdvancedInventoryUI] No runes found to display");
-    //         }
-    //     }
-    // }
     
     #endregion
 } 

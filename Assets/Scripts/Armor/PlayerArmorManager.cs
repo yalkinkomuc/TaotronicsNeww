@@ -41,8 +41,7 @@ public class PlayerArmorManager : MonoBehaviour
         // Seçilen armor'u aktif et
         armors[index].gameObject.SetActive(true);
         currentArmorIndex = index;
-        Debug.Log($"Activated armor: {armors[index].name}");
-
+        
         // ArmorData'yı EquipmentManager'a giydir
         if (armorDatas != null && index < armorDatas.Length && armorDatas[index] != null)
         {

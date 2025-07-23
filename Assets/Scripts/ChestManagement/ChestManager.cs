@@ -93,8 +93,6 @@ public class ChestManager : MonoBehaviour
                         }
                     }
                 }
-                
-                Debug.Log("Sandık verileri yüklendi, toplam " + collectedItemsByChest.Count + " sandık verisi bulundu.");
             }
             catch (Exception e)
             {
@@ -103,10 +101,7 @@ public class ChestManager : MonoBehaviour
                 collectedItemsByChest = new Dictionary<string, List<string>>();
             }
         }
-        else
-        {
-            Debug.Log("Kaydedilmiş sandık verisi bulunamadı.");
-        }
+      
     }
 
     // Sandık verilerini kaydeder
@@ -144,8 +139,6 @@ public class ChestManager : MonoBehaviour
             string jsonData = JsonUtility.ToJson(saveData);
             PlayerPrefs.SetString("ChestData", jsonData);
             PlayerPrefs.Save();
-            
-            Debug.Log("Sandık verileri kaydedildi. Toplam " + saveData.chests.Count + " sandık.");
         }
         catch (Exception e)
         {
@@ -173,9 +166,7 @@ public class ChestManager : MonoBehaviour
         if (!items.Contains(itemID))
         {
             items.Add(itemID);
-            Debug.Log("Item " + itemID + " sandıktan " + chestID + " toplandı olarak işaretlendi.");
             
-            // Değişiklik yaptıktan sonra kaydet
             SaveChestData();
         }
     }
@@ -193,8 +184,6 @@ public class ChestManager : MonoBehaviour
         if (collectedItemsByChest.ContainsKey(chestID))
         {
             collectedItemsByChest.Remove(chestID);
-            Debug.Log("Sandık " + chestID + " verileri temizlendi.");
-            
             // Değişiklik yaptıktan sonra kaydet
             SaveChestData();
         }
@@ -226,7 +215,5 @@ public class ChestManager : MonoBehaviour
         // PlayerPrefs'ten de temizle
         PlayerPrefs.DeleteKey("ChestData");
         PlayerPrefs.Save();
-        
-        Debug.Log("Tüm sandık verileri temizlendi.");
     }
 } 

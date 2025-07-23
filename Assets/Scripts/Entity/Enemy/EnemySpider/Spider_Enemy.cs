@@ -34,8 +34,7 @@ public class Spider_Enemy : Enemy
         base.Start();
         
         stateMachine.Initialize(idleState);
-
-        Debug.Log("Test");
+        
     }
 
     public override void Die()

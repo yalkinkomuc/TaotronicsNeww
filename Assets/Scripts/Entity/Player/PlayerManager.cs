@@ -73,7 +73,6 @@ public class PlayerManager : MonoBehaviour
             {
                 if (allPlayers[i] != null && allPlayers[i].gameObject != null)
                 {
-                    Debug.Log($"PlayerManager: Destroying duplicate player: {allPlayers[i].name}");
                     Destroy(allPlayers[i].gameObject);
                 }
             }
@@ -90,16 +89,11 @@ public class PlayerManager : MonoBehaviour
             {
                 player = foundPlayer;
                 DontDestroyOnLoad(player.gameObject);
-                Debug.Log("PlayerManager: Player reference restored");
             }
             else
             {
                 Debug.LogError("PlayerManager: Could not find Player in scene!");
             }
-        }
-        else
-        {
-            Debug.Log("PlayerManager: Player reference is valid");
         }
         
         // Force health and mana bar reinitialization if needed

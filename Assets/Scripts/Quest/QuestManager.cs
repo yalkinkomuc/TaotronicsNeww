@@ -37,8 +37,6 @@ public class QuestManager : MonoBehaviour
 
     public void RaiseEvent(string eventName, object data)
     {
-        Debug.Log($"Event Raised: {eventName}");
-
         var questsToComplete = ProcessQuestEvents(eventName, data);
         CompleteQuests(questsToComplete);
         

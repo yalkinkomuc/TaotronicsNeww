@@ -11,8 +11,6 @@ public class UIRaycastDebug : MonoBehaviour
             var results = new List<RaycastResult>();
             var data    = new PointerEventData(EventSystem.current){position = Input.mousePosition};
             EventSystem.current.RaycastAll(data, results);
-            Debug.Log("--- UI Raycast Hit List ---");
-            foreach (var r in results) Debug.Log(r.gameObject.name);
         }
     }
 }

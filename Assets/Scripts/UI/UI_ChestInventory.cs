@@ -16,18 +16,13 @@ public class UI_ChestInventory : BaseUIPanel
     private Chest currentChest;
     private List<UI_ItemSlot> itemSlots = new List<UI_ItemSlot>();
     
-    [Header("Debug")]
-    [SerializeField] private bool debugMode = true;
-
+    
     private new void Awake()
     {
         // İlk olarak, kendimizi uygun şekilde ayarla
         if (Instance == null)
         {
             Instance = this;
-            
-            
-            Debug.Log("UI_ChestInventory Singleton oluşturuldu, DontDestroyOnLoad aktif");
             
             // Butonları ayarla
             if (closeButton != null)
@@ -42,9 +37,7 @@ public class UI_ChestInventory : BaseUIPanel
         }
         else if (Instance != this)
         {
-            Debug.Log("Fazladan UI_ChestInventory tespit edildi, yok ediliyor: " + gameObject.name);
             Destroy(gameObject);
-            return;
         }
     }
     
@@ -63,7 +56,6 @@ public class UI_ChestInventory : BaseUIPanel
         if (Instance == null)
         {
             Instance = this;
-            Debug.Log("UI_ChestInventory: Instance OnEnable'da yeniden atandı");
         }
     }
 
@@ -81,32 +73,8 @@ public class UI_ChestInventory : BaseUIPanel
             TakeAllItems();
         }
         
-        // TEST AMAÇLI: UI görünürlüğünü kontrol et
-        if (debugMode && Input.GetKeyDown(KeyCode.P))
-        {
-            PrintDebugInfo();
-        }
     }
     
-    private void PrintDebugInfo()
-    {
-        if (!debugMode) return;
-        
-        Debug.Log("--- UI_ChestInventory Debug Info ---");
-        Debug.Log("Container: " + (itemSlotsContainer != null ? itemSlotsContainer.name : "NULL"));
-        Debug.Log("Prefab: " + (itemSlotPrefab != null ? itemSlotPrefab.name : "NULL"));
-        Debug.Log("Slot count: " + itemSlots.Count);
-        
-        if (currentChest != null)
-        {
-            Dictionary<string, int> stackedItems = currentChest.GetStackedItems();
-            Debug.Log("Chest unique item count: " + stackedItems.Count);
-        }
-        else
-        {
-            Debug.Log("Chest: NULL");
-        }
-    }
 
     // Open chest
     public void OpenChest(Chest chest)

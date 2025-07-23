@@ -69,7 +69,6 @@ public class HealthBar : MonoBehaviour
             if (stats == null && PlayerManager.instance?.player != null)
             {
                 stats = PlayerManager.instance.player.GetComponent<CharacterStats>();
-                Debug.Log("HealthBar: Found stats from PlayerManager");
             }
         }
 
@@ -105,7 +104,6 @@ public class HealthBar : MonoBehaviour
             // Metin alanını güncelle
             UpdateHealthText(roundedCurrentHealth, roundedMaxHealth);
             
-            Debug.Log($"HealthBar: Initialized with Health {roundedCurrentHealth}/{roundedMaxHealth}");
             return true;
         }
 
@@ -126,7 +124,6 @@ public class HealthBar : MonoBehaviour
                 Image img = obj.GetComponent<Image>();
                 if (img != null)
                 {
-                    Debug.Log($"HealthBar: Found fill image by name: {name}");
                     return img;
                 }
             }
@@ -138,7 +135,6 @@ public class HealthBar : MonoBehaviour
         {
             if (img.name.ToLower().Contains("fill") || img.name.ToLower().Contains("health"))
             {
-                Debug.Log($"HealthBar: Found fill image in children: {img.name}");
                 return img;
             }
         }
@@ -151,7 +147,6 @@ public class HealthBar : MonoBehaviour
             {
                 if (img.name.ToLower().Contains("fill") && img.name.ToLower().Contains("health"))
                 {
-                    Debug.Log($"HealthBar: Found fill image in parent: {img.name}");
                     return img;
                 }
             }
@@ -225,7 +220,6 @@ public class HealthBar : MonoBehaviour
         healthBarFill = fill;
         healthText = text;
         isInitialized = true; // Mark as initialized since references are explicitly set
-        Debug.Log($"HealthBar: References set externally - Fill: {fill != null}, Text: {text != null}");
         
         // Hemen güncelle
         if (stats != null && healthBarFill != null)

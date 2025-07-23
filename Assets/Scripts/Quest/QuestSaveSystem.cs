@@ -14,7 +14,6 @@ public static class QuestSaveSystem
         SaveCompletedQuests(completedQuests);
         PlayerPrefs.Save();
         
-        Debug.Log($"Quest progress saved. Active: {activeQuests.Count}, Completed: {completedQuests.Count}");
     }
     
     public static QuestSaveData LoadQuestProgress(List<QuestData> availableQuests)
@@ -35,7 +34,6 @@ public static class QuestSaveSystem
             saveData.activeQuests = LoadActiveQuests(availableQuests);
         }
         
-        Debug.Log($"Quest progress loaded. Active: {saveData.activeQuests.Count}, Completed: {saveData.completedQuests.Count}");
         return saveData;
     }
     

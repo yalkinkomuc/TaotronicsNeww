@@ -158,29 +158,15 @@ public class SkillTreePanel : BaseUIPanel
             closeButton.interactable = true; // ZORLA AKTİF YAP
         }
         
-        // Setup skill buttons - SADECE CLICK EVENT'LERİ
-        Debug.Log($"buttonToSkillID dictionary has {buttonToSkillID.Count} entries");
         
         foreach (var kvp in buttonToSkillID)
         {
             Button button = kvp.Key;
             string skillID = kvp.Value;
             
-            // FİRESKİLL1 İÇİN ÖZEL LOG!
-            if (skillID == "FireSpell")
-            {
-                Debug.Log($"PROCESSING FIRESKILL! Button is null: {button == null}");
-                if (button != null)
-                {
-                    Debug.Log($"FireSkill button name: {button.name}");
-                    Debug.Log($"FireSkill button active: {button.gameObject.activeInHierarchy}");
-                }
-            }
-            
             if (button != null)
             {
-                Debug.Log($"Setting up button for skill: {skillID}");
-                // Önce eski event'leri temizle
+                
                 button.onClick.RemoveAllListeners();
                 // ZORLA HER BUTTON'U AKTİF YAP
                 button.interactable = true;
@@ -362,7 +348,6 @@ public class SkillTreePanel : BaseUIPanel
         CheckpointSelectionScreen checkpointScreen = FindAnyObjectByType<CheckpointSelectionScreen>();
         if (checkpointScreen != null)
         {
-            Debug.Log("Closing CheckpointSelectionScreen!");
             checkpointScreen.gameObject.SetActive(false);
         }
         
@@ -396,7 +381,6 @@ public class SkillTreePanel : BaseUIPanel
         CheckpointSelectionScreen checkpointScreen = FindAnyObjectByType<CheckpointSelectionScreen>();
         if (checkpointScreen != null)
         {
-            Debug.Log("Reopening CheckpointSelectionScreen!");
             checkpointScreen.gameObject.SetActive(true);
         }
     }
@@ -449,7 +433,6 @@ public class SkillTreePanel : BaseUIPanel
                     buttonImage.color = currentColor;
                 }
                 
-                Debug.Log($"UpdateAllSkillButtons: {skillID} interactable = {button.interactable}");
             }
         }
     }
@@ -488,7 +471,6 @@ public class SkillTreePanel : BaseUIPanel
         pointerDown.callback.AddListener((data) => {
             isHolding = true;
             holdTime = 0f;
-            Debug.Log($"Started holding button for skill: {skillID}");
         });
         trigger.triggers.Add(pointerDown);
         
@@ -498,7 +480,6 @@ public class SkillTreePanel : BaseUIPanel
         pointerUp.callback.AddListener((data) => {
             if (isHolding)
             {
-                Debug.Log($"Stopped holding button for skill: {skillID} after {holdTime:F1}s");
                 isHolding = false;
                 holdTime = 0f;
             }
@@ -518,7 +499,6 @@ public class SkillTreePanel : BaseUIPanel
                     
                     if (holdTime >= requiredHoldTime)
                     {
-                        Debug.Log($"Hold time reached! Unlocking skill: {skillID}");
                         UnlockSkill(skillID);
                         isHolding = false;
                         holdTime = 0f;

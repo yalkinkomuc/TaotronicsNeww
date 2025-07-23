@@ -100,7 +100,6 @@ public class BlacksmithHandler : MonoBehaviour
             BlacksmithManager manager = FindFirstObjectByType<BlacksmithManager>();
             if (manager != null)
             {
-                Debug.Log("BlacksmithHandler: BlacksmithManager bulundu, instance atanıyor.");
                 BlacksmithManager.Instance = manager;
             }
             else
@@ -122,7 +121,6 @@ public class BlacksmithHandler : MonoBehaviour
         // Open blacksmith UI
         if (ui != null)
         {
-            Debug.Log("BlacksmithHandler: Opening BlacksmithUI");
             ui.OpenBlacksmith(playerStats);
         }
         else

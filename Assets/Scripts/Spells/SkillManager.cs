@@ -206,7 +206,6 @@ public class SkillManager : MonoBehaviour
     {
         // Oyun kapatılırken skill verilerini kesin olarak kaydet
         SaveSkillData();
-        Debug.Log("Oyun kapatılıyor, skill verileri kaydedildi!");
     }
     
     private void UpdateAllCooldowns()

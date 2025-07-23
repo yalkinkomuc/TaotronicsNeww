@@ -45,8 +45,6 @@ public class Notepad_UI : BaseUIPanel
     
     public void ShowNote(string title, string content, Color? noteColor = null, Sprite icon = null)
     {
-        Debug.Log("show note called");
-        
         // UI elementlerini güncelle
         if (titleText != null)
             titleText.text = title;
@@ -66,22 +64,19 @@ public class Notepad_UI : BaseUIPanel
     
     public void CloseNote()
     {
-        Debug.Log("CloseNote() çağrıldı!");
-        
-        // Animasyonu kaldır, direkt kapat
+      
         if (canvasGroup != null)
         {
             LeanTween.cancel(canvasGroup.gameObject);
         }
         
-        Debug.Log("Direkt HidePanel() çağrılıyor...");
+      
         HidePanel();
     }
     
     // ESC tuşuna basıldığında animasyonlu kapatma
     protected override void OnEscapePressed()
     {
-        Debug.Log("ESC tuşuna basıldı! OnEscapePressed() çağrıldı!");
         
         // Eğer animasyon devam ediyorsa durdur
         if (canvasGroup != null)

@@ -55,7 +55,6 @@ public class DialogueManager : MonoBehaviour
     public void Initialize()
     {
         SetupDialogueUI();
-        Debug.Log("DialogueManager initialized");
     }
 
     private void SetupDialogueUI()
@@ -145,7 +144,6 @@ public class DialogueManager : MonoBehaviour
         // Eğer diyalog sadece bir kez okunabilirse ve daha önce okunmuşsa, başlatma
         if (dialogueData.canOnlyBeReadOnce && IsDialogueRead(dialogueData))
         {
-            Debug.Log($"Bu diyalog daha önce okunmuş: {dialogueData.characterName}");
             return;
         }
 
@@ -236,7 +234,6 @@ public class DialogueManager : MonoBehaviour
         if (dialogueData != null)
         {
             readDialogues.Add(dialogueData.name);
-            Debug.Log($"Diyalog okunmuş olarak işaretlendi: {dialogueData.characterName}");
         }
     }
     
@@ -262,7 +259,6 @@ public class DialogueManager : MonoBehaviour
         }
         
         PlayerPrefs.Save();
-        Debug.Log($"Okunmuş diyaloglar kaydedildi: {readDialogues.Count} adet");
     }
     
     /// <summary>
@@ -285,7 +281,7 @@ public class DialogueManager : MonoBehaviour
                         readDialogues.Add(dialogueName);
                     }
                 }
-                Debug.Log($"Okunmuş diyaloglar yüklendi: {readDialogues.Count} adet");
+               
             }
             catch (System.Exception e)
             {
@@ -303,7 +299,6 @@ public class DialogueManager : MonoBehaviour
         readDialogues.Clear();
         PlayerPrefs.DeleteKey("ReadDialogues");
         PlayerPrefs.Save();
-        Debug.Log("Tüm okunmuş diyaloglar temizlendi ve kaydedildi.");
     }
 }
 
