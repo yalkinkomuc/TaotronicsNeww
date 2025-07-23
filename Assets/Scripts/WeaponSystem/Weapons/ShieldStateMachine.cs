@@ -24,6 +24,7 @@ public class ShieldStateMachine : WeaponStateMachine
         animator.SetBool("ShieldDeath",false);
         animator.SetBool("ShieldStunned",false);
         animator.SetBool("ShieldParry",false);
+        animator.SetBool("ShieldSuccesfulParry",false);
         animator.SetBool("ShieldAirPushSpell",false);
         animator.SetBool("ShieldFireBallSpell",false);
 
@@ -58,6 +59,9 @@ public class ShieldStateMachine : WeaponStateMachine
                 break;
             case WeaponState.CrouchAttack:
                 animator.SetBool("ShieldGroundAttack", true);
+                break;
+            case WeaponState.SuccesfulParry:
+                animator.SetBool("ShieldSuccesfulParry",true);
                 break;
             case WeaponState.Parry:
                 animator.SetBool("ShieldParry", true);
@@ -147,6 +151,14 @@ public class ShieldStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState ==player.fireballSpellState)
         {
             ChangeState(WeaponState.FireballSpell);
+        }
+        else if (player.stateMachine.currentState == player.parryState)
+        {
+            ChangeState(WeaponState.Parry);
+        }
+        else if (player.stateMachine.currentState == player.succesfulParryState)
+        {
+            ChangeState(WeaponState.SuccesfulParry);
         }
     }
 }

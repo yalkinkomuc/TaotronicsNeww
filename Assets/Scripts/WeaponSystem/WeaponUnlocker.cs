@@ -1,75 +1,46 @@
 using System.Linq;
 using UnityEngine;
 
-/// <summary>
-/// Quest tamamlandığında silahları otomatik olarak oyuncuya unlock eder.
-/// Artık sadece spellbook değil, tüm silahlar için unlock methodları içerir.
-/// Sahneye manuel eklenen silahları aktif hale getirir.
-/// "RunCustomAction" completion davranışı ile tetiklenmesi amaçlanmıştır.
-/// </summary>
+
 public class WeaponUnlocker : MonoBehaviour
 {
-    /// <summary>
-    /// Quest tamamlandığında Spellbook silahını unlock eder.
-    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
-    /// </summary>
+    [ContextMenu("UnlockSpellbook")]
     public void UnlockSpellbook()
     {
         UnlockWeapon<SpellbookWeaponStateMachine>("Spellbook", SecondaryWeaponType.Spellbook, true);
     }
 
-    /// <summary>
-    /// Quest tamamlandığında Boomerang silahını unlock eder.
-    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
-    /// </summary>
+    [ContextMenu("UnlockBoomerang")]
     public void UnlockBoomerang()
     {
         UnlockWeapon<BoomerangWeaponStateMachine>("Boomerang", SecondaryWeaponType.Boomerang, true);
     }
 
-    /// <summary>
-    /// Quest tamamlandığında Shield silahını unlock eder.
-    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
-    /// </summary>
+    [ContextMenu("UnlockShield")]
     public void UnlockShield()
     {
         UnlockWeapon<ShieldStateMachine>("Shield", SecondaryWeaponType.Shield, true);
     }
 
-    /// <summary>
-    /// Quest tamamlandığında Burning Sword silahını unlock eder.
-    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
-    /// </summary>
+    [ContextMenu("UnlockBurningSword")]
     public void UnlockBurningSword()
     {
         UnlockWeapon<BurningSwordStateMachine>("Burning Sword", null, false);
     }
 
-    /// <summary>
-    /// Quest tamamlandığında Hammer silahını unlock eder.
-    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
-    /// </summary>
+    [ContextMenu("UnlockHammer")]
     public void UnlockHammer()
     {
         UnlockWeapon<HammerSwordStateMachine>("Hammer", null, false);
     }
 
-    /// <summary>
-    /// Quest tamamlandığında Sword silahını unlock eder.
-    /// QuestGiver → CompletionBehaviour → RunCustomAction yoluyla çağrılır.
-    /// </summary>
+    [ContextMenu("UnlockSword")]
     public void UnlockSword()
     {
         UnlockWeapon<SwordWeaponStateMachine>("Sword", null, false);
     }
 
-    /// <summary>
-    /// Genel silah unlock metodu - tüm silahlar için ortak mantık
-    /// </summary>
-    /// <typeparam name="T">Silah StateMachine tipi</typeparam>
-    /// <param name="weaponName">Silah adı (log için)</param>
-    /// <param name="secondaryType">Secondary weapon ise tipi, primary weapon ise null</param>
-    /// <param name="isSecondary">Secondary weapon mi?</param>
+   
     private void UnlockWeapon<T>(string weaponName, SecondaryWeaponType? secondaryType, bool isSecondary) where T : WeaponStateMachine
     {
         // 1) Player ve temel referansları bul
