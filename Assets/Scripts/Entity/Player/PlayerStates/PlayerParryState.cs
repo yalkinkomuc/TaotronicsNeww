@@ -10,7 +10,7 @@ public class PlayerParryState : PlayerState
     {
         base.Enter();
 
-        stateTimer = .25f;
+        stateTimer = player.parryWindowTime;
     }
 
     public override void Update()

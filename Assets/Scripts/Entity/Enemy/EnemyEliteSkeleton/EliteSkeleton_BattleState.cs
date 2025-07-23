@@ -97,14 +97,29 @@ public class EliteSkeleton_BattleState : EnemyState
     {
         if (player != null)
         {
-            float distanceToPlayer = player.position.x - enemy.transform.position.x;
+            float distanceToPlayer = Vector2.Distance(enemy.transform.position, player.position);
+            float horizontalDistance = player.position.x - enemy.transform.position.x;
             
-            // Dead zone (ölü bölge) ekle - çok yakınken sürekli dönmeyi engelle
-            if (Mathf.Abs(distanceToPlayer) > 0.5f)
+            // Saldırı mesafesi kontrolü - eğer saldırı mesafesinden daha yakınsa dur veya geri çekil
+            if (distanceToPlayer <= enemy.attackDistance + 0.5f) // 0.5f buffer zone
             {
-                moveDir = distanceToPlayer > 0 ? 1 : -1;
-                
-                // Yön değişimi gerekiyorsa Flip() kullan
+                // Çok yakın - dur veya hafifçe geri çekil
+                moveDir = 0; // Durma
+               
+            }
+            else
+            {
+                // Uzak - yaklaş (normal hareket)
+                // Dead zone (ölü bölge) ekle - çok yakınken sürekli dönmeyi engelle
+                if (Mathf.Abs(horizontalDistance) > 0.5f)
+                {
+                    moveDir = horizontalDistance > 0 ? 1 : -1;
+                }
+            }
+            
+            // Yön değişimi gerekiyorsa Flip() kullan (sadece hareket ediyorsa)
+            if (moveDir != 0)
+            {
                 if ((moveDir > 0 && enemy.facingdir < 0) || (moveDir < 0 && enemy.facingdir > 0))
                 {
                     enemy.Flip();

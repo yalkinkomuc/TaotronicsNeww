@@ -213,7 +213,10 @@ public class Player : Entity
     [SerializeField] public float parryRadius = 2f; // Parry etki yarıçapı (public yaptık)
     [SerializeField] private float parryCooldown = 1f; // Parry cooldown süresi
     private float parryTimer = 0f; // Parry cooldown sayacı
+    [SerializeField] public float parryWindowTime;
     [SerializeField] public GameObject parryEffectPrefab; // Başarılı parry efekti prefabı
+
+    
     
     
     protected override void Awake()

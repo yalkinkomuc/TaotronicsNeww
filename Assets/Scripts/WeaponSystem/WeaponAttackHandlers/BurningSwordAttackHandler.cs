@@ -9,15 +9,12 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
     
     protected override void HandleWeaponSpecificAttack(Player player, Enemy enemy, IWeaponAttackState weaponAttackState, float baseDamage, bool isCritical)
     {
-        Debug.Log($"[BurningSword] Attack triggered! Base damage: {baseDamage}");
         
         int comboCounter = weaponAttackState.GetComboCounter();
         float damage = baseDamage;
         
         // BurningSword combo multipliers - similar to sword but with fire damage
         damage *= weaponAttackState.GetDamageMultiplier(comboCounter);
-        
-        Debug.Log($"[BurningSword] Combo: {comboCounter}, Final damage: {damage}");
         
         // Hasarı uygula
         DealDamageToEnemy(player, enemy, damage, comboCounter, isCritical);
@@ -36,28 +33,23 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
     private void TryApplyBurnEffect(Player player, Enemy enemy)
     {
         float rand = Random.value;
-        Debug.Log($"[BurningSword] Trying to apply burn effect... Random value: {rand}");
+       
         
         // 10% chance to apply burn effect
         if (rand <= 0.1f)
         {
-            Debug.Log("[BurningSword] Burn effect triggered! Starting burn...");
             StartBurnEffect(player, enemy);
         }
-        else
-        {
-            Debug.Log("[BurningSword] Burn effect failed - random value too high");
-        }
+     
     }
     
     private void StartBurnEffect(Player player, Enemy enemy)
     {
-        Debug.Log("[BurningSword] Starting burn effect on enemy: " + enemy.name);
+       
         
         // Start visual burn effect
         if (enemy.entityFX != null)
         {
-            Debug.Log("[BurningSword] Starting visual burn effect");
             enemy.entityFX.StartCoroutine("BurnFX");
         }
         else
@@ -67,11 +59,10 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
         
         // Apply burn effect to enemy (without movement speed reduction for burning sword)
         enemy.ApplyBurnEffect(false);
-        Debug.Log("[BurningSword] Applied burn effect to enemy (no movement speed reduction)");
         
         // Start damage over time coroutine
         player.StartCoroutine(BurnDamageOverTime(player, enemy));
-        Debug.Log("[BurningSword] Started damage over time coroutine");
+        
     }
     
     private System.Collections.IEnumerator BurnDamageOverTime(Player player, Enemy enemy)
