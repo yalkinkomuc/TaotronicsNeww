@@ -13,9 +13,8 @@ public class ShieldStateMachine : WeaponStateMachine
     {
         animator.SetBool("ShieldIdle",false);
         animator.SetBool("ShieldMove",false);
-        animator.SetBool("ShieldSpell1",false);
-        animator.SetBool("ShieldSpell2",false);
         animator.SetBool("ShieldAttack",false);
+        animator.SetBool("ShieldHammerAttack", false);
         animator.SetBool("ShieldDash",false);
         animator.SetBool("ShieldJump",false);
         animator.SetBool("ShieldGroundDash",false);
@@ -25,25 +24,33 @@ public class ShieldStateMachine : WeaponStateMachine
         animator.SetBool("ShieldStunned",false);
         animator.SetBool("ShieldParry",false);
         animator.SetBool("ShieldSuccesfulParry",false);
-        animator.SetBool("ShieldAirPushSpell",false);
         animator.SetBool("ShieldFireBallSpell",false);
+        
+        animator.SetInteger("ShieldSwordComboCounter", 0);
+        animator.SetInteger("ShieldHammerComboCounter", 0);
 
         switch (currentState)
         {
             case WeaponState.Idle:
                 animator.SetBool("ShieldIdle",true);
                 break;
-            case WeaponState.Spell1:
-                animator.SetBool("ShieldSpell1", true);
-                break;
-            case WeaponState.Spell2:
-                animator.SetBool("ShieldSpell2", true);
-                break;
             case WeaponState.Move:
                 animator.SetBool("ShieldMove", true);
                 break;
             case WeaponState.Attack:
                 animator.SetBool("ShieldAttack",true);
+                if (player.stateMachine.currentState is PlayerAttackState attackState)
+                {
+                    animator.SetInteger("ShieldSwordComboCounter",attackState.GetComboCounter());
+                }
+                break;
+            case WeaponState.HammerAttack:
+                animator.SetBool("ShieldHammerAttack", true);
+                if (player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState)
+                {
+                    // Direkt combo counter'ı set ediyoruz
+                    animator.SetInteger("ShieldHammerComboCounter", hammerAttackState.GetComboCounter());
+                }
                 break;
             case WeaponState.Dash:
                 animator.SetBool("ShieldDash", true);
@@ -72,9 +79,6 @@ public class ShieldStateMachine : WeaponStateMachine
             case WeaponState.Death:
                 animator.SetBool("ShieldDeath", true);
                 break;
-            case WeaponState.AirPush:
-                animator.SetBool("ShieldAirPushSpell", true);
-                break;
             case WeaponState.FireballSpell:
                 animator.SetBool("ShieldFireBallSpell", true);
                 break;
@@ -95,22 +99,9 @@ public class ShieldStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Attack);
         }
-        else if (player.stateMachine.currentState == player.spell1State)
+        else if (player.stateMachine.currentState == player.hammerAttackState)
         {
-            ChangeState(WeaponState.Spell1);
-        }
-        else if (player.stateMachine.currentState == player.spell2State)
-        {
-            // SkillManager kontrolü - Fire Spell açık mı?
-            if (SkillManager.Instance != null && !SkillManager.Instance.IsSkillUnlocked("FireSpell"))
-            {
-                // Fire Spell açık değilse Idle state'ine geç
-                ChangeState(WeaponState.Idle);
-            }
-            else
-            {
-                ChangeState(WeaponState.Spell2);
-            }
+            ChangeState(WeaponState.HammerAttack);
         }
         else if (player.stateMachine.currentState == player.moveState)
         {
@@ -143,10 +134,6 @@ public class ShieldStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.stunnedState)
         {
             ChangeState(WeaponState.Stunned);
-        }
-        else if (player.stateMachine.currentState == player.airPushState)
-        {
-            ChangeState(WeaponState.AirPush);
         }
         else if (player.stateMachine.currentState ==player.fireballSpellState)
         {
