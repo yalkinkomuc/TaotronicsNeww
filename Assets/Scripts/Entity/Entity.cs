@@ -34,6 +34,9 @@ public class Entity : MonoBehaviour
     public bool isKnocked;
     protected float originalMoveSpeed;
     protected float originalChaseSpeed;
+    // Burn effect tracking
+    private int burnEffectCount = 0;
+    private bool hasSavedOriginalSpeeds = false;
 
     [Header("Combat")]
     [HideInInspector] public bool isAttackActive = false;
@@ -256,11 +259,20 @@ public class Entity : MonoBehaviour
         {
             if (affectMovementSpeed)
             {
-                originalMoveSpeed = enemy.moveSpeed;
-                originalChaseSpeed = enemy.chaseSpeed;
+                // İlk kez burn effect uygulanıyorsa orijinal hızları kaydet
+                if (!hasSavedOriginalSpeeds)
+                {
+                    originalMoveSpeed = enemy.moveSpeed;
+                    originalChaseSpeed = enemy.chaseSpeed;
+                    hasSavedOriginalSpeeds = true;
+                    
+                    // Sadece ilk kez hızı azalt
+                    enemy.moveSpeed *= 0.5f;
+                    enemy.chaseSpeed *= 0.5f;
+                }
                 
-                enemy.moveSpeed *= 0.5f;
-                enemy.chaseSpeed *= 0.5f;
+                // Burn effect sayacını artır
+                burnEffectCount++;
             }
         }
     }
@@ -269,10 +281,19 @@ public class Entity : MonoBehaviour
     {
         if (this is Enemy enemy)
         {
-            if (affectMovementSpeed)
+            if (affectMovementSpeed && burnEffectCount > 0)
             {
-                enemy.moveSpeed = originalMoveSpeed;
-                enemy.chaseSpeed = originalChaseSpeed;
+                // Burn effect sayacını azalt
+                burnEffectCount--;
+                
+                // Eğer hiç burn effect kalmadıysa orijinal hızları geri yükle
+                if (burnEffectCount <= 0)
+                {
+                    enemy.moveSpeed = originalMoveSpeed;
+                    enemy.chaseSpeed = originalChaseSpeed;
+                    hasSavedOriginalSpeeds = false;
+                    burnEffectCount = 0; // Negatif değerleri önle
+                }
             }
         }
     }

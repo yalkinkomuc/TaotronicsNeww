@@ -89,35 +89,45 @@ public class FireSpell : MonoBehaviour
     private void OnTriggerExit2D(Collider2D other)
     {
         Enemy enemy = other.GetComponent<Enemy>();
-        if (enemy != null)
+        if (enemy != null && burningEnemies.Contains(enemy))
         {
             burningEnemies.Remove(enemy);
-            enemy.entityFX.StopCoroutine("BurnFX");
-            enemy.entityFX.ResetToOriginalMaterial();
+            
+            // Güvenli bir şekilde burn effect'i kaldır
+            if (enemy.entityFX != null)
+            {
+                enemy.entityFX.StopCoroutine("BurnFX");
+                enemy.entityFX.ResetToOriginalMaterial();
+            }
             enemy.RemoveBurnEffect(true); // Fire spell affects movement speed
             
-            // Remove from dictionaries
-            if (lastTextTimes.ContainsKey(enemy))
-            {
-                lastTextTimes.Remove(enemy);
-            }
-            
-            if (enemyBurnTimes.ContainsKey(enemy))
-            {
-                enemyBurnTimes.Remove(enemy);
-            }
-            
-            if (accumulatedDamage.ContainsKey(enemy))
-            {
-                accumulatedDamage.Remove(enemy);
-            }
-            
-            if (lastTextDisplayTimes.ContainsKey(enemy))
-            {
-                lastTextDisplayTimes.Remove(enemy);
-            }
-            
-
+            // Remove from dictionaries with null check
+            CleanupEnemyFromDictionaries(enemy);
+        }
+    }
+    
+    private void CleanupEnemyFromDictionaries(Enemy enemy)
+    {
+        if (enemy == null) return;
+        
+        if (lastTextTimes.ContainsKey(enemy))
+        {
+            lastTextTimes.Remove(enemy);
+        }
+        
+        if (enemyBurnTimes.ContainsKey(enemy))
+        {
+            enemyBurnTimes.Remove(enemy);
+        }
+        
+        if (accumulatedDamage.ContainsKey(enemy))
+        {
+            accumulatedDamage.Remove(enemy);
+        }
+        
+        if (lastTextDisplayTimes.ContainsKey(enemy))
+        {
+            lastTextDisplayTimes.Remove(enemy);
         }
     }
 
@@ -157,6 +167,9 @@ public class FireSpell : MonoBehaviour
                             enemy.entityFX.ResetToOriginalMaterial();
                         }
                         enemy.RemoveBurnEffect(true); // Fire spell affects movement speed
+                        
+                        // Clean up dictionaries
+                        CleanupEnemyFromDictionaries(enemy);
                         continue;
                     }
                     
