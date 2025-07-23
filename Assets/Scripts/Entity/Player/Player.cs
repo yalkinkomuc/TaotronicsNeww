@@ -1399,6 +1399,12 @@ public class Player : Entity
 
     private void CheckForSuccessfulParry()
     {
+        // PARRY SADECE SHIELD AKTİFKEN ÇALIŞIR
+        if (!IsShieldActive())
+        {
+            return;
+        }
+        
         // Sadece parry tuşuna anlık basış varsa (GetKeyDown) && parry cooldown'u dolmuşsa
         if (playerInput.parryInput && parryTimer <= 0)
         {
@@ -1417,6 +1423,15 @@ public class Player : Entity
             // Parry için cooldown başlat
             parryTimer = parryCooldown;
         }
+    }
+    
+    /// <summary>
+    /// Shield'ın aktif olup olmadığını kontrol eder
+    /// </summary>
+    /// <returns>Shield aktifse true, değilse false</returns>
+    private bool IsShieldActive()
+    {
+        return shield != null && shield.gameObject.activeInHierarchy;
     }
     
     // Genel düşman parry kontrolü - Generic versiyon
