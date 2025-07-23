@@ -703,10 +703,34 @@ public class EquipmentManager : MonoBehaviour
         if (PlayerPrefs.HasKey(PREF_SECONDARY_WEAPON_TYPE))
         {
             int savedSecondaryType = PlayerPrefs.GetInt(PREF_SECONDARY_WEAPON_TYPE, -1);
-            var secondaryWeaponData = weapons.Find(w => (int)w.weaponType == savedSecondaryType);
-            if (secondaryWeaponData != null)
+            WeaponType savedWeaponType = (WeaponType)savedSecondaryType;
+            
+            // Önce SecondaryWeaponDataBase'de ara
+            if (BlacksmithManager.Instance.secondaryWeaponDataBase != null)
             {
-                currentSecondaryWeapon = secondaryWeaponData;
+                SecondaryWeaponType targetSecondaryType = MapWeaponTypeToSecondary(savedWeaponType);
+                var secondaryWeaponData = BlacksmithManager.Instance.secondaryWeaponDataBase
+                    .Find(s => s.secondaryWeaponType == targetSecondaryType);
+                
+                if (secondaryWeaponData != null)
+                {
+                    currentSecondaryWeapon = secondaryWeaponData;
+                    Debug.Log($"[EquipmentManager] Loaded secondary weapon from SecondaryWeaponDataBase: {secondaryWeaponData.itemName}");
+                }
+                else
+                {
+                    // Fallback: WeaponData database'inde ara
+                    var weaponData = weapons.Find(w => (int)w.weaponType == savedSecondaryType);
+                    if (weaponData != null)
+                    {
+                        currentSecondaryWeapon = weaponData;
+                        Debug.Log($"[EquipmentManager] Loaded secondary weapon from WeaponData: {weaponData.itemName}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[EquipmentManager] Secondary weapon with type {savedWeaponType} not found in any database!");
+                    }
+                }
             }
         }
     }
@@ -761,6 +785,17 @@ public class EquipmentManager : MonoBehaviour
             SecondaryWeaponType.Spellbook => WeaponType.Spellbook,
             SecondaryWeaponType.Shield => WeaponType.Shield,
             _ => WeaponType.Boomerang
+        };
+    }
+    
+    private SecondaryWeaponType MapWeaponTypeToSecondary(WeaponType weaponType)
+    {
+        return weaponType switch
+        {
+            WeaponType.Boomerang => SecondaryWeaponType.Boomerang,
+            WeaponType.Spellbook => SecondaryWeaponType.Spellbook,
+            WeaponType.Shield => SecondaryWeaponType.Shield,
+            _ => SecondaryWeaponType.Spellbook // Default fallback
         };
     }
 

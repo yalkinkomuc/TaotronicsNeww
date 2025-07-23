@@ -133,10 +133,10 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private WeaponData GetEquippedWeapon()
     {
-        // Use EquipmentManager as the single source of truth
+        // Use EquipmentManager cached value as the single source of truth
         if (EquipmentManager.Instance != null)
         {
-            return EquipmentManager.Instance.GetCurrentMainWeapon();
+            return EquipmentManager.Instance.GetEquippedItem(EquipmentSlot.MainWeapon) as WeaponData;
         }
         
         return null; // No EquipmentManager available
@@ -144,10 +144,10 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private EquipmentData GetEquippedSecondaryWeapon()
     {
-        // Use EquipmentManager as the single source of truth
+        // Use EquipmentManager cached value as the single source of truth
         if (EquipmentManager.Instance != null)
         {
-            return EquipmentManager.Instance.GetCurrentSecondaryWeapon();
+            return EquipmentManager.Instance.GetEquippedItem(EquipmentSlot.SecondaryWeapon);
         }
         
         return null; // No EquipmentManager available

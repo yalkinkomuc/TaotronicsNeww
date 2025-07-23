@@ -115,7 +115,31 @@ public class AdvancedInventoryUI : BaseUIPanel
             InitializeUI();
             SetupEventListeners();
             InitializeTabSystem();
+            
+            // Equipment manager initialization sonrası slot'ları güncelle
+            StartCoroutine(RefreshSlotsAfterEquipmentManagerReady());
         }
+    }
+    
+    /// <summary>
+    /// EquipmentManager hazır olduktan sonra slot'ları refresh et
+    /// </summary>
+    private IEnumerator RefreshSlotsAfterEquipmentManagerReady()
+    {
+        // EquipmentManager'ın hazır olmasını bekle
+        while (EquipmentManager.Instance == null)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+        
+        // Bir frame daha bekle equipment loading için
+        yield return null;
+        
+        // Equipment slot'larını güncelle
+        UpdateEquipmentSlots();
+        UpdateRuneSlots();
+        
+        Debug.Log("[AdvancedInventoryUI] Equipment slots refreshed after EquipmentManager ready");
     }
     
 
@@ -377,6 +401,10 @@ public class AdvancedInventoryUI : BaseUIPanel
             EquipmentUIManager.Instance.UpdateAllEquipmentSlots();
         }
         
+        // Force refresh equipment slots to ensure they display current equipment
+        // This helps with timing issues when equipment is loaded before UI is ready
+        StartCoroutine(ForceRefreshEquipmentSlotsDelayed());
+        
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
@@ -593,6 +621,44 @@ public class AdvancedInventoryUI : BaseUIPanel
     {
         UpdateStatsDisplay();
         UpdateEquipmentSlots();
+    }
+    
+    /// <summary>
+    /// Inventory açıldığında equipment slot'larını force refresh eder (timing sorunları için)
+    /// </summary>
+    private IEnumerator ForceRefreshEquipmentSlotsDelayed()
+    {
+        // Kısa bir delay bekle (UI initialization için)
+        yield return new WaitForSeconds(0.1f);
+        
+        // Debug: EquipmentManager'daki secondary weapon durumunu kontrol et
+        if (EquipmentManager.Instance != null)
+        {
+            var currentSecondary = EquipmentManager.Instance.GetCurrentSecondaryWeapon();
+            var equippedSecondary = EquipmentManager.Instance.GetEquippedItem(EquipmentSlot.SecondaryWeapon);
+            
+            Debug.Log($"[DEBUG] Current Secondary: {(currentSecondary != null ? currentSecondary.itemName : "NULL")}");
+            Debug.Log($"[DEBUG] Equipped Secondary: {(equippedSecondary != null ? equippedSecondary.itemName : "NULL")}");
+            
+            PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+            if (weaponManager != null)
+            {
+                int currentSecondaryIndex = weaponManager.GetCurrentSecondaryWeaponIndex();
+                Debug.Log($"[DEBUG] PlayerWeaponManager Secondary Index: {currentSecondaryIndex}");
+                
+                if (currentSecondaryIndex >= 0 && currentSecondaryIndex < weaponManager.weapons.Length)
+                {
+                    var activeWeapon = weaponManager.weapons[currentSecondaryIndex];
+                    Debug.Log($"[DEBUG] Active Secondary Weapon: {(activeWeapon != null ? activeWeapon.name : "NULL")}");
+                }
+            }
+        }
+        
+        // Equipment slot'larını force refresh et
+        UpdateEquipmentSlots();
+        
+        // Debug için log
+        Debug.Log("[AdvancedInventoryUI] Force refreshed equipment slots after inventory opened");
     }
     
     private void OnRuneChanged(int slotIndex, RuneData rune)
