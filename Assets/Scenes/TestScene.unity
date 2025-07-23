@@ -17620,7 +17620,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3032671044708449667, guid: f9c8f23692b278240b765d23b0f83bf4, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25632,6 +25632,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 845152553}
   m_CullTransparentMesh: 1
+--- !u!4 &854595192 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+  m_PrefabInstance: {fileID: 4845323905665605720}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &854595193 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7489190624444739955, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+  m_PrefabInstance: {fileID: 4845323905665605720}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e5aba92c4ed002439a236b4a6e5ae37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &860897681
 GameObject:
   m_ObjectHideFlags: 0
@@ -28819,22 +28835,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1683066506}
     m_Modifications:
-    - target: {fileID: 1058031071138051504, guid: 89c2b743b5556ab47a2778aa4b0f1dd0, type: 3}
-      propertyPath: weaponDatabase.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1058031071138051504, guid: 89c2b743b5556ab47a2778aa4b0f1dd0, type: 3}
-      propertyPath: 'weaponDatabase.Array.data[3]'
-      value: 
-      objectReference: {fileID: 11400000, guid: b1a90fb71673dc7459a3ddc0d886f68b, type: 2}
-    - target: {fileID: 1058031071138051504, guid: 89c2b743b5556ab47a2778aa4b0f1dd0, type: 3}
-      propertyPath: 'weaponDatabase.Array.data[4]'
-      value: 
-      objectReference: {fileID: 11400000, guid: b1a90fb71673dc7459a3ddc0d886f68b, type: 2}
-    - target: {fileID: 1058031071138051504, guid: 89c2b743b5556ab47a2778aa4b0f1dd0, type: 3}
-      propertyPath: 'weaponDatabase.Array.data[5]'
-      value: 
-      objectReference: {fileID: 11400000, guid: b1a90fb71673dc7459a3ddc0d886f68b, type: 2}
     - target: {fileID: 6197147152069310164, guid: 89c2b743b5556ab47a2778aa4b0f1dd0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -29008,6 +29008,10 @@ PrefabInstance:
     - target: {fileID: 770610726131400552, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
       propertyPath: m_Name
       value: Spellbook
+      objectReference: {fileID: 0}
+    - target: {fileID: 770610726131400552, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7123588621038388202, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
       propertyPath: m_LocalPosition.x
@@ -32344,8 +32348,12 @@ PrefabInstance:
       value: Shield
       objectReference: {fileID: 0}
     - target: {fileID: 4309007596583136487, guid: c0657a5c57c5653459f99a496fc54ce6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4309007596583136487, guid: c0657a5c57c5653459f99a496fc54ce6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7890423986896541963, guid: c0657a5c57c5653459f99a496fc54ce6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42180,6 +42188,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sword
       objectReference: {fileID: 0}
+    - target: {fileID: 678572023270907210, guid: a37dbc267f2733545b5af02ae357c3f9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2410878840005011983, guid: a37dbc267f2733545b5af02ae357c3f9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -42382,6 +42394,10 @@ PrefabInstance:
     - target: {fileID: 5188635493186575689, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
       propertyPath: m_Name
       value: BurningSword
+      objectReference: {fileID: 0}
+    - target: {fileID: 5188635493186575689, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8442360767663441756, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42724,6 +42740,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hammer
       objectReference: {fileID: 0}
+    - target: {fileID: 3297799702818054646, guid: 0b97c4edf7708bf4d993507e1fc10ffe, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -42926,6 +42946,7 @@ Transform:
   - {fileID: 4355669720903012473}
   - {fileID: 2025913845698213031}
   - {fileID: 3822498760747412763}
+  - {fileID: 854595192}
   - {fileID: 1852372233}
   - {fileID: 682385677}
   - {fileID: 83395893}
@@ -43078,6 +43099,63 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1001 &4845323905665605720
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3212124910674626973}
+    m_Modifications:
+    - target: {fileID: 532824522845378973, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_Name
+      value: IceHammer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.045
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2935999340709141623, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
 --- !u!1001 &5006739567299956700
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43345,6 +43423,7 @@ MonoBehaviour:
   - {fileID: 8011961976445182997}
   - {fileID: 2067151910395138747}
   - {fileID: 2139623797924803304}
+  - {fileID: 854595193}
   - {fileID: 1852372234}
   - {fileID: 682385678}
   - {fileID: 83395894}
@@ -44227,6 +44306,7 @@ MonoBehaviour:
   swordWeapon: {fileID: 0}
   burningSword: {fileID: 0}
   hammer: {fileID: 0}
+  iceHammer: {fileID: 0}
   shield: {fileID: 0}
   basicArmor: {fileID: 0}
   boomerangCooldown: 1.5

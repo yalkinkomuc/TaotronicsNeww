@@ -304,7 +304,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 // Main weapons: Sword, BurningSword, Hammer
                 if (isMainWeapon && (weapon.weaponType == WeaponType.Sword || 
                                     weapon.weaponType == WeaponType.BurningSword || 
-                                    weapon.weaponType == WeaponType.Hammer))
+                                    weapon.weaponType == WeaponType.Hammer||
+                                    weapon.weaponType == WeaponType.IceHammer))
                 {
                     // Don't add if this weapon is currently equipped
                     bool isEquipped = (equippedWeapon != null && weapon.weaponType == equippedWeapon.weaponType);
@@ -346,6 +347,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             weaponType = WeaponType.BurningSword;
         else if (weaponStateMachine is HammerSwordStateMachine)
             weaponType = WeaponType.Hammer;
+        else if (weaponStateMachine is IceHammerStateMachine)
+            weaponType = WeaponType.IceHammer;
         else if (weaponStateMachine is BoomerangWeaponStateMachine)
             weaponType = WeaponType.Boomerang;
         else if (weaponStateMachine is SpellbookWeaponStateMachine)
@@ -395,6 +398,13 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 weaponData.minDamage = 30;
                 weaponData.maxDamage = 35;
                 break;
+            case WeaponType.IceHammer:
+                weaponData.itemName = "IceHammer";
+                weaponData.rarity = ItemRarity.Epic;
+                weaponData.icon = Resources.Load<Sprite>("WeaponIcons/ice hammer");
+                weaponData.minDamage = 35;
+                weaponData.maxDamage = 40;
+                break;
             case WeaponType.Boomerang:
                 weaponData.itemName = "Boomerang";
                 weaponData.rarity = ItemRarity.Uncommon;
@@ -417,6 +427,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                 weaponData.maxDamage = 0;
                 weaponData.equipmentSlot = EquipmentSlot.SecondaryWeapon;
                 break;
+            
         }
 
         weaponData.requiredLevel = 1;
@@ -516,7 +527,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                                  weaponStateMachine is ShieldStateMachine;
             bool isPrimarySM = weaponStateMachine is SwordWeaponStateMachine ||
                                 weaponStateMachine is BurningSwordStateMachine ||
-                                weaponStateMachine is HammerSwordStateMachine;
+                                weaponStateMachine is HammerSwordStateMachine||
+                                weaponStateMachine is IceHammerStateMachine;
 
             if (currentSlotType == EquipmentSlot.SecondaryWeapon && !isSecondarySM) continue;
             if (currentSlotType == EquipmentSlot.MainWeapon && !isPrimarySM) continue;
@@ -546,7 +558,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                     ((currentSlotType == EquipmentSlot.MainWeapon && 
                       (currentWeaponData.weaponType == WeaponType.Sword || 
                        currentWeaponData.weaponType == WeaponType.BurningSword || 
-                       currentWeaponData.weaponType == WeaponType.Hammer)) ||
+                       currentWeaponData.weaponType == WeaponType.Hammer||
+                       currentWeaponData.weaponType == WeaponType.IceHammer)) ||
                      (currentSlotType == EquipmentSlot.SecondaryWeapon && 
                       (currentWeaponData.weaponType == WeaponType.Boomerang || 
                        currentWeaponData.weaponType == WeaponType.Spellbook ||
