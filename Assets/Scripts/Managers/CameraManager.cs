@@ -141,6 +141,9 @@ public class CameraManager : MonoBehaviour
             mainCamera.clearFlags = CameraClearFlags.SolidColor;
             mainCamera.backgroundColor = Color.black;
             
+            // AudioListener ekle - ses için gerekli
+            cameraObj.AddComponent<AudioListener>();
+            
             // Cinemachine Brain ekle
             CinemachineBrain brain = cameraObj.AddComponent<CinemachineBrain>();
             brain.m_DefaultBlend.m_Time = 0.5f;
