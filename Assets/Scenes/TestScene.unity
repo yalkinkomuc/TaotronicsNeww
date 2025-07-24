@@ -20912,6 +20912,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 586325618}
   m_CullTransparentMesh: 1
+--- !u!4 &588247494 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7112582628263823318, guid: 7f6b7c7a94f6eb74a9bcf730efc4f087, type: 3}
+  m_PrefabInstance: {fileID: 4845323905665605720}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &590808759 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8927877650550582040, guid: 9a1005d0a02626144b20b6e5345aa614, type: 3}
@@ -44343,6 +44348,9 @@ MonoBehaviour:
   hammerExplosionCheck: {fileID: 783438092985561695}
   hammerExplosionSize: {x: 1.51, y: 1.1}
   lastHammerCombo3Damage: 0
+  iceHammerExplosionCheck: {fileID: 588247494}
+  iceHammerExplosionSize: {x: 1.51, y: 1.1}
+  iceHammerlastHammerCombo3Damage: 0
 --- !u!4 &7758315432404786867
 Transform:
   m_ObjectHideFlags: 0
