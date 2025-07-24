@@ -317,6 +317,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
                     {
                         matchingWeapons.Add(weapon);
                     }
+
                 }
                 // Secondary weapons: Boomerang, Spellbook, Shield
                 else if (isSecondaryWeapon && (weapon.weaponType == WeaponType.Boomerang || 

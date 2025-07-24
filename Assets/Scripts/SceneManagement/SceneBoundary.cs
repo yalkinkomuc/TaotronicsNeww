@@ -41,25 +41,9 @@ public class SceneBoundary : MonoBehaviour
     {
         // Çıkış collider'larını oluştur
         CreateExitColliders();
-        
-        // Sahne yüklendikten sonra kendini CameraManager'a bildir
-        // Bir frame gecikme ile bildir (güvenli olması için)
-        Invoke("NotifyCameraManager", 0.1f);
     }
     
-    private void NotifyCameraManager()
-    {
-        if (CameraManager.instance != null)
-        {
-            // Yeni eklenen metod ile sınırları doğrudan bildir
-            CameraManager.instance.RegisterSceneBoundary(this);
-            //Debug.Log($"SceneBoundary registered with camera: L={leftBoundary}, R={rightBoundary}, T={topBoundary}, B={bottomBoundary}");
-        }
-        else
-        {
-            Debug.LogWarning("CameraManager instance not found!");
-        }
-    }
+   
     
     private void CreateExitColliders()
     {

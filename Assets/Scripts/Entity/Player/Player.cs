@@ -183,7 +183,9 @@ public class Player : Entity
 
     #endregion
     
-   
+   [Header(("CameraSettings"))]
+   protected CameraFollowObject cameraFollowObject;
+   [SerializeField] protected GameObject cameraFollowGO;
     
 
    
@@ -372,6 +374,8 @@ public class Player : Entity
     {
         healthBar = GetComponent<HealthBar>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
+
+        cameraFollowObject = cameraFollowGO.GetComponent<CameraFollowObject>();
     }
     
     private void SetupRigidbody()
@@ -1807,7 +1811,13 @@ public class Player : Entity
         
         base.FlipController(_x);
     }
-    
+
+    public override void Flip()
+    {
+        base.Flip();
+        cameraFollowObject.CallTurn();
+    }
+
     #endregion
     
     #region Velocity Override
@@ -1818,7 +1828,9 @@ public class Player : Entity
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         FlipController(xVelocity);
     }
-   
+
+    
+
     public override void SetZeroVelocity()
     {
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);

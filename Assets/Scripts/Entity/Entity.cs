@@ -23,7 +23,7 @@ public class Entity : MonoBehaviour
     [Header("Flip Controller")]
     [HideInInspector]
     public int facingdir  = 1;
-    protected bool facingright = true;
+    public bool facingright = true;
     
     [Header("KnockbackInfo")]
     [SerializeField] public Vector2 knockbackDirection;
@@ -241,6 +241,8 @@ public class Entity : MonoBehaviour
         facingdir *= -1;
         facingright = !facingright;
         transform.Rotate(0, 180, 0);
+        
+        
     }
     
     public virtual void SetupDefaultFacingDir(int _direction)
