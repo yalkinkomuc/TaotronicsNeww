@@ -459,8 +459,8 @@ public class PlayerAnimTriggers : MonoBehaviour
    public void HammerExplosionTrigger()
    {
       // Sadece hammer aktifken ve 3. kombo sırasında çalışsın
-      if (GetCurrentWeaponType() != WeaponType.Hammer || GetCurrentWeaponType() != WeaponType.IceHammer)
-         return;
+      if (GetCurrentWeaponType() != WeaponType.Hammer && GetCurrentWeaponType() != WeaponType.IceHammer)
+    return;
       if (!(player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState))
          return;
       if (hammerAttackState.GetComboCounter() != 2) // 3. saldırı (0-based)
