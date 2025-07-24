@@ -610,6 +610,8 @@ public class BlacksmithUI : BaseUIPanel
             weaponType = WeaponType.Spellbook;
         else if (weaponStateMachine is ShieldStateMachine)
             weaponType = WeaponType.Shield;
+        else if (weaponStateMachine is IceHammerStateMachine)
+            weaponType = WeaponType.IceHammer;
         else
             return null; // bilinmeyen
 

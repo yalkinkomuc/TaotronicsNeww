@@ -180,7 +180,8 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         return weapon is SwordWeaponStateMachine || 
                weapon is BurningSwordStateMachine || 
-               weapon is HammerSwordStateMachine;
+               weapon is HammerSwordStateMachine||
+               weapon is IceHammerStateMachine;
     }
      
     private bool IsSecondaryWeapon(WeaponStateMachine weapon)
@@ -219,6 +220,10 @@ public class PlayerWeaponManager : MonoBehaviour
             else if (weapons[i] is HammerSwordStateMachine)
             {
                 types[i] = WeaponType.Hammer;
+            }
+            else if (weapons[i] is IceHammerStateMachine)
+            {
+                types[i] = WeaponType.IceHammer;
             }
         }
         return types;
@@ -308,6 +313,8 @@ public class PlayerWeaponManager : MonoBehaviour
             return WeaponType.BurningSword;
         else if (weapon is HammerSwordStateMachine)
             return WeaponType.Hammer;
+        else if (weapon is IceHammerStateMachine)
+            return WeaponType.IceHammer;
         else if (weapon is BoomerangWeaponStateMachine)
             return WeaponType.Boomerang;
         else if (weapon is SpellbookWeaponStateMachine)
