@@ -101,11 +101,6 @@ public class FireballSpell : MonoBehaviour
         {
             finalDamage *= playerStats.criticalDamage;
             
-            // Show critical hit text if available
-            if (FloatingTextManager.Instance != null)
-            {
-                FloatingTextManager.Instance.ShowCustomText("CRITICAL!", transform.position, Color.red);
-            }
         }
         
         return finalDamage;

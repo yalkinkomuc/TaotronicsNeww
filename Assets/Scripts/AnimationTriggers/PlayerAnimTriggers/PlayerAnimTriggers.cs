@@ -99,9 +99,6 @@ public class PlayerAnimTriggers : MonoBehaviour
       {
          // Düşmana saldır
          TryAttackEnemy(hit);
-         
-         // Training dummy'ye saldır
-         TryAttackDummy(hit);
       }
    }
 
@@ -146,12 +143,6 @@ public class PlayerAnimTriggers : MonoBehaviour
       // Hasarı uygula
       enemy.stats.TakeDamage(damage, CharacterStats.DamageType.Physical);
       
-      // Hasar metni göster
-      if (FloatingTextManager.Instance != null)
-      {
-         Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-         FloatingTextManager.Instance.ShowDamageText(damage, textPosition);
-      }
       
       // Vuruş efekti göster
       if (enemy.entityFX != null)
@@ -166,30 +157,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       }
    }
 
-   private void TryAttackDummy(Collider2D hit)
-   {
-      Dummy dummy = hit.GetComponent<Dummy>();
-      if (dummy == null) return;
-      
-      // Dummy objelerinin ID'sini kullanarak kontrol et
-      int dummyID = dummy.gameObject.GetInstanceID();
-      
-      // Eğer bu dummy'ye zaten vurduysak, atla
-      if (player.hitDummyIDs.Contains(dummyID)) return;
-            
-      // Vurulan dummy ID'sini listeye ekle
-      player.hitDummyIDs.Add(dummyID);
-      
-      // Basit hasar uygula
-      float damage = 10f;
-      if (player.stateMachine.currentState == player.crouchAttackState)
-      {
-         damage = 12f;
-      }
-      
-      // Dummy'ye hasarı uygula
-      dummy.TakeDamage(damage, 0, false);
-   }
+  
    
    // Determine which weapon is currently active
    private WeaponType GetCurrentWeaponType()
@@ -437,17 +405,7 @@ public class PlayerAnimTriggers : MonoBehaviour
          enemy.ApplyComboKnockback(player.transform.position, 2, knockbackMultiplier);
       }
 
-      if (FloatingTextManager.Instance != null)
-      {
-         Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-         FloatingTextManager.Instance.ShowDamageText(explosionDamage, textPosition);
-      }
-      
-      if (FloatingTextManager.Instance != null)
-      {
-         Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-         FloatingTextManager.Instance.ShowDamageText(iceExplosionDamage, textPosition);
-      }
+     
 
       // EntityFX null kontrolü ve GameObject aktiflik kontrolü
       if (enemy.entityFX != null && enemy.entityFX.gameObject != null && enemy.entityFX.gameObject.activeInHierarchy)
@@ -478,7 +436,6 @@ public class PlayerAnimTriggers : MonoBehaviour
       foreach (var hit in hits)
       {
          TryExplosionAttackEnemy(hit);
-         TryAttackDummy(hit);
       }
       
       Vector2 iceHammerexplosionPos = player.iceHammerExplosionCheck.position;
@@ -489,7 +446,6 @@ public class PlayerAnimTriggers : MonoBehaviour
       foreach (var iceHit in iceHits)
       {
          TryExplosionAttackEnemy(iceHit);
-         TryAttackDummy(iceHit);
       }
    }
 

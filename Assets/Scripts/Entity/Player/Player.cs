@@ -4,6 +4,7 @@ using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class Player : Entity
 {
@@ -154,8 +155,8 @@ public class Player : Entity
     [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
     private float iceShardCooldownTimer;
-    
-    
+
+   
     
     [Header("Void Skill Settings")]
     [SerializeField] public GameObject voidSlashPrefab;
@@ -219,6 +220,8 @@ public class Player : Entity
     [SerializeField] public float parryWindowTime;
     [SerializeField] public GameObject parryEffectPrefab; // Başarılı parry efekti prefabı
 
+    private float fallSpeedYDampingChangeThreshold;
+
     
     
     
@@ -246,6 +249,8 @@ public class Player : Entity
         
         
         SetupStates();
+        
+        
     }
     
     protected override void Start()
@@ -276,8 +281,21 @@ public class Player : Entity
         CheckForDashInput();
         CheckForGroundDashInput();
         CheckForElectricDashInput();
+
+
+
+        if (rb.linearVelocityY < fallSpeedYDampingChangeThreshold && !CameraManager.instance.isLerpingYDamping &&
+            !CameraManager.instance.lerpedFromPlayerFalling)
+        {
+            CameraManager.instance.LerpYDamping(true);
+        }
         
-      
+        if (rb.linearVelocityY >= 0f && !CameraManager.instance.isLerpingYDamping && CameraManager.instance.lerpedFromPlayerFalling)
+        {
+            CameraManager.instance.lerpedFromPlayerFalling = false;
+            CameraManager.instance.LerpYDamping(false);
+        }
+        
         
         // Stun durumunu kontrol et
         bool isStunned = stateMachine.currentState == stunnedState;
@@ -1053,14 +1071,7 @@ public class Player : Entity
                 {
                     stateMachine.ChangeState(spell1State);
                 }
-                else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.IceShard))
-                {
-                    // Mana yetersiz uyarısı
-                    if (FloatingTextManager.Instance != null)
-                    {
-                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                    }
-                }
+              
             }
             else
             {
@@ -1069,14 +1080,7 @@ public class Player : Entity
                 {
                     stateMachine.ChangeState(spell1State);
                 }
-                else if (stats.currentMana < iceShardManaCost)
-                {
-                    // Mana yetersiz uyarısı
-                    if (FloatingTextManager.Instance != null)
-                    {
-                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                    }
-                }
+               
             }
         }
         
@@ -1093,22 +1097,6 @@ public class Player : Entity
                     {
                         stateMachine.ChangeState(spell2State);
                     }
-                    else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.FireSpell))
-                    {
-                        // Mana yetersiz uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                        }
-                    }
-                    else if (!SkillManager.Instance.IsSkillUnlocked("FireSpell"))
-                    {
-                        // Beceri açılmamış uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Skill not unlocked!", transform.position + Vector3.up, Color.red);
-                        }
-                    }
                 }
                 else
                 {
@@ -1116,14 +1104,6 @@ public class Player : Entity
                     if (stats.currentMana >= fireSpellManaDrainPerSecond)
                     {
                         stateMachine.ChangeState(spell2State);
-                    }
-                    else
-                    {
-                        // Mana yetersiz uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                        }
                     }
                 }
             }

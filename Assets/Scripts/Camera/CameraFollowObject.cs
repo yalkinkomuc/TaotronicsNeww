@@ -22,12 +22,12 @@ public class CameraFollowObject : MonoBehaviour
 
     private void Update()
     {
-       transform.position = new Vector3(playerTransform.position.x, playerTransform.position.y, transform.position.z);
+       transform.position = playerTransform.position;
     }
 
     public void CallTurn()
     {
-        turnCoroutine = StartCoroutine(FlipYLerp());
+        LeanTween.rotateY(gameObject,DetermineEndRotation(),flipRotationTime).setEaseOutSine();
     }
 
     private IEnumerator FlipYLerp()
@@ -50,11 +50,11 @@ public class CameraFollowObject : MonoBehaviour
     private float DetermineEndRotation()
     {
         isFacingRight = !isFacingRight;
-
         if (isFacingRight)
         {
             return 180f;
         }
+        
         else
         {
             return 0f;

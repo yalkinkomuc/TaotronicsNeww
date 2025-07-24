@@ -69,8 +69,6 @@ public class SceneManager : MonoBehaviour
         // Kameranın güncellenmesi için kısa bir süre bekle
         yield return new WaitForSeconds(0.1f);
         
-        // Kamerayı bilgilendir
-        UpdateCameraAfterSpawn(player);
     }
     
     private void HandlePlayerSpawning(Player player)
@@ -185,32 +183,7 @@ public class SceneManager : MonoBehaviour
         player.ResetPlayerFacing();
         player.ShowWeapons();
     }
-    
-    // Spawn işleminden sonra kamerayı güncelle
-    private void UpdateCameraAfterSpawn(Player player)
-    {
-        if (CameraManager.instance != null)
-        {
-            // Virtual camera'yı bul ve oyuncuyu takip etmesini sağla
-            var virtualCamera = CameraManager.instance.GetComponentInChildren<Cinemachine.CinemachineVirtualCamera>();
-            if (virtualCamera != null)
-            {
-                virtualCamera.Follow = player.transform;
-                virtualCamera.LookAt = null; // LookAt'ı temizle
-            }
-            
-            // SceneBoundary'yi bul ve kameraya bildir
-            SceneBoundary boundary = FindFirstObjectByType<SceneBoundary>();
-            if (boundary != null)
-            {
-                CameraManager.instance.RegisterSceneBoundary(boundary);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("CameraManager not found!");
-        }
-    }
+   
     
     // Özel kapı geçişleri için spawn pozisyonunu ayarla
     private void HandleCustomSpawnPosition(Player player)

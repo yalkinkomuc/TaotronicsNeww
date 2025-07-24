@@ -153,12 +153,6 @@ public class BoomerangSkill : MonoBehaviour
                     
                     enemyStats.TakeDamage(boomerangDamage, CharacterStats.DamageType.Physical);
                     
-                    // Hasar metni göster
-                    if (FloatingTextManager.Instance != null)
-                    {
-                        Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                        FloatingTextManager.Instance.ShowDamageText(boomerangDamage, textPosition);
-                    }
                 }
             }
             

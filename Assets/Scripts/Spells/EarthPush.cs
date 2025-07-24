@@ -117,8 +117,6 @@ public class EarthPush : MonoBehaviour
                 // Apply earth damage with knockback
                 enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
                 
-                // Display Earth damage text in green or yellow if critical
-                ShowEarthDamageText(finalDamage, enemy.transform.position, isCritical);
                 
                 // Check if this enemy should ignore knockback
                 if (!ShouldIgnoreKnockback(enemy.gameObject))
@@ -146,23 +144,11 @@ public class EarthPush : MonoBehaviour
                 
                 enemyStats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
                 
-                // Display Earth damage text in green or yellow if critical
-                ShowEarthDamageText(finalDamage, enemyCollider.transform.position, isCritical);
             }
         }
     }
     
-    private void ShowEarthDamageText(float damageAmount, Vector3 position, bool isCritical = false)
-    {
-        if (FloatingTextManager.Instance != null)
-        {
-            Color color = isCritical ? Color.yellow : damageTextColor;
-            FloatingTextManager.Instance.ShowCustomText(
-                damageAmount.ToString("0"),
-                position + Vector3.up * 1.2f,
-                color);
-        }
-    }
+   
     
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -209,9 +195,6 @@ public class EarthPush : MonoBehaviour
             
             // Apply earth damage with knockback
             enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Earth);
-            
-            // Display Earth damage text in green or yellow if critical
-            ShowEarthDamageText(finalDamage, enemy.transform.position, isCritical);
             
             // Check if this enemy should ignore knockback
             if (!ShouldIgnoreKnockback(enemy.gameObject))

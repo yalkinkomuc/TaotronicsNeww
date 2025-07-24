@@ -31,13 +31,6 @@ public static class WeaponDamageManager
         if (playerStats != null && playerStats.IsCriticalHit())
         {
             baseDamage *= GetCriticalMultiplier(weaponData, playerStats);
-            
-            // Show critical hit feedback
-            if (FloatingTextManager.Instance != null)
-            {
-                Vector3 playerPos = playerStats.transform.position + Vector3.up * 1.5f;
-                FloatingTextManager.Instance.ShowCustomText("CRITICAL!", playerPos, Color.yellow);
-            }
         }
         
         return baseDamage;

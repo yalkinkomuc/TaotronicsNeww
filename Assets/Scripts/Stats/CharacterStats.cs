@@ -252,34 +252,13 @@ public class CharacterStats : MonoBehaviour
         if (damageSource != null && UnityEngine.Random.value < 0.05f) // 5% base chance for enemies
         {
             finalDamage *= 1.5f; // 50% more damage on critical hit
-            if (FloatingTextManager.Instance != null)
-            {
-                FloatingTextManager.Instance.ShowCustomText("CRITICAL!", transform.position + Vector3.up * 0.5f, Color.red);
-            }
         }
         
         // Ensure minimum damage of 1 and round damage to nearest integer for cleaner UI
         float roundedDamage = Mathf.Max(1, Mathf.Round(finalDamage));
         
         currentHealth -= roundedDamage;
-
-        // Show damage numbers with appropriate colors
-        if (FloatingTextManager.Instance != null)
-        {
-            Color dmgColor;
-            switch (damageType)
-            {
-                case DamageType.Fire: dmgColor = Color.red; break;
-                case DamageType.Ice: dmgColor = Color.cyan; break;
-                case DamageType.Void: dmgColor = new Color(0.5f,0,1f); break;
-                case DamageType.Earth: dmgColor = new Color(0.5f,0.3f,0.1f); break;
-                case DamageType.Electric: dmgColor = new Color(1f,1f,0); break; // Yellow color for electric
-                case DamageType.Air: dmgColor = new Color(0.7f,0.9f,1f); break; // Light blue color for air
-                default: dmgColor = Color.white; break;
-            }
-            FloatingTextManager.Instance.ShowCustomText(roundedDamage.ToString(), transform.position, dmgColor);
-        }
-
+        
         if (currentHealth <= 0)
             Die();
     }

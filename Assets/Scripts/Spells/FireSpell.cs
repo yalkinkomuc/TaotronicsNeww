@@ -204,11 +204,6 @@ public class FireSpell : MonoBehaviour
                     
                     if (Time.time - lastTextDisplayTimes[enemy] >= textDisplayInterval)
                     {
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                            FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage[enemy], textPosition);
-                        }
                         lastTextDisplayTimes[enemy] = Time.time;
                     }
                 }
