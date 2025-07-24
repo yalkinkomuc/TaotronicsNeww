@@ -1838,5 +1838,11 @@ public class Player : Entity
     public Vector2 hammerExplosionSize = new Vector2(2f, 2f); // Patlama alanı boyutu
     public HashSet<int> explosionHitEntities = new HashSet<int>(); // Explosion için vurulan düşmanlar
     public float lastHammerCombo3Damage; // 3. combo gerçek hasarı (crit, buff dahil)
+    
+    [Header("IceHammer Explosion")]
+    public Transform iceHammerExplosionCheck; // Patlama pozisyonu için boş obje
+    public Vector2 iceHammerExplosionSize = new Vector2(2f, 2f); // Patlama alanı boyutu
+    public HashSet<int> iceHammerExplosionHitEntities = new HashSet<int>(); // Explosion için vurulan düşmanlar
+    public float iceHammerlastHammerCombo3Damage; // 3. combo gerçek hasarı (crit, buff dahil)
 }
 

@@ -400,6 +400,7 @@ public class PlayerAnimTriggers : MonoBehaviour
    public void ClearExplosionHitEntities()
    {
       player.explosionHitEntities.Clear();
+      player.iceHammerExplosionHitEntities.Clear();
    }
 
    private void TryExplosionAttackEnemy(Collider2D hit)
@@ -414,11 +415,19 @@ public class PlayerAnimTriggers : MonoBehaviour
       int id = enemy.GetInstanceID();
       if (player.explosionHitEntities.Contains(id)) return;
       player.explosionHitEntities.Add(id);
+      
+      if(player.iceHammerExplosionHitEntities.Contains(id)) return;
+      player.iceHammerExplosionHitEntities.Add(id);
+      
+      
 
       // Hasar hesapla ve uygula
       float explosionDamage = player.lastHammerCombo3Damage * 0.25f;
 
       enemy.stats.TakeDamage(explosionDamage, CharacterStats.DamageType.Physical);
+      
+      float iceExplosionDamage = player.iceHammerlastHammerCombo3Damage * 0.25f;
+      enemy.stats.TakeDamage(iceExplosionDamage,CharacterStats.DamageType.Ice);
       
       if (enemy.rb != null && enemy.rb.bodyType != RigidbodyType2D.Static)
       {
@@ -433,6 +442,12 @@ public class PlayerAnimTriggers : MonoBehaviour
          Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
          FloatingTextManager.Instance.ShowDamageText(explosionDamage, textPosition);
       }
+      
+      if (FloatingTextManager.Instance != null)
+      {
+         Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
+         FloatingTextManager.Instance.ShowDamageText(iceExplosionDamage, textPosition);
+      }
 
       // EntityFX null kontrolü ve GameObject aktiflik kontrolü
       if (enemy.entityFX != null && enemy.entityFX.gameObject != null && enemy.entityFX.gameObject.activeInHierarchy)
@@ -444,23 +459,37 @@ public class PlayerAnimTriggers : MonoBehaviour
    public void HammerExplosionTrigger()
    {
       // Sadece hammer aktifken ve 3. kombo sırasında çalışsın
-      if (GetCurrentWeaponType() != WeaponType.Hammer)
+      if (GetCurrentWeaponType() != WeaponType.Hammer || GetCurrentWeaponType() != WeaponType.IceHammer)
          return;
       if (!(player.stateMachine.currentState is PlayerHammerAttackState hammerAttackState))
          return;
       if (hammerAttackState.GetComboCounter() != 2) // 3. saldırı (0-based)
          return;
-      if (player.hammerExplosionCheck == null)
+      if (player.hammerExplosionCheck == null) 
+         if(player.iceHammerExplosionCheck == null)
          return;
 
       Vector2 explosionPos = player.hammerExplosionCheck.position;
       Vector2 explosionSize = player.hammerExplosionSize;
+      
+     
       Collider2D[] hits = Physics2D.OverlapBoxAll(explosionPos, explosionSize, 0, player.passableEnemiesLayerMask);
 
       foreach (var hit in hits)
       {
          TryExplosionAttackEnemy(hit);
          TryAttackDummy(hit);
+      }
+      
+      Vector2 iceHammerexplosionPos = player.iceHammerExplosionCheck.position;
+      Vector2 iceHammerExplosionSize = player.iceHammerExplosionSize;
+      
+      Collider2D[] iceHits = Physics2D.OverlapBoxAll(iceHammerexplosionPos, iceHammerExplosionSize, 0, player.passableEnemiesLayerMask);
+
+      foreach (var iceHit in iceHits)
+      {
+         TryExplosionAttackEnemy(iceHit);
+         TryAttackDummy(iceHit);
       }
    }
 
