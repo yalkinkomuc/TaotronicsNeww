@@ -231,11 +231,14 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     {
         List<WeaponData> matchingWeapons = GetMatchingWeapons(slotType);
         
+        
         // Create selection slots for each matching weapon
         foreach (var weapon in matchingWeapons)
         {
             CreateWeaponSelectionSlot(weapon);
         }
+        
+        
         
         // Eğer hiç silah yoksa (sadece equipped olan varsa), boş panel bırak
         // CreateEmptySlot() çağrılmasın - kullanıcı hiçbir slot görmemeli
@@ -372,7 +375,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         // 3) Fallback – önceki CreateInstance mantığı (asset bulunamazsa UI boş kalmasın)
         WeaponData weaponData = ScriptableObject.CreateInstance<WeaponData>();
         weaponData.weaponType = weaponType;
-        weaponData.equipmentSlot = (weaponType == WeaponType.Boomerang || weaponType == WeaponType.Spellbook)
+        weaponData.equipmentSlot = (weaponType == WeaponType.Boomerang || weaponType == WeaponType.Spellbook || weaponType == WeaponType.Shield)
                                     ? EquipmentSlot.SecondaryWeapon : EquipmentSlot.MainWeapon;
 
         switch (weaponType)
