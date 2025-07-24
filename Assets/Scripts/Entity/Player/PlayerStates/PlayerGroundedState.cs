@@ -75,7 +75,8 @@ public class PlayerGroundedState : PlayerState
     }
     
     private bool IsHammerActive()
-    {
-        return player.hammer != null && player.hammer.gameObject.activeInHierarchy;
-    }
+{
+    return (player.hammer != null && player.hammer.gameObject.activeInHierarchy) ||
+           (player.iceHammer != null && player.iceHammer.gameObject.activeInHierarchy);
+}
 }

@@ -39,6 +39,7 @@ public class PlayerState
    {
       stateTimer-=Time.deltaTime;
       xInput = player.playerInput.xInput;
+      Debug.Log(stateMachine.currentState);
    }
 
    public virtual void Exit()
