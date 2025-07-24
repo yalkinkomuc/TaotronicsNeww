@@ -26,7 +26,26 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private void Start()
     {
+        // Subscribe to equipment change events
+        EquipmentManager.OnEquipmentChanged += OnEquipmentChanged;
+        
         UpdateSlotDisplay();
+    }
+    
+    private void OnDestroy()
+    {
+        // Unsubscribe from events
+        EquipmentManager.OnEquipmentChanged -= OnEquipmentChanged;
+    }
+    
+    private void OnEquipmentChanged(EquipmentSlot changedSlot, EquipmentData equipment)
+    {
+        // Only update if this slot is the one that changed
+        if (changedSlot == slotType)
+        {
+            currentEquipment = equipment;
+            UpdateSlotDisplay();
+        }
     }
     
     public void Initialize(EquipmentSlot equipmentSlot)
@@ -120,6 +139,11 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private EquipmentData GetEquippedItem()
     {
+        if (EquipmentManager.Instance == null)
+        {
+            return null;
+        }
+        
         // Get equipped item based on slot type
         return slotType switch
         {
@@ -133,24 +157,24 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private WeaponData GetEquippedWeapon()
     {
-        // Use EquipmentManager cached value as the single source of truth
+        // Get from EquipmentManager
         if (EquipmentManager.Instance != null)
         {
             return EquipmentManager.Instance.GetEquippedItem(EquipmentSlot.MainWeapon) as WeaponData;
         }
         
-        return null; // No EquipmentManager available
+        return null;
     }
     
     private EquipmentData GetEquippedSecondaryWeapon()
     {
-        // Use EquipmentManager cached value as the single source of truth
+        // Get from EquipmentManager - this should return null if no secondary weapon is equipped
         if (EquipmentManager.Instance != null)
         {
             return EquipmentManager.Instance.GetEquippedItem(EquipmentSlot.SecondaryWeapon);
         }
         
-        return null; // No EquipmentManager available
+        return null;
     }
     
     private ArmorData GetEquippedArmor()
@@ -164,8 +188,10 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     
     private AccessoryData GetEquippedAccessory()
     {
-        // TODO: Get from EquipmentManager when implemented
-        // For now return null (empty slot)
+        if (EquipmentManager.Instance != null)
+        {
+            return EquipmentManager.Instance.GetEquippedItem(EquipmentSlot.Accessory) as AccessoryData;
+        }
         return null;
     }
     

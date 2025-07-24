@@ -68,6 +68,15 @@ public class PlayerWeaponManager : MonoBehaviour
             
             // Tüm secondary silahları deaktif et
             DisableAllSecondaryWeapons();
+            
+            // Notify EquipmentManager that no secondary weapon is equipped
+            if (EquipmentManager.Instance != null)
+            {
+                EquipmentManager.Instance.UnequipItem(EquipmentSlot.SecondaryWeapon);
+            }
+            
+            // Save weapon state after unequipping secondary weapon
+            OnWeaponEquipped();
             return;
         }
 

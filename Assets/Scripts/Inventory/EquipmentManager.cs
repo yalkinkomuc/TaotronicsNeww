@@ -63,8 +63,47 @@ public class EquipmentManager : MonoBehaviour
         //
         CalculateAllStats();
         
+        // Trigger initial UI update after a short delay
+        StartCoroutine(TriggerInitialUIUpdate());
+        
         // NOTE: Initial equipment save moved to after rune loading to prevent clearing loaded runes
         // NOTE: Rune loading is now handled by RuneSaveManager to avoid timing issues
+    }
+    
+    private System.Collections.IEnumerator TriggerInitialUIUpdate()
+    {
+        yield return new WaitForSeconds(0.5f);
+        
+        // Trigger events for all equipped items to update UI
+        if (currentWeapon != null)
+        {
+            OnEquipmentChanged?.Invoke(EquipmentSlot.MainWeapon, currentWeapon);
+        }
+        
+        // Only trigger secondary weapon event if one is actually equipped
+        var equippedSecondary = GetActuallyEquippedSecondaryWeapon();
+        if (equippedSecondary != null)
+        {
+            OnEquipmentChanged?.Invoke(EquipmentSlot.SecondaryWeapon, equippedSecondary);
+        }
+        else
+        {
+            // Trigger event with null to indicate no secondary weapon is equipped
+            OnEquipmentChanged?.Invoke(EquipmentSlot.SecondaryWeapon, null);
+        }
+        
+        if (currentArmor != null)
+        {
+            OnEquipmentChanged?.Invoke(EquipmentSlot.Armor, currentArmor);
+        }
+        
+        if (currentAccessory != null)
+        {
+            OnEquipmentChanged?.Invoke(EquipmentSlot.Accessory, currentAccessory);
+        }
+        
+        // Trigger stats update
+        OnStatsUpdated?.Invoke();
     }
     
     private void InitializeStats()
@@ -164,10 +203,35 @@ public class EquipmentManager : MonoBehaviour
         {
             EquipmentSlot.MainWeapon => currentWeapon,
             EquipmentSlot.Armor => currentArmor,
-            EquipmentSlot.SecondaryWeapon => currentSecondaryWeapon,
+            EquipmentSlot.SecondaryWeapon => GetActuallyEquippedSecondaryWeapon(),
             EquipmentSlot.Accessory => currentAccessory,
             _ => null
         };
+    }
+    
+    /// <summary>
+    /// Check if a secondary weapon is actually equipped (not just unlocked)
+    /// </summary>
+    private EquipmentData GetActuallyEquippedSecondaryWeapon()
+    {
+        // Check if there's actually a secondary weapon equipped via PlayerWeaponManager
+        PlayerWeaponManager weaponManager = FindFirstObjectByType<PlayerWeaponManager>();
+        if (weaponManager != null)
+        {
+            int currentSecondaryIndex = weaponManager.GetCurrentSecondaryWeaponIndex();
+            
+            // If no secondary weapon is equipped (-1), return null
+            if (currentSecondaryIndex == -1)
+            {
+                return null;
+            }
+            
+            // If there is a secondary weapon equipped, return the cached data
+            return currentSecondaryWeapon;
+        }
+        
+        // Fallback to cached value
+        return currentSecondaryWeapon;
     }
     
     #endregion

@@ -17618,10 +17618,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boomerang
       objectReference: {fileID: 0}
-    - target: {fileID: 3032671044708449667, guid: f9c8f23692b278240b765d23b0f83bf4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -29014,10 +29010,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spellbook
       objectReference: {fileID: 0}
-    - target: {fileID: 770610726131400552, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 7123588621038388202, guid: f511c1afca073ec40b17fa2cb84a3857, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.03
@@ -32351,14 +32343,6 @@ PrefabInstance:
     - target: {fileID: 4309007596583136487, guid: c0657a5c57c5653459f99a496fc54ce6, type: 3}
       propertyPath: m_Name
       value: Shield
-      objectReference: {fileID: 0}
-    - target: {fileID: 4309007596583136487, guid: c0657a5c57c5653459f99a496fc54ce6, type: 3}
-      propertyPath: m_Layer
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4309007596583136487, guid: c0657a5c57c5653459f99a496fc54ce6, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7890423986896541963, guid: c0657a5c57c5653459f99a496fc54ce6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42193,10 +42177,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sword
       objectReference: {fileID: 0}
-    - target: {fileID: 678572023270907210, guid: a37dbc267f2733545b5af02ae357c3f9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2410878840005011983, guid: a37dbc267f2733545b5af02ae357c3f9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -42399,10 +42379,6 @@ PrefabInstance:
     - target: {fileID: 5188635493186575689, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
       propertyPath: m_Name
       value: BurningSword
-      objectReference: {fileID: 0}
-    - target: {fileID: 5188635493186575689, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8442360767663441756, guid: 3b38ea7945953ae4781bdff6998325b6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -42744,10 +42720,6 @@ PrefabInstance:
     - target: {fileID: 3297799702818054646, guid: 0b97c4edf7708bf4d993507e1fc10ffe, type: 3}
       propertyPath: m_Name
       value: Hammer
-      objectReference: {fileID: 0}
-    - target: {fileID: 3297799702818054646, guid: 0b97c4edf7708bf4d993507e1fc10ffe, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -44346,10 +44318,10 @@ MonoBehaviour:
   parryWindowTime: 0.15
   parryEffectPrefab: {fileID: 6790647974808866659, guid: 6b414d20df288a443a4f888a59c2f32a, type: 3}
   hammerExplosionCheck: {fileID: 783438092985561695}
-  hammerExplosionSize: {x: 1.51, y: 1.1}
+  hammerExplosionSize: {x: 1.75, y: 1.1}
   lastHammerCombo3Damage: 0
   iceHammerExplosionCheck: {fileID: 588247494}
-  iceHammerExplosionSize: {x: 1.51, y: 1.1}
+  iceHammerExplosionSize: {x: 1.75, y: 1.1}
   iceHammerlastHammerCombo3Damage: 0
 --- !u!4 &7758315432404786867
 Transform:
