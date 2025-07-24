@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
@@ -52,7 +53,7 @@ public class CameraManager : MonoBehaviour
     public void PanCameraOnContact(float _panDistance, float _panTime,
         CustomInspectorObjects.PanDirection _panDirection, bool _panToStartingPos)
     {
-        
+        panCameraCoroutine = StartCoroutine(PanCamera(_panDistance, _panTime, _panDirection, _panToStartingPos));
     }
 
     private IEnumerator PanCamera(float _panDistance, float _panTime, CustomInspectorObjects.PanDirection _panDirection,
@@ -146,4 +147,6 @@ public class CameraManager : MonoBehaviour
         isLerpingYDamping = false;
         
     }
+
+    
 }
