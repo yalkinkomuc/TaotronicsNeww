@@ -22186,7 +22186,7 @@ Transform:
   m_GameObject: {fileID: 690556771}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.99998814, y: -3.5486999, z: 5}
+  m_LocalPosition: {x: -0.99998814, y: -3.04227, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22313,7 +22313,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5.625
+  orthographic size: 4.21875
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -34206,13 +34206,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1604299527}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1835027663}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1606350478}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1606350477
 GameObject:
@@ -34246,6 +34246,7 @@ Transform:
   m_Children:
   - {fileID: 690556772}
   - {fileID: 1632101937}
+  - {fileID: 1604299528}
   m_Father: {fileID: 1683066506}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1606350479
@@ -34458,7 +34459,7 @@ MonoBehaviour:
   m_Follow: {fileID: 1100386504}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 5
+    OrthographicSize: 4.5
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -35043,7 +35044,7 @@ GameObject:
   - component: {fileID: 1683066506}
   - component: {fileID: 1683066507}
   m_Layer: 0
-  m_Name: '***System***'
+  m_Name: '***PersistentObject***'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37416,7 +37417,7 @@ GameObject:
   - component: {fileID: 1835027665}
   - component: {fileID: 1835027664}
   m_Layer: 0
-  m_Name: Boundary
+  m_Name: TestSceneBoundary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37498,7 +37499,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 1
   m_CompositeOrder: 0
-  m_Offset: {x: -0.5, y: -3.590788}
+  m_Offset: {x: -0.5, y: -3.241442}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -37508,7 +37509,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 44, y: 11.334225}
+  m_Size: {x: 44, y: 9.398392}
   m_EdgeRadius: 0
 --- !u!66 &1835027666
 CompositeCollider2D:
@@ -37552,19 +37553,19 @@ CompositeCollider2D:
   - m_Collider: {fileID: 1835027665}
     m_ColliderPaths:
     - - X: 215000000
-        Y: 20763244
+        Y: 14577539
       - X: -225000000
-        Y: 20763244
+        Y: 14577539
       - X: -225000000
-        Y: -92579000
+        Y: -79406376
       - X: 215000000
-        Y: -92579000
+        Y: -79406376
   m_CompositePaths:
     m_Paths:
-    - - {x: 21.499971, y: -9.2579}
-      - {x: 21.499971, y: 2.0763245}
-      - {x: -22.5, y: 2.0762951}
-      - {x: -22.499971, y: -9.2579}
+    - - {x: 21.499971, y: -7.9406376}
+      - {x: 21.499971, y: 1.4577539}
+      - {x: -22.5, y: 1.4577246}
+      - {x: -22.499971, y: -7.9406376}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
@@ -42876,7 +42877,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2939766476189330611, guid: 95cedc11428a756478ecbf6abb4eb771, type: 3}
       propertyPath: m_Size.x
-      value: 3.1708007
+      value: 1.879745
       objectReference: {fileID: 0}
     - target: {fileID: 2939766476189330611, guid: 95cedc11428a756478ecbf6abb4eb771, type: 3}
       propertyPath: m_Size.y
@@ -42884,7 +42885,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2939766476189330611, guid: 95cedc11428a756478ecbf6abb4eb771, type: 3}
       propertyPath: m_Offset.x
-      value: -8.149182
+      value: -8.177599
       objectReference: {fileID: 0}
     - target: {fileID: 2939766476189330611, guid: 95cedc11428a756478ecbf6abb4eb771, type: 3}
       propertyPath: m_Offset.y
@@ -44678,5 +44679,4 @@ SceneRoots:
   - {fileID: 991237356}
   - {fileID: 348999712}
   - {fileID: 629936956}
-  - {fileID: 1604299528}
   - {fileID: 4949667253681877762}
