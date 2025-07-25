@@ -29,11 +29,6 @@ public class NecromancerDeadState : EnemyState
             healthBar.gameObject.SetActive(false);
         }
         
-        // Portal/çıkış objesini aktive et
-        if (BossArenaManager.instance != null)
-        {
-            BossArenaManager.instance.ShowExitPortal();
-        }
     }
 
     public override void Exit()

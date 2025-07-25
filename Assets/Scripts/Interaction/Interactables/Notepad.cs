@@ -11,9 +11,11 @@ public class Notepad : MonoBehaviour, IInteractable
     [Header("Note Behavior")]
     [SerializeField] bool useCustomText = false; // Özel metin kullanılsın mı?
     [SerializeField] bool destroyAfterReading = false; // Okuduktan sonra yok olsun mu?
-    
-    
-    
+
+
+    public GameObject Player { get; set; }
+    public bool CanInteract { get; set; }
+
     public void Interact()
     {
         // NoteManager ile entegrasyon

@@ -136,12 +136,12 @@ public class TabManager : MonoBehaviour
     
         private void HandleTabSwitching()
     {
-        // Get player input
-        NewInputSystem playerInput = GetPlayerInput();
-        if (playerInput == null) return;
+       
+        
+        
 
         // Handle ESC input to close the entire tab UI system
-        if (playerInput.escapeInput)
+        if (UserInput.WasEscapePressed)
         {
             CloseParentUI();
             return; // Exit early since we're closing the UI
@@ -151,8 +151,8 @@ public class TabManager : MonoBehaviour
         if (tabs.Count <= 1) return;
 
         // PERFORMANCE OPTIMIZATION: Only check expensive conditions when input is actually pressed
-        bool leftPressed = playerInput.tabLeftInput;
-        bool rightPressed = playerInput.tabRightInput;
+        bool leftPressed = UserInput.WasTabLeftPressed;
+        bool rightPressed = UserInput.WasTabRightPressed;
         
         // Early exit if no input - avoid expensive checks
         if (!leftPressed && !rightPressed) return;
@@ -371,18 +371,6 @@ public class TabManager : MonoBehaviour
     
     #region Utility
     
-    private NewInputSystem GetPlayerInput()
-    {
-        // Get player input from PlayerManager or find Player
-        if (PlayerManager.instance != null && PlayerManager.instance.player != null)
-        {
-            return PlayerManager.instance.player.playerInput;
-        }
-        
-        // Fallback: find player in scene
-        Player player = FindFirstObjectByType<Player>();
-        return player?.playerInput;
-    }
     
     private void PlayTabSwitchSound()
     {

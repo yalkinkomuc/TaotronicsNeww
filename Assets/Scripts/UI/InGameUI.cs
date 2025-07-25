@@ -55,16 +55,6 @@ public class InGameUI : MonoBehaviour
             }
         }
         
-        // FloatingTextManager durumunu kontrol et
-        if (FloatingTextManager.Instance != null)
-        {
-            Debug.Log("FloatingTextManager aktif");
-        }
-        else
-        {
-            Debug.LogWarning("FloatingTextManager bulunamadı!");
-        }
-        
         // Canvas'ları kontrol et
         Canvas[] allCanvases = FindObjectsOfType<Canvas>();
         Debug.Log($"Toplam Canvas sayısı: {allCanvases.Length}");

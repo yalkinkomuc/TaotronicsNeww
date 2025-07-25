@@ -124,15 +124,7 @@ public class IceShard : MonoBehaviour
                 }
 
                 enemy.stats.TakeDamage(finalDamage, CharacterStats.DamageType.Ice);
-
-                if (FloatingTextManager.Instance != null)
-                {
-                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    if (isCritical)
-                        FloatingTextManager.Instance.ShowCustomText(finalDamage.ToString("0"), textPosition, Color.yellow);
-                    else
-                        FloatingTextManager.Instance.ShowMagicDamageText(finalDamage, textPosition);
-                }
+                
 
                 enemy.ApplyIceEffect();
                 

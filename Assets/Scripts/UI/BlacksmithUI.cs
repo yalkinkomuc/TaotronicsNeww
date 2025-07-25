@@ -120,14 +120,13 @@ public class BlacksmithUI : BaseUIPanel
                 Debug.LogError($"CreateWeaponButtons hata verdi: {e.Message}\n{e.StackTrace}");
             }
             
-            // Time scale'i sıfıra ayarla (oyunu duraklat)
-            Time.timeScale = 0f;
+           
         }
         catch (System.Exception e)
         {
             Debug.LogError($"OpenBlacksmith hata verdi: {e.Message}\n{e.StackTrace}");
-            // Hata olsa da oyunu devam ettir
-            Time.timeScale = 1f;
+           
+          
         }
     }
     
@@ -136,8 +135,6 @@ public class BlacksmithUI : BaseUIPanel
         // Hide the panel
         blacksmithPanel.SetActive(false);
         
-        // Time scale'i normal hale getir (oyunu devam ettir)
-        Time.timeScale = 1f;
     }
     
     // Silah bilgilerini temizle
@@ -610,6 +607,8 @@ public class BlacksmithUI : BaseUIPanel
             weaponType = WeaponType.Spellbook;
         else if (weaponStateMachine is ShieldStateMachine)
             weaponType = WeaponType.Shield;
+        else if (weaponStateMachine is IceHammerStateMachine)
+            weaponType = WeaponType.IceHammer;
         else
             return null; // bilinmeyen
 

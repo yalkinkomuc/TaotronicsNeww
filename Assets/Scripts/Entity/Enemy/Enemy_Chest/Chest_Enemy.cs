@@ -141,6 +141,9 @@ public class Chest_Enemy : Enemy,IInteractable
         stateMachine.ChangeState(deadState);
     }
 
+    public GameObject Player { get; set; }
+    public bool CanInteract { get; set; }
+
     public void Interact()
     {
         

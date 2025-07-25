@@ -109,11 +109,6 @@ public class BurningSwordAttackHandler : BaseWeaponAttackHandler
             // Show accumulated damage as counter (every 0.1 seconds)
             if (Time.time - lastTextDisplayTime >= textDisplayInterval)
             {
-                if (FloatingTextManager.Instance != null)
-                {
-                    Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-                    FloatingTextManager.Instance.ShowMagicDamageText(accumulatedDamage, textPosition);
-                }
                 lastTextDisplayTime = Time.time;
             }
             

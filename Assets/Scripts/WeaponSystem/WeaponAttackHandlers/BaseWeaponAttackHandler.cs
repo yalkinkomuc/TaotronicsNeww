@@ -14,9 +14,6 @@ public abstract class BaseWeaponAttackHandler : IWeaponAttackHandler
         {
             // Düşmana saldır
             TryAttackEnemy(player, hit);
-            
-            // Training dummy'ye saldır
-            TryAttackDummy(player, hit);
         }
     }
     
@@ -35,23 +32,7 @@ public abstract class BaseWeaponAttackHandler : IWeaponAttackHandler
         ApplyDamageToEnemy(player, enemy);
     }
     
-    protected virtual void TryAttackDummy(Player player, Collider2D hit)
-    {
-        Dummy dummy = hit.GetComponent<Dummy>();
-        if (dummy == null) return;
-        
-        // Dummy objelerinin ID'sini kullanarak kontrol et
-        int dummyID = dummy.gameObject.GetInstanceID();
-        
-        // Eğer bu dummy'ye zaten vurduysak, atla
-        if (player.hitDummyIDs.Contains(dummyID)) return;
-                
-        // Vurulan dummy ID'sini listeye ekle
-        player.hitDummyIDs.Add(dummyID);
-        
-        // Hasarı hesapla ve uygula
-        ApplyDamageToDummy(player, dummy);
-    }
+  
     
     protected virtual void ApplyDamageToEnemy(Player player, Enemy enemy)
     {
@@ -71,7 +52,7 @@ public abstract class BaseWeaponAttackHandler : IWeaponAttackHandler
         }
     }
     
-    protected virtual void ApplyDamageToDummy(Player player, Dummy dummy)
+    protected virtual void ApplyDamageToDummy(Player player)
     {
         // Temel hasar değerini al
         float damage = CalculateDamage(player, out bool isCritical);
@@ -89,8 +70,6 @@ public abstract class BaseWeaponAttackHandler : IWeaponAttackHandler
             damage *= 1.2f;
         }
         
-        // Dummy'ye hasarı uygula
-        dummy.TakeDamage(damage, comboCounter, isCritical);
     }
     
     protected abstract void HandleWeaponSpecificAttack(Player player, Enemy enemy, IWeaponAttackState weaponAttackState, float baseDamage, bool isCritical);
@@ -114,21 +93,6 @@ public abstract class BaseWeaponAttackHandler : IWeaponAttackHandler
     {
         // Hasarı doğrudan uygula
         enemy.stats.TakeDamage(damage, CharacterStats.DamageType.Physical);
-        
-        // Hasar metni göster
-        if (FloatingTextManager.Instance != null)
-        {
-            Vector3 textPosition = enemy.transform.position + Vector3.up * 1.5f;
-            
-            if (comboCounter > 0)
-            {
-                FloatingTextManager.Instance.ShowComboDamageText(damage, textPosition, comboCounter);
-            }
-            else
-            {
-                FloatingTextManager.Instance.ShowDamageText(damage, textPosition);
-            }
-        }
         
         // Vuruş efekti göster
         if (enemy.entityFX != null)

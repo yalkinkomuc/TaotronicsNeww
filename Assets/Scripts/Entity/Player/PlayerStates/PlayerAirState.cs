@@ -37,10 +37,10 @@ public class PlayerAirState : PlayerState
         
         player.SetVelocity(xInput*player.moveSpeed,rb.linearVelocity.y);
 
-        if (player.playerInput.attackInput)
+        if (UserInput.WasAttackPressed)
         {
             // Hangi silahın aktif olduğunu kontrol et
-            if (IsHammerActive())
+            if (IsHammerActive() || IsIceHammerActive())
             {
                 stateMachine.ChangeState(player.hammerAttackState);
             }
@@ -56,5 +56,10 @@ public class PlayerAirState : PlayerState
     private bool IsHammerActive()
     {
         return player.hammer != null && player.hammer.gameObject.activeInHierarchy;
+    }
+    
+    private bool IsIceHammerActive()
+    {
+        return player.iceHammer != null && player.iceHammer.gameObject.activeInHierarchy;
     }
 }

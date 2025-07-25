@@ -29,21 +29,6 @@ public class PlayerFireballSpellState : PlayerState
         {
             // Not enough mana or on cooldown, exit state
             stateMachine.ChangeState(player.idleState);
-            
-            if (player.stats.currentMana < SkillManager.Instance.GetSkillManaCost(skillType))
-            {
-                if (FloatingTextManager.Instance != null)
-                {
-                    FloatingTextManager.Instance.ShowCustomText("Not enough mana!", player.transform.position + Vector3.up, Color.blue);
-                }
-            }
-            else
-            {
-                if (FloatingTextManager.Instance != null)
-                {
-                    FloatingTextManager.Instance.ShowCustomText("Skill on cooldown!", player.transform.position + Vector3.up, Color.yellow);
-                }
-            }
         }
     }
     

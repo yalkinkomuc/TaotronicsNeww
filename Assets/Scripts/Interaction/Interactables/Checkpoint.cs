@@ -71,6 +71,9 @@ public class Checkpoint : MonoBehaviour, IInteractable
             persistentSelectionScreen = selectionScreen;
     }
 
+    public GameObject Player { get; set; }
+    public bool CanInteract { get; set; }
+
     public void Interact()
     {
         if (!isActivated)

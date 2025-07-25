@@ -38,7 +38,7 @@ public class PlayerState
    public virtual void Update()
    {
       stateTimer-=Time.deltaTime;
-      xInput = player.playerInput.xInput;
+      xInput = UserInput.MoveInput.x;
       Debug.Log(stateMachine.currentState);
    }
 

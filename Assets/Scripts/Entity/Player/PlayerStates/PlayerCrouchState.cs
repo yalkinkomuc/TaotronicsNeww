@@ -30,13 +30,13 @@ public class PlayerCrouchState : PlayerState
         player.SetZeroVelocity();
 
         
-        if (player.playerInput.crouchInputReleased)
+        if (UserInput.WasCrouchReleased)
         {
             stateMachine.ChangeState(player.idleState);
         }
        
 
-        if (player.playerInput.attackInput)
+        if (UserInput.WasAttackPressed)
         {
             stateMachine.ChangeState(player.crouchAttackState);
         }

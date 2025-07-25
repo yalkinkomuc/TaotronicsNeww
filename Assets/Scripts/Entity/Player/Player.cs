@@ -4,12 +4,13 @@ using UnityEngine.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class Player : Entity
 {
    
     
-    public NewInputSystem playerInput {get;private set;}
+    
     
     [HideInInspector]
     public HealthBar healthBar;
@@ -154,8 +155,8 @@ public class Player : Entity
     [SerializeField] public float spellSpacing = 1f;
     [SerializeField] private float delayBetweenShards = 0.1f;
     private float iceShardCooldownTimer;
-    
-    
+
+   
     
     [Header("Void Skill Settings")]
     [SerializeField] public GameObject voidSlashPrefab;
@@ -183,7 +184,9 @@ public class Player : Entity
 
     #endregion
     
-   
+   [Header(("CameraSettings"))]
+   protected CameraFollowObject cameraFollowObject;
+   [SerializeField] protected GameObject cameraFollowGO;
     
 
    
@@ -217,6 +220,8 @@ public class Player : Entity
     [SerializeField] public float parryWindowTime;
     [SerializeField] public GameObject parryEffectPrefab; // Başarılı parry efekti prefabı
 
+    private float fallSpeedYDampingChangeThreshold;
+
     
     
     
@@ -239,11 +244,12 @@ public class Player : Entity
             }
         }
         
-        playerInput = new NewInputSystem(); 
         stateMachine = new PlayerStateMachine();
         
         
         SetupStates();
+        
+        
     }
     
     protected override void Start()
@@ -274,8 +280,21 @@ public class Player : Entity
         CheckForDashInput();
         CheckForGroundDashInput();
         CheckForElectricDashInput();
+
+
+
+        if (rb.linearVelocityY < fallSpeedYDampingChangeThreshold && !CameraManager.instance.isLerpingYDamping &&
+            !CameraManager.instance.lerpedFromPlayerFalling)
+        {
+            CameraManager.instance.LerpYDamping(true);
+        }
         
-      
+        if (rb.linearVelocityY >= 0f && !CameraManager.instance.isLerpingYDamping && CameraManager.instance.lerpedFromPlayerFalling)
+        {
+            CameraManager.instance.lerpedFromPlayerFalling = false;
+            CameraManager.instance.LerpYDamping(false);
+        }
+        
         
         // Stun durumunu kontrol et
         bool isStunned = stateMachine.currentState == stunnedState;
@@ -295,7 +314,7 @@ public class Player : Entity
             CheckForAirPushInput();
             
             // Etkileşim kontrolü
-            if (playerInput.interactionInput && currentInteractable != null)
+            if (UserInput.WasInteractPressed && currentInteractable != null)
             {
                 // DialogueManager kontrolü
                 if (currentInteractable is DialogueNPC && DialogueManager.Instance == null)
@@ -372,6 +391,8 @@ public class Player : Entity
     {
         healthBar = GetComponent<HealthBar>();
         capsuleCollider = GetComponent<CapsuleCollider2D>();
+
+        cameraFollowObject = cameraFollowGO.GetComponent<CameraFollowObject>();
     }
     
     private void SetupRigidbody()
@@ -763,10 +784,10 @@ public class Player : Entity
             return;
         }
         dashTimer -= Time.deltaTime;
-        if (playerInput.dashInput&&dashTimer<0&&!IsGroundDetected())
+        if (UserInput.WasDashPressed&&dashTimer<0&&!IsGroundDetected())
         {
             dashTimer = dashCooldown;
-            dashDirection = playerInput.xInput;
+            dashDirection = UserInput.MoveInput.x;
             
             if (dashDirection == 0)
             {
@@ -787,7 +808,7 @@ public class Player : Entity
             return;
         }
         
-        if (playerInput.dashInput && dashTimer < 0 && IsGroundDetected())
+        if (UserInput.WasDashPressed && dashTimer < 0 && IsGroundDetected())
         {
 
             if (stateMachine.currentState == crouchState)
@@ -796,7 +817,7 @@ public class Player : Entity
                 
             }
             dashTimer = dashCooldown;
-            dashDirection = playerInput.xInput;
+            dashDirection = UserInput.MoveInput.x;
             
             if (dashDirection == 0)
             {
@@ -1040,7 +1061,7 @@ public class Player : Entity
         bool hasSkillManager = SkillManager.Instance != null;
         
         // Ice Shard
-        if (playerInput.spell1Input && canCastNewSpell)
+        if (UserInput.WasSpell1Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1049,14 +1070,7 @@ public class Player : Entity
                 {
                     stateMachine.ChangeState(spell1State);
                 }
-                else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.IceShard))
-                {
-                    // Mana yetersiz uyarısı
-                    if (FloatingTextManager.Instance != null)
-                    {
-                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                    }
-                }
+              
             }
             else
             {
@@ -1065,19 +1079,12 @@ public class Player : Entity
                 {
                     stateMachine.ChangeState(spell1State);
                 }
-                else if (stats.currentMana < iceShardManaCost)
-                {
-                    // Mana yetersiz uyarısı
-                    if (FloatingTextManager.Instance != null)
-                    {
-                        FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                    }
-                }
+               
             }
         }
         
         // Fire Spell
-        if (playerInput.spell2Input)
+        if (UserInput.WasSpell2Pressed)
         {
             // Eğer zaten spell2State'deyse tekrar state değiştirme (charge mechanic için)
             if (stateMachine.currentState != spell2State && canCastNewSpell)
@@ -1089,22 +1096,6 @@ public class Player : Entity
                     {
                         stateMachine.ChangeState(spell2State);
                     }
-                    else if (stats.currentMana < SkillManager.Instance.GetSkillManaCost(SkillType.FireSpell))
-                    {
-                        // Mana yetersiz uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                        }
-                    }
-                    else if (!SkillManager.Instance.IsSkillUnlocked("FireSpell"))
-                    {
-                        // Beceri açılmamış uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Skill not unlocked!", transform.position + Vector3.up, Color.red);
-                        }
-                    }
                 }
                 else
                 {
@@ -1113,20 +1104,12 @@ public class Player : Entity
                     {
                         stateMachine.ChangeState(spell2State);
                     }
-                    else
-                    {
-                        // Mana yetersiz uyarısı
-                        if (FloatingTextManager.Instance != null)
-                        {
-                            FloatingTextManager.Instance.ShowCustomText("Not enough mana!", transform.position + Vector3.up, Color.blue);
-                        }
-                    }
                 }
             }
         }
         
         // Earth Push
-        if (playerInput.spell3Input && canCastNewSpell)
+        if (UserInput.WasSpell3Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1148,7 +1131,7 @@ public class Player : Entity
         }
         
         // Air Push
-        if (playerInput.spell4Input && canCastNewSpell)
+        if (UserInput.WasSpell4Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1170,7 +1153,7 @@ public class Player : Entity
         }
         
         // Fireball Spell
-        if (playerInput.spell7Input && canCastNewSpell)
+        if (UserInput.WasSpell7Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1414,7 +1397,7 @@ public class Player : Entity
         }
         
         // Sadece parry tuşuna anlık basış varsa (GetKeyDown) && parry cooldown'u dolmuşsa
-        if (playerInput.parryInput && parryTimer <= 0)
+        if (UserInput.WasParryPressed && parryTimer <= 0)
         {
             // Düşmanın parry penceresi açık mı diye kontrol et
             if (IsEnemyParryWindowOpen())
@@ -1665,7 +1648,7 @@ public class Player : Entity
     private void CheckForVoidSkillInput()
     {
         // X tuşuna basıldığında ve beceri açıksa kullan
-        if (playerInput.voidSkillInput && stateMachine.currentState != voidState && CanUseVoidSkill())
+        if (UserInput.WasVoidInputPressed && stateMachine.currentState != voidState && CanUseVoidSkill())
         {
             // Yeterli mana ve beceri açıksa state'e geçiş yap
             stateMachine.ChangeState(voidState);
@@ -1692,10 +1675,10 @@ public class Player : Entity
         }
         
         // Check for the electric dash input
-        if (playerInput.spell5Input && CanUseElectricDash())
+        if (UserInput.WasSpell5Pressed && CanUseElectricDash())
         {
             // Set direction
-            dashDirection = playerInput.xInput;
+            dashDirection = UserInput.MoveInput.x;
             if (dashDirection == 0)
             {
                 dashDirection = facingdir;
@@ -1726,7 +1709,7 @@ public class Player : Entity
     private void CheckForAirPushInput()
     {
         // Check if player can use Air Push
-        if (playerInput.spell6Input && CanUseAirPush() && CanCastSpells())
+        if (UserInput.WasSpell6Pressed && CanUseAirPush() && CanCastSpells())
         {
             // Change to AirPush state
             stateMachine.ChangeState(airPushState);
@@ -1757,7 +1740,7 @@ public class Player : Entity
     private void CheckForUIInput()
     {
         // Inventory toggle
-        if (playerInput.inventoryInput)
+        if (UserInput.WasInventoryPressed)
         {
             ToggleInventory();
         }
@@ -1807,7 +1790,13 @@ public class Player : Entity
         
         base.FlipController(_x);
     }
-    
+
+    public override void Flip()
+    {
+        base.Flip();
+        cameraFollowObject.CallTurn();
+    }
+
     #endregion
     
     #region Velocity Override
@@ -1818,7 +1807,9 @@ public class Player : Entity
         rb.linearVelocity = new Vector2(xVelocity, yVelocity);
         FlipController(xVelocity);
     }
-   
+
+    
+
     public override void SetZeroVelocity()
     {
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);

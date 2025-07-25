@@ -36,14 +36,6 @@ public class VoidSkill : MonoBehaviour
          enemyUnit.Damage();
          enemyUnit.stats.TakeDamage(finalDamage,CharacterStats.DamageType.Void);
          
-         if (FloatingTextManager.Instance != null)
-         {
-            Vector3 textPosition = enemyUnit.transform.position + Vector3.up * 1.5f;
-            if (isCritical)
-               FloatingTextManager.Instance.ShowCustomText(finalDamage.ToString("0"), textPosition, Color.yellow);
-            else
-               FloatingTextManager.Instance.ShowCustomText(finalDamage.ToString("0"), textPosition, new Color(0.5f,0,1f));
-         }
       }
    }
 }

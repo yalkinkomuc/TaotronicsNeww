@@ -226,6 +226,9 @@ public class Chest : MonoBehaviour, IInteractable
         }
     }
 
+    public GameObject Player { get; set; }
+    public bool CanInteract { get; set; }
+
     public void Interact()
     {
         // Eğer animasyon oynatılıyorsa hiçbir şey yapma

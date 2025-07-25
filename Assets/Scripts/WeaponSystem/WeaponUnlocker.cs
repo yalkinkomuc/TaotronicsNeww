@@ -90,11 +90,11 @@ public class WeaponUnlocker : MonoBehaviour
         // 3) Silahı unlock et
         weaponManager.UnlockWeapon(weaponIndex);
         
-        // 4) Secondary weapon ise kuşan, primary weapon ise sadece unlock et
-        if (isSecondary)
-        {
-            weaponManager.EquipSecondaryWeapon(weaponIndex);
-        }
+        // // 4) Secondary weapon ise kuşan, primary weapon ise sadece unlock et
+        // if (isSecondary)
+        // {
+        //     weaponManager.EquipSecondaryWeapon(weaponIndex);
+        // }
 
         // 5) EquipmentManager'a bildir (stats güncellensin)
         if (EquipmentManager.Instance != null && BlacksmithManager.Instance != null)
@@ -107,13 +107,13 @@ public class WeaponUnlocker : MonoBehaviour
                 if (secondaryWeaponData != null)
                 {
                     Debug.Log($"[WeaponUnlocker] {weaponName} SecondaryWeaponData bulundu: {secondaryWeaponData.itemName}");
-                    bool equipResult = EquipmentManager.Instance.EquipItem(secondaryWeaponData);
-                    Debug.Log($"[WeaponUnlocker] EquipmentManager.EquipItem sonucu: {equipResult}");
-                    
-                    if (!equipResult)
-                    {
-                        Debug.LogError($"[WeaponUnlocker] {weaponName} EquipItem başarısız oldu!");
-                    }
+                   // bool equipResult = EquipmentManager.Instance.EquipItem(secondaryWeaponData);
+                    // Debug.Log($"[WeaponUnlocker] EquipmentManager.EquipItem sonucu: {equipResult}");
+                    //
+                    // if (!equipResult)
+                    // {
+                    //     Debug.LogError($"[WeaponUnlocker] {weaponName} EquipItem başarısız oldu!");
+                    // }
                 }
                 else
                 {
@@ -132,14 +132,14 @@ public class WeaponUnlocker : MonoBehaviour
                     
                     if (weaponData != null)
                     {
-                        Debug.Log($"[WeaponUnlocker] {weaponName} WeaponData bulundu: {weaponData.itemName}");
-                        bool equipResult = EquipmentManager.Instance.EquipItem(weaponData);
-                        Debug.Log($"[WeaponUnlocker] EquipmentManager.EquipItem sonucu: {equipResult}");
-                        
-                        if (!equipResult)
-                        {
-                            Debug.LogError($"[WeaponUnlocker] {weaponName} EquipItem başarısız oldu!");
-                        }
+                      //   Debug.Log($"[WeaponUnlocker] {weaponName} WeaponData bulundu: {weaponData.itemName}");
+                      // //  bool equipResult = EquipmentManager.Instance.EquipItem(weaponData);
+                      //   Debug.Log($"[WeaponUnlocker] EquipmentManager.EquipItem sonucu: {equipResult}");
+                      //   
+                      //   if (!equipResult)
+                      //   {
+                      //       Debug.LogError($"[WeaponUnlocker] {weaponName} EquipItem başarısız oldu!");
+                      //   }
                     }
                     else
                     {
@@ -149,10 +149,10 @@ public class WeaponUnlocker : MonoBehaviour
             }
         }
 
-        // 6) UI Equipment Selection Panel'i güncelle (eğer açıksa)
-        RefreshEquipmentSelectionPanel(isSecondary);
-
-        Debug.Log($"[WeaponUnlocker] {weaponName} başarıyla unlock edildi ve aktif hale getirildi.");
+        // // 6) UI Equipment Selection Panel'i güncelle (eğer açıksa)
+        // RefreshEquipmentSelectionPanel(isSecondary);
+        //
+        // Debug.Log($"[WeaponUnlocker] {weaponName} başarıyla unlock edildi ve aktif hale getirildi.");
     }
 
     /// <summary>
