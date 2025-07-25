@@ -352,32 +352,18 @@ public class CheckpointSelectionScreen : BaseUIPanel
             }
         }
         
-        // Geçiş efekti
-        GameObject transitionEffectPrefab = Resources.Load<GameObject>("SceneTransitionEffect");
-        if (transitionEffectPrefab != null)
-        {
-            Instantiate(transitionEffectPrefab);
-        }
         
         // Rest butonundan dönüş olduğunu belirt - checkpoint pozisyonuna yerleşmesi için
         PlayerPrefs.SetInt("UseCheckpointRespawn", 1);
         PlayerPrefs.Save();
         
         // Şu anki sahne index'ini al
-        int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         
-        // Gecikme ile sahne geçişi
-        // İsim karmaşasından kaçınmak için SceneManager'ı doğrudan arayalım
-        SceneManager customSceneManager = FindFirstObjectByType<SceneManager>();
+            SceneManager.LoadScene(currentSceneIndex);
+       
+      
             
-        if (customSceneManager != null)
-        {
-            customSceneManager.LoadBossArena(currentSceneIndex);
-        }
-        else
-        {
-            // Unity'nin SceneManager'ını kullan
-            UnityEngine.SceneManagement.SceneManager.LoadScene(currentSceneIndex);
-        }
+       
     }
 } 

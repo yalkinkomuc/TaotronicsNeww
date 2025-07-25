@@ -26,6 +26,9 @@ public class DialogueNPC : MonoBehaviour, IInteractable
         }
     }
 
+    public GameObject Player { get; set; }
+    public bool CanInteract { get; set; }
+
     public virtual void Interact()
     {
         // DialogueManager null kontrolü

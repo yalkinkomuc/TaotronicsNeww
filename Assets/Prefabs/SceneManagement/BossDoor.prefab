@@ -111,8 +111,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4965643546933412517}
   - component: {fileID: 244718211194294516}
-  - component: {fileID: 2935367261900161824}
   - component: {fileID: 6511306384540548263}
+  - component: {fileID: 5891154867037050916}
   m_Layer: 0
   m_Name: BossDoor
   m_TagString: Untagged
@@ -191,22 +191,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2935367261900161824
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5354558526226233619}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd240f05a8214e24888d1d45d9b3ad0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bossArenaSceneIndex: 2
-  prompt: {fileID: 2155451715807864560}
-  bossName: Necromancer
-  defeatedVisual: {fileID: 0}
 --- !u!61 &6511306384540548263
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -253,3 +237,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &5891154867037050916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5354558526226233619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 299f2327d2fb8a6428c009780f66b2da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneToLoad:
+    _sceneAsset: {fileID: 0}
+    _sceneName: 

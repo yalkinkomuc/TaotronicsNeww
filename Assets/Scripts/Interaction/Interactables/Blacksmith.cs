@@ -89,7 +89,10 @@ public class Blacksmith : MonoBehaviour, IInteractable
             }
         }
     }
-    
+
+    public GameObject Player { get; set; }
+    public bool CanInteract { get; set; }
+
     public void Interact()
     {
         if (player == null)

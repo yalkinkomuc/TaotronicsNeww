@@ -252,7 +252,12 @@ public class Player : Entity
         
         
     }
-    
+
+    private void OnEnable()
+    {
+        
+    }
+
     protected override void Start()
     {
         base.Start();
