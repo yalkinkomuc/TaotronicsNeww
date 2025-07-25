@@ -19,12 +19,16 @@ public class TriggerInteractionBase :MonoBehaviour, IInteractable
 
     private void Update()
     {
+        
+        Debug.Log(CanInteract);
+        
         if (CanInteract)
         {
             if (UserInput.WasInteractPressed)
             {
                 Interact();
             }
+            
         }
     }
 
@@ -33,6 +37,7 @@ public class TriggerInteractionBase :MonoBehaviour, IInteractable
         if(other.gameObject == Player)
         {
             CanInteract = true;
+            SceneTransition();
         }
     }
 
@@ -49,6 +54,11 @@ public class TriggerInteractionBase :MonoBehaviour, IInteractable
     {
         
         
+        
+    }
+
+    public virtual void SceneTransition()
+    {
         
     }
 

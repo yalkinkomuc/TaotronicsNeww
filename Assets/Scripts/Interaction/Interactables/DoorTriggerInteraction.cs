@@ -24,4 +24,6 @@ public class DoorTriggerInteraction : TriggerInteractionBase
    {
       SceneSwapManager.SwapSceneFromDoorUse(sceneToLoad, DoorToSpawnTo);
    }
+
+   
 }
