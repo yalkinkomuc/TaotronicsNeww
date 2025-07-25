@@ -8,6 +8,13 @@ public class SceneSwapManager : MonoBehaviour
    public static SceneSwapManager instance;
 
    private static bool loadFromDoor;
+
+   private GameObject Player;
+   private Player playerScript;
+   private Collider2D playerCollider;
+   private Collider2D doorCollider;
+   private Vector3 playerSpawnPosition;
+   
    
    private DoorTriggerInteraction.DoorToSpawnAt doorToSpawnTo;
 
@@ -17,6 +24,12 @@ public class SceneSwapManager : MonoBehaviour
       {
          instance = this;
       }
+      
+      Player = GameObject.FindWithTag("Player");
+      playerScript = Player.GetComponent<Player>();
+      playerCollider = Player.GetComponent<Collider2D>();
+      
+      
    }
 
    private void OnEnable()
@@ -54,10 +67,35 @@ public class SceneSwapManager : MonoBehaviour
    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
    {
       SceneFadeManager.instance.StartFadeIn();
+      playerScript.ShowWeapons();
 
       if (loadFromDoor)
       {
+         FindDoor(doorToSpawnTo);
+         Player.transform.position = playerSpawnPosition;
          loadFromDoor = false;
       }
+   }
+
+   private void FindDoor(DoorTriggerInteraction.DoorToSpawnAt doorSpawnNumber)
+   {
+      DoorTriggerInteraction[] doors =  FindObjectsOfType<DoorTriggerInteraction>();
+
+      for(int i = 0; i < doors.Length; i++)
+      {
+         if (doors[i].CurrentDoorPosition == doorSpawnNumber)
+         {
+            doorCollider = doors[i].gameObject.GetComponent<Collider2D>();
+            
+            CalculateSpawnPosition();
+            return;
+         }
+      }
+   }
+
+   private void CalculateSpawnPosition()
+   {
+      float colliderHeight = playerCollider.bounds.extents.y;
+      playerSpawnPosition = doorCollider.transform.position + new Vector3(0f, colliderHeight * 0f, 0f);
    }
 }

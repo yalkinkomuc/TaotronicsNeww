@@ -26,7 +26,7 @@ public class UIInputBlocker : MonoBehaviour
         {
             instance = this;
             
-            //DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -173,7 +173,7 @@ public class UIInputBlocker : MonoBehaviour
         
         // Player'ın sahne değişimi sonrası hazır olmasını bekle
         float waitTime = 0f;
-        while (waitTime < 2f && (PlayerManager.instance?.player?.playerInput == null))
+        while (waitTime < 2f )
         {
             yield return new WaitForSeconds(0.1f);
             waitTime += 0.1f;
@@ -219,30 +219,21 @@ public class UIInputBlocker : MonoBehaviour
         // If there are panels, disable input (but only if Player is ready)
         if (activePanelCount > 0)
         {
-            if (PlayerManager.instance?.player?.playerInput != null)
-            {
+           
                 
-                DisableGameplayInput();
-            }
-            else
-            {
-                Debug.Log("UIInputBlocker: Active panels found but Player not ready, skipping input disable");
-            }
+            DisableGameplayInput();
+            
+           
         }
         else
         {
-            // Only enable input if Player is ready
-            if (PlayerManager.instance?.player?.playerInput != null)
-            {
-               
-                EnableGameplayInput(true);
-            }
-            else
-            {
-                
-                // Force enable after delay if no Player found
-                StartCoroutine(ForceEnableInputAfterDelay());
-            }
+            
+            EnableGameplayInput(true);
+            
+            
+            StartCoroutine(ForceEnableInputAfterDelay());
+              
+            
         }
     }
     
@@ -250,8 +241,7 @@ public class UIInputBlocker : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         
-        // If still no active panels and Player still not ready, force enable
-        if (activePanelCount == 0 && PlayerManager.instance?.player?.playerInput == null)
+        if (activePanelCount == 0 )
         {
             
             SetUIBlockerVisibility(false);
@@ -269,15 +259,7 @@ public class UIInputBlocker : MonoBehaviour
             activePanelCount++;
             if (activePanelCount == 1) // When first panel activates
             {
-                // Only disable input if Player is ready
-                if (PlayerManager.instance?.player?.playerInput != null)
-                {
-                    DisableGameplayInput();
-                }
-                else
-                {
-                    Debug.Log("UIInputBlocker: Panel activated but Player not ready, skipping input disable");
-                }
+                DisableGameplayInput();
             }
         }
         else if (!isVisible || !actuallyVisible)
@@ -370,29 +352,35 @@ public class UIInputBlocker : MonoBehaviour
     {
         if (uiBlockerPanel != null)
         {
-            uiBlockerPanel.SetActive(isVisible);
+            // UI Blocker panel'ini hiç kapatma, sadece görünürlüğünü ayarla
+            CanvasGroup canvasGroup = uiBlockerPanel.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = uiBlockerPanel.AddComponent<CanvasGroup>();
+            }
+            
+            canvasGroup.alpha = isVisible ? 1f : 0f;
+            canvasGroup.interactable = isVisible;
+            canvasGroup.blocksRaycasts = isVisible;
         }
     }
     
     // ONLY disable GAMEPLAY INPUTS, do NOT affect UI inputs
     public void DisableGameplayInput()
     {
-        
+        // GameObject aktif değilse Coroutine başlatma
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.LogWarning("UIInputBlocker: Cannot start coroutine - GameObject is inactive. Re-enabling GameObject.");
+            gameObject.SetActive(true);
+        }
         
         // Disable player inputs
         Player player = PlayerManager.instance?.player;
         if (player != null)
         {
-            IPlayerInput playerInput = player.playerInput;
-            if (playerInput != null)
-            {
-                playerInput.DisableGameplayInput();
-            }
-            else
-            {
-               
-                StartCoroutine(RetryDisableGameplayInput());
-            }
+            StartCoroutine(RetryDisableGameplayInput());
+            
         }
         else
         {
@@ -401,8 +389,7 @@ public class UIInputBlocker : MonoBehaviour
         
         // Show UI Blocker
         SetUIBlockerVisibility(true);
-        // Oyun duraklat
-        Time.timeScale = 0f;
+       
     }
     
     // Player henüz hazır değilse tekrar dene
@@ -421,7 +408,7 @@ public class UIInputBlocker : MonoBehaviour
             }
             
             Player player = PlayerManager.instance?.player;
-            if (player != null && player.playerInput != null)
+            if (player != null)
             {
                
                
@@ -453,24 +440,22 @@ public class UIInputBlocker : MonoBehaviour
                 return;
             }
             
-            
-            IPlayerInput playerInput = player.playerInput;
-            if (playerInput != null)
-            {
-                // Enable all inputs
-                playerInput.EnableGameplayInput();
-            }
-            else
-            {
-                return;
-            }
-            
             // Hide UI Blocker
             SetUIBlockerVisibility(false);
-            // Oyun devam etsin
-            Time.timeScale = 1f;
+           
         }
     }
+    
+    // GameObject'in kapanmasını engelle
+    // private void OnDisable()
+    // {
+    //     // UI InputBlocker'ın kapanmasını engelle
+    //     if (gameObject.activeInHierarchy == false)
+    //     {
+    //         gameObject.SetActive(true);
+    //         Debug.LogWarning("UIInputBlocker: Attempted to disable UIInputBlocker GameObject. Keeping it active for system stability.");
+    //     }
+    // }
     
   
    

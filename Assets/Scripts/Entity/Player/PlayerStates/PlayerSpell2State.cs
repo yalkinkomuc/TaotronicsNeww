@@ -80,7 +80,7 @@ public class PlayerSpell2State : PlayerState
         }
         
         // T tuşu bırakıldığında veya max süre dolduğunda
-        if (!player.playerInput.spell2Input || currentChargeTime >= MAX_CHARGE_TIME)
+        if (!UserInput.WasSpell2Pressed || currentChargeTime >= MAX_CHARGE_TIME)
         {
             CleanupSpell();
             stateMachine.ChangeState(player.idleState);

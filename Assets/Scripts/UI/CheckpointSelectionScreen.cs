@@ -166,7 +166,7 @@ public class CheckpointSelectionScreen : BaseUIPanel
             if (UIInputBlocker.instance != null)
             {
                 Player player = PlayerManager.instance?.player;
-                if (player != null && player.playerInput != null)
+                if (player != null)
                 {
                     UIInputBlocker.instance.AddPanel(gameObject);
                     UIInputBlocker.instance.DisableGameplayInput();

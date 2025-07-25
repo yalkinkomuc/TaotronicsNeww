@@ -60,7 +60,7 @@ public class BaseUIPanel : MonoBehaviour
     private void HandleInputBlocking()
     {
         // Sadece Player ve PlayerInput hazırsa input blocking yap
-        if (UIInputBlocker.instance != null && IsPlayerReady())
+        if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
         }
@@ -76,14 +76,14 @@ public class BaseUIPanel : MonoBehaviour
         float waitTime = 0f;
         const float maxWaitTime = 2f;
         
-        while (waitTime < maxWaitTime && !IsPlayerReady())
+        while (waitTime < maxWaitTime)
         {
             yield return new WaitForSeconds(0.1f);
             waitTime += 0.1f;
         }
         
         // Player hazır olduğunda input blocking yap
-        if (IsPlayerReady() && UIInputBlocker.instance != null)
+        if ( UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.AddPanel(gameObject);
         }
@@ -137,11 +137,7 @@ public class BaseUIPanel : MonoBehaviour
     }
     
     // Player ve PlayerInput'un hazır olup olmadığını kontrol et
-    private bool IsPlayerReady()
-    {
-        Player player = PlayerManager.instance?.player;
-        return player != null && player.playerInput != null;
-    }
+   
     
     // UI elemanının güvenli pozisyonda olup olmadığını kontrol et
     public bool IsInSafePosition()
@@ -192,7 +188,7 @@ public class BaseUIPanel : MonoBehaviour
     protected virtual void Update()
     {
         // ESC tuşu ile kapatma (yeni input sistemi)
-        if (PlayerManager.instance?.player?.playerInput?.escapeInput == true && gameObject.activeInHierarchy)
+        if (UserInput.WasEscapePressed && gameObject.activeInHierarchy)
         {
             OnEscapePressed();
         }

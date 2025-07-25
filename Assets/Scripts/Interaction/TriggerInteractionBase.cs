@@ -3,16 +3,13 @@ using UnityEngine;
 
 public class TriggerInteractionBase :MonoBehaviour, IInteractable
 {
-    public NewInputSystem playerInput {get;private set;}
+  
     
     public GameObject Player { get; set; }
     public bool CanInteract { get; set; }
 
 
-    private void Awake()
-    {
-        playerInput = new NewInputSystem();
-    }
+   
 
     private void Start()
     {
@@ -24,7 +21,7 @@ public class TriggerInteractionBase :MonoBehaviour, IInteractable
     {
         if (CanInteract)
         {
-            if (playerInput.interactionInput)
+            if (UserInput.WasInteractPressed)
             {
                 Interact();
             }

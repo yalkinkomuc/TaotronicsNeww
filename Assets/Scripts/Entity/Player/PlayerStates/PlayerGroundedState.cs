@@ -25,17 +25,17 @@ public class PlayerGroundedState : PlayerState
             stateMachine.ChangeState(player.airState);
         }
         
-        if (player.playerInput.jumpInput&&player.IsGroundDetected())
+        if (UserInput.IsJumpBeingPressed&&player.IsGroundDetected()) //
         {
             stateMachine.ChangeState(player.airState);
         }
 
-        if (player.playerInput.crouchInput && player.IsGroundDetected())
+        if (UserInput.WasCrouchPressed && player.IsGroundDetected())
         {
             stateMachine.ChangeState(player.crouchState);
         }
         
-        if (player.playerInput.attackInput)
+        if (UserInput.WasAttackPressed)
         {
             // Hangi silahın aktif olduğunu kontrol et
             if (IsHammerActive())
@@ -51,7 +51,7 @@ public class PlayerGroundedState : PlayerState
 
        
 
-        if ((player.playerInput.boomerangInput) && player.CanThrowBoomerang())
+        if (UserInput.WasBoomerangPressed && player.CanThrowBoomerang())
         {
             stateMachine.ChangeState(player.throwBoomerangState);
         }

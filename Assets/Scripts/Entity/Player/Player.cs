@@ -10,7 +10,7 @@ public class Player : Entity
 {
    
     
-    public NewInputSystem playerInput {get;private set;}
+    
     
     [HideInInspector]
     public HealthBar healthBar;
@@ -244,7 +244,6 @@ public class Player : Entity
             }
         }
         
-        playerInput = new NewInputSystem(); 
         stateMachine = new PlayerStateMachine();
         
         
@@ -252,12 +251,7 @@ public class Player : Entity
         
         
     }
-
-    private void OnEnable()
-    {
-        
-    }
-
+    
     protected override void Start()
     {
         base.Start();
@@ -320,7 +314,7 @@ public class Player : Entity
             CheckForAirPushInput();
             
             // Etkileşim kontrolü
-            if (playerInput.interactionInput && currentInteractable != null)
+            if (UserInput.WasInteractPressed && currentInteractable != null)
             {
                 // DialogueManager kontrolü
                 if (currentInteractable is DialogueNPC && DialogueManager.Instance == null)
@@ -790,10 +784,10 @@ public class Player : Entity
             return;
         }
         dashTimer -= Time.deltaTime;
-        if (playerInput.dashInput&&dashTimer<0&&!IsGroundDetected())
+        if (UserInput.WasDashPressed&&dashTimer<0&&!IsGroundDetected())
         {
             dashTimer = dashCooldown;
-            dashDirection = playerInput.xInput;
+            dashDirection = UserInput.MoveInput.x;
             
             if (dashDirection == 0)
             {
@@ -814,7 +808,7 @@ public class Player : Entity
             return;
         }
         
-        if (playerInput.dashInput && dashTimer < 0 && IsGroundDetected())
+        if (UserInput.WasDashPressed && dashTimer < 0 && IsGroundDetected())
         {
 
             if (stateMachine.currentState == crouchState)
@@ -823,7 +817,7 @@ public class Player : Entity
                 
             }
             dashTimer = dashCooldown;
-            dashDirection = playerInput.xInput;
+            dashDirection = UserInput.MoveInput.x;
             
             if (dashDirection == 0)
             {
@@ -1067,7 +1061,7 @@ public class Player : Entity
         bool hasSkillManager = SkillManager.Instance != null;
         
         // Ice Shard
-        if (playerInput.spell1Input && canCastNewSpell)
+        if (UserInput.WasSpell1Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1090,7 +1084,7 @@ public class Player : Entity
         }
         
         // Fire Spell
-        if (playerInput.spell2Input)
+        if (UserInput.WasSpell2Pressed)
         {
             // Eğer zaten spell2State'deyse tekrar state değiştirme (charge mechanic için)
             if (stateMachine.currentState != spell2State && canCastNewSpell)
@@ -1115,7 +1109,7 @@ public class Player : Entity
         }
         
         // Earth Push
-        if (playerInput.spell3Input && canCastNewSpell)
+        if (UserInput.WasSpell3Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1137,7 +1131,7 @@ public class Player : Entity
         }
         
         // Air Push
-        if (playerInput.spell4Input && canCastNewSpell)
+        if (UserInput.WasSpell4Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1159,7 +1153,7 @@ public class Player : Entity
         }
         
         // Fireball Spell
-        if (playerInput.spell7Input && canCastNewSpell)
+        if (UserInput.WasSpell7Pressed && canCastNewSpell)
         {
             if (hasSkillManager)
             {
@@ -1403,7 +1397,7 @@ public class Player : Entity
         }
         
         // Sadece parry tuşuna anlık basış varsa (GetKeyDown) && parry cooldown'u dolmuşsa
-        if (playerInput.parryInput && parryTimer <= 0)
+        if (UserInput.WasParryPressed && parryTimer <= 0)
         {
             // Düşmanın parry penceresi açık mı diye kontrol et
             if (IsEnemyParryWindowOpen())
@@ -1654,7 +1648,7 @@ public class Player : Entity
     private void CheckForVoidSkillInput()
     {
         // X tuşuna basıldığında ve beceri açıksa kullan
-        if (playerInput.voidSkillInput && stateMachine.currentState != voidState && CanUseVoidSkill())
+        if (UserInput.WasVoidInputPressed && stateMachine.currentState != voidState && CanUseVoidSkill())
         {
             // Yeterli mana ve beceri açıksa state'e geçiş yap
             stateMachine.ChangeState(voidState);
@@ -1681,10 +1675,10 @@ public class Player : Entity
         }
         
         // Check for the electric dash input
-        if (playerInput.spell5Input && CanUseElectricDash())
+        if (UserInput.WasSpell5Pressed && CanUseElectricDash())
         {
             // Set direction
-            dashDirection = playerInput.xInput;
+            dashDirection = UserInput.MoveInput.x;
             if (dashDirection == 0)
             {
                 dashDirection = facingdir;
@@ -1715,7 +1709,7 @@ public class Player : Entity
     private void CheckForAirPushInput()
     {
         // Check if player can use Air Push
-        if (playerInput.spell6Input && CanUseAirPush() && CanCastSpells())
+        if (UserInput.WasSpell6Pressed && CanUseAirPush() && CanCastSpells())
         {
             // Change to AirPush state
             stateMachine.ChangeState(airPushState);
@@ -1746,7 +1740,7 @@ public class Player : Entity
     private void CheckForUIInput()
     {
         // Inventory toggle
-        if (playerInput.inventoryInput)
+        if (UserInput.WasInventoryPressed)
         {
             ToggleInventory();
         }
