@@ -53,6 +53,7 @@ public class Player : Entity
     [SerializeField] public GameObject electricDashPrefab;
     [SerializeField] public Transform electricDashSpawnPoint;
     [SerializeField] private float electricDashManaCost = 30f;
+    [SerializeField] public GameObject shockwavePrefab; // Shockwave efekti için referans
     
     [Header("DashVFX")]
     public GameObject dashEffectPrefab;

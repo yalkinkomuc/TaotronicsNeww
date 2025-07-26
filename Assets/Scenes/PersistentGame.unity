@@ -17464,7 +17464,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 4.9479165
+  orthographic size: 4.21875
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -28132,6 +28132,7 @@ MonoBehaviour:
   electricDashPrefab: {fileID: 2187963067883842217, guid: e934d529a0955f146b7c5e71335d28e1, type: 3}
   electricDashSpawnPoint: {fileID: 7450083541054871417}
   electricDashManaCost: 10
+  shockwavePrefab: {fileID: 5132641287387126444, guid: 2a814831973477d4584917d8e92f1f0f, type: 3}
   dashEffectPrefab: {fileID: 8988165034031698401, guid: c977397730e256e40b8dce63ee7c5491, type: 3}
   groundDashEffectPrefab: {fileID: 304813384200678175, guid: 144c0862aeb48a4409dad31d8a4e4253, type: 3}
   effectCount: 3

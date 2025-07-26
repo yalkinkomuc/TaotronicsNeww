@@ -113,6 +113,23 @@ public class PlayerElectricDashState : PlayerState
             }
         }
         
+        // Spawn shockwave effect at the start position
+        if (player.shockwavePrefab != null)
+        {
+            GameObject shockwaveEffect = Object.Instantiate(
+                player.shockwavePrefab,
+                startPos,
+                Quaternion.identity
+            );
+            
+            // Call the shockwave effect
+            ShockWaveManager shockwaveManager = shockwaveEffect.GetComponent<ShockWaveManager>();
+            if (shockwaveManager != null)
+            {
+                shockwaveManager.CallShockWave();
+            }
+        }
+        
         // Small delay for effect to appear before teleporting
         yield return new WaitForSeconds(0.05f);
         

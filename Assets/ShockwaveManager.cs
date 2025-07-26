@@ -35,5 +35,8 @@ public class ShockWaveManager : MonoBehaviour
             _material.SetFloat(_waveDistanceFromCenter, lerpedAmount);
             yield return null;
         }
+        
+        // Shockwave tamamlandıktan sonra objeyi sil
+        Destroy(gameObject);
     }
 }
