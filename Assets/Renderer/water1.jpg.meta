@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ee903e61aa0a78b4c9b5131b70d633d9
+guid: 231d680d53b94c44bb7b864acf610154
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2333020893515587696
-    second: waterfall_0
+      213: -5130686204486642245
+    second: water1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,9 +40,9 @@ TextureImporter:
     filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
-    wrapW: 1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: waterfall_0
+      name: water1_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 256
-        height: 192
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 070af8b442e806020800000000000000
-      internalID: 2333020893515587696
+      spriteID: bb5939f94142cc8b0800000000000000
+      internalID: -5130686204486642245
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      waterfall_0: 2333020893515587696
+      water1_0: -5130686204486642245
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

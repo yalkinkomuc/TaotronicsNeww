@@ -784,7 +784,7 @@ public class Player : Entity
             return;
         }
         dashTimer -= Time.deltaTime;
-        if (UserInput.WasDashPressed&&dashTimer<0&&!IsGroundDetected())
+        if (UserInput.WasDashPressed && dashTimer <0 && !IsGroundDetected())
         {
             dashTimer = dashCooldown;
             dashDirection = UserInput.MoveInput.x;

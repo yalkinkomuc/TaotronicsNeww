@@ -21,7 +21,6 @@ public class CameraControlTrigger : MonoBehaviour
            if (customInspectorObjects.panCameraOnContact)
            {
                CameraManager.instance.PanCameraOnContact(customInspectorObjects.panDistance,customInspectorObjects.panTime,customInspectorObjects.panDirection,false);
-               Debug.Log("girdikiste");
            }
        }
    }
@@ -33,7 +32,6 @@ public class CameraControlTrigger : MonoBehaviour
            if (customInspectorObjects.panCameraOnContact)
            {
                CameraManager.instance.PanCameraOnContact(customInspectorObjects.panDistance,customInspectorObjects.panTime,customInspectorObjects.panDirection,true);
-               Debug.Log("ciktikiste");
            }
        }
    }

@@ -31,8 +31,6 @@ public class SceneSwapManager : MonoBehaviour
       Player = GameObject.FindWithTag("Player");
       playerScript = Player.GetComponent<Player>();
       playerCollider = Player.GetComponent<Collider2D>();
-      
-      
    }
 
    private void OnEnable()
@@ -107,8 +105,19 @@ public class SceneSwapManager : MonoBehaviour
 
    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
    {
-      SceneFadeManager.instance.StartFadeIn();
+      // CameraManager'dan SceneBoundary'yi güncelle
+      if (CameraManager.instance != null)
+      {
+         CameraManager.instance.UpdateSceneBoundary();
+      }
+      
       playerScript.ShowWeapons();
+      
+      
+      SceneFadeManager.instance.StartFadeIn();
+     
+
+     
 
       if (loadFromDoor)
       {
@@ -177,6 +186,8 @@ public class SceneSwapManager : MonoBehaviour
       
       
       float colliderHeight = playerCollider.bounds.extents.y;
-      playerSpawnPosition = sceneTriggerCollider.transform.position + new Vector3(xOffset, colliderHeight * 0f, 0f);
+      playerSpawnPosition = sceneTriggerCollider.transform.position + new Vector3(xOffset, colliderHeight * -0.75f, 0f);
    }
+
+   
 }

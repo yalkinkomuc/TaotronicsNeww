@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class SceneTriggerInteraction : TriggerInteractionBase
@@ -32,5 +33,11 @@ public class SceneTriggerInteraction : TriggerInteractionBase
         }
         
         SceneSwapManager.SwapSceneFromTrigger(sceneToLoad, sceneToSpawnTo);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(transform.position,transform.position + transform.right * xOffset);
+      
     }
 }
