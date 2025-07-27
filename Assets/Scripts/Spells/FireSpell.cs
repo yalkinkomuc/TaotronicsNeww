@@ -68,7 +68,7 @@ public class FireSpell : MonoBehaviour
             boxCollider2D.enabled = false;
         }
     }
-
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         Enemy enemy = other.GetComponent<Enemy>();

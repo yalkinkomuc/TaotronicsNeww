@@ -126,18 +126,43 @@ public class PlayerSpell2State : PlayerState
 
     private void CleanupSpell()
     {
+        Debug.Log($"CleanupSpell() çağrıldı - isSpellActive: {isSpellActive}, currentFireSpell null mu?: {currentFireSpell == null}");
+        
         if (currentFireSpell != null)
         {
+            Debug.Log($"currentFireSpell bulundu: {currentFireSpell.name}");
             GameObject.Destroy(currentFireSpell.gameObject);
             currentFireSpell = null;
+            Debug.Log("currentFireSpell null yapıldı");
         }
+        else
+        {
+            Debug.Log("currentFireSpell zaten null - sahnedeki fire spell'leri arıyorum...");
+            
+            // Sahnedeki tüm FireSpell'leri bul ve sil
+            FireSpell[] fireSpells = Object.FindObjectsOfType<FireSpell>();
+            Debug.Log($"Sahnede {fireSpells.Length} adet FireSpell bulundu");
+            
+            foreach (FireSpell spell in fireSpells)
+            {
+                if (spell != null && spell.gameObject != null)
+                {
+                    Debug.Log($"Fire spell siliniyor: {spell.name}");
+                    GameObject.Destroy(spell.gameObject);
+                }
+            }
+        }
+        
         isSpellActive = false;
+        Debug.Log($"isSpellActive false yapıldı: {isSpellActive}");
     }
 
     // Animation event'ten çağrılacak metod - PauseSpell2Animation çağrıldığında fire spell'i spawn et
     public void SpawnFireSpell()
     {
-        if (player.fireSpellPrefab != null && player.fireSpellPoint != null && !isSpellActive)
+        Debug.Log($"SpawnFireSpell() çağrıldı - isSpellActive: {isSpellActive}, currentFireSpell null mu?: {currentFireSpell == null}");
+        
+        if (player.fireSpellPrefab != null && player.fireSpellPoint != null)
         {
             // SkillManager ile skill kullanımını işaretle
             if (SkillManager.Instance != null)
@@ -148,11 +173,13 @@ public class PlayerSpell2State : PlayerState
             
             GameObject spellObj = GameObject.Instantiate(player.fireSpellPrefab, 
                 player.fireSpellPoint.position, 
-                player.fireSpellPoint.rotation,
-                player.transform);
+                player.fireSpellPoint.rotation
+                );
             
             currentFireSpell = spellObj.GetComponent<FireSpell>();
             isSpellActive = true;
+            
+            Debug.Log($"Fire spell oluşturuldu - isSpellActive: {isSpellActive}, currentFireSpell null mu?: {currentFireSpell == null}");
             
             // Fire spell'in damage collider'ını aktif et
             if (currentFireSpell != null)

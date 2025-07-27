@@ -1087,20 +1087,35 @@ public class Player : Entity
         // Fire Spell - Charge-based skill
         if (UserInput.WasSpell2Pressed && stateMachine.currentState != spell2State && canCastNewSpell)
         {
+            Debug.Log("Spell2 tuşu basıldı! Kontroller yapılıyor...");
+            Debug.Log($"Mevcut state: {stateMachine.currentState}, canCastNewSpell: {canCastNewSpell}");
+            
             if (hasSkillManager)
             {
+                Debug.Log("SkillManager ile kontrol yapılıyor");
                 // SkillManager üzerinden kontrol et
                 if (SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
                 {
+                    Debug.Log("SkillManager: Fire Spell kullanıma hazır, Spell2State'e geçiliyor");
                     stateMachine.ChangeState(spell2State);
+                }
+                else
+                {
+                    Debug.Log("SkillManager: Fire Spell kullanıma hazır değil");
                 }
             }
             else
             {
+                Debug.Log("SkillManager yok, eski yöntemle kontrol yapılıyor");
                 // Eski yöntem - SkillManager olmadan
                 if (stats.currentMana >= fireSpellManaDrainPerSecond)
                 {
+                    Debug.Log($"Eski yöntem: Mana yeterli ({stats.currentMana} >= {fireSpellManaDrainPerSecond}), Spell2State'e geçiliyor");
                     stateMachine.ChangeState(spell2State);
+                }
+                else
+                {
+                    Debug.Log($"Eski yöntem: Mana yetersiz ({stats.currentMana} < {fireSpellManaDrainPerSecond})");
                 }
             }
         }
