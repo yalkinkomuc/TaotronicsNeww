@@ -88,9 +88,6 @@ public class PlayerAttackState : PlayerState, IWeaponAttackState
             player.SetVelocity(rb.linearVelocity.x*.5f, rb.linearVelocity.y);
         }
         
-       
-
-
         if (triggerCalled)
         {
             stateMachine.ChangeState(player.idleState);

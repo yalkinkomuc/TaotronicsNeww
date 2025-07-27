@@ -447,6 +447,16 @@ public class PlayerAnimTriggers : MonoBehaviour
       {
          TryExplosionAttackEnemy(iceHit);
       }
+      
+    
+   }
+
+   public void ShakeCamera()
+   {
+      if (CameraManager.instance != null)
+      {
+         CameraManager.instance.ShakeCamera(0.3f, 0.6f, 30f); // Hammer için daha güçlü titreşim
+      }
    }
 
    public void HideCurrentArmor()
