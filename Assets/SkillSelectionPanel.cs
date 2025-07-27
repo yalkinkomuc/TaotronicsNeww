@@ -8,7 +8,7 @@ public class SkillSelectionPanel : InGameUI,IPointerDownHandler,IPointerUpHandle
     [SerializeField] private Button[] buttons;
     
     private Vector3 initialScale = new Vector3(1,1,1);
-
+    
     [SerializeField] private float scaleTime;
     [SerializeField] float targetScale = 1.20f;
     
@@ -39,7 +39,6 @@ public class SkillSelectionPanel : InGameUI,IPointerDownHandler,IPointerUpHandle
 
     private void ScaleButtonsOnHover()
     {
-        
         foreach (Button button in buttons)
         {
             LeanTween.scale(button.gameObject, initialScale * targetScale, scaleTime)

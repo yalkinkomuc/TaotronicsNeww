@@ -14,6 +14,17 @@ public enum SkillType
     FireballSpell
 }
 
+// SkillType için icon property'si
+public static class SkillTypeExtensions
+{
+    public static Sprite GetIcon(this SkillType skillType)
+    {
+        // Icon'ları Resources/SkillIcons klasöründen yükle
+        string iconPath = $"SkillIcons/{skillType}";
+        return Resources.Load<Sprite>(iconPath);
+    }
+}
+
 [System.Serializable]
 public class SkillInfo
 {
