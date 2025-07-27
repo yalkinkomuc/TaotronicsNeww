@@ -30,6 +30,9 @@ public class UserInput : MonoBehaviour
     public static bool WasBoomerangPressed;
     public static bool WasTabLeftPressed;
     public static bool WasTabRightPressed;
+    public static bool IsSkillScreenBeingPressed;
+    public static bool WasSkillScreenReleased;
+    
     
 
     private InputAction _moveAction;
@@ -52,6 +55,7 @@ public class UserInput : MonoBehaviour
     private InputAction _tabLeftAction;
     private InputAction _tabRightAction;
     private InputAction _crouchAction;
+    private InputAction _skillScreenAction;
     
 
     private void Awake()
@@ -63,7 +67,7 @@ public class UserInput : MonoBehaviour
         _attackAction = PlayerInput.actions["Attack"];
         _dashAction = PlayerInput.actions["Dash"];
         _interactAction = PlayerInput.actions["Interact"];
-        _escapeAction = PlayerInput.actions["Escape"];
+        _escapeAction = PlayerInput.actions["UI/Escape"];
         _parryAction = PlayerInput.actions["Parry"];
         _crouchAction = PlayerInput.actions["Crouch"];
         _spell1Action = PlayerInput.actions["Spell1"];
@@ -76,8 +80,9 @@ public class UserInput : MonoBehaviour
         _voidAction = PlayerInput.actions["VoidSpell"];
         _inventoryAction = PlayerInput.actions["Inventory"];
         _boomerangAction = PlayerInput.actions["BoomerangThrow"];
-        _tabLeftAction = PlayerInput.actions["TabLeft"];
-        _tabRightAction = PlayerInput.actions["TabRight"];
+        _tabLeftAction = PlayerInput.actions["UI/TabLeft"];
+        _tabRightAction = PlayerInput.actions["UI/TabRight"];
+        _skillScreenAction = PlayerInput.actions["SkillScreen"];
         
     }
 
@@ -109,6 +114,10 @@ public class UserInput : MonoBehaviour
         WasBoomerangPressed = _boomerangAction.WasPressedThisFrame();
         WasTabLeftPressed = _tabLeftAction.WasPressedThisFrame();
         WasTabRightPressed = _tabRightAction.WasPressedThisFrame();
-        
+        IsSkillScreenBeingPressed = _skillScreenAction.IsPressed();
+        WasSkillScreenReleased = _skillScreenAction.WasReleasedThisFrame();
+
+
+
     }
 }
