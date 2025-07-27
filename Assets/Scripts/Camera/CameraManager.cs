@@ -22,6 +22,7 @@ public class CameraManager : MonoBehaviour
 
     private Coroutine lerpYPanCoroutine;
     private Coroutine panCameraCoroutine;
+    private Coroutine shakeCoroutine;
 
     private CinemachineVirtualCamera currentCamera;
     private CinemachineFramingTransposer framingTransposer;
@@ -30,6 +31,7 @@ public class CameraManager : MonoBehaviour
     private float normYPanAmount;
 
     private Vector2 startingTrackedObjectOffset;
+    private Vector2 originalTrackedObjectOffset; // Shake için orijinal pozisyon
 
     private void Awake()
     {
@@ -77,6 +79,7 @@ public class CameraManager : MonoBehaviour
         {
             normYPanAmount = framingTransposer.m_YDamping;
             startingTrackedObjectOffset = framingTransposer.m_TrackedObjectOffset;
+            originalTrackedObjectOffset = startingTrackedObjectOffset; // Shake için kaydet
         }
     }
 
@@ -218,6 +221,61 @@ public class CameraManager : MonoBehaviour
         
         isLerpingYDamping = false;
         
+    }
+
+    /// <summary>
+    /// Kamera titreşimi efekti - LeanTween ile hafif shake
+    /// </summary>
+    /// <param name="intensity">Titreşim yoğunluğu (0.1f - 0.5f arası önerilir)</param>
+    /// <param name="duration">Titreşim süresi</param>
+    /// <param name="frequency">Titreşim frekansı (saniyede kaç kez)</param>
+    public void ShakeCamera(float intensity = 0.2f, float duration = 0.3f, float frequency = 20f)
+    {
+        // Eğer zaten shake devam ediyorsa, yeni shake'i başlatma
+        if (shakeCoroutine != null)
+        {
+            return;
+        }
+        
+        shakeCoroutine = StartCoroutine(ShakeCameraCoroutine(intensity, duration, frequency));
+    }
+
+    private IEnumerator ShakeCameraCoroutine(float intensity, float duration, float frequency)
+    {
+        if (framingTransposer == null) yield break;
+
+        float elapsedTime = 0f;
+        float shakeInterval = 1f / frequency; // Her shake arasındaki süre
+        
+        Vector2 originalOffset = framingTransposer.m_TrackedObjectOffset;
+        
+        while (elapsedTime < duration)
+        {
+            // Rastgele offset hesapla
+            Vector2 randomOffset = new Vector2(
+                UnityEngine.Random.Range(-intensity, intensity),
+                UnityEngine.Random.Range(-intensity, intensity)
+            );
+            
+            // LeanTween ile yumuşak geçiş
+            LeanTween.value(gameObject, (Vector2)framingTransposer.m_TrackedObjectOffset, originalOffset + randomOffset, shakeInterval * 0.5f)
+                .setOnUpdate((Vector2 val) => {
+                    framingTransposer.m_TrackedObjectOffset = val;
+                })
+                .setEase(LeanTweenType.easeOutQuad);
+            
+            elapsedTime += shakeInterval;
+            yield return new WaitForSeconds(shakeInterval);
+        }
+        
+        // Orijinal pozisyona yumuşak dönüş
+        LeanTween.value(gameObject, (Vector2)framingTransposer.m_TrackedObjectOffset, originalOffset, 0.1f)
+            .setOnUpdate((Vector2 val) => {
+                framingTransposer.m_TrackedObjectOffset = val;
+            })
+            .setEase(LeanTweenType.easeOutQuad);
+        
+        shakeCoroutine = null;
     }
 
     

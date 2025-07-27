@@ -56,6 +56,12 @@ public class PlayerSpell1State : PlayerState
             stateMachine.ChangeState(player.idleState);
             return;
         }
+        
+        // Kamera titreşimi efekti - Ice Skill için hafif shake
+        if (CameraManager.instance != null)
+        {
+            CameraManager.instance.ShakeCamera(0.25f, 0.4f, 25f); // Hafif titreşim
+        }
     }
 
     private void CalculateSpawnPositions()
