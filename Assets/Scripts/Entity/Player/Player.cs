@@ -1084,27 +1084,23 @@ public class Player : Entity
             }
         }
         
-        // Fire Spell
-        if (UserInput.WasSpell2Pressed)
+        // Fire Spell - Charge-based skill
+        if (UserInput.WasSpell2Pressed && stateMachine.currentState != spell2State && canCastNewSpell)
         {
-            // Eğer zaten spell2State'deyse tekrar state değiştirme (charge mechanic için)
-            if (stateMachine.currentState != spell2State && canCastNewSpell)
+            if (hasSkillManager)
             {
-                if (hasSkillManager)
+                // SkillManager üzerinden kontrol et
+                if (SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
                 {
-                    // SkillManager üzerinden kontrol et
-                    if (SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
-                    {
-                        stateMachine.ChangeState(spell2State);
-                    }
+                    stateMachine.ChangeState(spell2State);
                 }
-                else
+            }
+            else
+            {
+                // Eski yöntem - SkillManager olmadan
+                if (stats.currentMana >= fireSpellManaDrainPerSecond)
                 {
-                    // Eski yöntem - SkillManager olmadan
-                    if (stats.currentMana >= fireSpellManaDrainPerSecond)
-                    {
-                        stateMachine.ChangeState(spell2State);
-                    }
+                    stateMachine.ChangeState(spell2State);
                 }
             }
         }

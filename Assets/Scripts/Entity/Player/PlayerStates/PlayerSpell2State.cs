@@ -62,7 +62,13 @@ public class PlayerSpell2State : PlayerState
 
         currentChargeTime += Time.deltaTime;
         
-        // Spell aktifse mana tüketmeye başla
+        // T tuşu basılı tutulduğunda mana tüketmeye başla
+        if (UserInput.IsSpell2BeingPressed && !isSpellActive)
+        {
+            isSpellActive = true;
+        }
+        
+        // Spell aktifse mana tüketmeye devam et
         if (isSpellActive)
         {
             float manaCost = player.fireSpellManaDrainPerSecond * Time.deltaTime;
@@ -79,7 +85,7 @@ public class PlayerSpell2State : PlayerState
         }
         
         // T tuşu bırakıldığında veya max süre dolduğunda
-        if (!UserInput.WasSpell2Pressed || currentChargeTime >= MAX_CHARGE_TIME)
+        if (UserInput.WasSpell2Released || currentChargeTime >= MAX_CHARGE_TIME)
         {
             CleanupSpell();
             stateMachine.ChangeState(player.idleState);
