@@ -20,6 +20,7 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SwordMove", false);
         animator.SetBool("SwordSpell1", false);
         animator.SetBool("SwordSpell2",false);
+        animator.SetBool("SwordEarthPush",false);
         
         animator.SetBool("SwordDash", false);
         animator.SetBool("SwordJump",false);
@@ -93,6 +94,9 @@ public class SwordWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Spell2:
                 animator.SetBool("SwordSpell2", true);
+                break;
+            case WeaponState.EarthPush:
+                animator.SetBool("SwordEarthPush",true);
                 break;
             case WeaponState.SuccesfulParry:
                 animator.SetBool("SwordSuccesfulParry", true);
@@ -187,6 +191,10 @@ public class SwordWeaponStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.airPushState)
         {
             ChangeState(WeaponState.AirPush);
+        }
+        else if (player.stateMachine.currentState == player.earthPushState)
+        {
+            ChangeState(WeaponState.EarthPush);
         }
         else if (player.stateMachine.currentState ==player.fireballSpellState)
         {

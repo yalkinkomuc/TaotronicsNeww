@@ -21,6 +21,7 @@ public class BasicArmorStateMachine : ArmorStateMachine
         animator.SetBool("ArmorMove", false);
         animator.SetBool("ArmorSpell1", false);
         animator.SetBool("ArmorSpell2", false);
+        animator.SetBool("ArmorEarthPush",false);
 
         animator.SetBool("ArmorDash", false);
         animator.SetBool("ArmorJump", false);
@@ -105,6 +106,9 @@ public class BasicArmorStateMachine : ArmorStateMachine
                 break;
             case ArmorState.Spell2:
                 animator.SetBool("ArmorSpell2", true);
+                break;
+            case ArmorState.EarthPush:
+                animator.SetBool("ArmorEarthPush", true);
                 break;
             case ArmorState.SuccesfulParry:
                 animator.SetBool("ArmorSuccesfulParry", true);
@@ -203,6 +207,10 @@ public class BasicArmorStateMachine : ArmorStateMachine
         else if (player.stateMachine.currentState == player.airPushState)
         {
             ChangeState(ArmorState.AirPush);
+        }
+        else if (player.stateMachine.currentState == player.earthPushState)
+        {
+            ChangeState(ArmorState.EarthPush);
         }
         else if (player.stateMachine.currentState == player.fireballSpellState)
         {

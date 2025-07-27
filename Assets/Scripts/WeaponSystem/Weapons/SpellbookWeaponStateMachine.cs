@@ -183,6 +183,10 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.FireballSpell);
         }
+        else if (player.stateMachine.currentState == player.earthPushState)
+        {
+            ChangeState(WeaponState.Spell1);
+        }
     }
 
 }

@@ -18,6 +18,8 @@ public class UserInput : MonoBehaviour
     public static bool WasEscapePressed;
     public static bool WasSpell1Pressed;
     public static bool WasSpell2Pressed;
+    public static bool IsSpell2BeingPressed;
+    public static bool WasSpell2Released;
     public static bool WasSpell3Pressed;
     public static bool WasSpell4Pressed;
     public static bool WasSpell5Pressed;
@@ -95,6 +97,8 @@ public class UserInput : MonoBehaviour
         WasEscapePressed = _escapeAction.WasPressedThisFrame();
         WasSpell1Pressed = _spell1Action.WasPressedThisFrame();
         WasSpell2Pressed = _spell2Action.WasPressedThisFrame();
+        IsSpell2BeingPressed = _spell2Action.IsPressed();
+        WasSpell2Released = _spell2Action.WasReleasedThisFrame();
         WasSpell3Pressed = _spell3Action.WasPressedThisFrame();
         WasSpell4Pressed = _spell4Action.WasPressedThisFrame();
         WasSpell5Pressed = _spell5Action.WasPressedThisFrame();

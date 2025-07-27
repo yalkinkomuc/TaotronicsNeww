@@ -20,6 +20,7 @@ public class BurningSwordStateMachine : WeaponStateMachine
         animator.SetBool("BurningSwordMove", false);
         animator.SetBool("BurningSwordSpell1", false);
         animator.SetBool("BurningSwordSpell2",false);
+        animator.SetBool("BurningSwordEarthPush",false);
         
         animator.SetBool("BurningSwordDash", false);
         animator.SetBool("BurningSwordJump",false);
@@ -52,7 +53,9 @@ public class BurningSwordStateMachine : WeaponStateMachine
             case WeaponState.Dash:
                 animator.SetBool("BurningSwordDash", true);
                 break;
-                
+            case WeaponState.EarthPush:
+                animator.SetBool("BurningSwordEarthPush", true);
+                break;
             case WeaponState.Jump:
                 animator.SetBool("BurningSwordJump", true);
                 break;
@@ -103,6 +106,7 @@ public class BurningSwordStateMachine : WeaponStateMachine
             case WeaponState.FireballSpell:
                 animator.SetBool("BurningSwordFireball", true);
                 break;
+            
         }
     }
 
@@ -183,6 +187,10 @@ public class BurningSwordStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.parryState)
         {
             ChangeState(WeaponState.Parry);
+        }
+        else if (player.stateMachine.currentState == player.earthPushState)
+        {
+            ChangeState(WeaponState.EarthPush);
         }
         else if (player.stateMachine.currentState == player.airPushState)
         {

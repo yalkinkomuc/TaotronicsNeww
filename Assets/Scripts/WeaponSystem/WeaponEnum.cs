@@ -16,6 +16,7 @@ public enum WeaponState
     CatchBoomerang,
     Spell1,
     Spell2,
+    EarthPush,
     Parry,
     SuccesfulParry,
     AirPush,

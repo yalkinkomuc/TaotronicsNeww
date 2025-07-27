@@ -18,6 +18,7 @@ public enum ArmorState
     CatchBoomerang,
     Spell1,
     Spell2,
+    EarthPush,
     Parry,
     SuccesfulParry,
     AirPush,

@@ -16,6 +16,7 @@ public class HammerSwordStateMachine : WeaponStateMachine
         animator.SetBool("HammerMove", false);
         animator.SetBool("HammerSpell1", false);
         animator.SetBool("HammerSpell2",false);
+        animator.SetBool("HammerEarthPush",false);
         
         animator.SetBool("HammerDash", false);
         animator.SetBool("HammerJump",false);
@@ -97,6 +98,9 @@ public class HammerSwordStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Spell2:
                 animator.SetBool("HammerSpell2", true);
+                break;
+            case WeaponState.EarthPush:
+                animator.SetBool("HammerEarthPush",true);
                 break;
             case WeaponState.SuccesfulParry:
                 animator.SetBool("HammerSuccesfulParry", true);
@@ -195,6 +199,10 @@ public class HammerSwordStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.airPushState)
         {
             ChangeState(WeaponState.AirPush);
+        }
+        else if (player.stateMachine.currentState == player.earthPushState)
+        {
+            ChangeState(WeaponState.EarthPush);
         }
         else if (player.stateMachine.currentState ==player.fireballSpellState)
         {

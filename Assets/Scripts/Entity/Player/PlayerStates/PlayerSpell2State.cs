@@ -5,7 +5,7 @@ public class PlayerSpell2State : PlayerState
 {
     private FireSpell currentFireSpell;
     private const string SPELL2_ANIM_NAME = "PlayerSpell2"; // Animator'daki state ismiyle aynı olmalı
-    private const string SPELL2_ARMOR_ANIM_NAME = "Armor_Spell2";
+   // private const string SPELL2_ARMOR_ANIM_NAME = "Armor_Spell2";
     private const float MAX_CHARGE_TIME = 1000f;
     private float currentChargeTime;
     private bool isSpellActive;
@@ -53,7 +53,6 @@ public class PlayerSpell2State : PlayerState
         isSpellActive = false;
         
         player.anim.Play(SPELL2_ANIM_NAME);
-        player.anim.Play(SPELL2_ARMOR_ANIM_NAME);
     }
 
     public override void Update()

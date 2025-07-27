@@ -16,6 +16,7 @@ public class IceHammerStateMachine : WeaponStateMachine
         animator.SetBool("IceHammerMove", false);
         animator.SetBool("IceHammerSpell1", false);
         animator.SetBool("IceHammerSpell2",false);
+        animator.SetBool("IceHammerEarthPush",false);
         
         animator.SetBool("IceHammerDash", false);
         animator.SetBool("IceHammerJump",false);
@@ -88,6 +89,9 @@ public class IceHammerStateMachine : WeaponStateMachine
                 break;
             case WeaponState.CatchBoomerang:
                 animator.SetBool("IceHammerCatchBoomerang", true);
+                break;
+            case WeaponState.EarthPush:
+                animator.SetBool("IceHammerEarthPush",true);
                 break;
             case WeaponState.Parry:
                 animator.SetBool("IceHammerBlock", true);
@@ -195,6 +199,10 @@ public class IceHammerStateMachine : WeaponStateMachine
         else if (player.stateMachine.currentState == player.airPushState)
         {
             ChangeState(WeaponState.AirPush);
+        }
+        else if (player.stateMachine.currentState == player.earthPushState)
+        {
+            ChangeState(WeaponState.EarthPush);
         }
         else if (player.stateMachine.currentState ==player.fireballSpellState)
         {
