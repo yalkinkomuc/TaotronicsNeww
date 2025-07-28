@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-public class HealthBar : MonoBehaviour
+public class HealthBar : InGameUI
 {
     [SerializeField] private Image healthBarFill;
     [SerializeField] private float smoothSpeed = 10f;

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class ManaBar : MonoBehaviour
+public class ManaBar : InGameUI
 {
     [SerializeField] private Image manaBarFill;
     [SerializeField] private float smoothSpeed = 10f;

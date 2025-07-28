@@ -72,6 +72,9 @@ public class SkillTreePanel : BaseUIPanel
     
     protected override void OnEnable()
     {
+        // Base class'ın OnEnable'ını çağır (InGameUI'ları gizlemek için)
+        base.OnEnable();
+        
         Debug.Log("[SkillTree] OnEnable called - SkillTreePanel activated");
         
         // UIInputBlocker'a ekle (sadece aktif olduğunda)

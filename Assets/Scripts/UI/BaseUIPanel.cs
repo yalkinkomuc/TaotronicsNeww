@@ -10,6 +10,7 @@ public class BaseUIPanel : MonoBehaviour
     
     private RectTransform rectTransform;
     private Canvas parentCanvas;
+    private InGameUI[] inGameUIElements;
     
     protected virtual void Awake()
     {
@@ -41,6 +42,9 @@ public class BaseUIPanel : MonoBehaviour
             // Hemen input blocking yap
             HandleInputBlocking();
         }
+        
+        // InGameUI elementlerini gizle
+        HideInGameUIElements();
     }
 
     protected virtual void OnDisable()
@@ -48,6 +52,37 @@ public class BaseUIPanel : MonoBehaviour
         if (UIInputBlocker.instance != null)
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
+        }
+        
+        // InGameUI elementlerini tekrar göster
+        ShowInGameUIElements();
+    }
+    
+    // InGameUI elementlerini gizle
+    private void HideInGameUIElements()
+    {
+        inGameUIElements = FindObjectsByType<InGameUI>(FindObjectsSortMode.None);
+        foreach (InGameUI ui in inGameUIElements)
+        {
+            if (ui != null && ui.gameObject.activeInHierarchy)
+            {
+                ui.gameObject.SetActive(false);
+            }
+        }
+    }
+    
+    // InGameUI elementlerini tekrar göster
+    private void ShowInGameUIElements()
+    {
+        if (inGameUIElements != null)
+        {
+            foreach (InGameUI ui in inGameUIElements)
+            {
+                if (ui != null)
+                {
+                    ui.gameObject.SetActive(true);
+                }
+            }
         }
     }
     
