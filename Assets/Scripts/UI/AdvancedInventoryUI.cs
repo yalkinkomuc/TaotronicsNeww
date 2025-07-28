@@ -457,6 +457,13 @@ public class AdvancedInventoryUI : BaseUIPanel
             return true;
         }
         
+        // MenuManagement Panel - Joystick input problemini çözmek için
+        GameObject menuManagement = GameObject.Find("MenuManagement");
+        if (menuManagement != null && menuManagement.activeInHierarchy)
+        {
+            return true;
+        }
+        
         return false; // Hiçbir blocking panel yok
     }
     

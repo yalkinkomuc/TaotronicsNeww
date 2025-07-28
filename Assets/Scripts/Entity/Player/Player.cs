@@ -1764,6 +1764,7 @@ public class Player : Entity
         if (UserInput.WasInventoryPressed)
         {
             ToggleInventory();
+            Debug.Log("Inventory inputa basıldı");
         }
     }
     

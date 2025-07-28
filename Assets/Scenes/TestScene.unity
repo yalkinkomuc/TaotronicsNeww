@@ -222,6 +222,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxEffectMultiplier: {x: 0.3, y: 0}
+  infiniteHorizontal: 0
+  infiniteVertical: 0
 --- !u!1001 &70523494
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15487,6 +15489,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxEffectMultiplier: {x: 0.25, y: 0}
+  infiniteHorizontal: 0
+  infiniteVertical: 0
 --- !u!1 &932578963
 GameObject:
   m_ObjectHideFlags: 0
@@ -16190,6 +16194,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxEffectMultiplier: {x: 0.1, y: 0}
+  infiniteHorizontal: 0
+  infiniteVertical: 0
 --- !u!1 &1554886806
 GameObject:
   m_ObjectHideFlags: 0
@@ -16364,6 +16370,75 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &1607883471
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -6.26375
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -5.495
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965643546933412517, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5354558526226233619, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: m_Name
+      value: BossDoor (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5891154867037050916, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: CurrentDoorPosition
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5891154867037050916, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: sceneToLoad._sceneName
+      value: ForestScene-2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5891154867037050916, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
+      propertyPath: sceneToLoad._sceneAsset
+      value: 
+      objectReference: {fileID: 102900000, guid: 37e893150c96ec74bb07da5ba6544e3b, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ed521eedc57661b4585b5931e0e76694, type: 3}
 --- !u!1001 &1622757401
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16834,6 +16909,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxEffectMultiplier: {x: 0.1, y: 0}
+  infiniteHorizontal: 0
+  infiniteVertical: 0
 --- !u!4 &1898575091 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4370291709839974149, guid: 4643c89b5ac386e41ad310ebc01f8f88, type: 3}
@@ -18011,6 +18088,7 @@ SceneRoots:
   - {fileID: 652940965}
   - {fileID: 1759609810}
   - {fileID: 2093300435}
+  - {fileID: 1607883471}
   - {fileID: 932578964}
   - {fileID: 991237356}
   - {fileID: 348999712}
