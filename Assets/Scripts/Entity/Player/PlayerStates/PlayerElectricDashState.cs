@@ -9,6 +9,15 @@ public class PlayerElectricDashState : PlayerState
     private float electricDashDistance;
     private float electricDashDuration;
     
+    // Smooth dash için yeni değişkenler
+    private float currentDashSpeed;
+    private float accelerationRate = 80f; // Daha hızlı hızlanma
+    private float decelerationRate = 80f; // Daha hızlı yavaşlama
+    private bool isAccelerating = true; 
+    private Vector2 startPosition;
+    private Vector2 targetPosition;
+    private float dashProgress = 0f;
+    
     public PlayerElectricDashState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) 
         : base(_player, _stateMachine, _animBoolName)
     {
@@ -24,6 +33,29 @@ public class PlayerElectricDashState : PlayerState
         electricDashDistance = player.electricDashDistance;
         electricDashPrefab = player.electricDashPrefab;
         electricDashSpawnPoint = player.electricDashSpawnPoint;
+        
+        // Smooth dash için başlangıç değerleri
+        currentDashSpeed = 0f;
+        isAccelerating = true;
+        dashProgress = 0f;
+        
+        // Başlangıç ve hedef pozisyonları hesapla
+        startPosition = player.transform.position;
+        Vector2 direction = new Vector2(player.dashDirection, 0);
+        targetPosition = startPosition + direction * electricDashDistance;
+        
+        // Engelleri kontrol et
+        RaycastHit2D hit = Physics2D.Raycast(
+            startPosition, 
+            direction, 
+            electricDashDistance, 
+            player.whatIsGround
+        );
+        
+        if (hit.collider != null)
+        {
+            targetPosition = hit.point - direction * 0.5f;
+        }
         
         // Set state timer
         stateTimer = electricDashDuration;
@@ -61,8 +93,8 @@ public class PlayerElectricDashState : PlayerState
     {
         base.Update();
         
-        // Apply velocity during dash
-        player.SetVelocity(electricDashSpeed * player.dashDirection, 0);
+        // Smooth dash movement
+        UpdateSmoothDashMovement();
         
         // Check if dash timer expired
         if (stateTimer < 0)
@@ -70,32 +102,44 @@ public class PlayerElectricDashState : PlayerState
             stateMachine.ChangeState(player.idleState);
         }
     }
+    
+    private void UpdateSmoothDashMovement()
+    {
+        // Dash progress'i hesapla
+        dashProgress += Time.deltaTime / electricDashDuration;
+        
+        // Acceleration ve deceleration
+        if (isAccelerating)
+        {
+            currentDashSpeed += accelerationRate * Time.deltaTime;
+            if (currentDashSpeed >= electricDashSpeed)
+            {
+                currentDashSpeed = electricDashSpeed;
+                isAccelerating = false;
+            }
+        }
+        else
+        {
+            // Dash'in son %25'inde yavaşlamaya başla
+            if (dashProgress > 0.75f)
+            {
+                currentDashSpeed -= decelerationRate * Time.deltaTime;
+                if (currentDashSpeed < 0)
+                    currentDashSpeed = 0;
+            }
+        }
+        
+        // Velocity'yi uygula
+        float direction = player.dashDirection;
+        player.SetVelocity(currentDashSpeed * direction, 0);
+    }
 
     private IEnumerator DoElectricDash()
     {
-        // Calculate destination position
-        Vector2 startPos = player.transform.position;
-        Vector2 direction = new Vector2(player.dashDirection, 0);
-        Vector2 targetPos = startPos + direction * electricDashDistance;
-        
-        // Check for obstacles in the path
-        RaycastHit2D hit = Physics2D.Raycast(
-            startPos, 
-            direction, 
-            electricDashDistance, 
-            player.whatIsGround
-        );
-        
-        if (hit.collider != null)
-        {
-            // Adjust target position if obstacle found
-            targetPos = hit.point - direction * 0.5f; // Small offset to not embed in wall
-        }
-        
         // Spawn electric effect at the midpoint of dash
         if (electricDashPrefab != null)
         {
-            Vector2 midPoint = Vector2.Lerp(startPos, targetPos, 0.5f);
+            Vector2 midPoint = Vector2.Lerp(startPosition, targetPosition, 0.5f);
             GameObject electricEffect = Object.Instantiate(
                 electricDashPrefab, 
                 midPoint, 
@@ -118,7 +162,7 @@ public class PlayerElectricDashState : PlayerState
         {
             GameObject shockwaveEffect = Object.Instantiate(
                 player.shockwavePrefab,
-                startPos,
+                startPosition,
                 Quaternion.identity
             );
             
@@ -134,7 +178,7 @@ public class PlayerElectricDashState : PlayerState
         yield return new WaitForSeconds(0.05f);
         
         // Teleport to destination
-        player.transform.position = targetPos;
+        player.transform.position = targetPosition;
         
         // Small delay before ending the dash
         yield return new WaitForSeconds(0.1f);
