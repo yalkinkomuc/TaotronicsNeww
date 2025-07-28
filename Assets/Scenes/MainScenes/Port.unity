@@ -16026,6 +16026,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: BGNEW
       objectReference: {fileID: 0}
+    - target: {fileID: 4730631905794465219, guid: 087ba86306a397e49aac16fa05a8f0d2, type: 3}
+      propertyPath: parallaxEffectMultiplier.y
+      value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 5318122302835609053, guid: 087ba86306a397e49aac16fa05a8f0d2, type: 3}
+      propertyPath: parallaxEffectMultiplier.y
+      value: 0.55
+      objectReference: {fileID: 0}
     - target: {fileID: 7433577342509696252, guid: 087ba86306a397e49aac16fa05a8f0d2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.65625
@@ -16065,6 +16073,14 @@ PrefabInstance:
     - target: {fileID: 7433577342509696252, guid: 087ba86306a397e49aac16fa05a8f0d2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7564165025209297271, guid: 087ba86306a397e49aac16fa05a8f0d2, type: 3}
+      propertyPath: parallaxEffectMultiplier.y
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 8852342622615174111, guid: 087ba86306a397e49aac16fa05a8f0d2, type: 3}
+      propertyPath: parallaxEffectMultiplier.y
+      value: 0.45
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
