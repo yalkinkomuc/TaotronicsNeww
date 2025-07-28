@@ -815,9 +815,9 @@ MonoBehaviour:
   debugKey: 293
   buttons:
   - {fileID: 44981418}
-  - {fileID: 0}
   - {fileID: 860221382}
   - {fileID: 1415749404}
+  - {fileID: 1168190510}
   scaleTime: 0.75
   targetScale: 1.2
 --- !u!114 &1114933675
@@ -832,11 +832,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9451eda4d82702e419f472b8f234ed6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  availableSkills:
-  - {fileID: 11400000, guid: aff9c89ef715893499ce64bd98e94111, type: 2}
-  - {fileID: 11400000, guid: 7501914d7bbeb5247b559cd743c3dbda, type: 2}
-  - {fileID: 11400000, guid: c735cbf5b9bcf2d4fbdf145017419336, type: 2}
-  - {fileID: 11400000, guid: 0370ebd01c882f44493262dd6e0ca650, type: 2}
+  availableSkillTypes: 01000000030000000200000006000000
   skillButtons:
   - {fileID: 44981418}
   - {fileID: 860221382}
@@ -852,7 +848,6 @@ MonoBehaviour:
   - {fileID: 358003413}
   - {fileID: 365737832}
   - {fileID: 1838318868}
-  cooldownOverlays: []
 --- !u!1 &1168190508
 GameObject:
   m_ObjectHideFlags: 0
@@ -22548,8 +22543,8 @@ MonoBehaviour:
     skillType: 1
     skillName: Ice Shard
     description: fdggfddfgfdgfdg
-    baseCooldown: 2
-    cooldownTimer: 0
+    baseCooldown: 5
+    cooldownTimer: 5
     manaCost: 0
     isUnlocked: 1
     skillPrefab: {fileID: 3781980674335233421, guid: 35eb45ef5405f1046af3fe7f5e18d141, type: 3}
@@ -22557,7 +22552,7 @@ MonoBehaviour:
     skillType: 3
     skillName: Fire Charge
     description: Channel your inner flames into a devastating inferno.
-    baseCooldown: 2
+    baseCooldown: 5
     cooldownTimer: 0
     manaCost: 1
     isUnlocked: 1
@@ -22566,7 +22561,7 @@ MonoBehaviour:
     skillType: 2
     skillName: Earth Push
     description: sdfsdfdfsfdsfdsfds
-    baseCooldown: 2
+    baseCooldown: 5
     cooldownTimer: 0
     manaCost: 0
     isUnlocked: 1
@@ -22593,7 +22588,7 @@ MonoBehaviour:
     skillType: 6
     skillName: Air Push
     description: dsfsdfdsdfsfsd
-    baseCooldown: 1
+    baseCooldown: 20
     cooldownTimer: 0
     manaCost: 30
     isUnlocked: 1

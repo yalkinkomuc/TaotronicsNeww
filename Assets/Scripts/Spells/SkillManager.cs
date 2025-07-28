@@ -237,11 +237,22 @@ public class SkillManager : MonoBehaviour
     // Beceri kullanma işlemi
     public void UseSkill(SkillType skillType)
     {
+        Debug.Log($"UseSkill called for: {skillType}");
+        
         if (skillDict.TryGetValue(skillType, out SkillInfo skill))
         {
+            Debug.Log($"Skill found: {skill.skillName}");
+            Debug.Log($"Before - baseCooldown: {skill.baseCooldown}, cooldownTimer: {skill.cooldownTimer}");
+            
             // Cooldown'a etkili azaltma uygula
             float effectiveCooldown = skill.baseCooldown * (1f - globalCooldownReduction / 100f);
             skill.cooldownTimer = effectiveCooldown;
+            
+            Debug.Log($"After - effectiveCooldown: {effectiveCooldown}, cooldownTimer set to: {skill.cooldownTimer}");
+        }
+        else
+        {
+            Debug.LogWarning($"Skill not found in dictionary: {skillType}");
         }
     }
     

@@ -180,7 +180,7 @@ public class Player : Entity
     [Header("Air Spell Settings")]
     public GameObject airPushPrefab;
     public Transform airPushSpawnPoint;
-    private float airPushCooldown = 2f; // 2 saniye cooldown
+    private float airPushCooldown = 8f; // 2 saniye cooldown
     private float airPushCooldownTimer;
 
     #endregion
@@ -1069,6 +1069,7 @@ public class Player : Entity
                 // SkillManager üzerinden kontrol et
                 if (SkillManager.Instance.IsSkillReady(SkillType.IceShard, stats.currentMana))
                 {
+                    SkillManager.Instance.UseSkill(SkillType.IceShard);
                     stateMachine.ChangeState(spell1State);
                 }
               
@@ -1097,6 +1098,7 @@ public class Player : Entity
                 if (SkillManager.Instance.IsSkillReady(SkillType.FireSpell, stats.currentMana))
                 {
                     Debug.Log("SkillManager: Fire Spell kullanıma hazır, Spell2State'e geçiliyor");
+                    SkillManager.Instance.UseSkill(SkillType.FireSpell);
                     stateMachine.ChangeState(spell2State);
                 }
                 else
@@ -1128,6 +1130,7 @@ public class Player : Entity
                 // SkillManager üzerinden kontrol et
                 if (SkillManager.Instance.IsSkillReady(SkillType.EarthPush, stats.currentMana))
                 {
+                    SkillManager.Instance.UseSkill(SkillType.EarthPush);
                     stateMachine.ChangeState(earthPushState);
                 }
             }
@@ -1150,6 +1153,7 @@ public class Player : Entity
                 // SkillManager üzerinden kontrol et
                 if (SkillManager.Instance.IsSkillReady(SkillType.AirPush, stats.currentMana))
                 {
+                    SkillManager.Instance.UseSkill(SkillType.AirPush);
                     stateMachine.ChangeState(airPushState);
                 }
             }
@@ -1172,6 +1176,7 @@ public class Player : Entity
                 // SkillManager üzerinden kontrol et
                 if (SkillManager.Instance.IsSkillReady(SkillType.FireballSpell, stats.currentMana))
                 {
+                    SkillManager.Instance.UseSkill(SkillType.FireballSpell);
                     stateMachine.ChangeState(fireballSpellState);
                 }
             }
@@ -1663,6 +1668,10 @@ public class Player : Entity
         if (UserInput.WasVoidInputPressed && stateMachine.currentState != voidState && CanUseVoidSkill())
         {
             // Yeterli mana ve beceri açıksa state'e geçiş yap
+            if (SkillManager.Instance != null)
+            {
+                SkillManager.Instance.UseSkill(SkillType.VoidSkill);
+            }
             stateMachine.ChangeState(voidState);
         }
     }
