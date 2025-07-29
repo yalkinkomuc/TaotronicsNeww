@@ -20,6 +20,7 @@ public class IceHammerStateMachine : WeaponStateMachine
         
         animator.SetBool("IceHammerDash", false);
         animator.SetBool("IceHammerJump",false);
+        animator.SetBool("IceHammerFall",false);
         
         animator.SetBool("IceHammerAttack", false);
         animator.SetBool("IceHammerGroundDash", false);
@@ -52,6 +53,9 @@ public class IceHammerStateMachine : WeaponStateMachine
                 
             case WeaponState.Jump:
                 animator.SetBool("IceHammerJump", true);
+                break;
+            case WeaponState.Fall:
+                animator.SetBool("IceHammerFall",true);
                 break;
             // case WeaponState.Attack:
             //     animator.SetBool("HammerAttack",true);
@@ -139,9 +143,13 @@ public class IceHammerStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Dash);
         }
-        else if (player.stateMachine.currentState == player.airState)
+        else if (player.stateMachine.currentState == player.jumpState)
         {
             ChangeState(WeaponState.Jump);
+        }
+        else if (player.stateMachine.currentState == player.airState)
+        {
+            ChangeState(WeaponState.Fall);
         }
         else if (player.stateMachine.currentState == player.crouchState)
         {
