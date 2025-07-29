@@ -94,8 +94,7 @@ public class VFXManager : MonoBehaviour
                 vfx.transform.rotation = Quaternion.identity;
             }
                 
-            if (parent != null && parent.gameObject != null && parent.gameObject.activeInHierarchy)
-                vfx.transform.SetParent(parent);
+            // Parent bağlantısını kaldırdık - VFX artık düşmanın child'ı olmayacak
             
             // Particle System varsa reset et ve oynat
             ParticleSystem particleSystem = vfx.GetComponent<ParticleSystem>();

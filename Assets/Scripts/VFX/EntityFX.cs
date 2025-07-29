@@ -75,12 +75,22 @@ public class EntityFX : MonoBehaviour
       
       if (hitVFXIds != null && hitVFXIds.Length > 0 && vfxSpawnPoint != null)
       {
-          string randomVFXId = hitVFXIds[UnityEngine.Random.Range(0, hitVFXIds.Length)];
+          string selectedVFXId;
+          
+          // Eğer listede tek VFX varsa random seçme, birden fazla varsa random seç
+          if (hitVFXIds.Length == 1)
+          {
+              selectedVFXId = hitVFXIds[0];
+          }
+          else
+          {
+              selectedVFXId = hitVFXIds[UnityEngine.Random.Range(0, hitVFXIds.Length)];
+          }
           
           // VFXManager ve spawn point kontrolü
           if (VFXManager.Instance != null && vfxSpawnPoint.gameObject != null && vfxSpawnPoint.gameObject.activeInHierarchy)
           {
-              VFXManager.Instance.PlayVFX(randomVFXId, vfxSpawnPoint.position, transform);
+              VFXManager.Instance.PlayVFX(selectedVFXId, vfxSpawnPoint.position, transform);
           }
       }
       
