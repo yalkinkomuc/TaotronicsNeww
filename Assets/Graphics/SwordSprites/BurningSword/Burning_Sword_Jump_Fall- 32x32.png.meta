@@ -65,7 +65,7 @@ TextureImporter:
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
-  spritePivot: {x: 0.5, y: 0}
+  spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -128,133 +128,133 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ates_klc_jump_fall_32x48_0
+      name: Burning_Sword_Jump_Fall- 32x32_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 48
+        y: 64
         width: 32
-        height: 48
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2dc69e20f851f02d0800000000000000
-      internalID: -3310403497120666414
+      spriteID: 24bcec31faf9409439f2e21e675032e7
+      internalID: 368125068
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ates_klc_jump_fall_32x48_1
+      name: Burning_Sword_Jump_Fall- 32x32_1
       rect:
         serializedVersion: 2
         x: 32
-        y: 48
+        y: 64
         width: 32
-        height: 48
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e3b9f5a4f4467f270800000000000000
-      internalID: 8284200331284290366
+      spriteID: b66606c62c5f18143a8a852e437328e1
+      internalID: 1038955606
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ates_klc_jump_fall_32x48_2
+      name: Burning_Sword_Jump_Fall- 32x32_2
       rect:
         serializedVersion: 2
         x: 64
-        y: 48
+        y: 64
         width: 32
-        height: 48
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 30cb43199d522ba50800000000000000
-      internalID: 6535327625642294275
+      spriteID: 3408057e2d62a374fb74129f314582f1
+      internalID: 666206245
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ates_klc_jump_fall_32x48_3
+      name: Burning_Sword_Jump_Fall- 32x32_3
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 48
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ced883433a01b0500800000000000000
-      internalID: 363402488075292140
+      spriteID: b1ac60c331591bc449ad48074c859fad
+      internalID: -1332504852
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ates_klc_jump_fall_32x48_4
+      name: Burning_Sword_Jump_Fall- 32x32_4
       rect:
         serializedVersion: 2
         x: 32
         y: 0
         width: 32
-        height: 48
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 32103dc76b9e2f260800000000000000
-      internalID: 7130018130068439331
+      spriteID: 7dfc4efb060ec464fb4fa582245e6030
+      internalID: -714808142
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ates_klc_jump_fall_32x48_5
+      name: Burning_Sword_Jump_Fall- 32x32_5
       rect:
         serializedVersion: 2
         x: 64
         y: 0
         width: 32
-        height: 48
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8373ce4e6d78dd950800000000000000
-      internalID: 6475481196262078264
+      spriteID: e9a3db23486448f49a560982c52ebdf3
+      internalID: 821371979
       vertices: []
       indices: 
       edges: []
@@ -273,12 +273,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ates_klc_jump_fall_32x48_0: -3310403497120666414
-      ates_klc_jump_fall_32x48_1: 8284200331284290366
-      ates_klc_jump_fall_32x48_2: 6535327625642294275
-      ates_klc_jump_fall_32x48_3: 363402488075292140
-      ates_klc_jump_fall_32x48_4: 7130018130068439331
-      ates_klc_jump_fall_32x48_5: 6475481196262078264
+      Burning_Sword_Jump_Fall- 32x32_0: 368125068
+      Burning_Sword_Jump_Fall- 32x32_1: 1038955606
+      Burning_Sword_Jump_Fall- 32x32_2: 666206245
+      Burning_Sword_Jump_Fall- 32x32_3: -1332504852
+      Burning_Sword_Jump_Fall- 32x32_4: -714808142
+      Burning_Sword_Jump_Fall- 32x32_5: 821371979
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
