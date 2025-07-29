@@ -408,6 +408,7 @@ MonoBehaviour:
   wallCheck: {fileID: 3543634340846307245}
   wallCheckDistance: 0.84
   facingdir: 1
+  facingright: 1
   knockbackDirection: {x: 2, y: 3}
   secondComboKnockbackXMultiplier: 2
   thirdComboKnockbackXMultiplier: 4
@@ -430,6 +431,7 @@ MonoBehaviour:
   isDefeated: 0
   isQuestEnemy: 0
   uniqueEnemyId: 
+  shouldSpawnOnObjective: 0
   attackDistance: 0.7
   attackCooldown: 0.2
   battleTime: 2.5
@@ -457,9 +459,10 @@ MonoBehaviour:
   - Skeleton_Hurt1
   - Skeleton_Hurt2
   - Skeleton_Hurt3
+  - Skeleton_Hurt_Particles
   vfxSpawnPoint: {fileID: 1893527124932000873}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
-  burnDuration: 1
+  burnDuration: 1.5
   burnFlashInterval: 0.1
   iceMat: {fileID: 2100000, guid: 066fa3013b7e6364898411e07f33a868, type: 2}
   electricMat: {fileID: 2100000, guid: 6395b9930a6409247abdd97eaa15abc2, type: 2}

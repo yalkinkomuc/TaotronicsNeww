@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -20,7 +21,7 @@ public class VFXManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-           // DontDestroyOnLoad(gameObject);
+            // DontDestroyOnLoad(gameObject);
             InitializeVFXPool();
         }
         else
@@ -36,7 +37,30 @@ public class VFXManager : MonoBehaviour
             GameObject vfx = Instantiate(vfxData.vfxPrefab);
             vfx.transform.SetParent(transform);
             vfx.gameObject.SetActive(false);
+            
+            // Particle System varsa ayarları yap
+            SetupParticleSystem(vfx);
+            
             vfxPool.Add(vfxData.vfxId, vfx);
+        }
+    }
+
+    private void SetupParticleSystem(GameObject vfx)
+    {
+        ParticleSystem particleSystem = vfx.GetComponent<ParticleSystem>();
+        if (particleSystem != null)
+        {
+            // Auto Destroy kapalı olsun (pool için)
+            var main = particleSystem.main;
+            main.stopAction = ParticleSystemStopAction.Callback;
+            
+            // Particle System bittiğinde OnVFXComplete çağır
+            var particleSystemCallback = vfx.GetComponent<ParticleSystemCallback>();
+            if (particleSystemCallback == null)
+            {
+                particleSystemCallback = vfx.AddComponent<ParticleSystemCallback>();
+            }
+            particleSystemCallback.vfxManager = this;
         }
     }
 
@@ -59,10 +83,10 @@ public class VFXManager : MonoBehaviour
             {
                 bool hitFromLeft = player.transform.position.x < position.x;
                 
-                // Y ekseninde döndür
+                // Y ekseninde döndür (tersine çevrildi)
                 vfx.transform.rotation = hitFromLeft ? 
-                    Quaternion.Euler(0f, 180f, 0f) : 
-                    Quaternion.Euler(0f, 0f, 0f);
+                    Quaternion.Euler(0f, 0f, 0f) : 
+                    Quaternion.Euler(0f, 180f, 0f);
             }
             else
             {
@@ -72,6 +96,15 @@ public class VFXManager : MonoBehaviour
                 
             if (parent != null && parent.gameObject != null && parent.gameObject.activeInHierarchy)
                 vfx.transform.SetParent(parent);
+            
+            // Particle System varsa reset et ve oynat
+            ParticleSystem particleSystem = vfx.GetComponent<ParticleSystem>();
+            if (particleSystem != null)
+            {
+                particleSystem.Stop();
+                particleSystem.Clear();
+                particleSystem.Play();
+            }
                 
             vfx.SetActive(true);
         }
@@ -81,5 +114,25 @@ public class VFXManager : MonoBehaviour
     {
         vfx.SetActive(false);
         vfx.transform.SetParent(transform);
+    }
+}
+
+// Particle System callback için yardımcı component
+public class ParticleSystemCallback : MonoBehaviour
+{
+    public VFXManager vfxManager;
+    private ParticleSystem particleSystem;
+
+    private void Awake()
+    {
+        particleSystem = GetComponent<ParticleSystem>();
+    }
+
+    private void OnParticleSystemStopped()
+    {
+        if (vfxManager != null)
+        {
+            vfxManager.OnVFXComplete(gameObject);
+        }
     }
 } 
