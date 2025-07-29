@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 20.266, y: -5.331, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8267325989980272579}
@@ -163,6 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blacksmithUI: {fileID: 679630847225757971, guid: 751ab90e2c6b30a42af7ebd8178caa58, type: 3}
+  blacksmithUIPrefabPath: UI/BlacksmithUI
+  useResourcesForUI: 1
 --- !u!114 &6249835174523710144
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12504,7 +12504,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &3177547724207824183
 GameObject:
   m_ObjectHideFlags: 0
@@ -13667,7 +13667,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &3475628107082640595
 Animator:
   serializedVersion: 7
@@ -25190,7 +25190,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &6559187584165304961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25247,7 +25247,7 @@ Transform:
   m_GameObject: {fileID: 6774815563347771801}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: 0, z: 0}
+  m_LocalPosition: {x: 1, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -26539,7 +26539,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &7059207393077567222
 GameObject:
   m_ObjectHideFlags: 0
@@ -28769,7 +28769,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ad980451443d70438faac0bc6c235a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: -1, y: 0, z: 0}
+  m_TrackedObjectOffset: {x: 1, y: 0, z: 0}
   m_LookaheadTime: 0.05
   m_LookaheadSmoothing: 1
   m_LookaheadIgnoreY: 1
@@ -29005,8 +29005,8 @@ MonoBehaviour:
     m_Bits: 0
   wallCheck: {fileID: 9215165900924562322}
   wallCheckDistance: 0.35
-  facingdir: 1
-  facingright: 1
+  facingdir: -1
+  facingright: 0
   knockbackDirection: {x: 0, y: 0}
   secondComboKnockbackXMultiplier: 0
   thirdComboKnockbackXMultiplier: 0
@@ -29021,15 +29021,15 @@ MonoBehaviour:
   boomerangPrefab: {fileID: 5897258380486930799, guid: fcf09d240695bf5458ab2de5fafdda12, type: 3}
   boomerangLaunchPoint: {fileID: 5489726811915005563}
   capsuleCollider: {fileID: 6797760351746211592}
-  moveSpeed: 5.5
+  moveSpeed: 6
   jumpForce: 12.5
   dashCooldown: 0.75
   dashDuration: 0.2
-  dashSpeed: 8
-  groundDashSpeed: 10
-  electricDashSpeed: 15
-  electricDashDuration: 0.15
-  electricDashDistance: 2.25
+  dashSpeed: 15
+  groundDashSpeed: 15
+  electricDashSpeed: 40
+  electricDashDuration: 0.05
+  electricDashDistance: 5
   electricDashPrefab: {fileID: 2187963067883842217, guid: e934d529a0955f146b7c5e71335d28e1, type: 3}
   electricDashSpawnPoint: {fileID: 7450083541054871417}
   electricDashManaCost: 10
@@ -29075,14 +29075,14 @@ MonoBehaviour:
   airPushSpawnPoint: {fileID: 4654985012767893841}
   cameraFollowGO: {fileID: 4190898410991397979}
   groundCheckWidth: 0.65
-  groundCheckHeight: 0.44
+  groundCheckHeight: 0.23
   groundCheckExtraHeight: 0.01
   sideRaySpacing: 0.1
   gold: 1000
   experience: 0
   level: 1
   experienceToNextLevel: 100
-  parryRadius: 1.02
+  parryRadius: 1.25
   parryCooldown: 1
   parryWindowTime: 0.15
   parryEffectPrefab: {fileID: 6790647974808866659, guid: 6b414d20df288a443a4f888a59c2f32a, type: 3}
@@ -29336,7 +29336,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!222 &7746426386532829760
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32844,7 +32844,7 @@ Transform:
   m_GameObject: {fileID: 7064740656634417990}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.99998814, y: -3.04227, z: 0}
+  m_LocalPosition: {x: 0.9999941, y: -3.04226, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
