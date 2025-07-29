@@ -185,7 +185,7 @@ public class SceneSwapManager : MonoBehaviour
    private void CalculateSpawnPositionForDoor()
    {
       float colliderHeight = playerCollider.bounds.extents.y;
-      playerSpawnPosition = doorCollider.transform.position + new Vector3(0f, colliderHeight * 0f, 0f);
+      playerSpawnPosition = doorCollider.transform.position + new Vector3(0f, colliderHeight * 0.35f, 0f);
    }
    
    private void CalculateSpawnPositionForScene()

@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.21, y: -4.24, z: -0.0024958635}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8945813345642355057}
@@ -129,6 +129,7 @@ MonoBehaviour:
   wallCheck: {fileID: 4435692000081309978}
   wallCheckDistance: 0.32
   facingdir: 1
+  facingright: 1
   knockbackDirection: {x: 2, y: 3}
   secondComboKnockbackXMultiplier: 2.5
   thirdComboKnockbackXMultiplier: 4.5
@@ -169,9 +170,7 @@ MonoBehaviour:
   flashDuration: 0.2
   flashInterval: 0.2
   hitVFXIds:
-  - Skeleton_Hurt1
-  - Skeleton_Hurt2
-  - Skeleton_Hurt3
+  - Skeleton_Hurt_Particles
   vfxSpawnPoint: {fileID: 309585666282751159}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
   burnDuration: 1
