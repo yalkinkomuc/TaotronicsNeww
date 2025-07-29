@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 311287d7b65c9134ba964188bba3ff5e
+guid: 0d021b46bf941804f96e62c920af7c64
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6106771249253034116
-    second: Kalkan_Jump48x32_0
+      213: 1010430029301034493
+    second: Kalkan Jump f(64x32)_0
+  - first:
+      213: -6571377512885348171
+    second: Kalkan Jump f(64x32)_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +99,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Kalkan_Jump48x32_0
+      name: Kalkan Jump f(64x32)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 32
-        height: 48
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c7754b367e3604ba0800000000000000
-      internalID: -6106771249253034116
+      spriteID: dfd20e612c4c50e00800000000000000
+      internalID: 1010430029301034493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Kalkan Jump f(64x32)_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b89a7bf7f6cdc4a0800000000000000
+      internalID: -6571377512885348171
       vertices: []
       indices: 
       edges: []
@@ -138,7 +150,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 4da88e5ff8df0544ba5a078a8ee2ae2e
+    spriteID: 73a2b588f63f67041823c0f47688293d
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Kalkan_Jump48x32_0: -6106771249253034116
+      Kalkan Jump f(64x32)_0: 1010430029301034493
+      Kalkan Jump f(64x32)_1: -6571377512885348171
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
