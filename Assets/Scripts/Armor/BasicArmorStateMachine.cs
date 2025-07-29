@@ -25,6 +25,7 @@ public class BasicArmorStateMachine : ArmorStateMachine
 
         animator.SetBool("ArmorDash", false);
         animator.SetBool("ArmorJump", false);
+        animator.SetBool("ArmorFall",false);
 
         animator.SetBool("ArmorAttack", false);
         animator.SetBool("ArmorHammerAttack", false); // hammer yapıldı
@@ -59,7 +60,9 @@ public class BasicArmorStateMachine : ArmorStateMachine
             case ArmorState.Jump:
                 animator.SetBool("ArmorJump", true);
                 break;
-            
+            case ArmorState.Fall:
+                animator.SetBool("ArmorFall", true);
+                break;
             case ArmorState.Attack:
                 animator.SetBool("ArmorAttack",true);
             if (player.stateMachine.currentState is PlayerAttackState attackState)
@@ -147,9 +150,13 @@ public class BasicArmorStateMachine : ArmorStateMachine
         {
             ChangeState(ArmorState.Dash);
         }
-        else if (player.stateMachine.currentState == player.airState)
+        else if (player.stateMachine.currentState == player.jumpState)
         {
             ChangeState(ArmorState.Jump);
+        }
+        else if (player.stateMachine.currentState == player.airState)
+        {
+            ChangeState(ArmorState.Fall);
         }
         else if (player.stateMachine.currentState == player.crouchState)
         {

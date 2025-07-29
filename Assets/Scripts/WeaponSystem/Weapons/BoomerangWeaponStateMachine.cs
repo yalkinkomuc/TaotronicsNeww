@@ -15,6 +15,7 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         animator.SetBool("BoomerangMove",false);
         animator.SetBool("BoomerangDash",false);
         animator.SetBool("BoomerangJump",false);
+        animator.SetBool("BoomerangFall",false);
         
         animator.SetBool("BoomerangAttack",false);
         animator.SetBool("BoomerangGroundDash",false);
@@ -42,9 +43,10 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
             case WeaponState.Jump:
                 animator.SetBool("BoomerangJump", true);
                 break;
-                
-          
-                
+            
+            case WeaponState.Fall:
+                animator.SetBool("BoomerangFall", true);
+                break;
             case WeaponState.Attack:
                 animator.SetBool("BoomerangAttack",true);
                 break;
@@ -72,14 +74,8 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
 
     protected override void Update()
     {
-        
         base.Update();
-        
-       
-        
-      
-        
-        
+     
         // State kontrolleri
         if (player.stateMachine.currentState == player.idleState)
         {
@@ -93,10 +89,13 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Dash);
         }
-      
-        else if (player.stateMachine.currentState == player.airState)
+        else if (player.stateMachine.currentState == player.jumpState)
         {
             ChangeState(WeaponState.Jump);
+        }
+        else if (player.stateMachine.currentState == player.airState)
+        {
+            ChangeState(WeaponState.Fall);
         }
         else if (player.stateMachine.currentState == player.attackState)
         {
@@ -122,8 +121,6 @@ public class BoomerangWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Stunned);
         }
-
-        
         else if (player.stateMachine.currentState == player.throwBoomerangState)
         {
             ChangeState(WeaponState.ThrowBoomerang);

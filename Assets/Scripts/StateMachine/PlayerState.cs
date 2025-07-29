@@ -40,6 +40,9 @@ public class PlayerState
       stateTimer-=Time.deltaTime;
       xInput = UserInput.MoveInput.x;
       Debug.Log(stateMachine.currentState);
+      
+      player.anim.SetFloat("yVelocity",rb.linearVelocity.y);
+      
    }
 
    public virtual void Exit()

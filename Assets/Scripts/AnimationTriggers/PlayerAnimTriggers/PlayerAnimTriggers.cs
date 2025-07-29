@@ -244,8 +244,17 @@ public class PlayerAnimTriggers : MonoBehaviour
    // Earth Push spell animation event trigger - called when player's foot hits the ground
    public void EarthPushTrigger()
    {
+      // Prevent multiple instantiation by checking if we're already in the correct state
       if (player.stateMachine.currentState is PlayerEarthPushSpellState && player.earthPushPrefab != null)
       {
+         // Check if there's already an active Earth Push in the scene to prevent duplicates
+         EarthPush[] existingEarthPushes = FindObjectsOfType<EarthPush>();
+         if (existingEarthPushes.Length > 0)
+         {
+            Debug.Log("Earth Push already exists, skipping instantiation");
+            return;
+         }
+         
          // Use custom spawn point if available, otherwise calculate based on player position
          Vector3 spawnPosition;
          Quaternion spawnRotation;

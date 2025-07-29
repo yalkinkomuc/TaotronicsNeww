@@ -24,6 +24,7 @@ public class BurningSwordStateMachine : WeaponStateMachine
         
         animator.SetBool("BurningSwordDash", false);
         animator.SetBool("BurningSwordJump",false);
+        animator.SetBool("BurningSwordFall",false);
         
         animator.SetBool("BurningSwordAttack", false);
         animator.SetBool("BurningSwordGroundDash", false);
@@ -58,6 +59,9 @@ public class BurningSwordStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Jump:
                 animator.SetBool("BurningSwordJump", true);
+                break;
+            case WeaponState.Fall:
+                animator.SetBool("BurningSwordFall", true);
                 break;
             case WeaponState.Attack:
                 animator.SetBool("BurningSwordAttack",true);
@@ -131,9 +135,13 @@ public class BurningSwordStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.Dash);
         }
-        else if (player.stateMachine.currentState == player.airState)
+        else if (player.stateMachine.currentState == player.jumpState)
         {
             ChangeState(WeaponState.Jump);
+        }
+        else if (player.stateMachine.currentState == player.airState)
+        {
+            ChangeState(WeaponState.Fall);
         }
         else if (player.stateMachine.currentState == player.crouchState)
         {

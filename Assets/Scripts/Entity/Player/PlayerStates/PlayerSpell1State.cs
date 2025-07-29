@@ -68,7 +68,7 @@ public class PlayerSpell1State : PlayerState
     {
         float xOffset = .75f * player.facingdir; // TEST
         float startX = player.transform.position.x + xOffset;
-        float spawnY = player.transform.position.y + 0.25f;
+        float spawnY = player.transform.position.y + 0.10f;
 
         for (int i = 0; i < 4; i++)
         {

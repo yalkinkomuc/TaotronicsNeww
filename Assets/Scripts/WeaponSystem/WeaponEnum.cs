@@ -4,6 +4,7 @@ public enum WeaponState
     Move,
     Dash,
     Jump,
+    Fall,
     
     Attack,
     GroundDash,

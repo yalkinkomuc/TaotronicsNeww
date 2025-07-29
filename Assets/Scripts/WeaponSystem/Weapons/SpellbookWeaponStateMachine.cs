@@ -53,6 +53,7 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         animator.SetBool("SpellbookAttack",false);
         animator.SetBool("SpellbookDash",false);
         animator.SetBool("SpellbookJump",false);
+        animator.SetBool("SpellbookFall",false);
         animator.SetBool("SpellbookGroundDash",false);
         animator.SetBool("SpellbookCrouch",false);
         animator.SetBool("SpellbookGroundAttack",false);
@@ -84,6 +85,9 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
                 break;
             case WeaponState.Jump:
                 animator.SetBool("SpellbookJump", true);
+                break;
+            case WeaponState.Fall:
+                animator.SetBool("SpellbookFall",true);
                 break;
             case WeaponState.Crouch:
                 animator.SetBool("SpellbookCrouch", true);
@@ -159,9 +163,13 @@ public class SpellbookWeaponStateMachine : WeaponStateMachine
         {
             ChangeState(WeaponState.CrouchAttack);
         }
-        else if (player.stateMachine.currentState == player.airState)
+        else if (player.stateMachine.currentState == player.jumpState)
         {
             ChangeState(WeaponState.Jump);
+        }
+        else if (player.stateMachine.currentState == player.airState)
+        {
+            ChangeState(WeaponState.Fall);
         }
         else if (player.stateMachine.currentState == player.crouchState)
         {

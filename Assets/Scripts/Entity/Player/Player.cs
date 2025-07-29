@@ -94,6 +94,7 @@ public class Player : Entity
     
     
     public PlayerDashState dashState { get; private set; }
+    public PlayerJumpState jumpState { get; private set; }
     public PlayerAirState airState { get; private set; }
     public PlayerCrouchState crouchState { get; private set; }
     public PlayerGroundDashState groundDashState { get; private set; }
@@ -410,7 +411,8 @@ public class Player : Entity
         idleState = new PlayerIdleState(this,stateMachine,"Idle");
         moveState = new PlayerMoveState(this,stateMachine,"Move");
         dashState = new PlayerDashState(this,stateMachine,"Dash");
-        airState = new PlayerAirState(this,stateMachine,"Jump");
+        jumpState = new PlayerJumpState(this,stateMachine,"JumpFall");
+        airState = new PlayerAirState(this,stateMachine,"JumpFall");
         crouchState = new PlayerCrouchState(this,stateMachine,"Crouch");
         groundDashState = new PlayerGroundDashState(this,stateMachine,"GroundDash");
         attackState = new PlayerAttackState(this, stateMachine, "Attack");

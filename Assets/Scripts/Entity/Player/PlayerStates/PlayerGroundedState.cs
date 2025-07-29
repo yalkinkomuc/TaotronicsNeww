@@ -27,7 +27,7 @@ public class PlayerGroundedState : PlayerState
         
         if (UserInput.IsJumpBeingPressed&&player.IsGroundDetected()) //
         {
-            stateMachine.ChangeState(player.airState);
+            stateMachine.ChangeState(player.jumpState);
         }
 
         if (UserInput.WasCrouchPressed && player.IsGroundDetected())

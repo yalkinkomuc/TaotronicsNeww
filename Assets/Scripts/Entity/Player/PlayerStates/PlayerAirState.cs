@@ -9,11 +9,7 @@ public class PlayerAirState : PlayerState
     public override void Enter()
     {
         base.Enter();
-
-        if (player.IsGroundDetected())
-        {
-            player.SetVelocity(rb.linearVelocity.x * .2f, player.jumpForce);
-        }
+        
     }
 
     public override void Exit()
@@ -25,9 +21,9 @@ public class PlayerAirState : PlayerState
     {
         base.Update();
 
-        player.SetVelocity(rb.linearVelocity.x * .2f, rb.linearVelocity.y);
+        player.SetVelocity(xInput *player.moveSpeed * .75f, rb.linearVelocity.y);
 
-        if (Input.GetKeyDown(KeyCode.Mouse1) && player.CanThrowBoomerang())
+        if (UserInput.WasBoomerangPressed && player.CanThrowBoomerang())
         {
             stateMachine.ChangeState(player.throwBoomerangState);
         }
@@ -35,7 +31,7 @@ public class PlayerAirState : PlayerState
         if(rb.linearVelocity.y ==0)
             stateMachine.ChangeState(player.idleState);
         
-        player.SetVelocity(xInput*player.moveSpeed,rb.linearVelocity.y);
+        //player.SetVelocity(xInput*player.moveSpeed,rb.linearVelocity.y);
 
         if (UserInput.WasAttackPressed)
         {

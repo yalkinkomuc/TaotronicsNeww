@@ -6,6 +6,7 @@ public enum ArmorState
     Move,
     Dash,
     Jump,
+    Fall,
     
     Attack,
     GroundDash,
