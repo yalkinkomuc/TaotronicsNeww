@@ -71,7 +71,7 @@ public class SceneSwapManager : MonoBehaviour
    private IEnumerator FadeOutThenChangeScene(SceneField myScene,
       DoorTriggerInteraction.DoorToSpawnAt doorToSpawnAt = DoorTriggerInteraction.DoorToSpawnAt.None)
    {
-      
+      UserInput.DeactivatePlayerControls();
       SceneFadeManager.instance.StartFadeOut();
 
       while (SceneFadeManager.instance.isFadingOut)
@@ -82,6 +82,17 @@ public class SceneSwapManager : MonoBehaviour
       doorToSpawnTo = doorToSpawnAt;
       SceneManager.LoadScene(myScene);
    }
+
+   private IEnumerator ActivatePlayerControlsAfterFadeIn()
+   {
+      while (SceneFadeManager.instance.isFadingIn)
+      {
+         yield return null;
+      }
+      
+      UserInput.ActivatePlayerControls();
+   }
+   
    
    private IEnumerator FadeOutThenChangeSceneWithTrigger(SceneField myScene,
       SceneTriggerInteraction.SceneToSpawnAt sceneToSpawnAt = SceneTriggerInteraction.SceneToSpawnAt.None)
@@ -91,6 +102,7 @@ public class SceneSwapManager : MonoBehaviour
          yield break;
       }
       
+      UserInput.DeactivatePlayerControls();
       SceneFadeManager.instance.StartFadeOut();
 
       Debug.Log("Fade out bekleniyor...");
@@ -121,6 +133,7 @@ public class SceneSwapManager : MonoBehaviour
 
       if (loadFromDoor)
       {
+         StartCoroutine(ActivatePlayerControlsAfterFadeIn());
          FindDoor(doorToSpawnTo);
          Player.transform.position = playerSpawnPosition;
          loadFromDoor = false;
@@ -128,6 +141,7 @@ public class SceneSwapManager : MonoBehaviour
 
       if (loadFromTrigger)
       {
+         StartCoroutine(ActivatePlayerControlsAfterFadeIn());
          FindSceneEntry(SceneToSpawnTrigger);
          Player.transform.position = playerSpawnPosition;
          loadFromTrigger = false;

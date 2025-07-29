@@ -117,7 +117,15 @@ public class UserInput : MonoBehaviour
         IsSkillScreenBeingPressed = _skillScreenAction.IsPressed();
         WasSkillScreenReleased = _skillScreenAction.WasReleasedThisFrame();
 
+    }
 
+    public static void DeactivatePlayerControls()
+    {
+        PlayerInput.currentActionMap.Disable();
+    }
 
+    public static void ActivatePlayerControls()
+    {
+        PlayerInput.currentActionMap.Enable();
     }
 }

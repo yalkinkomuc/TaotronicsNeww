@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &578106660111293629
+--- !u!1 &9222476195025526577
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7005369960958320381}
-  - component: {fileID: 3276453664837333337}
-  - component: {fileID: 1631495604372568928}
+  - component: {fileID: 5431239604627206344}
+  - component: {fileID: 3866470104035229791}
+  - component: {fileID: 5648828423173571408}
   m_Layer: 0
-  m_Name: SceneBoundaryScene1
-  m_TagString: SceneBoundary
+  m_Name: Door_Exit
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7005369960958320381
+--- !u!4 &5431239604627206344
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 578106660111293629}
+  m_GameObject: {fileID: 9222476195025526577}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,41 +33,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3276453664837333337
-MonoBehaviour:
+--- !u!61 &3866470104035229791
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 578106660111293629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa438bfbe8280484fbeeba643bdd04c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  leftBoundary: -13.3
-  rightBoundary: 19
-  topBoundary: 5
-  bottomBoundary: -8.13
-  hasLeftExit: 1
-  hasRightExit: 0
-  hasTopExit: 0
-  hasBottomExit: 0
-  leftSceneIndex: 0
-  rightSceneIndex: 1
-  topSceneIndex: -1
-  bottomSceneIndex: -1
-  exitTriggerThickness: 0.3
-  exitHeight: 11.12
-  boundaryColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  exitColor: {r: 0, g: 1, b: 0, a: 1}
---- !u!60 &1631495604372568928
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 578106660111293629}
+  m_GameObject: {fileID: 9222476195025526577}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -98,17 +70,29 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 18.987995, y: 5.0357566}
-      - {x: -13.906509, y: 5.109917}
-      - {x: -13.894482, y: -7.942775}
-      - {x: 19.07763, y: -8.180836}
-  m_UseDelaunayMesh: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &5648828423173571408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9222476195025526577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 299f2327d2fb8a6428c009780f66b2da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DoorToSpawnTo: 1
+  sceneToLoad:
+    _sceneAsset: {fileID: 102900000, guid: 37e893150c96ec74bb07da5ba6544e3b, type: 3}
+    _sceneName: ForestScene-2
+  CurrentDoorPosition: 1
