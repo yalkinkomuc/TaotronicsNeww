@@ -310,7 +310,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.0113254, y: -3.180115, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6111220364650423937}
@@ -456,9 +456,6 @@ MonoBehaviour:
   flashDuration: 0.2
   flashInterval: 0.2
   hitVFXIds:
-  - Skeleton_Hurt1
-  - Skeleton_Hurt2
-  - Skeleton_Hurt3
   - Skeleton_Hurt_Particles
   vfxSpawnPoint: {fileID: 1893527124932000873}
   burnMat: {fileID: 2100000, guid: 66098496fdb4e3941a3aabcb1f5d0c3d, type: 2}
