@@ -14383,6 +14383,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7637031704639217373, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: hitVFXIds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7637031704639217373, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
+      propertyPath: 'hitVFXIds.Array.data[1]'
+      value: Skeleton_Hurt_Particles
+      objectReference: {fileID: 0}
     - target: {fileID: 8561101783627590176, guid: 7ba73e54eef86d445866ecfa478beefb, type: 3}
       propertyPath: m_Name
       value: EliteSkeleton_Enemy

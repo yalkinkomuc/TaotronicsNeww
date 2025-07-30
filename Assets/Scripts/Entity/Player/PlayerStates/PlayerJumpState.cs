@@ -10,12 +10,22 @@ public class PlayerJumpState : PlayerState
     {
         base.Enter();
         
-        player.SetVelocity(rb.linearVelocity.x,player.jumpForce);
+        // Ground dash'ten geçiş yapıldığında jump force uygulama
+        if (stateMachine.currentState != player.groundDashState)
+        {
+            player.SetVelocity(rb.linearVelocity.x,player.jumpForce);
+        }
     }
 
     public override void Update()
     {
         base.Update();
+        
+        // Ground dash'ten geçiş yapıldığında normal hareket kontrollerini devre dışı bırak
+        if (stateMachine.currentState == player.groundDashState)
+        {
+            return;
+        }
         
         player.SetVelocity(xInput *player.moveSpeed, rb.linearVelocity.y);
         

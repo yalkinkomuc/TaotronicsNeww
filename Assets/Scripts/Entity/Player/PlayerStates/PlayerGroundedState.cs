@@ -25,7 +25,7 @@ public class PlayerGroundedState : PlayerState
             stateMachine.ChangeState(player.airState);
         }
         
-        if (UserInput.IsJumpBeingPressed&&player.IsGroundDetected()) //
+        if (UserInput.IsJumpBeingPressed && player.IsGroundDetected() && stateMachine.currentState != player.groundDashState)
         {
             stateMachine.ChangeState(player.jumpState);
         }
