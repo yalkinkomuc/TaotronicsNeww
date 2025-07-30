@@ -7,6 +7,7 @@ public class PlayerAnimTriggers : MonoBehaviour
 {
    
    private Player player => GetComponentInParent<Player>();
+   private Dissolve dissolve;
    
    // Weapon-specific attack handlers
    private Dictionary<WeaponType, IWeaponAttackHandler> weaponAttackHandlers;
@@ -14,6 +15,8 @@ public class PlayerAnimTriggers : MonoBehaviour
    private void Awake()
    {
       InitializeWeaponHandlers();
+      
+      dissolve = GetComponentInParent<Dissolve>();
    }
    
    private void InitializeWeaponHandlers()
@@ -358,7 +361,8 @@ public class PlayerAnimTriggers : MonoBehaviour
       if (player.stateMachine.currentState is PlayerVoidState)
       {
          // Disappear animasyonu tamamlandığında çağrılır
-         player.anim.SetBool("VoidDisappear", false);
+         //player.anim.SetBool("VoidDisappear", false);
+         dissolve.Vanish();
       }
    }
 
@@ -367,7 +371,8 @@ public class PlayerAnimTriggers : MonoBehaviour
       if (player.stateMachine.currentState is PlayerVoidState)
       {
          // Reappear animasyonu tamamlandığında çağrılır
-         player.anim.SetBool("VoidReappear", false);
+         //player.anim.SetBool("VoidReappear", false);
+         dissolve.Reappear();
       }
    }
 
