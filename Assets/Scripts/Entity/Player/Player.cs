@@ -264,6 +264,18 @@ public class Player : Entity
         SetupComponents();
         SetupCrouchCollider();
         
+        // Dissolve component'ini kontrol et ve gerekirse ekle
+        if (GetComponent<Dissolve>() == null)
+        {
+            gameObject.AddComponent<Dissolve>();
+        }
+        
+        // Weapon holder'a da Dissolve component'i ekle
+        if (weaponHolderTranform != null && weaponHolderTranform.GetComponent<Dissolve>() == null)
+        {
+            weaponHolderTranform.gameObject.AddComponent<Dissolve>();
+        }
+        
         ResetPlayerFacing();
         LoadCheckpoint();
 

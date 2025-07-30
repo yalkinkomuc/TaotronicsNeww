@@ -7,7 +7,7 @@ public class PlayerAnimTriggers : MonoBehaviour
 {
    
    private Player player => GetComponentInParent<Player>();
-   private Dissolve dissolve;
+   public Dissolve dissolve;
    
    // Weapon-specific attack handlers
    private Dictionary<WeaponType, IWeaponAttackHandler> weaponAttackHandlers;
@@ -17,6 +17,11 @@ public class PlayerAnimTriggers : MonoBehaviour
       InitializeWeaponHandlers();
       
       dissolve = GetComponentInParent<Dissolve>();
+   }
+
+   public void Dissolve()
+   {
+      dissolve.Vanish();
    }
    
    private void InitializeWeaponHandlers()

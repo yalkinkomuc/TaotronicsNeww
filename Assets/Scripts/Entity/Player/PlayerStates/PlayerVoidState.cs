@@ -10,6 +10,10 @@ public class PlayerVoidState : PlayerState
     // Yeni değişken - void skill teleport mesafesi
     private const float teleportDistance = 2.5f; // Düşmanın arkasına ışınlanma mesafesi
      // Kılıç efekti prefabı
+    
+    // Dissolve efekti için referanslar
+    private Dissolve playerDissolveEffect;
+    private Dissolve weaponHolderDissolveEffect;
 
     public PlayerVoidState(Player _player, PlayerStateMachine _stateMachine, string _animBoolName) : base(_player, _stateMachine, _animBoolName)
     {
@@ -28,8 +32,28 @@ public class PlayerVoidState : PlayerState
             return;
         }
         
+        // Player'a Dissolve efekti ekle
+        playerDissolveEffect = player.GetComponent<Dissolve>();
+        if (playerDissolveEffect == null)
+        {
+            playerDissolveEffect = player.gameObject.AddComponent<Dissolve>();
+        }
+        
+        // Weapon holder'a da Dissolve efekti ekle
+        if (player.weaponHolderTranform != null)
+        {
+            weaponHolderDissolveEffect = player.weaponHolderTranform.GetComponent<Dissolve>();
+            if (weaponHolderDissolveEffect == null)
+            {
+                weaponHolderDissolveEffect = player.weaponHolderTranform.gameObject.AddComponent<Dissolve>();
+            }
+        }
+        
+        // Void state'de invulnerable ol
+        player.SetTemporaryInvulnerability(5f); // 5 saniye invulnerable (void skill süresinden fazla)
+        
         // Hide weapons when entering void state
-        player.HideWeapons();
+        //player.HideWeapons();
         
         // Önce en yakın düşmanı bul
         targetEnemy = FindClosestEnemy();
@@ -65,7 +89,7 @@ public class PlayerVoidState : PlayerState
         player.anim.SetBool("VoidReappear", false);
         
         // Show weapons when exiting void state
-        player.ShowWeapons();
+       // player.ShowWeapons();
         
         player.ExitGhostMode();
     }
@@ -97,14 +121,25 @@ public class PlayerVoidState : PlayerState
 
     private IEnumerator VoidSkillSequence()
     {
+        // 1. Dissolve efektlerini başlat (vanish)
+        if (playerDissolveEffect != null)
+        {
+            playerDissolveEffect.Vanish();
+        }
+        
+        if (weaponHolderDissolveEffect != null)
+        {
+            weaponHolderDissolveEffect.Vanish();
+        }
+        
         // 1. Void disappear animasyonu oynat
         player.anim.SetBool("VoidDisappear", true);
         
-        // Kaybolma animasyonu için bir süre bekle
-        yield return new WaitForSeconds(0.5f);
-        
         // Disappear animasyonu bitince bool'u false yap
         player.anim.SetBool("VoidDisappear", false);
+        
+        // Dissolve efektinin bitmesini bekle
+        yield return new WaitForSeconds(0.75f); // Dissolve süresi
         
         // 2. Düşmanın üzerine void slash effect'leri oluştur
         for (int i = 0; i < slashCount; i++)
@@ -135,11 +170,19 @@ public class PlayerVoidState : PlayerState
         // 3. Oyuncuyu düşmanın karşı tarafında konumlandır
         RepositionPlayerBehindEnemy();
         
-        // Make sure weapons are still hidden before reappear animation
-        player.HideWeapons();
-        
         // 4. Reappear animasyonu oynat
         player.anim.SetBool("VoidReappear", true);
+        
+        // Dissolve efektleri ile tekrar görünür ol (reappear)
+        if (playerDissolveEffect != null)
+        {
+            playerDissolveEffect.Reappear();
+        }
+        
+        if (weaponHolderDissolveEffect != null)
+        {
+            weaponHolderDissolveEffect.Reappear();
+        }
         
         // Bir süre bekle 
         yield return new WaitForSeconds(0.5f);

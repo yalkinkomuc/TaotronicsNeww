@@ -15,13 +15,17 @@ public class Dissolve : MonoBehaviour
 
    private void Start()
    {
-      _spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+      // Tüm child'lardaki SpriteRenderer'ları bul (weaponlar dahil)
+      _spriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
 
       _materials = new Material[_spriteRenderers.Length];
       for (int i = 0; i < _spriteRenderers.Length; i++)
       {
          _materials[i] = _spriteRenderers[i].material;
       }
+      
+      // Debug için kaç sprite renderer bulunduğunu logla
+      Debug.Log($"Dissolve: {_spriteRenderers.Length} SpriteRenderer bulundu (weaponlar dahil)");
    }
 
    private void Update()
