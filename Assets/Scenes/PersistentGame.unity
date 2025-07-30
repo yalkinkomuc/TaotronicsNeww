@@ -10013,6 +10013,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305f98843ca373149b92514f70670787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyDelay: 0
 --- !u!114 &1595632245496988189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14749,6 +14750,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305f98843ca373149b92514f70670787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyDelay: 0
 --- !u!114 &3159347421218247347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26655,6 +26657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305f98843ca373149b92514f70670787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyDelay: 0
 --- !u!1 &6813378782181557000
 GameObject:
   m_ObjectHideFlags: 0
@@ -29674,12 +29677,20 @@ MonoBehaviour:
   vfxList:
   - vfxId: SkeletonHurt1
     vfxPrefab: {fileID: 4233927731194322223, guid: 2ccc25af58bdc1045a6a4c0595853b97, type: 3}
+    vfxType: 0
+    autoDestroyTime: 2
   - vfxId: SkeletonHurt2
     vfxPrefab: {fileID: 3640434673979778771, guid: 0086d03691286ab4c9cccbfbf11dc4d6, type: 3}
+    vfxType: 0
+    autoDestroyTime: 2
   - vfxId: SkeletonHurt3
     vfxPrefab: {fileID: 2942430389981394608, guid: 1328bc5773bcfe046aef71ed277786bd, type: 3}
+    vfxType: 0
+    autoDestroyTime: 2
   - vfxId: SkeletonTakeDamage
     vfxPrefab: {fileID: 5495955209067964762, guid: 8fe3cefc1926bcd4f934111524621f80, type: 3}
+    vfxType: 1
+    autoDestroyTime: 2
 --- !u!1 &7740256655636390472
 GameObject:
   m_ObjectHideFlags: 0
@@ -32572,7 +32583,7 @@ Transform:
   m_GameObject: {fileID: 7064740656634417990}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.9999941, y: -2.76101, z: 0}
+  m_LocalPosition: {x: 0.9999941, y: -3.04226, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
