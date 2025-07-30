@@ -7,6 +7,7 @@ public class PlayerAnimTriggers : MonoBehaviour
 {
    
    private Player player => GetComponentInParent<Player>();
+   [HideInInspector]
    public Dissolve dissolve;
    
    // Weapon-specific attack handlers

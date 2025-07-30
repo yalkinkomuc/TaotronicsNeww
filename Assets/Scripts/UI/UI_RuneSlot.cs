@@ -9,10 +9,7 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
     [Header("UI References")]
     [SerializeField] private Image runeIcon;
     [SerializeField] private Image backgroundImage;
-    [SerializeField] private TextMeshProUGUI enhancementText;
-    [SerializeField] private GameObject emptySlotIndicator;
     [SerializeField] private Image runeTypeIndicator; // Shows rune type color
-    [SerializeField] private TextMeshProUGUI runeNameText; // Rune ismini göstermek için
     [SerializeField] private Button openRuneInventoryButton; // Inspector'dan atanacak
     
     [Header("Slot Configuration")]
@@ -39,25 +36,7 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
             runeIcon.sprite = rune.icon;
             runeIcon.color = equippedColor;
             
-            // Show enhancement level if enhanced (EquipmentManager'dan gerçek enhancement level'ını al)
-            if (enhancementText != null)
-            {
-                int actualEnhancementLevel = 0;
-                if (EquipmentManager.Instance != null)
-                {
-                    actualEnhancementLevel = EquipmentManager.Instance.GetRuneEnhancementLevel(slotIndex);
-                }
-                
-                if (actualEnhancementLevel > 0)
-                {
-                    enhancementText.text = $"+{actualEnhancementLevel}";
-                    enhancementText.gameObject.SetActive(true);
-                }
-                else
-                {
-                    enhancementText.gameObject.SetActive(false);
-                }
-            }
+           
             
             // Show rune type indicator
             if (runeTypeIndicator != null)
@@ -65,12 +44,7 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
                 runeTypeIndicator.color = GetRuneTypeColor(rune.runeType);
                 runeTypeIndicator.gameObject.SetActive(true);
             }
-            
-            // Hide empty slot indicator
-            if (emptySlotIndicator != null)
-            {
-                emptySlotIndicator.SetActive(false);
-            }
+          
         }
         else
         {
@@ -78,11 +52,7 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
             runeIcon.sprite = emptySlotSprite;
             runeIcon.color = emptyColor;
             
-            // Hide enhancement text
-            if (enhancementText != null)
-            {
-                enhancementText.gameObject.SetActive(false);
-            }
+            
             
             // Hide rune type indicator
             if (runeTypeIndicator != null)
@@ -90,18 +60,9 @@ public class UI_RuneSlot : MonoBehaviour, IPointerClickHandler
                 runeTypeIndicator.gameObject.SetActive(false);
             }
             
-            // Show empty slot indicator
-            if (emptySlotIndicator != null)
-            {
-                emptySlotIndicator.SetActive(true);
-            }
+            
         }
         
-        if (runeNameText != null)
-        {
-            runeNameText.text = rune != null ? rune.itemName : "";
-            runeNameText.gameObject.SetActive(rune != null);
-        }
     }
     private Color GetRuneTypeColor(RuneType runeType)
     {

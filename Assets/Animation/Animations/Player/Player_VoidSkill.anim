@@ -21,15 +21,19 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -4123886881021564430, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
+      value: {fileID: -2626250159724311513, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
     - time: 0.125
-      value: {fileID: -7192875147718605675, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
+      value: {fileID: -7104181081414886549, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
     - time: 0.25
-      value: {fileID: 3267812377582622206, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
+      value: {fileID: -4099696574959413550, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
     - time: 0.375
-      value: {fileID: 5654246162276427543, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
+      value: {fileID: -3227290995117809609, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
     - time: 0.5
-      value: {fileID: 4203406242191784528, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
+      value: {fileID: 8496606183832204275, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - time: 0.625
+      value: {fileID: -6088362573096584522, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - time: 0.75
+      value: {fileID: 1574065658097201493, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -52,17 +56,19 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: -4123886881021564430, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
-    - {fileID: -7192875147718605675, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
-    - {fileID: 3267812377582622206, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
-    - {fileID: 5654246162276427543, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
-    - {fileID: 4203406242191784528, guid: f86b540c44384ce45a265901626d1f4f, type: 3}
+    - {fileID: -2626250159724311513, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - {fileID: -7104181081414886549, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - {fileID: -4099696574959413550, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - {fileID: -3227290995117809609, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - {fileID: 8496606183832204275, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - {fileID: -6088362573096584522, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
+    - {fileID: 1574065658097201493, guid: f01cee5c4e65f0642b1ee51887d8deef, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.625
+    m_StopTime: 0.875
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -83,7 +89,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0.25
-    functionName: HideCurrentArmor
+    functionName: Dissolve
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
@@ -91,13 +97,6 @@ AnimationClip:
     messageOptions: 0
   - time: 0.5
     functionName: VoidDisappearFinished
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 0.5
-    functionName: MakeInvisible
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -284,6 +284,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Item Object - Leather
       objectReference: {fileID: 0}
+    - target: {fileID: 2136502034040675571, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4300234007011121033, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
       propertyPath: m_GravityScale
       value: 0
@@ -15331,6 +15335,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Item Object - Iron
       objectReference: {fileID: 0}
+    - target: {fileID: 2136502034040675571, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4300234007011121033, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
       propertyPath: m_GravityScale
       value: 0
@@ -15408,6 +15416,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Notepad (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5200788953753863683, guid: 964f0ac4226b8c1448274610add38c93, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15472,6 +15484,10 @@ PrefabInstance:
     - target: {fileID: 5200788953753863683, guid: 964f0ac4226b8c1448274610add38c93, type: 3}
       propertyPath: m_Name
       value: Notepad (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5200788953753863683, guid: 964f0ac4226b8c1448274610add38c93, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15603,7 +15619,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &932578964
 Transform:
   m_ObjectHideFlags: 0
@@ -16848,6 +16864,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Item Object - Dragon Tooth
       objectReference: {fileID: 0}
+    - target: {fileID: 2136502034040675571, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4300234007011121033, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
       propertyPath: m_GravityScale
       value: 0
@@ -17038,6 +17058,10 @@ PrefabInstance:
     - target: {fileID: 2136502034040675571, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
       propertyPath: m_Name
       value: Item Object - Vitality Rune
+      objectReference: {fileID: 0}
+    - target: {fileID: 2136502034040675571, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4300234007011121033, guid: 70e7380e38dd1b542a8d36012b78fbfd, type: 3}
       propertyPath: m_GravityScale
@@ -17751,6 +17775,10 @@ PrefabInstance:
     - target: {fileID: 5200788953753863683, guid: 964f0ac4226b8c1448274610add38c93, type: 3}
       propertyPath: m_Name
       value: Notepad
+      objectReference: {fileID: 0}
+    - target: {fileID: 5200788953753863683, guid: 964f0ac4226b8c1448274610add38c93, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
