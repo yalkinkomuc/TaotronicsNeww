@@ -378,7 +378,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       {
          // Reappear animasyonu tamamlandığında çağrılır
          //player.anim.SetBool("VoidReappear", false);
-         dissolve.Reappear();
+        // dissolve.Reappear();
       }
    }
 
@@ -486,11 +486,11 @@ public class PlayerAnimTriggers : MonoBehaviour
          armorManager.HideCurrentArmor();
    }
 
-   public void ShowCurrentArmor()
-   {
-      var armorManager = player.GetComponentInChildren<PlayerArmorManager>();
-      if (armorManager != null)
-         armorManager.ShowCurrentArmor();
-   }
+   // public void ShowCurrentArmor()
+   // {
+   //    var armorManager = player.GetComponentInChildren<PlayerArmorManager>();
+   //    if (armorManager != null)
+   //       armorManager.ShowCurrentArmor();
+   // }
    
 }

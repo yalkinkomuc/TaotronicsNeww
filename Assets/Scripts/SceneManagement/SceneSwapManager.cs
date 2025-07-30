@@ -102,6 +102,7 @@ public class SceneSwapManager : MonoBehaviour
          yield break;
       }
       
+      InGameUI.instance.CloseInGameUI();
       UserInput.DeactivatePlayerControls();
       SceneFadeManager.instance.StartFadeOut();
 
@@ -123,6 +124,7 @@ public class SceneSwapManager : MonoBehaviour
          CameraManager.instance.UpdateSceneBoundary();
       }
       
+      InGameUI.instance.OpenInGameUI();
       playerScript.ShowWeapons();
       
       
