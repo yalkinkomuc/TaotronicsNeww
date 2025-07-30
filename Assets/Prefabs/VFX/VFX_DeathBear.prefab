@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1805141347711509266}
   - component: {fileID: 417618573946331542}
   - component: {fileID: 3414813532714504797}
+  - component: {fileID: 5358170442272585523}
   m_Layer: 0
   m_Name: VFX_DeathBear
   m_TagString: Untagged
@@ -123,3 +124,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305f98843ca373149b92514f70670787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyDelay: 0
+--- !u!114 &5358170442272585523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3757604410375930725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad3c6129471e51046a629ec332ae0adb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnAnimationEvent: 1
+  destroyDelay: 0
+  animationEventName: DestroyVFX

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6308769411270722463}
   - component: {fileID: 1770712625508947435}
   - component: {fileID: 8066088191911435939}
+  - component: {fileID: -2551436160474297475}
   m_Layer: 0
   m_Name: BloodVFX_2
   m_TagString: Untagged
@@ -76,7 +77,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 509013307
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 986146643249607857, guid: 43b8a27af378c7a43a6787efaa53ea37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -123,3 +124,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305f98843ca373149b92514f70670787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  destroyDelay: 0
+--- !u!114 &-2551436160474297475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6790647974808866659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad3c6129471e51046a629ec332ae0adb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnAnimationEvent: 1
+  destroyDelay: 0
+  animationEventName: DestroyVFX

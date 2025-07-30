@@ -90,7 +90,7 @@ public class EntityFX : MonoBehaviour
           // VFXManager ve spawn point kontrolü
           if (VFXManager.Instance != null && vfxSpawnPoint.gameObject != null && vfxSpawnPoint.gameObject.activeInHierarchy)
           {
-              VFXManager.Instance.PlayVFX(selectedVFXId, vfxSpawnPoint.position, transform);
+              VFXManager.Instance.PlayVFX(selectedVFXId, vfxSpawnPoint.position, null);
           }
       }
       
