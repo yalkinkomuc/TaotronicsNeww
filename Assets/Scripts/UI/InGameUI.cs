@@ -26,11 +26,13 @@ public class InGameUI : MonoBehaviour
     public void CloseInGameUI()
     {
         gameObject.SetActive(false);
+        Debug.Log("kapadık");
     }
 
     public void OpenInGameUI()
     {
         gameObject.SetActive(true);
+        Debug.Log("actik");
     }
 
     private void Update()

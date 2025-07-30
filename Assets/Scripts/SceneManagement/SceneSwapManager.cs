@@ -102,7 +102,6 @@ public class SceneSwapManager : MonoBehaviour
          yield break;
       }
       
-      InGameUI.instance.CloseInGameUI();
       UserInput.DeactivatePlayerControls();
       SceneFadeManager.instance.StartFadeOut();
 
@@ -124,7 +123,7 @@ public class SceneSwapManager : MonoBehaviour
          CameraManager.instance.UpdateSceneBoundary();
       }
       
-      InGameUI.instance.OpenInGameUI();
+      
       playerScript.ShowWeapons();
       
       
@@ -139,6 +138,7 @@ public class SceneSwapManager : MonoBehaviour
          FindDoor(doorToSpawnTo);
          Player.transform.position = playerSpawnPosition;
          loadFromDoor = false;
+         
       }
 
       if (loadFromTrigger)
@@ -147,6 +147,7 @@ public class SceneSwapManager : MonoBehaviour
          FindSceneEntry(SceneToSpawnTrigger);
          Player.transform.position = playerSpawnPosition;
          loadFromTrigger = false;
+         
       }
    }
 
