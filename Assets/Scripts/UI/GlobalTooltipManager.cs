@@ -216,8 +216,21 @@ public class GlobalTooltipManager : MonoBehaviour
         {
             if (equipment is WeaponData weaponData)
             {
-                string damageRange = CalculateWeaponDamageRange(weaponData, false);
-                tooltipDamageText.text = $"Hasar: {damageRange}";
+                // Special text for secondary weapons
+                if (weaponData.weaponType == WeaponType.Spellbook)
+                {
+                    tooltipDamageText.text = "Scales with Mind";
+                }
+                else if (weaponData.weaponType == WeaponType.Boomerang)
+                {
+                    tooltipDamageText.text = "Scales with Might";
+                }
+                else
+                {
+                    // Normal damage calculation for other weapons
+                    string damageRange = CalculateWeaponDamageRange(weaponData, false);
+                    tooltipDamageText.text = $"Hasar: {damageRange}";
+                }
             }
             else
             {
