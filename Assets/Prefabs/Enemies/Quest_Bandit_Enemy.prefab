@@ -62,8 +62,8 @@ Transform:
   m_GameObject: {fileID: 2716819673060110429}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.173, y: 0.6600001, z: 0.038921557}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.038921557}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9078081764468672457}
@@ -160,6 +160,7 @@ MonoBehaviour:
   wallCheck: {fileID: 7356323227827464995}
   wallCheckDistance: 0.63
   facingdir: 1
+  facingright: 1
   knockbackDirection: {x: 2, y: 3}
   secondComboKnockbackXMultiplier: 1.5
   thirdComboKnockbackXMultiplier: 2
@@ -182,6 +183,7 @@ MonoBehaviour:
   isDefeated: 0
   isQuestEnemy: 0
   uniqueEnemyId: 
+  shouldSpawnOnObjective: 0
   attackDistance: 0.7
   attackCooldown: 0.2
   battleTime: 4

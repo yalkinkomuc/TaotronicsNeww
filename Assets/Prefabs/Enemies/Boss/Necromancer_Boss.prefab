@@ -308,8 +308,8 @@ Transform:
   m_GameObject: {fileID: 8942981650842214983}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.02, y: -5.21, z: -0.05188074}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5701922470439934846}
@@ -407,6 +407,7 @@ MonoBehaviour:
   wallCheck: {fileID: 2981558565480874075}
   wallCheckDistance: 1.26
   facingdir: 1
+  facingright: 1
   knockbackDirection: {x: 0, y: 0}
   secondComboKnockbackXMultiplier: 0
   thirdComboKnockbackXMultiplier: 0
@@ -454,7 +455,6 @@ MonoBehaviour:
   - {fileID: 0}
   arenaCollider: {fileID: 0}
   surroundingCheckSize: {x: 1.1, y: 1.1}
-  debugMode: 1
 --- !u!114 &3616037168172700755
 MonoBehaviour:
   m_ObjectHideFlags: 0

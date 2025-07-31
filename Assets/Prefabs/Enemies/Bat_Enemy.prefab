@@ -31,8 +31,8 @@ Transform:
   m_GameObject: {fileID: 4694070637326983686}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.6511798, y: -2.518424, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1681979379672045622}
@@ -128,6 +128,7 @@ MonoBehaviour:
   wallCheck: {fileID: 5441756697815002969}
   wallCheckDistance: 1.1
   facingdir: 1
+  facingright: 1
   knockbackDirection: {x: 1, y: 1}
   secondComboKnockbackXMultiplier: 0
   thirdComboKnockbackXMultiplier: 0
