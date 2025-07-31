@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: IceHammer
   m_EditorClassIdentifier: 
   itemName: IceHammer
-  description: IceHammer
+  description: Deep within the Frostfire Peaks, dwarven masters forged the Ice Hammer.
+    They channeled the raw magic of glacial ice and volcanic heat into its core,
+    creating a weapon that sings with the silent fury of the mountains.
   icon: {fileID: -4588948942966614722, guid: 3ae3e62ce4e29d542b824643c1f3c392, type: 3}
   itemType: 0
   dropChance: 0
@@ -34,7 +36,7 @@ MonoBehaviour:
   minDamage: 35
   maxDamage: 40
   baseDamageBonus: 0
-  level: 1
+  level: 23
   maxLevel: 30
   upgradeDamageIncrement: 2
   baseUpgradeCost: 100

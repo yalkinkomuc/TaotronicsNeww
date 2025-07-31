@@ -13,7 +13,10 @@ MonoBehaviour:
   m_Name: Hammer
   m_EditorClassIdentifier: 
   itemName: Hammer
-  description: Hammer
+  description: This hammer was forged in a standard workshop, likely in a town or
+    city. A local smith heated common iron or steel and shaped it on an anvil. It
+    was made for general purpose work, without any special attributes. It's a reliable
+    tool, nothing more.
   icon: {fileID: 313374463458331706, guid: 892e6b183b51152428daeb0f269f5753, type: 3}
   itemType: 0
   dropChance: 0
@@ -34,7 +37,7 @@ MonoBehaviour:
   minDamage: 30
   maxDamage: 35
   baseDamageBonus: 0
-  level: 1
+  level: 10
   maxLevel: 10
   upgradeDamageIncrement: 2
   baseUpgradeCost: 1
