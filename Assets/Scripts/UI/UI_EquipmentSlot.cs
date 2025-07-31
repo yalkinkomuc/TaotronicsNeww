@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using System.Linq;
 
-public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
+public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("UI References")]
     [SerializeField] private Image equipmentIcon;
@@ -18,11 +18,14 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Color equippedColor = Color.white;
     [SerializeField] private Color emptyColor = new Color(1, 1, 1, 0.3f);
     
+    
+    
     // Public property for external access
     public EquipmentSlot SlotType => slotType;
     
     private EquipmentData currentEquipment;
     private System.Action<EquipmentData> onEquipmentSelected;
+    private bool isHovering = false;
     
     private void Start()
     {
@@ -220,6 +223,54 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         }
     }
     
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        // Prevent multiple triggers
+        if (isHovering) return;
+        
+        isHovering = true;
+        Debug.Log("OnPointerEnter triggered on EquipmentSlot!");
+        
+        // Check if mouse is over tooltip panel (prevent event conflicts)
+        if (GlobalTooltipManager.Instance != null && 
+            GlobalTooltipManager.Instance.IsMouseOverTooltip())
+        {
+            Debug.Log("Mouse is over tooltip panel, ignoring event");
+            isHovering = false;
+            return; // Don't show tooltip if mouse is over tooltip panel
+        }
+        
+        // Show tooltip even if slot is empty (show slot type info)
+        if (GlobalTooltipManager.Instance != null)
+        {
+            if (currentEquipment != null)
+            {
+                Debug.Log($"Showing tooltip for equipment: {currentEquipment.itemName}");
+                GlobalTooltipManager.Instance.ShowTooltip(currentEquipment, transform.position);
+            }
+            else
+            {
+                Debug.Log("Slot is empty, no tooltip to show");
+            }
+        }
+        else
+        {
+            Debug.LogError("GlobalTooltipManager.Instance is null!");
+        }
+    }
+    
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        isHovering = false;
+        Debug.Log("OnPointerExit triggered on EquipmentSlot!");
+        
+        // Hide global tooltip
+        if (GlobalTooltipManager.Instance != null)
+        {
+            GlobalTooltipManager.Instance.HideTooltip();
+        }
+    }
+    
     private void OpenEquipmentSelectionPanel()
     {
         // This will trigger lazy loading if needed
@@ -247,4 +298,5 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler
         UpdateSlotDisplay();
         onEquipmentSelected?.Invoke(selectedEquipment);
     }
+    
 } 

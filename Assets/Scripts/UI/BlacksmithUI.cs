@@ -532,7 +532,7 @@ public class BlacksmithUI : BaseUIPanel
     /// <param name="weapon">Weapon to calculate for</param>
     /// <param name="isNextLevel">If true, calculate for next level upgrade</param>
     /// <returns>Formatted damage range string</returns>
-    private string CalculateWeaponDamageRange(WeaponData weapon, bool isNextLevel)
+    public string CalculateWeaponDamageRange(WeaponData weapon, bool isNextLevel)
     {
         if (weapon == null || playerStats == null) return "0";
         
