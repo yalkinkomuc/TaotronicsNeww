@@ -132,6 +132,9 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         if (selectionPanel != null)
             selectionPanel.SetActive(false);
         
+        // Reset hover state for all equipment slots
+        ResetAllEquipmentSlotHoverStates();
+        
         // Show the specified object when panel closes
         if (objectToHideWhenPanelOpens != null)
         {
@@ -649,5 +652,21 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         return RectTransformUtility.RectangleContainsScreenPoint(
             panelRect, Input.mousePosition, 
             GetComponentInParent<Canvas>().worldCamera);
+    }
+
+    /// <summary>
+    /// Reset hover state for all equipment slots to ensure tooltips work after panel closes
+    /// </summary>
+    private void ResetAllEquipmentSlotHoverStates()
+    {
+        // Find all UI_EquipmentSlot components in the scene
+        UI_EquipmentSlot[] allEquipmentSlots = FindObjectsOfType<UI_EquipmentSlot>();
+        
+        foreach (var slot in allEquipmentSlots)
+        {
+            slot.ResetHoverState();
+        }
+        
+        Debug.Log($"Reset hover state for {allEquipmentSlots.Length} equipment slots");
     }
 } 

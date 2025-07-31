@@ -277,6 +277,15 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler, IPointerEnt
         }
     }
     
+    /// <summary>
+    /// Force reset hover state when panel closes
+    /// </summary>
+    public void ResetHoverState()
+    {
+        isHovering = false;
+        Debug.Log("Hover state reset for EquipmentSlot!");
+    }
+    
     private void OpenEquipmentSelectionPanel()
     {
         // This will trigger lazy loading if needed
@@ -302,6 +311,16 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler, IPointerEnt
         // TODO: Integrate with EquipmentManager when it's ready
         currentEquipment = selectedEquipment;
         UpdateSlotDisplay();
+        
+        // Reset hover state to ensure tooltip works after equipment change
+        isHovering = false;
+        
+        // Update tooltip if it's currently showing
+        if (GlobalTooltipManager.Instance != null && currentEquipment != null)
+        {
+            GlobalTooltipManager.Instance.ShowTooltip(currentEquipment, transform.position);
+        }
+        
         onEquipmentSelected?.Invoke(selectedEquipment);
     }
     

@@ -110,6 +110,7 @@ public class GlobalTooltipManager : MonoBehaviour
         if (UI_EquipmentSelectionPanel.Instance != null && 
             UI_EquipmentSelectionPanel.Instance.IsPanelOpen())
         {
+            Debug.Log("Equipment selection panel is open, not showing tooltip");
             return;
         }
         
@@ -119,7 +120,18 @@ public class GlobalTooltipManager : MonoBehaviour
         if (isHovering && currentEquipment == equipment && 
             Vector3.Distance(currentPosition, position) < 10f)
         {
-            return; // Already showing tooltip for this equipment
+            // Same equipment, but update tooltip content in case equipment data changed
+            UpdateTooltipContent(equipment, position);
+            return;
+        }
+        
+        Debug.Log($"Showing tooltip for: {equipment.itemName}");
+        
+        // Reset hover state if equipment changed
+        if (currentEquipment != equipment)
+        {
+            isHovering = false;
+            Debug.Log("Equipment changed, resetting hover state");
         }
         
         isHovering = true;
