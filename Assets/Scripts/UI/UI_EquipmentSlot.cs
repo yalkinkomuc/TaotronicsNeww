@@ -228,6 +228,12 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler, IPointerEnt
         // Prevent multiple triggers
         if (isHovering) return;
         
+        // Don't show tooltip if this is a selection slot (has callback)
+        if (onEquipmentSelected != null)
+        {
+            return; // This is a selection slot, don't show tooltip
+        }
+        
         isHovering = true;
         Debug.Log("OnPointerEnter triggered on EquipmentSlot!");
         

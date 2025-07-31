@@ -18,6 +18,9 @@ public class GlobalTooltipManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI tooltipDescriptionText;
     [SerializeField] private TextMeshProUGUI tooltipDamageText;
     
+    [Header("Panel Management")]
+    [SerializeField] private GameObject panelToHideWhenSelectionOpens;
+    
     [Header("Tooltip Settings")]
     [SerializeField] private float showDelay = 0.3f;
     [SerializeField] private Vector3 offset = new Vector3(150, 50, 0);
@@ -169,9 +172,14 @@ public class GlobalTooltipManager : MonoBehaviour
     {
         if (equipment == null || tooltipPanel == null) return;
         
-        // Set tooltip position using screen coordinates for better stability
-        Vector3 screenPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, position);
-        tooltipPanel.transform.position = screenPosition + offset;
+        // Get mouse position
+        Vector3 mousePosition = Input.mousePosition;
+        
+        // Calculate smart offset based on screen position
+        Vector3 smartOffset = CalculateSmartOffset(position);
+        
+        // Set tooltip position using mouse position with smart offset
+        tooltipPanel.transform.position = mousePosition + smartOffset;
         
         // Set tooltip content
         if (tooltipNameText != null)
@@ -200,6 +208,28 @@ public class GlobalTooltipManager : MonoBehaviour
     }
     
     /// <summary>
+    /// Calculate smart offset based on object's screen position
+    /// </summary>
+    private Vector3 CalculateSmartOffset(Vector3 objectPosition)
+    {
+        // Convert object world position to screen position
+        Vector3 screenPosition = RectTransformUtility.WorldToScreenPoint(Camera.main, objectPosition);
+        
+        // Get screen center
+        float screenCenterX = Screen.width * 0.5f;
+        
+        // If object is on the left side of screen, show tooltip on the left
+        if (screenPosition.x < screenCenterX)
+        {
+            return new Vector3(-offset.x, offset.y, 0); // Left side offset
+        }
+        else
+        {
+            return new Vector3(offset.x, offset.y, 0); // Right side offset
+        }
+    }
+    
+    /// <summary>
     /// Calculate weapon damage range using WeaponDamageManager (same as BlacksmithUI)
     /// </summary>
     private string CalculateWeaponDamageRange(WeaponData weapon, bool isNextLevel)
@@ -224,9 +254,6 @@ public class GlobalTooltipManager : MonoBehaviour
         playerStats = stats;
     }
     
-    /// <summary>
-    /// Check if mouse is over tooltip panel
-    /// </summary>
     public bool IsMouseOverTooltip()
     {
         if (tooltipPanel == null || !tooltipPanel.activeInHierarchy) return false;

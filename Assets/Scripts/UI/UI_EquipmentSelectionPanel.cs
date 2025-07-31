@@ -117,7 +117,17 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         if (selectionPanel != null)
             selectionPanel.SetActive(false);
         
+       
+        
         onItemSelected = null;
+    }
+    
+    /// <summary>
+    /// Check if the selection panel is currently open
+    /// </summary>
+    public bool IsPanelOpen()
+    {
+        return selectionPanel != null && selectionPanel.activeInHierarchy;
     }
     
     /// <summary>
