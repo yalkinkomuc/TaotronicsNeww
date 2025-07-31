@@ -28,6 +28,9 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private TextMeshProUGUI panelTitleText;
     
+    [Header("Panel Management")]
+    [SerializeField] private GameObject objectToHideWhenPanelOpens;
+    
     
     [Header("Positioning")]
     [SerializeField] private Vector2 panelOffset = new Vector2(200, 0); // Increased offset to position panel to the right of inventory
@@ -99,6 +102,18 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         currentSlotType = slotType;
         onItemSelected = onSelected;
         
+        // Hide any existing tooltip when panel opens
+        if (GlobalTooltipManager.Instance != null)
+        {
+            GlobalTooltipManager.Instance.HideTooltip();
+        }
+        
+        // Hide the specified object when panel opens
+        if (objectToHideWhenPanelOpens != null)
+        {
+            objectToHideWhenPanelOpens.SetActive(false);
+        }
+        
         // Position panel near the clicked slot
         PositionPanel(screenPosition);
         
@@ -117,7 +132,11 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         if (selectionPanel != null)
             selectionPanel.SetActive(false);
         
-       
+        // Show the specified object when panel closes
+        if (objectToHideWhenPanelOpens != null)
+        {
+            objectToHideWhenPanelOpens.SetActive(true);
+        }
         
         onItemSelected = null;
     }

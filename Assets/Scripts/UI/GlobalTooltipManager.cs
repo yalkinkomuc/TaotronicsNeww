@@ -106,6 +106,13 @@ public class GlobalTooltipManager : MonoBehaviour
     /// <param name="position">World position to show tooltip near</param>
     public void ShowTooltip(EquipmentData equipment, Vector3 position)
     {
+        // Don't show tooltip if equipment selection panel is open
+        if (UI_EquipmentSelectionPanel.Instance != null && 
+            UI_EquipmentSelectionPanel.Instance.IsPanelOpen())
+        {
+            return;
+        }
+        
         if (equipment == null || tooltipPanel == null) return;
         
         // Check if it's the same equipment and position (prevent unnecessary updates)
