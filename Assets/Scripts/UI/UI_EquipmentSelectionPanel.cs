@@ -102,6 +102,9 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         currentSlotType = slotType;
         onItemSelected = onSelected;
         
+        // Reset all hover states BEFORE hiding the equipment panel
+        ResetAllEquipmentSlotHoverStates();
+        
         // Hide any existing tooltip when panel opens
         if (GlobalTooltipManager.Instance != null)
         {
@@ -131,9 +134,6 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     {
         if (selectionPanel != null)
             selectionPanel.SetActive(false);
-        
-        // Reset hover state for all equipment slots
-        ResetAllEquipmentSlotHoverStates();
         
         // Show the specified object when panel closes
         if (objectToHideWhenPanelOpens != null)
@@ -659,6 +659,12 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
     /// </summary>
     private void ResetAllEquipmentSlotHoverStates()
     {
+        // Reset GlobalTooltipManager hover states first
+        if (GlobalTooltipManager.Instance != null)
+        {
+            GlobalTooltipManager.Instance.ResetAllHoverStates();
+        }
+        
         // Find all UI_EquipmentSlot components in the scene
         UI_EquipmentSlot[] allEquipmentSlots = FindObjectsOfType<UI_EquipmentSlot>();
         
@@ -667,6 +673,8 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
             slot.ResetHoverState();
         }
         
-        Debug.Log($"Reset hover state for {allEquipmentSlots.Length} equipment slots");
+        Debug.Log($"Reset hover state for {allEquipmentSlots.Length} equipment slots and GlobalTooltipManager");
     }
+    
+
 } 

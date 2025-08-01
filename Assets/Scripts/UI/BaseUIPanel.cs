@@ -43,6 +43,8 @@ public class BaseUIPanel : MonoBehaviour
             HandleInputBlocking();
         }
         
+        
+        
         // InGameUI elementlerini gizle
         HideInGameUIElements();
     }
@@ -53,6 +55,7 @@ public class BaseUIPanel : MonoBehaviour
         {
             UIInputBlocker.instance.RemovePanel(gameObject);
         }
+        
         
         // InGameUI elementlerini tekrar göster
         ShowInGameUIElements();

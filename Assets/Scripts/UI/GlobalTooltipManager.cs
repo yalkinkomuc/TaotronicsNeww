@@ -174,7 +174,7 @@ public class GlobalTooltipManager : MonoBehaviour
     /// </summary>
     private IEnumerator ShowTooltipWithDelay(EquipmentData equipment, Vector3 position, float delay)
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsRealtime(delay);
         
         // Only show tooltip if still hovering and equipment hasn't changed
         if (isHovering && currentEquipment == equipment && tooltipPanel != null)
@@ -284,6 +284,30 @@ public class GlobalTooltipManager : MonoBehaviour
     public void UpdatePlayerStats(PlayerStats stats)
     {
         playerStats = stats;
+    }
+    
+    /// <summary>
+    /// Force reset all hover states - called when equipment selection panel closes
+    /// </summary>
+    public void ResetAllHoverStates()
+    {
+        isHovering = false;
+        currentEquipment = null;
+        
+        // Hide tooltip immediately
+        if (tooltipPanel != null)
+        {
+            tooltipPanel.SetActive(false);
+        }
+        
+        // Stop any running coroutines
+        if (tooltipCoroutine != null)
+        {
+            StopCoroutine(tooltipCoroutine);
+            tooltipCoroutine = null;
+        }
+        
+        Debug.Log("[GlobalTooltipManager] All hover states reset");
     }
     
     public bool IsMouseOverTooltip()

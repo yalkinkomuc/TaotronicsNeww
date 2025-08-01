@@ -234,6 +234,14 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler, IPointerEnt
             return; // This is a selection slot, don't show tooltip
         }
         
+        // Don't show tooltip if equipment selection panel is open
+        if (UI_EquipmentSelectionPanel.Instance != null && 
+            UI_EquipmentSelectionPanel.Instance.IsPanelOpen())
+        {
+            Debug.Log("Equipment selection panel is open, not showing tooltip");
+            return;
+        }
+        
         isHovering = true;
         Debug.Log("OnPointerEnter triggered on EquipmentSlot!");
         
@@ -283,6 +291,13 @@ public class UI_EquipmentSlot : MonoBehaviour, IPointerClickHandler, IPointerEnt
     public void ResetHoverState()
     {
         isHovering = false;
+        
+        // Also hide any active tooltip for this slot
+        if (GlobalTooltipManager.Instance != null)
+        {
+            GlobalTooltipManager.Instance.HideTooltip();
+        }
+        
         Debug.Log("Hover state reset for EquipmentSlot!");
     }
     

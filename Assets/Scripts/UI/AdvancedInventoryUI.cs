@@ -491,6 +491,10 @@ public class AdvancedInventoryUI : BaseUIPanel
         if (collectiblesPanel != null)
             collectiblesPanel.SetActive(false);
         
+        // Reset hover states when equipment panel is shown
+        // This ensures tooltips work properly after equipment selection panel closes
+        StartCoroutine(ResetHoverStatesWhenEquipmentPanelShown());
+        
         UpdateGearCapacity();
     }
     
@@ -684,4 +688,28 @@ public class AdvancedInventoryUI : BaseUIPanel
     
     
     #endregion
+    
+    /// <summary>
+    /// Reset hover states when equipment panel is shown (after equipment selection panel closes)
+    /// </summary>
+    private IEnumerator ResetHoverStatesWhenEquipmentPanelShown()
+    {
+        // Wait for one frame to ensure equipment panel is fully active
+        yield return null;
+        
+        // Reset GlobalTooltipManager hover states
+        if (GlobalTooltipManager.Instance != null)
+        {
+            GlobalTooltipManager.Instance.ResetAllHoverStates();
+        }
+        
+        // Find all UI_EquipmentSlot components in the scene and reset their hover states
+        UI_EquipmentSlot[] allEquipmentSlots = FindObjectsOfType<UI_EquipmentSlot>();
+        foreach (var slot in allEquipmentSlots)
+        {
+            slot.ResetHoverState();
+        }
+        
+        Debug.Log($"[AdvancedInventoryUI] Reset hover states for {allEquipmentSlots.Length} equipment slots after equipment panel shown");
+    }
 } 
