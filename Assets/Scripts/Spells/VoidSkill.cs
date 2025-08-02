@@ -18,7 +18,6 @@ public class VoidSkill : MonoBehaviour
          Enemy enemyUnit = other.GetComponent<Enemy>();
          
          Player player = PlayerManager.instance?.player;
-         bool isCritical = false;
          float finalDamage = damage;
          
          if (player != null && player.stats is PlayerStats playerStats)
@@ -30,7 +29,6 @@ public class VoidSkill : MonoBehaviour
             if (playerStats.IsCriticalHit())
             {
                finalDamage *= 1.5f;
-               isCritical = true;
             }
          }
          enemyUnit.Damage();

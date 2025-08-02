@@ -704,7 +704,7 @@ public class AdvancedInventoryUI : BaseUIPanel
         }
         
         // Find all UI_EquipmentSlot components in the scene and reset their hover states
-        UI_EquipmentSlot[] allEquipmentSlots = FindObjectsOfType<UI_EquipmentSlot>();
+        UI_EquipmentSlot[] allEquipmentSlots = FindObjectsByType<UI_EquipmentSlot>(FindObjectsSortMode.None);
         foreach (var slot in allEquipmentSlots)
         {
             slot.ResetHoverState();

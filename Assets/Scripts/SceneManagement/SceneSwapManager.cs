@@ -17,7 +17,6 @@ public class SceneSwapManager : MonoBehaviour
    private Collider2D sceneTriggerCollider;
    private Vector3 playerSpawnPosition;
    
-   
    private DoorTriggerInteraction.DoorToSpawnAt doorToSpawnTo;
    private SceneTriggerInteraction.SceneToSpawnAt SceneToSpawnTrigger;
 
@@ -32,6 +31,8 @@ public class SceneSwapManager : MonoBehaviour
       playerScript = Player.GetComponent<Player>();
       playerCollider = Player.GetComponent<Collider2D>();
    }
+
+  
 
    private void OnEnable()
    {
@@ -153,7 +154,7 @@ public class SceneSwapManager : MonoBehaviour
 
    private void FindDoor(DoorTriggerInteraction.DoorToSpawnAt doorSpawnNumber)
    {
-      DoorTriggerInteraction[] doors =  FindObjectsOfType<DoorTriggerInteraction>();
+      DoorTriggerInteraction[] doors = FindObjectsByType<DoorTriggerInteraction>(FindObjectsSortMode.None);
 
       for(int i = 0; i < doors.Length; i++)
       {
@@ -169,7 +170,7 @@ public class SceneSwapManager : MonoBehaviour
    
    private void FindSceneEntry(SceneTriggerInteraction.SceneToSpawnAt sceneSpawnNumber)
    {
-     SceneTriggerInteraction[] scenesTriggers =  FindObjectsOfType<SceneTriggerInteraction>();
+     SceneTriggerInteraction[] scenesTriggers =  FindObjectsByType<SceneTriggerInteraction>(FindObjectsSortMode.None);
 
       for(int i = 0; i < scenesTriggers.Length; i++)
       {
@@ -195,7 +196,7 @@ public class SceneSwapManager : MonoBehaviour
    {
 
       float xOffset = 0;
-      SceneTriggerInteraction[] scenesTriggers =  FindObjectsOfType<SceneTriggerInteraction>();
+      SceneTriggerInteraction[] scenesTriggers =  FindObjectsByType<SceneTriggerInteraction>(FindObjectsSortMode.None);
       for (int i = 0; i < scenesTriggers.Length; i++)
       {
          xOffset = scenesTriggers[i].xOffset;

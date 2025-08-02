@@ -13,18 +13,6 @@ public class PlayerManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            //DontDestroyOnLoad(gameObject);
-            
-            // Player'ı da DontDestroyOnLoad yap
-            if (player != null)
-            {
-                DontDestroyOnLoad(player.gameObject);
-                
-            }
-            else
-            {
-                Debug.LogError("PlayerManager: Player referansı atanmamış!");
-            }
             
             // Subscribe to scene loading events to maintain references
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;

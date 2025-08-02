@@ -6,8 +6,6 @@ using UnityEngine;
 /// </summary>
 public class VFXAnimTrigger : MonoBehaviour
 {
-    [Header("Destroy Settings")]
-    [SerializeField] private float destroyDelay = 0f;
 
     // Animation Event ile çağrılacak
     public void CompleteVFX()

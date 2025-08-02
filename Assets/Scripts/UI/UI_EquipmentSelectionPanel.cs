@@ -666,7 +666,7 @@ public class UI_EquipmentSelectionPanel : MonoBehaviour
         }
         
         // Find all UI_EquipmentSlot components in the scene
-        UI_EquipmentSlot[] allEquipmentSlots = FindObjectsOfType<UI_EquipmentSlot>();
+        UI_EquipmentSlot[] allEquipmentSlots = FindObjectsByType<UI_EquipmentSlot>(FindObjectsSortMode.None);
         
         foreach (var slot in allEquipmentSlots)
         {

@@ -68,7 +68,6 @@ public class EarthPush : MonoBehaviour
         // Get player reference for Mind attribute scaling
         Player player = PlayerManager.instance?.player;
         float finalDamage = damage;
-        bool isCritical = false;
         
         // Use WeaponDamageManager for spell damage calculation
         if (player != null && player.stats is PlayerStats playerStats)
@@ -80,7 +79,6 @@ public class EarthPush : MonoBehaviour
             if (playerStats.IsCriticalHit())
             {
                 finalDamage *= 1.5f;
-                isCritical = true;
             }
         }
         
@@ -157,7 +155,6 @@ public class EarthPush : MonoBehaviour
         // Get player reference for spell damage calculation
         Player player = PlayerManager.instance?.player;
         float finalDamage = damage;
-        bool isCritical = false;
         
         // Use WeaponDamageManager for spell damage calculation
         if (player != null && player.stats is PlayerStats playerStats)
@@ -169,7 +166,6 @@ public class EarthPush : MonoBehaviour
             if (playerStats.IsCriticalHit())
             {
                 finalDamage *= 1.5f;
-                isCritical = true;
             }
         }
         

@@ -9,12 +9,6 @@ public class VFXDestroyer : MonoBehaviour
     [SerializeField] private bool destroyOnAnimationEvent = true;
     [SerializeField] private float destroyDelay = 0f;
     
-    [Header("Animation Event")]
-    [SerializeField] private string animationEventName = "DestroyVFX";
-
-    /// <summary>
-    /// Anim event ile çağrılacak method
-    /// </summary>
     public void DestroyVFX()
     {
         if (destroyDelay > 0)

@@ -193,7 +193,7 @@ public class VFXManager : MonoBehaviour
 public class ParticleAutoDestroy : MonoBehaviour
 {
     public float destroyTime = 2f;
-    private ParticleSystem particleSystem;
+    private new ParticleSystem particleSystem;
     private float timer;
 
     private void Awake()

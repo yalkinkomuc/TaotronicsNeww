@@ -108,7 +108,6 @@ public class IceShard : MonoBehaviour
             {
                 // Use WeaponDamageManager for spell damage calculation
                 float finalDamage = damage;
-                bool isCritical = false;
                 
                 if (player != null && player.stats is PlayerStats playerStats)
                 {
@@ -119,7 +118,6 @@ public class IceShard : MonoBehaviour
                     if (playerStats.IsCriticalHit())
                     {
                         finalDamage *= 1.5f;
-                        isCritical = true;
                     }
                 }
 

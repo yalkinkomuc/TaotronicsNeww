@@ -257,7 +257,7 @@ public class PlayerAnimTriggers : MonoBehaviour
       if (player.stateMachine.currentState is PlayerEarthPushSpellState && player.earthPushPrefab != null)
       {
          // Check if there's already an active Earth Push in the scene to prevent duplicates
-         EarthPush[] existingEarthPushes = FindObjectsOfType<EarthPush>();
+         EarthPush[] existingEarthPushes = FindObjectsByType<EarthPush>(FindObjectsSortMode.None);
          if (existingEarthPushes.Length > 0)
          {
             Debug.Log("Earth Push already exists, skipping instantiation");

@@ -93,12 +93,14 @@ public class EquipmentUIManager : MonoBehaviour
         if (AdvancedInventoryUI.Instance != null)
         {
             inventoryUI = AdvancedInventoryUI.Instance;
+            Debug.Log("1. yöntem çalıştı");
         }
         
         // Strategy 2: Try to find via FindFirstObjectByType (includes inactive objects)
         if (inventoryUI == null)
         {
             inventoryUI = FindFirstObjectByType<AdvancedInventoryUI>();
+            Debug.Log("2. yöntem çalıştı");
         }
         
         // Strategy 3: Try to find via FindObjectsOfType (includes inactive objects)
@@ -108,6 +110,7 @@ public class EquipmentUIManager : MonoBehaviour
             if (allInventoryUIs.Length > 0)
             {
                 inventoryUI = allInventoryUIs[0];
+                Debug.Log("3. yöntem çalıştı");
             }
         }
         

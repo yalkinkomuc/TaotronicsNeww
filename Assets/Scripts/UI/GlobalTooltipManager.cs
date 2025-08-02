@@ -36,7 +36,6 @@ public class GlobalTooltipManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
             
             // Get PlayerStats reference
             playerStats = FindFirstObjectByType<PlayerStats>();
@@ -99,11 +98,6 @@ public class GlobalTooltipManager : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Show tooltip for equipment data
-    /// </summary>
-    /// <param name="equipment">Equipment data to show tooltip for</param>
-    /// <param name="position">World position to show tooltip near</param>
     public void ShowTooltip(EquipmentData equipment, Vector3 position)
     {
         // Don't show tooltip if equipment selection panel is open

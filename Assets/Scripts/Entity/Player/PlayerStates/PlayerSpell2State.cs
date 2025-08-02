@@ -140,7 +140,7 @@ public class PlayerSpell2State : PlayerState
             Debug.Log("currentFireSpell zaten null - sahnedeki fire spell'leri arıyorum...");
             
             // Sahnedeki tüm FireSpell'leri bul ve sil
-            FireSpell[] fireSpells = Object.FindObjectsOfType<FireSpell>();
+            FireSpell[] fireSpells = Object.FindObjectsByType<FireSpell>(FindObjectsSortMode.None);
             Debug.Log($"Sahnede {fireSpells.Length} adet FireSpell bulundu");
             
             foreach (FireSpell spell in fireSpells)
